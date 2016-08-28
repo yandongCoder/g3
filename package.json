@@ -1,0 +1,35 @@
+{
+  "name": "yes",
+  "version": "1.0.0",
+  "description": "graph data visualization based on D3.js",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yandongCoder/g3.git"
+  },
+  "keywords": [
+    "graph visualization",
+    "graph algorithms",
+    "d3"
+  ],
+  "author": "yandong",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/yandongCoder/g3/issues"
+  },
+  "homepage": "https://github.com/yandongCoder/g3#readme",
+  "dependencies": {
+    "jquery": "^3.1.0"
+  },
+  "devDependencies": {
+    "babel-plugin-external-helpers": "^6.8.0",
+    "babel-preset-es2015": "^6.14.0",
+    "babel-preset-es2015-rollup": "^1.2.0",
+    "rollup": "^0.34.10",
+    "rollup-plugin-babel": "^2.6.1",
+    "rollup-plugin-json": "^2.0.1"
+  }
+}

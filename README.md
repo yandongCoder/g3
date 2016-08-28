@@ -1,2 +1,2 @@
 # graph
-graph data visualization based on D3.js
+graph visualization and graph algorithms based on D3.js
