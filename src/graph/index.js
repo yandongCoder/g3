@@ -14,7 +14,7 @@ Graph.prototype = {
     constructor: Graph,
     width: width,
     height: height,
-    render: render,
+    render: render
 };
 
 export default function (selector) {

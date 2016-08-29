@@ -1,8 +1,8 @@
 export default function (height) {
     if(!arguments.length) {
-        console.log('get height');
+        return this._height;
     }
-    console.log('set height: ' + height);
+    this._height = height;
 
     return this;
 }

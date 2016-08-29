@@ -1,8 +1,9 @@
 export default function (width) {
     if(!arguments.length) {
-        console.log('get width');
+        return this._width;
     }
-    console.log('set width: ' + width);
+    
+    this._width = width;
 
     return this;
 }
