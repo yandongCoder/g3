@@ -1,4 +1,4 @@
-export default function (parent) {
+export default function () {
     let str = `<defs>
                         <filter id="shadow" x="-20%" y="-20%" width="200%" height="200%" type="Shadow" shadowoffsetx="5" shadowoffsety="5" shadowblur="5" shadowcolor="rgba(0,0,0)">
                             <feOffset result="offOut" in="SourceGraphic" dx="0" dy="3"></feOffset>
@@ -18,5 +18,5 @@ export default function (parent) {
                         </radialGradient>
                 </defs>`;
 
-    parent.insertAdjacentHTML("afterbegin", str);
+    this._svg.insertAdjacentHTML("afterbegin", str);
 }

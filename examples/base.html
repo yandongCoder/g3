@@ -2,8 +2,9 @@
 <html>
 <head>
     <meta charset="utf-8">
+    <link rel="stylesheet" href="../dist/css/graph.css">
     <style>
-        .svg1{
+        .svg1 {
             width: 500px;
             height: 500px;
             background: beige;
@@ -11,16 +12,23 @@
     </style>
 </head>
 <body>
-    <svg id="my-svg" class="svg1"></svg>
+<svg id="my-svg" class="svg1"></svg>
 </body>
 </html>
 
 <script src="../dist/js/g3.js"></script>
+<script src="../node_modules/d3/build/d3.js"></script>
 <script>
+    var nodes = [{id: 1, label: "A", x: 50, y: 50}, {id: 2, label: "A", x: 100, y: 100}];
+    var links = [{id: 1, label: "A->B", src: 1, dst: 2}];
+
+
     var graph = g3.graph("#my-svg")
             .width(300)
-            .height(300);
+            .height(300)
+            .nodes(nodes)
+            .links(links);
 
-    //graph.render();
+    graph.render();
 
 </script>

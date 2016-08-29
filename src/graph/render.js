@@ -1,3 +1,4 @@
 export default function () {
-    console.log('render graph');
+    this._init();
+    this._draw();
 }

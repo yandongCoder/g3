@@ -1,0 +1,170 @@
+.graph {
+  display: block;
+  position: relative;
+  overflow: hidden;
+  cursor: move;
+  height: 100%;
+  width: 100%;
+  background-color: #f1f1f1;
+}
+.graph .graph-tooltip {
+  display: none;
+  position: fixed;
+  left: 900px;
+  top: 250px;
+  color: white;
+  text-align: center;
+  min-width: 100px;
+  max-width: 500px;
+  padding: 10px 8px;
+  border-radius: 6px;
+  font-size: 13px;
+  background: #000;
+  opacity: .7;
+}
+.graph .graph-tooltip:after {
+  top: 100%;
+  left: 50%;
+  border: solid transparent;
+  content: " ";
+  height: 0;
+  width: 0;
+  position: absolute;
+  pointer-events: none;
+  border-color: rgba(136, 183, 213, 0);
+  border-top-color: #000;
+  border-width: 6px;
+  margin-left: -6px;
+}
+.graph .node,
+.graph line,
+.graph .link-path {
+  cursor: default;
+}
+.graph .nodes .text-background {
+  display: none;
+}
+.graph .nodes .node .fa {
+  color: #fff;
+  font-size: 21px;
+  position: static;
+  display: block;
+  line-height: 30px;
+  text-align: center;
+}
+.graph .nodes .node .img-circle {
+  width: 30px;
+  height: 30px;
+}
+.graph .nodes .node .img-rect {
+  border-radius: 0;
+}
+.graph .nodes .node rect.circle {
+  rx: 15;
+}
+.graph .nodes .node .text-group > div {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  width: 80px;
+  pointer-events: none;
+}
+.graph .nodes .node .text-group > div > span {
+  pointer-events: auto;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  height: 20px;
+  line-height: 20px;
+}
+.graph .nodes .node.linked-node circle,
+.graph .nodes .node.selected-linked-node circle,
+.graph .nodes .node.selected-link circle,
+.graph .nodes .node.linked-node rect,
+.graph .nodes .node.selected-linked-node rect,
+.graph .nodes .node.selected-link rect {
+  stroke: #f65565;
+  stroke-width: 5;
+}
+.graph .nodes .node.linked-node .text-background,
+.graph .nodes .node.selected-linked-node .text-background,
+.graph .nodes .node.selected-link .text-background {
+  display: block;
+}
+.graph .nodes .node.linked-node text,
+.graph .nodes .node.selected-linked-node text,
+.graph .nodes .node.selected-link text {
+  font-weight: bold;
+}
+.graph .nodes .node.selected circle,
+.graph .nodes .node.selected rect {
+  stroke: #f65565;
+  stroke-width: 5;
+}
+.graph .nodes .node.selected .text-background {
+  display: block;
+}
+.graph .nodes .node.selected text {
+  font-weight: bold;
+}
+.graph .nodes .node.selected .text-group > div {
+  width: auto;
+}
+.graph .nodes .node.selected .text-group > div > span {
+  padding-right: 5px;
+  background: #f65565;
+}
+.graph svg:focus {
+  outline: 0;
+}
+.graph .paths path {
+  fill-opacity: 0.5;
+  stroke-opacity: 0.5;
+  fill: none;
+  stroke: #a1a1a1;
+  stroke-width: 4px;
+}
+.graph .paths path:hover {
+  fill-opacity: 1;
+  stroke-opacity: 1;
+}
+.graph .paths path.selected {
+  fill: none;
+  stroke: #f65565;
+  fill-opacity: 1;
+  stroke-opacity: 1;
+}
+.graph #start-arrow path,
+.graph #end-arrow path {
+  fill-opacity: 0.5;
+  fill: #a1a1a1;
+}
+.graph #start-arrow-hover path,
+.graph #end-arrow-hover path {
+  fill-opacity: 1;
+  fill: #a1a1a1;
+}
+.graph #start-arrow-selected path,
+.graph #end-arrow-selected path {
+  fill-opacity: 1;
+  fill: #f65565;
+}
+.graph .links {
+  stroke: #ccc;
+  stroke-width: 1;
+}
+.graph .links .link .link-label {
+  stroke: none;
+  stroke-width: 0;
+}
+.graph .links line:hover {
+  stroke: #aaa;
+  stroke-width: 2;
+}
+.graph .brush {
+  display: none;
+}
+.graph .brush .extent {
+  fill-opacity: 0.1;
+  stroke: #fff;
+  shape-rendering: crispEdges;
+}
