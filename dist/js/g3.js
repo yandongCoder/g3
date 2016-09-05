@@ -41,20 +41,155 @@
         return this;
     }
 
-    function nodes (nodes) {
+    function nodes (nodes, cover) {
+        if (!Array.isArray(nodes)) {
+            nodes = [nodes];
+        }
+
         if (!arguments.length) {
             return this._nodes;
         }
-        this._nodes = nodes;
+
+        if (cover) {
+            this.clearNodes();
+        }
+
+        nodes.forEach(function (v) {
+            this.addNode(v);
+        }, this);
+
         return this;
     }
 
-    function links (links) {
+    function Node(data) {
+        this.id = data.id;
+        this.x = data.x;
+        this.y = data.y;
+    }
+
+    Node.prototype = {
+        constructor: Node,
+        getId: function getId() {
+            return this.id;
+        },
+        getColor: function getColor() {
+            return this.color || "#123456";
+        },
+        getTranslate: function getTranslate() {
+            return "translate(" + this.x + "," + this.y + ")";
+        }
+    };
+
+    function addNode (obj) {
+        var node = new Node(obj);
+        if (!this.hasNode(node)) this._nodes.push(node);
+    }
+
+    function hasNode (node) {
+        var ids = this._nodes.map(function (d) {
+            return d.id;
+        });
+
+        return ids.indexOf(node.id) !== -1;
+    }
+
+    function clearNodes () {
+        this._nodes = [];
+    }
+
+    function links (links, cover) {
+        if (!Array.isArray(links)) {
+            links = [links];
+        }
+
         if (!arguments.length) {
             return this._links;
         }
-        this._links = links;
+
+        if (cover) {
+            this.clearLinks();
+        }
+
+        links.forEach(function (v) {
+            this.addLink(v);
+        }, this);
+        console.log(this._links);
         return this;
+    }
+
+    function getNodeById (id, Nodes) {
+        return Nodes.filter(function (d) {
+            return d.id === id;
+        })[0];
+    }
+
+    //Link has source and target Node in _nodes
+    function hasST () {
+        return this.source !== undefined && this.target !== undefined;
+    }
+
+    function getOffsetEndCoordinate (Xs, Ys, Xd, Yd, offsetLength) {
+        var offsetScale = d3.scaleLinear().domain([1, 20]).range([25, 50]).clamp(true);
+        var s = offsetScale(offsetLength) || 30;
+
+        var l = Math.sqrt((Xd - Xs) * (Xd - Xs) + (Yd - Ys) * (Yd - Ys));
+        var sin = (Yd - Ys) / l;
+        var cos = (Xd - Xs) / l;
+        return {
+            x: Xd - s * cos,
+            y: Yd - s * sin
+        };
+    }
+
+    function getPath (r) {
+        var offset = getOffsetEndCoordinate(this.source.x, this.source.y, this.target.x, this.target.y, this.originalLinks ? this.originalLinks.length : 1);
+        var halfR = r / 2;
+
+        return 'M ' + (this.source.x + halfR) + ' ' + (this.source.y + halfR) + ' L ' + (offset.x + halfR) + ' ' + (offset.y + halfR);
+    }
+
+    function getStartArrow () {
+        return "url(" + window.location.href.split('#')[0] + "#start-arrow)";
+    }
+
+    function getEndArrow () {
+        return "url(" + window.location.href.split('#')[0] + "#end-arrow)";
+    }
+
+    function Link(data, nodes) {
+        this.id = data.id;
+        this.label = data.label;
+        this.src = data.src;
+        this.dst = data.dst;
+
+        this.source = getNodeById(this.src, nodes);
+        this.target = getNodeById(this.dst, nodes);
+    }
+
+    Link.prototype = {
+        constructor: Link,
+        hasST: hasST,
+        getPath: getPath,
+        getStartArrow: getStartArrow,
+        getEndArrow: getEndArrow
+
+    };
+
+    function addLink (obj) {
+        var link = new Link(obj, this._nodes);
+        if (!this.hasLink(link) && link.hasST()) this._links.push(link);
+    }
+
+    function hasLink (link) {
+        var ids = this._links.map(function (d) {
+            return d.id;
+        });
+
+        return ids.indexOf(link.id) !== -1;
+    }
+
+    function clearLinks () {
+        this._links = [];
     }
 
     function appendPreDefs () {
@@ -90,21 +225,41 @@
             return d.id;
         });
 
-        var g = nodes.enter().append('g').attr("transform", function (d) {
-            return "translate(" + d.x + "," + d.y + ")";
+        var g = nodes.enter().append('g').attr("transform", function (node) {
+            return node.getTranslate();
         }).classed('node', true);
 
         //添加矩形
-        g.append("rect").attr("width", this._r).attr("height", this._r).attr("filter", "url(" + window.location.href.split('#')[0] + "#shadow)");
+        g.append("rect").attr("width", this._r).attr("height", this._r).attr("filter", "url(" + window.location.href.split('#')[0] + "#shadow)").style("fill", function (Node) {
+            return Node.getColor();
+        });
+    }
+
+    function drawLinks () {
+        var self = this;
+        var linkPaths = d3.select('.paths').selectAll('path').data(this._links, function (d) {
+            return d.id;
+        });
+
+        linkPaths.enter().append('path').classed('link-path', true).attr('d', function (Link) {
+            return Link.getPath(self._r);
+        }).style('marker-start', function (Link) {
+            return Link.getStartArrow();
+        }).style('marker-end', function (Link) {
+            return Link.getEndArrow();
+        });
     }
 
     function draw () {
         drawNodes.call(this);
+        drawLinks.call(this);
     }
 
     function Graph(selector) {
         this._svg = select(selector);
         this._r = 30;
+        this._nodes = [];
+        this._links = [];
     }
 
     Graph.prototype = {
@@ -114,7 +269,13 @@
         render: render,
         data: data,
         nodes: nodes,
+        addNode: addNode,
+        clearNodes: clearNodes,
+        hasNode: hasNode,
         links: links,
+        addLink: addLink,
+        hasLink: hasLink,
+        clearLinks: clearLinks,
         _init: init$1,
         _draw: draw
     };

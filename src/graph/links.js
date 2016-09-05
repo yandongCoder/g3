@@ -1,7 +1,19 @@
-export default function (links) {
+export default function (links, cover) {
+    if(!Array.isArray(links)){
+        links = [links];
+    }
+
     if(!arguments.length){
         return this._links;
     }
-    this._links = links;
+
+    if(cover){
+        this.clearLinks();
+    }
+
+    links.forEach(function(v){
+        this.addLink(v);
+    },this);
+    console.log(this._links);
     return this;
 }
