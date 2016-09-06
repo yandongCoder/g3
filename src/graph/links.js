@@ -14,6 +14,6 @@ export default function (links, cover) {
     links.forEach(function(v){
         this.addLink(v);
     },this);
-    console.log(this._links);
+    
     return this;
 }

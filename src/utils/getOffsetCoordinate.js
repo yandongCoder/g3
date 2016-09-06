@@ -5,8 +5,11 @@ export default function (Xs, Ys, Xd, Yd, offsetLength) {
     var l = Math.sqrt((Xd - Xs) * (Xd - Xs) + (Yd - Ys) * (Yd - Ys));
     var sin = (Yd - Ys) / l;
     var cos = (Xd - Xs) / l;
+
     return {
-        x: Xd - s * cos,
-        y: Yd - s * sin
+        Xs: Xs + s * cos || Xs,
+        Ys: Ys + s * sin || Ys,
+        Xd: Xd - s * cos || Xd,
+        Yd: Yd - s * sin || Yd
     }
 }

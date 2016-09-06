@@ -1,6 +1,7 @@
-export default function () {
+import getAbsUrl from "../../utils/getAbsUrl";
 
-    var nodes = d3.select('svg .nodes').selectAll("g.node").data(this._nodes, function (d) {
+export default function () {
+    var nodes = this._getNodesSelection().data(this._nodes, function (d) {
         return d.id;
     });
 
@@ -14,6 +15,24 @@ export default function () {
     g.append("rect")
         .attr("width", this._r)
         .attr("height", this._r)
-        .attr("filter", "url(" + window.location.href.split('#')[0] + "#shadow)")
+        .attr("filter", "url(" + getAbsUrl() + "#shadow)")
         .style("fill", function(Node){ return Node.getColor() });
+
+
+    var textGroup = g.append('svg:foreignObject')
+        .attr('class', 'text-group')
+        .attr('width', function (Node) {
+            return Node.getLabelWidth();
+        })
+        .attr("height", this._r)
+        .style("line-height", this._r + 'px')
+        .attr('transform', "translate(" + (1 + this._r) + ", 0)");
+    textGroup.append("xhtml:div")
+        .attr('title', function (Node) {
+            return Node.getLabel();
+        })
+        .append('xhtml:span')
+        .text(function (Node) {
+            return Node.getLabel();
+        });
 }

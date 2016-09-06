@@ -13,10 +13,18 @@ import hasLink from "./hasLink";
 import clearLinks from "./clearLinks";
 import init from "./init/init";
 import draw from "./draw/index";
+import transform from "./transform";
 
-function Graph(selector) {
+
+function Graph(selector, config) {
+    if(config === undefined) config = {};
+
     this._svg = select(selector);
-    this._r = 30;
+
+    this._r = config.r || 30;
+    this._movable = config.movable || false;
+    this._zoomable = config.zoomable || false;
+    
     this._nodes = [];
     this._links = [];
 }
@@ -36,7 +44,30 @@ Graph.prototype = {
     hasLink: hasLink,
     clearLinks: clearLinks,
     _init: init,
-    _draw: draw
+    _draw: draw,
+    _transform: transform,
+    _getCurrentScale: function(){
+        return d3.zoomTransform(this._svg).k;
+    },
+    _getCurrentTranslate: function(){
+        var transform = d3.zoomTransform(this._svg);
+        return [transform.x, transform.y];
+    },
+    _getNodesSelection: function(){
+        return this._svgSelection.select('.nodes').selectAll("g.node");
+    },
+    _getNodesLabelSelection: function(){
+        return this._getNodesSelection().selectAll('.text-group');
+    },
+    _getLinksSelection: function(){
+        return this._svgSelection.select('.paths').selectAll("path");
+    },
+    _getLinksLabelSelection: function(){
+        return this._svgSelection.select('g.link-labels').selectAll('text');
+    },
+    _getForceGroup: function(){
+        return this._forceGroupSelection;
+    }
 };
 
 export default function (selector) {

@@ -13,14 +13,18 @@
 </head>
 <body>
 <svg id="my-svg" class="svg1"></svg>
+<svg id="my-svg2" class="svg2"></svg>
 </body>
 </html>
 
 <script src="../dist/js/g3.js"></script>
 <script src="../node_modules/d3/build/d3.js"></script>
 <script>
-    var nodes = [{id: 1, label: "A", x: 50, y: 50}, {id: 2, label: "A", x: 100, y: 100},{id: 2, label: "A", x: 130, y: 130}];
-    var links = [{id: 1, label: "A->B", src: 1, dst: 2}];
+    var nodes = [{id: 1, label: "A", x: 50, y: 50}, {id: 2, label: "A", x: 100, y: 100},{id: 2, label: "A", x: 130, y: 130},
+        {id: 3, label: "C", x: 250, y: 150}, {id: 4, label: "D", x: 150, y:230},
+        {id: 5, label: "E", x: 30, y: 250}, {id: 6, label: "F", x: 30, y:150}
+    ];
+    var links = [{id: 1, label: "A->B", src: 1, dst: 2,direction: 0},{id: 2, label: "C->D", src: 3, dst: 4,direction: 3},{id: 4, label: "C->D2", src: 3, dst: 4,direction: 2},{id: 5, label: "C->D3", src: 3, dst: 4,direction: 1},{id: 3, label: "E->F", src: 5, dst: 6, direction: 3}];
 
 
     var graph = g3.graph("#my-svg")
@@ -30,5 +34,13 @@
             .links(links);
 
     graph.render();
+//
+//    var graph2 = g3.graph("#my-svg2")
+//            .width(300)
+//            .height(300)
+//            .nodes(nodes)
+//            .links(links);
+//
+//    graph2.render();
 
 </script>

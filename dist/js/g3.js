@@ -61,8 +61,26 @@
         return this;
     }
 
+    //中文为2长度，非中文为1
+
+    function getStrLen (str) {
+        var len = 0;
+        if (typeof str !== "string") {
+            return len;
+        }
+        for (var i = 0; i < str.length; i++) {
+            if (str.charAt(i) > '~') {
+                len += 2;
+            } else {
+                len++;
+            }
+        }
+        return len;
+    };
+
     function Node(data) {
         this.id = data.id;
+        this.label = data.label;
         this.x = data.x;
         this.y = data.y;
     }
@@ -71,6 +89,12 @@
         constructor: Node,
         getId: function getId() {
             return this.id;
+        },
+        getLabelWidth: function getLabelWidth() {
+            return getStrLen(this.getLabel()) * 9;
+        },
+        getLabel: function getLabel() {
+            return this.combinedLabel || this.label || "No Label";
         },
         getColor: function getColor() {
             return this.color || "#123456";
@@ -113,7 +137,7 @@
         links.forEach(function (v) {
             this.addLink(v);
         }, this);
-        console.log(this._links);
+
         return this;
     }
 
@@ -128,32 +152,89 @@
         return this.source !== undefined && this.target !== undefined;
     }
 
-    function getOffsetEndCoordinate (Xs, Ys, Xd, Yd, offsetLength) {
+    function getOffsetCoordinate (Xs, Ys, Xd, Yd, offsetLength) {
         var offsetScale = d3.scaleLinear().domain([1, 20]).range([25, 50]).clamp(true);
         var s = offsetScale(offsetLength) || 30;
 
         var l = Math.sqrt((Xd - Xs) * (Xd - Xs) + (Yd - Ys) * (Yd - Ys));
         var sin = (Yd - Ys) / l;
         var cos = (Xd - Xs) / l;
+
         return {
-            x: Xd - s * cos,
-            y: Yd - s * sin
+            Xs: Xs + s * cos || Xs,
+            Ys: Ys + s * sin || Ys,
+            Xd: Xd - s * cos || Xd,
+            Yd: Yd - s * sin || Yd
         };
     }
 
-    function getPath (r) {
-        var offset = getOffsetEndCoordinate(this.source.x, this.source.y, this.target.x, this.target.y, this.originalLinks ? this.originalLinks.length : 1);
+    var DIRECTION = {
+        NONE: 0,
+        FROM: 1,
+        TO: 2,
+        DOUBLE: 3
+    };
+
+    function getPath (r, asSvgPathAttr) {
+        var offset = getOffsetCoordinate(this.source.x, this.source.y, this.target.x, this.target.y, this.originalLinks ? this.originalLinks.length : 1);
         var halfR = r / 2;
 
-        return 'M ' + (this.source.x + halfR) + ' ' + (this.source.y + halfR) + ' L ' + (offset.x + halfR) + ' ' + (offset.y + halfR);
+        var Xs = this.source.x,
+            Ys = this.source.y,
+            Xd = this.target.x,
+            Yd = this.target.y;
+
+        if (this.direction === DIRECTION.TO || this.direction === DIRECTION.DOUBLE) {
+            Xs = offset.Xs;
+            Ys = offset.Ys;
+        }
+        if (this.direction === DIRECTION.FROM || this.direction === DIRECTION.DOUBLE) {
+            Xd = offset.Xd;
+            Yd = offset.Yd;
+        }
+
+        if (asSvgPathAttr) return 'M ' + (Xs + halfR) + ' ' + (Ys + halfR) + ' L ' + (Xd + halfR) + ' ' + (Yd + halfR);else return {
+            Xs: Xs + halfR,
+            Ys: Ys + halfR,
+            Xd: Xd + halfR,
+            Yd: Yd + halfR
+        };
     }
 
     function getStartArrow () {
-        return "url(" + window.location.href.split('#')[0] + "#start-arrow)";
+        if (this.direction === DIRECTION.TO || this.direction === DIRECTION.DOUBLE) {
+            return "url(" + window.location.href.split('#')[0] + "#start-arrow)";
+        }
     }
 
     function getEndArrow () {
-        return "url(" + window.location.href.split('#')[0] + "#end-arrow)";
+        if (this.direction === DIRECTION.FROM || this.direction === DIRECTION.DOUBLE) {
+            return "url(" + window.location.href.split('#')[0] + "#end-arrow)";
+        }
+    }
+
+    function getTextCenter (pathCoord) {
+
+        var x = Math.abs(pathCoord.Xs - pathCoord.Xd);
+        var y = Math.abs(pathCoord.Ys - pathCoord.Yd);
+        var z = Math.sqrt(x * x + y * y);
+        var charLength = getStrLen(this.getLabel()) * 6 / 2;
+        //字长度
+        return z / 2 - charLength;
+    }
+
+    function getLinkLabelTransform (r, scaleFactor) {
+        var coord = this.getPath(r); //linkCoord
+        var halfR = r / 2;
+        var rx = (coord.Xs + coord.Xd) / 2;
+        var ry = (coord.Ys + coord.Yd) / 2;
+
+        if (coord.Xd < coord.Xs) {
+            return 'rotate(180 ' + rx + ' ' + ry + ') translate(' + rx + ' ' + ry + ') scale(' + 1 / scaleFactor + ') translate(' + -rx + ' ' + -ry + ')';
+            //先移动原点到字体位置，然后进行缩放，在将原点移回到初始位置
+        } else {
+            return 'translate(' + rx + ' ' + ry + ') scale(' + 1 / scaleFactor + ') translate(' + -rx + ' ' + -ry + ')';
+        }
     }
 
     function Link(data, nodes) {
@@ -161,6 +242,7 @@
         this.label = data.label;
         this.src = data.src;
         this.dst = data.dst;
+        this.direction = data.direction === undefined ? 1 : data.direction; //0: none, 1: from, 2: to, 3 double
 
         this.source = getNodeById(this.src, nodes);
         this.target = getNodeById(this.dst, nodes);
@@ -171,8 +253,15 @@
         hasST: hasST,
         getPath: getPath,
         getStartArrow: getStartArrow,
-        getEndArrow: getEndArrow
-
+        getEndArrow: getEndArrow,
+        getTextCenter: getTextCenter,
+        getLinkLabelTransform: getLinkLabelTransform,
+        getId: function getId() {
+            return this.id;
+        },
+        getLabel: function getLabel() {
+            return this.combinedLabel || this.label || this.linkTypeName || 'No label';
+        }
     };
 
     function addLink (obj) {
@@ -193,35 +282,44 @@
     }
 
     function appendPreDefs () {
-        var str = "<defs>\n                        <filter id=\"shadow\" x=\"-20%\" y=\"-20%\" width=\"200%\" height=\"200%\" type=\"Shadow\" shadowoffsetx=\"5\" shadowoffsety=\"5\" shadowblur=\"5\" shadowcolor=\"rgba(0,0,0)\">\n                            <feOffset result=\"offOut\" in=\"SourceGraphic\" dx=\"0\" dy=\"3\"></feOffset>\n                            <feColorMatrix result=\"matrixOut\" in=\"offOut\" type=\"matrix\" values=\"0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.5 0\"></feColorMatrix>\n                            <feGaussianBlur result=\"blurOut\" in=\"matrixOut\" stdDeviation=\"2\"></feGaussianBlur>\n                            <feBlend in=\"SourceGraphic\" in2=\"blurOut\" mode=\"normal\"></feBlend>\n                        </filter>\n                        <marker id=\"start-arrow\" viewBox=\"0 -5 10 10\" refX=\"-6\" markerWidth=\"3\" markerHeight=\"3\" orient=\"auto\"><path d=\"M10,-5L0,0L10,5\"></path></marker>\n                        <marker id=\"end-arrow\" viewBox=\"0 -5 10 10\" refX=\"0\" markerWidth=\"3\" markerHeight=\"3\" orient=\"auto\"><path d=\"M0,-5L10,0L0,5\"></path></marker>\n                        <marker id=\"end-arrow-hover\" viewBox=\"0 -5 10 10\" refX=\"0\" markerWidth=\"3\" markerHeight=\"3\" orient=\"auto\"><path d=\"M0,-5L10,0L0,5\"></path></marker>\n                        <marker id=\"end-arrow-selected\" viewBox=\"0 -5 10 10\" refX=\"0\" markerWidth=\"3\" markerHeight=\"3\" orient=\"auto\"><path d=\"M0,-5L10,0L0,5\"></path></marker>\n                        <radialGradient id=\"linear\" cx=\"50%\" cy=\"50%\" r=\"50%\" fx=\"50%\" fy=\"50%\">\n                            <stop offset=\"0%\" style=\"stop-color:rgb(255，255,255);stop-opacity:0\" />\n                            <stop offset=\"90%\" style=\"stop-color:rgb(255,255,255);stop-opacity:1\" />\n                            <stop offset=\"98%\" style=\"stop-color:rgb(255,255,255);stop-opacity:1\" />\n                            <stop offset=\"100%\" style=\"stop-color:rgb(222，222, 222);stop-opacity:1\" />\n                        </radialGradient>\n                </defs>";
+        var str = "<defs>\n                        <filter id=\"shadow\" x=\"-20%\" y=\"-20%\" width=\"200%\" height=\"200%\" type=\"Shadow\" shadowoffsetx=\"5\" shadowoffsety=\"5\" shadowblur=\"5\" shadowcolor=\"rgba(0,0,0)\">\n                            <feOffset result=\"offOut\" in=\"SourceGraphic\" dx=\"0\" dy=\"3\"></feOffset>\n                            <feColorMatrix result=\"matrixOut\" in=\"offOut\" type=\"matrix\" values=\"0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.5 0\"></feColorMatrix>\n                            <feGaussianBlur result=\"blurOut\" in=\"matrixOut\" stdDeviation=\"2\"></feGaussianBlur>\n                            <feBlend in=\"SourceGraphic\" in2=\"blurOut\" mode=\"normal\"></feBlend>\n                        </filter>\n                        <marker id=\"start-arrow\" viewBox=\"0 -5 10 10\" refX=\"10\" markerWidth=\"3\" markerHeight=\"3\" orient=\"auto\"><path d=\"M10,-5L0,0L10,5\"></path></marker>\n                        <marker id=\"end-arrow\" viewBox=\"0 -5 10 10\" refX=\"0\" markerWidth=\"3\" markerHeight=\"3\" orient=\"auto\"><path d=\"M0,-5L10,0L0,5\"></path></marker>\n                        <marker id=\"end-arrow-hover\" viewBox=\"0 -5 10 10\" refX=\"0\" markerWidth=\"3\" markerHeight=\"3\" orient=\"auto\"><path d=\"M0,-5L10,0L0,5\"></path></marker>\n                        <marker id=\"end-arrow-selected\" viewBox=\"0 -5 10 10\" refX=\"0\" markerWidth=\"3\" markerHeight=\"3\" orient=\"auto\"><path d=\"M0,-5L10,0L0,5\"></path></marker>\n                        <radialGradient id=\"linear\" cx=\"50%\" cy=\"50%\" r=\"50%\" fx=\"50%\" fy=\"50%\">\n                            <stop offset=\"0%\" style=\"stop-color:rgb(255，255,255);stop-opacity:0\" />\n                            <stop offset=\"90%\" style=\"stop-color:rgb(255,255,255);stop-opacity:1\" />\n                            <stop offset=\"98%\" style=\"stop-color:rgb(255,255,255);stop-opacity:1\" />\n                            <stop offset=\"100%\" style=\"stop-color:rgb(222，222, 222);stop-opacity:1\" />\n                        </radialGradient>\n                </defs>";
 
         this._svg.insertAdjacentHTML("afterbegin", str);
     }
 
     function appendPreElement () {
-        var svg = d3.select(this._svg);
-        svg.append("g").attr("class", "brush");
+        var svg = this._svgSelection = d3.select(this._svg);
+        this._brushSelection = svg.append("g").attr("class", "brush");
 
-        var forceGroup = svg.append('g').attr('class', 'force');
+        var forceGroup = this._forceGroupSelection = svg.append('g').attr('class', 'force');
+
         forceGroup.append("g").attr("class", "links");
         forceGroup.append("g").attr("class", "paths");
         forceGroup.append("g").attr("class", "link-labels");
         forceGroup.append("g").attr("class", "nodes");
     }
 
-    var init = false;
-    function init$1 () {
-        if (!init) {
-            d3.select(this._svg).classed("graph", true);
-            appendPreElement.call(this);
-            appendPreDefs.call(this);
-            init = true;
-        }
+    function initZoom () {
+        var self = this;
+        return d3.zoom().scaleExtent([0.1, 2.2]).on('start', function () {}).on("zoom", function () {
+            self._transform.call(self);
+        }).on('end', function () {});
+    }
+
+    function init () {
+        this.zoom = initZoom.call(this);
+        appendPreElement.call(this);
+        appendPreDefs.call(this);
+
+        d3.select(this._svg).classed("graph", true).call(this.zoom);
+    }
+
+    function getAbsUrl () {
+        return window.location.href.split('#')[0];
     }
 
     function drawNodes () {
-
-        var nodes = d3.select('svg .nodes').selectAll("g.node").data(this._nodes, function (d) {
+        var nodes = this._getNodesSelection().data(this._nodes, function (d) {
             return d.id;
         });
 
@@ -230,23 +328,68 @@
         }).classed('node', true);
 
         //添加矩形
-        g.append("rect").attr("width", this._r).attr("height", this._r).attr("filter", "url(" + window.location.href.split('#')[0] + "#shadow)").style("fill", function (Node) {
+        g.append("rect").attr("width", this._r).attr("height", this._r).attr("filter", "url(" + getAbsUrl() + "#shadow)").style("fill", function (Node) {
             return Node.getColor();
+        });
+
+        var textGroup = g.append('svg:foreignObject').attr('class', 'text-group').attr('width', function (Node) {
+            return Node.getLabelWidth();
+        }).attr("height", this._r).style("line-height", this._r + 'px').attr('transform', "translate(" + (1 + this._r) + ", 0)");
+        textGroup.append("xhtml:div").attr('title', function (Node) {
+            return Node.getLabel();
+        }).append('xhtml:span').text(function (Node) {
+            return Node.getLabel();
         });
     }
 
     function drawLinks () {
         var self = this;
-        var linkPaths = d3.select('.paths').selectAll('path').data(this._links, function (d) {
+        var linkPaths = this._getLinksSelection().data(this._links, function (d) {
             return d.id;
         });
 
-        linkPaths.enter().append('path').classed('link-path', true).attr('d', function (Link) {
-            return Link.getPath(self._r);
+        linkPaths.enter().append('path').classed('link-path', true).attr('id', function (Link) {
+            return "link-path" + Link.getId();
+        }).attr('d', function (Link) {
+            return Link.getPath(self._r, true);
         }).style('marker-start', function (Link) {
             return Link.getStartArrow();
         }).style('marker-end', function (Link) {
             return Link.getEndArrow();
+        });
+
+        //绑定linkData数据到linkLabels
+        var linkLabels = this._getLinksLabelSelection().data(this._links, function (Link) {
+            return Link.getId();
+        });
+
+        //linksData
+
+        //按需增加新的LinkLabels(当linksData data > linkPaths element)
+        var linkTexts = linkLabels.enter().append('text')
+        //.filter(function(d){
+        //    return !d.hide;
+        //})
+        .style("pointer-events", "none").classed('link-label', true).attr('id', function (Link) {
+            return 'link-label' + Link.getId();
+        }).attr('dx', function (Link) {
+            return Link.getTextCenter(Link.getPath(self._r));
+        }).attr('dy', 1).attr('font-size', 13);
+
+        //根据当前数据重新生成textPath
+        linkTexts.append('textPath')
+        //.filter(function(d){
+        //    return !d.hide;
+        //})
+        .attr('xlink:href', function (Link) {
+            return getAbsUrl() + '#link-path' + Link.getId();
+        }).style("pointer-events", "none").text(function (Link) {
+            return Link.getLabel();
+        });
+
+        //反转字体，使字体总是朝上，该句放于该函数最后执行，提前会导致问题
+        linkTexts.attr('transform', function (Link) {
+            return Link.getLinkLabelTransform(self._r, self._getCurrentScale());
         });
     }
 
@@ -255,9 +398,49 @@
         drawLinks.call(this);
     }
 
-    function Graph(selector) {
+    function transform () {
+        var self = this;
+        //不可移动
+        if (!this.movable) {}
+        //将变换前的translate值赋给变换后的translate值,保持位置不变
+        //this.zoom.translate(scope.config.status.translate);
+
+        //不可缩放
+        if (!this.zoomable) {}
+        //this.zoom.scale(scope.config.status.scale);
+
+
+        //Graph._ifShowLabels();
+
+
+        //不缩放text文字内容
+        this._getNodesLabelSelection().attr("height", this._r * this._getCurrentScale()).style("line-height", this._r * this._getCurrentScale() + "px").attr("transform", "translate(" + (1 + this._r) + ", 0) scale(" + 1 / this._getCurrentScale() + ")");
+
+        //linkLabels文字不缩放
+        this._getLinksLabelSelection().attr("transform", function (Link) {
+            return Link.getLinkLabelTransform(self._r, self._getCurrentScale());
+        });
+        //缩放网络图
+        this._getForceGroup().attr("transform", "translate(" + this._getCurrentTranslate() + ") scale(" + this._getCurrentScale() + ")");
+
+        // if (Graph.brush) {
+        //     //brush框选组件随之缩放
+        //     Graph.brush.attr("transform", "translate(" + this._getCurrentTranslate() + ") scale(" + this._getCurrentScale() + ")");
+        // }
+        //将状态记录在config中
+        // scope.config.status.translate = Graph.zoom.translate();
+        // scope.config.status.scale = Graph.zoom.scale();
+    }
+
+    function Graph(selector, config) {
+        if (config === undefined) config = {};
+
         this._svg = select(selector);
-        this._r = 30;
+
+        this._r = config.r || 30;
+        this._movable = config.movable || false;
+        this._zoomable = config.zoomable || false;
+
         this._nodes = [];
         this._links = [];
     }
@@ -276,8 +459,31 @@
         addLink: addLink,
         hasLink: hasLink,
         clearLinks: clearLinks,
-        _init: init$1,
-        _draw: draw
+        _init: init,
+        _draw: draw,
+        _transform: transform,
+        _getCurrentScale: function _getCurrentScale() {
+            return d3.zoomTransform(this._svg).k;
+        },
+        _getCurrentTranslate: function _getCurrentTranslate() {
+            var transform = d3.zoomTransform(this._svg);
+            return [transform.x, transform.y];
+        },
+        _getNodesSelection: function _getNodesSelection() {
+            return this._svgSelection.select('.nodes').selectAll("g.node");
+        },
+        _getNodesLabelSelection: function _getNodesLabelSelection() {
+            return this._getNodesSelection().selectAll('.text-group');
+        },
+        _getLinksSelection: function _getLinksSelection() {
+            return this._svgSelection.select('.paths').selectAll("path");
+        },
+        _getLinksLabelSelection: function _getLinksLabelSelection() {
+            return this._svgSelection.select('g.link-labels').selectAll('text');
+        },
+        _getForceGroup: function _getForceGroup() {
+            return this._forceGroupSelection;
+        }
     };
 
     function index (selector) {
