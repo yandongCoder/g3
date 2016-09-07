@@ -5,4 +5,6 @@ export default function () {
         this._draw();
     //}.bind(this),0);
 
+        return this;
+
 }

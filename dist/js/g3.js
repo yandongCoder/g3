@@ -35,6 +35,8 @@
             this._draw();
         //}.bind(this),0);
 
+            return this;
+
     }
 
     function data (data) {
