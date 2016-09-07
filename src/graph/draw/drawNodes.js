@@ -27,6 +27,7 @@ export default function () {
         .attr("height", this._r)
         .style("line-height", this._r + 'px')
         .attr('transform', "translate(" + (1 + this._r) + ", 0)");
+
     textGroup.append("xhtml:div")
         .attr('title', function (Node) {
             return Node.getLabel();
@@ -35,4 +36,6 @@ export default function () {
         .text(function (Node) {
             return Node.getLabel();
         });
+
+    nodes.exit().remove();
 }

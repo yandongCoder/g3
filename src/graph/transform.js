@@ -20,9 +20,7 @@ export default function () {
         .attr("transform", "translate(" + (1 + this._r) + ", 0) scale(" + 1 / this._getCurrentScale() + ")");
 
     //linkLabels文字不缩放
-    this._getLinksLabelSelection().attr("transform", function(Link){
-        return Link.getLinkLabelTransform(self._r, self._getCurrentScale());
-    });
+    this._getLinksLabelSelection().attr("transform", this._transformLinksLabel.bind(this));
     //缩放网络图
     this._getForceGroup().attr("transform", "translate(" + this._getCurrentTranslate() + ") scale(" + this._getCurrentScale() + ")");
 

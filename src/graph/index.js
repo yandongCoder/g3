@@ -6,10 +6,13 @@ import data from "./data";
 import nodes from "./nodes";
 import addNode from "./addNode";
 import hasNode from "./hasNode";
+import removeNodes from "./removeNodes";
 import clearNodes from "./clearNodes";
 import links from "./links";
 import addLink from "./addLink";
 import hasLink from "./hasLink";
+import removeLinks from "./removeLinks";
+import removeLinksByNodes from "./removeLinksByNodes";
 import clearLinks from "./clearLinks";
 import init from "./init/init";
 import draw from "./draw/index";
@@ -20,6 +23,8 @@ function Graph(selector, config) {
     if(config === undefined) config = {};
 
     this._svg = select(selector);
+
+    this._hasInit = false; //init only once
 
     this._r = config.r || 30;
     this._movable = config.movable || false;
@@ -37,11 +42,14 @@ Graph.prototype = {
     data: data,
     nodes: nodes,
     addNode: addNode,
+    removeNodes: removeNodes,
     clearNodes: clearNodes,
     hasNode: hasNode,
     links: links,
     addLink: addLink,
     hasLink: hasLink,
+    removeLinks: removeLinks,
+    _removeLinksByNodes: removeLinksByNodes,
     clearLinks: clearLinks,
     _init: init,
     _draw: draw,
@@ -67,6 +75,9 @@ Graph.prototype = {
     },
     _getForceGroup: function(){
         return this._forceGroupSelection;
+    },
+    _transformLinksLabel: function(Link){
+        return Link.getLinkLabelTransform(Link.getPath(this._r), this._getCurrentScale());
     }
 };
 

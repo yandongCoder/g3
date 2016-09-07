@@ -1,5 +1,5 @@
 var tape = require("tape"),
-    jsdom = require("jsdom");
+    jsdom = require("jsdom"),
     g3 = require("../../dist/js/g3");
 
 tape("Don't add node if node's id repeated in graph's _nodes", function(test){

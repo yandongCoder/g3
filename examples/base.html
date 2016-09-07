@@ -30,10 +30,22 @@
     var graph = g3.graph("#my-svg")
             .width(300)
             .height(300)
-            .nodes(nodes)
-            .links(links);
+            .nodes(nodes);
 
-    graph.render();
+    setTimeout(function(){
+       graph.links(links);
+    },500);
+
+    setTimeout(function(){
+        graph.nodes({id: 7, label: "G", x: 80, y:170});
+        graph.links({id: 99, label: "A->D", src: 2, dst: 4,direction: 0});
+    }, 1000);
+
+    setTimeout(function(){
+        graph.removeNodes(nodes[0]);
+        graph.removeLinks(links[0]);
+    }, 1500);
+
 //
 //    var graph2 = g3.graph("#my-svg2")
 //            .width(300)

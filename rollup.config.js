@@ -5,6 +5,6 @@ export default {
     banner: "//g3",
     entry: './index.js',
     dest: './dist/js/g3.js',
-    format: 'umd',
-    plugins: [ json(), babel() ]
+    format: 'umd'
+    //plugins: [ json(), babel() ]
 }; 

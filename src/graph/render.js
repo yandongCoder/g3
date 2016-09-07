@@ -1,4 +1,8 @@
 export default function () {
-    this._init();
-    this._draw();
+    //clearTimeout(this._renderDelay);
+    //this._renderDelay = setTimeout(function(){
+        this._init();
+        this._draw();
+    //}.bind(this),0);
+
 }

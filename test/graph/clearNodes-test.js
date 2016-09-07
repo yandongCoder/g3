@@ -1,5 +1,5 @@
 var tape = require("tape"),
-    jsdom = require("jsdom");
+    jsdom = require("jsdom"),
 g3 = require("../../dist/js/g3");
 
 tape("clear all nodes", function(test){

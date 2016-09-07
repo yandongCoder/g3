@@ -2,9 +2,7 @@ import getAbsUrl from "../../utils/getAbsUrl";
 
 export default function () {
     var self = this;
-    var linkPaths = this._getLinksSelection().data(this._links, function (d) {
-        return d.id;
-    });
+    var linkPaths = this._getLinksSelection().data(this._links, function (Link) { return Link.getId() });
 
     linkPaths.enter()
         .append('path')
@@ -22,8 +20,6 @@ export default function () {
 
     //绑定linkData数据到linkLabels
     var linkLabels = this._getLinksLabelSelection().data(this._links, function (Link) { return Link.getId(); });
-
-    //linksData
 
     //按需增加新的LinkLabels(当linksData data > linkPaths element)
     var linkTexts = linkLabels.enter().append('text')
@@ -55,7 +51,8 @@ export default function () {
 
 
     //反转字体，使字体总是朝上，该句放于该函数最后执行，提前会导致问题
-    linkTexts.attr('transform', function(Link){
-        return Link.getLinkLabelTransform(self._r, self._getCurrentScale());
-    });
+    linkTexts.attr('transform', this._transformLinksLabel.bind(this));
+
+    linkPaths.exit().remove();
+    linkLabels.exit().remove();
 }
