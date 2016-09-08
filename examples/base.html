@@ -44,6 +44,8 @@
     setTimeout(function(){
         graph.removeNodes(nodes[0]);
         graph.removeLinks(links[0]);
+        //graph._getSvgSelection().call(graph.zoom.transform, d3.zoomIdentity.scale(2.2));
+        graph.scaleTo(2.2);
     }, 1500);
 
 //

@@ -1,4 +1,6 @@
-export default function (coord, scaleFactor) {
+
+export default function (r, scaleFactor) {
+    var coord = this.getPath(r);
     var rx = (coord.Xs + coord.Xd) / 2;
     var ry = (coord.Ys + coord.Yd) / 2;
 

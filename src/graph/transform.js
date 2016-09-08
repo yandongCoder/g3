@@ -9,7 +9,6 @@ export default function () {
     if (!this.zoomable) {
         //this.zoom.scale(scope.config.status.scale);
     }
-    
     //Graph._ifShowLabels();
 
 
@@ -17,12 +16,12 @@ export default function () {
     this._getNodesLabelSelection()
         .attr("height", this._r * this._getCurrentScale())
         .style("line-height", this._r * this._getCurrentScale() + "px")
-        .attr("transform", "translate(" + (1 + this._r) + ", 0) scale(" + 1 / this._getCurrentScale() + ")");
+        .attr("transform", "translate(" + (1 + this._r) + ", 0) scale(" + 1 / d3.event.transform.k + ")");
 
     //linkLabels文字不缩放
-    this._getLinksLabelSelection().attr("transform", this._transformLinksLabel.bind(this));
+    this._getLinksLabelSelection().attr("transform", function(Link){ return Link.getLinkLabelTransform(self._r, d3.event.transform.k); });
     //缩放网络图
-    this._getForceGroup().attr("transform", "translate(" + this._getCurrentTranslate() + ") scale(" + this._getCurrentScale() + ")");
+    this._getForceGroup().attr("transform", "translate(" + d3.event.transform.x + ", "+ d3.event.transform.y + ") scale(" + d3.event.transform.k + ")");
 
     // if (Graph.brush) {
     //     //brush框选组件随之缩放

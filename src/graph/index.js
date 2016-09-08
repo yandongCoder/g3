@@ -17,6 +17,7 @@ import clearLinks from "./clearLinks";
 import init from "./init/init";
 import draw from "./draw/index";
 import transform from "./transform";
+import scaleTo from "./scaleTo";
 
 
 function Graph(selector, config) {
@@ -51,6 +52,7 @@ Graph.prototype = {
     removeLinks: removeLinks,
     _removeLinksByNodes: removeLinksByNodes,
     clearLinks: clearLinks,
+    scaleTo: scaleTo,
     _init: init,
     _draw: draw,
     _transform: transform,
@@ -61,23 +63,23 @@ Graph.prototype = {
         var transform = d3.zoomTransform(this._svg);
         return [transform.x, transform.y];
     },
+    _getSvgSelection: function(){
+        return d3.select(this._svg);
+    },
     _getNodesSelection: function(){
-        return this._svgSelection.select('.nodes').selectAll("g.node");
+        return this._getSvgSelection().select('.nodes').selectAll("g.node");
     },
     _getNodesLabelSelection: function(){
         return this._getNodesSelection().selectAll('.text-group');
     },
     _getLinksSelection: function(){
-        return this._svgSelection.select('.paths').selectAll("path");
+        return this._getSvgSelection().select('.paths').selectAll("path");
     },
     _getLinksLabelSelection: function(){
-        return this._svgSelection.select('g.link-labels').selectAll('text');
+        return this._getSvgSelection().select('g.link-labels').selectAll('text');
     },
     _getForceGroup: function(){
         return this._forceGroupSelection;
-    },
-    _transformLinksLabel: function(Link){
-        return Link.getLinkLabelTransform(Link.getPath(this._r), this._getCurrentScale());
     }
 };
 

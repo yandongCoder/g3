@@ -51,7 +51,7 @@ export default function () {
 
 
     //反转字体，使字体总是朝上，该句放于该函数最后执行，提前会导致问题
-    linkTexts.attr('transform', this._transformLinksLabel.bind(this));
+    linkTexts.attr('transform', function(Link){ return Link.getLinkLabelTransform(self._r, self._getCurrentScale()); });
 
     linkPaths.exit().remove();
     linkLabels.exit().remove();

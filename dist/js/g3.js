@@ -260,7 +260,8 @@
         return z / 2 - charLength;
     }
 
-    function getLinkLabelTransform (coord, scaleFactor) {
+    function getLinkLabelTransform (r, scaleFactor) {
+        var coord = this.getPath(r);
         var rx = (coord.Xs + coord.Xd) / 2;
         var ry = (coord.Ys + coord.Yd) / 2;
 
@@ -374,7 +375,7 @@
     }
 
     function appendPreElement () {
-        var svg = this._svgSelection = d3.select(this._svg);
+        var svg = this._getSvgSelection();
         this._brushSelection = svg.append("g").attr("class", "brush");
 
         var forceGroup = this._forceGroupSelection = svg.append('g').attr('class', 'force');
@@ -385,7 +386,6 @@
     }
 
     function initZoom() {
-        var self = this;
         return d3.zoom().scaleExtent([0.1, 2.2])
             .on('start', function () {
             })
@@ -504,7 +504,7 @@
 
 
         //反转字体，使字体总是朝上，该句放于该函数最后执行，提前会导致问题
-        linkTexts.attr('transform', this._transformLinksLabel.bind(this));
+        linkTexts.attr('transform', function(Link){ return Link.getLinkLabelTransform(self._r, self._getCurrentScale()); });
 
         linkPaths.exit().remove();
         linkLabels.exit().remove();
@@ -526,7 +526,6 @@
         if (!this.zoomable) {
             //this.zoom.scale(scope.config.status.scale);
         }
-        
         //Graph._ifShowLabels();
 
 
@@ -534,12 +533,12 @@
         this._getNodesLabelSelection()
             .attr("height", this._r * this._getCurrentScale())
             .style("line-height", this._r * this._getCurrentScale() + "px")
-            .attr("transform", "translate(" + (1 + this._r) + ", 0) scale(" + 1 / this._getCurrentScale() + ")");
+            .attr("transform", "translate(" + (1 + this._r) + ", 0) scale(" + 1 / d3.event.transform.k + ")");
 
         //linkLabels文字不缩放
-        this._getLinksLabelSelection().attr("transform", this._transformLinksLabel.bind(this));
+        this._getLinksLabelSelection().attr("transform", function(Link){ return Link.getLinkLabelTransform(self._r, d3.event.transform.k); });
         //缩放网络图
-        this._getForceGroup().attr("transform", "translate(" + this._getCurrentTranslate() + ") scale(" + this._getCurrentScale() + ")");
+        this._getForceGroup().attr("transform", "translate(" + d3.event.transform.x + ", "+ d3.event.transform.y + ") scale(" + d3.event.transform.k + ")");
 
         // if (Graph.brush) {
         //     //brush框选组件随之缩放
@@ -548,6 +547,10 @@
         //将状态记录在config中
         // scope.config.status.translate = Graph.zoom.translate();
         // scope.config.status.scale = Graph.zoom.scale();
+    }
+
+    function scaleTo (k) {
+        graph.zoom.scaleTo(graph._getSvgSelection(), k);
     }
 
     function Graph(selector, config) {
@@ -582,6 +585,7 @@
         removeLinks: removeLinks,
         _removeLinksByNodes: removeLinksByNodes,
         clearLinks: clearLinks,
+        scaleTo: scaleTo,
         _init: init,
         _draw: draw,
         _transform: transform,
@@ -592,23 +596,23 @@
             var transform = d3.zoomTransform(this._svg);
             return [transform.x, transform.y];
         },
+        _getSvgSelection: function(){
+            return d3.select(this._svg);
+        },
         _getNodesSelection: function(){
-            return this._svgSelection.select('.nodes').selectAll("g.node");
+            return this._getSvgSelection().select('.nodes').selectAll("g.node");
         },
         _getNodesLabelSelection: function(){
             return this._getNodesSelection().selectAll('.text-group');
         },
         _getLinksSelection: function(){
-            return this._svgSelection.select('.paths').selectAll("path");
+            return this._getSvgSelection().select('.paths').selectAll("path");
         },
         _getLinksLabelSelection: function(){
-            return this._svgSelection.select('g.link-labels').selectAll('text');
+            return this._getSvgSelection().select('g.link-labels').selectAll('text');
         },
         _getForceGroup: function(){
             return this._forceGroupSelection;
-        },
-        _transformLinksLabel: function(Link){
-            return Link.getLinkLabelTransform(Link.getPath(this._r), this._getCurrentScale());
         }
     };
 
