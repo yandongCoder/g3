@@ -86,17 +86,34 @@
         return len;
     };
 
+    function selected (selected) {
+        if(!arguments.length) return this._selected;
+
+        this._selected = selected;
+        d3.select(this._element).classed("selected", selected);
+
+        return this;
+    }
+
     function Node(data) {
         this.id = data.id;
         this.label = data.label;
         this.x = data.x;
         this.y = data.y;
+        this._selected = false; //indicate whether node is select
     }
 
     Node.prototype = {
         constructor: Node,
+        selected: selected,
         getId: function () {
             return this.id;
+        },
+        getX: function(){
+            return this.x;
+        },
+        getY: function () {
+            return this.y;
         },
         getLabelWidth: function(){
             return getStrLen(this.getLabel()) * 9;
@@ -385,26 +402,79 @@
         forceGroup.append("g").attr("class", "nodes");
     }
 
-    function initZoom() {
+    function Zoom() {
         return d3.zoom().scaleExtent([0.1, 2.2])
             .on('start', function () {
             })
-            .on("zoom", this._transform.bind(this))
+            .on("zoom", this._zoomed.bind(this))
             .on('end', function () {
             });
     }
 
+    function Brush () {
+        var self = this;
+        var brush = d3.brush()
+            .extent([[0, 0], [500, 500]])
+            .on('start', function () {
+                if (!d3.event.selection) return; // Ignore empty selections.
+                
+                self._getNodesSelection().each(function (Node) {
+                    Node.pselected = d3.event.sourceEvent.ctrlKey && Node.selected();
+                });
+            })
+            .on('brush', function () {
+                if (!d3.event.selection) return; // Ignore empty selections.
+
+                var extent = d3.event.selection;
+                var t = self._getCurrentTransform();
+
+                self._getNodesSelection().each(function(Node){
+                    Node.selected(Node.pselected ^ ( (extent[0][0] - t.x) / t.k  <= Node.getX() && Node.getX() < (extent[1][0] - t.x) / t.k  && (extent[0][1] - t.y) / t.k <= Node.getY() && Node.getY() < (extent[1][1] - t.y) / t.k ));
+                });
+
+            })
+            .on('end', function () {
+                if (!d3.event.selection) return; // Ignore empty selections.
+                self._getBrushSelection()
+                    .call(brush.move, null);
+            });
+
+        brush.show = function(){
+            self._getBrushSelection().style('display', 'block');
+        };
+        brush.hide = function(){
+            self._getBrushSelection().style('display', 'none');
+        };
+
+        return brush;
+    }
+
     function init () {
+        //init trigger only once a graph
         if(this._hasInit) return;
 
-        this.zoom = initZoom.call(this);
+
+        //add predefined DOM
         appendPreElement.call(this);
         appendPreDefs.call(this);
 
-        d3
-            .select(this._svg)
-            .classed("graph", true)
+        this._getSvgSelection()
+            .classed("graph", true);
+
+        //bind listener to page for keyboard shortCuts and mouse events
+        d3.select(document.body)
+            .on("keydown.brush", this._keydowned.bind(this))
+            .on("keyup.brush", this._keyupped.bind(this));
+
+        //add zoom instance to graph
+        this.zoom = Zoom.call(this);
+        this._getSvgSelection()
             .call(this.zoom);
+
+        //add brush instance to graph
+        this.brush = Brush.call(this);
+        this._getBrushSelection()
+            .call(this.brush);
 
         this._hasInit = true;
     }
@@ -419,6 +489,7 @@
         });
 
         var g = nodes.enter().append('g')
+            .each(function(Node){ Node._element = this })//reference element to Node
             .attr("transform", function (node) {
                 return node.getTranslate();
             })
@@ -515,7 +586,7 @@
         drawLinks.call(this);
     }
 
-    function transform () {
+    function zoomed () {
         var self = this;
         //不可移动
         if (!this.movable) {
@@ -542,15 +613,47 @@
 
         // if (Graph.brush) {
         //     //brush框选组件随之缩放
-        //     Graph.brush.attr("transform", "translate(" + this._getCurrentTranslate() + ") scale(" + this._getCurrentScale() + ")");
+        //     Graph.brush.attr("zoomed", "translate(" + this._getCurrentTranslate() + ") scale(" + this._getCurrentScale() + ")");
         // }
         //将状态记录在config中
         // scope.config.status.translate = Graph.zoom.translate();
         // scope.config.status.scale = Graph.zoom.scale();
     }
 
-    function scaleTo (k) {
-        graph.zoom.scaleTo(graph._getSvgSelection(), k);
+    function transform (k, x, y, duration) {
+        var transformed = d3.zoomIdentity;
+        if(typeof k === "number") transformed = transformed.scale(k);
+        if(typeof x === "number" && typeof y === "number") transformed = transformed.translate(x, y);
+        this._getSvgSelection(duration).call(this.zoom.transform, transformed);
+    }
+
+    function scaleTo (k, duration) {
+        this.transform(k, null, null, duration);
+    }
+
+    function translateBy (x, y, duration) {
+        this.transform(null, x, y , duration);
+    }
+
+    function keydowned () {
+        if (!d3.event.metaKey) {
+            switch (d3.event.keyCode) {
+                //shift alt and space is used by d3 brush
+                case 90:
+                    this.brush.show();
+                    break;
+            }
+        }
+    }
+
+    function keyupped () {
+        if (!d3.event.metaKey) {
+            switch (d3.event.keyCode) {
+                case 90:
+                    this.brush.hide();
+                    break;
+            }
+        }
     }
 
     function Graph(selector, config) {
@@ -585,19 +688,33 @@
         removeLinks: removeLinks,
         _removeLinksByNodes: removeLinksByNodes,
         clearLinks: clearLinks,
+        transform: transform,
         scaleTo: scaleTo,
+        translateBy: translateBy,
+        _keydowned: keydowned,
+        _keyupped: keyupped,
         _init: init,
         _draw: draw,
-        _transform: transform,
+        _zoomed: zoomed,
+        _getCurrentTransform: function(){
+            return d3.zoomTransform(this._svg);
+        },
         _getCurrentScale: function(){
-            return d3.zoomTransform(this._svg).k;
+            return this._getCurrentTransform().k;
         },
         _getCurrentTranslate: function(){
-            var transform = d3.zoomTransform(this._svg);
+            var transform = this._getCurrentTransform();
             return [transform.x, transform.y];
         },
-        _getSvgSelection: function(){
-            return d3.select(this._svg);
+        _getBrushSelection: function () {
+            return this._getSvgSelection().select('g.brush');
+        },
+        _getSvgSelection: function(duration){
+            var svgSelection = d3.select(this._svg);
+
+            if(duration) svgSelection = svgSelection.transition(Math.random()).duration(duration);
+
+            return svgSelection
         },
         _getNodesSelection: function(){
             return this._getSvgSelection().select('.nodes').selectAll("g.node");

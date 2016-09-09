@@ -16,8 +16,12 @@ import removeLinksByNodes from "./removeLinksByNodes";
 import clearLinks from "./clearLinks";
 import init from "./init/init";
 import draw from "./draw/index";
+import zoomed from "./zoomed";
 import transform from "./transform";
 import scaleTo from "./scaleTo";
+import translateBy from "./translateBy";
+import keydowned from "./keydowned";
+import keyupped from "./keyupped";
 
 
 function Graph(selector, config) {
@@ -52,19 +56,33 @@ Graph.prototype = {
     removeLinks: removeLinks,
     _removeLinksByNodes: removeLinksByNodes,
     clearLinks: clearLinks,
+    transform: transform,
     scaleTo: scaleTo,
+    translateBy: translateBy,
+    _keydowned: keydowned,
+    _keyupped: keyupped,
     _init: init,
     _draw: draw,
-    _transform: transform,
+    _zoomed: zoomed,
+    _getCurrentTransform: function(){
+        return d3.zoomTransform(this._svg);
+    },
     _getCurrentScale: function(){
-        return d3.zoomTransform(this._svg).k;
+        return this._getCurrentTransform().k;
     },
     _getCurrentTranslate: function(){
-        var transform = d3.zoomTransform(this._svg);
+        var transform = this._getCurrentTransform();
         return [transform.x, transform.y];
     },
-    _getSvgSelection: function(){
-        return d3.select(this._svg);
+    _getBrushSelection: function () {
+        return this._getSvgSelection().select('g.brush');
+    },
+    _getSvgSelection: function(duration){
+        var svgSelection = d3.select(this._svg);
+
+        if(duration) svgSelection = svgSelection.transition(Math.random()).duration(duration);
+
+        return svgSelection
     },
     _getNodesSelection: function(){
         return this._getSvgSelection().select('.nodes').selectAll("g.node");

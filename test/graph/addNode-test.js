@@ -6,6 +6,8 @@ tape("push new nodes to graph's nodes", function(test){
     var document = jsdom.jsdom('<svg id="graph"></svg>');
     var svg = document.querySelector("#graph");
     global.window = document.defaultView;
+    global.document = document;
+
     
     var myGraph = g3.graph(svg);
 

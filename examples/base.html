@@ -13,6 +13,8 @@
 </head>
 <body>
 <svg id="my-svg" class="svg1"></svg>
+<button id="showBrush">show brush</button>
+<button id="hideBrush">hide brush</button>
 <svg id="my-svg2" class="svg2"></svg>
 </body>
 </html>
@@ -32,6 +34,9 @@
             .height(300)
             .nodes(nodes);
 
+    d3.select("#showBrush").on('click', graph.brush.show);
+    d3.select("#hideBrush").on('click', graph.brush.hide);
+
     setTimeout(function(){
        graph.links(links);
     },500);
@@ -39,13 +44,13 @@
     setTimeout(function(){
         graph.nodes({id: 7, label: "G", x: 80, y:170});
         graph.links({id: 99, label: "A->D", src: 2, dst: 4,direction: 0});
+        nodes[3]['label'] = "changedD";
     }, 1000);
 
     setTimeout(function(){
         graph.removeNodes(nodes[0]);
         graph.removeLinks(links[0]);
-        //graph._getSvgSelection().call(graph.zoom.transform, d3.zoomIdentity.scale(2.2));
-        graph.scaleTo(2.2);
+        //graph._getSvgSelection().call(graph.zoom.zoomed, d3.zoomIdentity.scale(2.2));
     }, 1500);
 
 //
