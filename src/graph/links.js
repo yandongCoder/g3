@@ -1,7 +1,7 @@
+import toArray from "../utils/toArray";
+
 export default function (links, cover) {
-    if(!Array.isArray(links)){
-        links = [links];
-    }
+    links = toArray(links);
 
     if(!arguments.length){
         return this._links;

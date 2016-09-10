@@ -47,10 +47,13 @@
         return this;
     }
 
+    function toArray (maybeArr) {
+        if(!Array.isArray(maybeArr)) maybeArr = [maybeArr];
+        return maybeArr;
+    }
+
     function nodes (nodes, cover) {
-        if(!Array.isArray(nodes)){
-            nodes = [nodes];
-        }
+        nodes = toArray(nodes);
 
         if(!arguments.length){
             return this._nodes;
@@ -69,12 +72,42 @@
         return this;
     }
 
+    function getIds (array) {
+        return array.map(function(item){
+            if(typeof item  ===  'object') return item.id;
+            else return item;
+        });
+    }
+
+    //filter array of object which has id; filtered by id, or id array, or object that has id, or object array
+    //this function is convenient to Nodes or Links data.
+    function filterBy (filter, objArray) {
+        if(typeof filter === "function"){
+            var filtered = filter;
+        }else{
+            var ids = getIds(toArray(filter));
+
+            filtered = function(v){
+                return ids.indexOf(v.id) !== -1;
+            };
+        }
+        return objArray.filter(filtered);
+    }
+
+    function getNodes (filter) {
+        return filterBy(filter, this._nodes);
+    }
+
+    function getRenderedNodes () {
+        return this._nodes;
+    }
+
     //中文为2长度，非中文为1
 
     function getStrLen (str) {
         var len = 0;
         if (typeof str !== "string") {
-            return len;
+            str = str.toString();
         }
         for (var i = 0; i < str.length; i++) {
             if (str.charAt(i) > '~') {
@@ -140,30 +173,18 @@
         return ids.indexOf(node.id) !== -1;
     }
 
-    function toArray (maybeArr) {
-        if(!Array.isArray(maybeArr)) maybeArr = [maybeArr];
-        return maybeArr;
-    }
-
     //nodes could be: Node, [Node], Node id string, Node id array of string
     function removeNodes (nodes) {
-        nodes = toArray(nodes);
 
-        var removedIds = nodes.map(function(node){
-            if(typeof node  ===  'object') return node.id;
-            else return node;
-        });
+        //remove links first
+        this._removeLinksByNodes(nodes);
 
-        this._nodes.forEach(function(Node){
-            var index = removedIds.indexOf(Node.getId());
-            if(index !== -1) {
-                this._nodes.splice(index, 1);
-            }
+        this.getNodes(nodes).forEach(function(Node){
+            this._nodes.splice(this._nodes.indexOf(Node), 1);
         }, this);
 
-        this._removeLinksByNodes(removedIds);
-
         this.render();
+
     }
 
     function clearNodes () {
@@ -171,9 +192,7 @@
     }
 
     function links (links, cover) {
-        if(!Array.isArray(links)){
-            links = [links];
-        }
+        links = toArray(links);
 
         if(!arguments.length){
             return this._links;
@@ -190,6 +209,22 @@
         this.render();
         
         return this;
+    }
+
+    function getLinks (filter) {
+        return filterBy(filter, this._links);
+    }
+
+    function getRenderedLinks () {
+        return this._links;
+    }
+
+    //nodes could be: Node, [Node], Node id string, Node id array of string
+    function getLinksByNodes (nodes) {
+        var removedNodes = this.getNodes(nodes);
+        return this._links.filter(function (Link) {
+            return  (removedNodes.indexOf(Link.source) !== -1) || (removedNodes.indexOf(Link.target) !== -1);
+        });
     }
 
     function getNodeById (id, Nodes) {
@@ -330,35 +365,16 @@
 
     //links could be: Link, [Link], Link id string, Link id array of string
     function removeLinks (links) {
-        links = toArray(links);
-
-        var removedIds = links.map(function(link){
-            if(typeof link  ===  'object') return link.id;
-            else return link;
-        });
-
-        this._links.forEach(function(Link){
-            var index = removedIds.indexOf(Link.getId());
-            if(index !== -1) this._links.splice(index, 1);
+        this.getLinks(links).forEach(function(Link){
+            this._links.splice(this._links.indexOf(Link), 1);
         }, this);
-
+        
         this.render();
     }
 
     //nodes could be: Node, [Node], Node id string, Node id array of string
     function removeLinksByNodes (nodes) {
-        nodes = toArray(nodes);
-
-        var removedIds = nodes.map(function(node){
-            if(typeof node  ===  'object') return node.id;
-            else return node;
-        });
-
-        var toRemovedLinks = this._links.filter(function (Link) {
-            return  (removedIds.indexOf(Link.source.id) !== -1) || (removedIds.indexOf(Link.target.id) !== -1);
-        });
-
-        toRemovedLinks.map(function (Link) {
+        this.getLinksByNodes(nodes).map(function (Link) {
             this._links.splice(this._links.indexOf(Link), 1);
         }, this);
 
@@ -484,7 +500,7 @@
     }
 
     function drawNodes () {
-        var nodes = this._getNodesSelection().data(this._nodes, function (d) {
+        var nodes = this._getNodesSelection().data(this.getRenderedNodes(), function (d) {
             return d.id;
         });
 
@@ -526,7 +542,7 @@
 
     function drawLinks () {
         var self = this;
-        var linkPaths = this._getLinksSelection().data(this._links, function (Link) { return Link.getId() });
+        var linkPaths = this._getLinksSelection().data(this.getRenderedLinks(), function (Link) { return Link.getId() });
 
         linkPaths.enter()
             .append('path')
@@ -656,6 +672,14 @@
         }
     }
 
+    //nodes could be: Node, [Node], Node id string, Node id array of string
+    function n2l (nodes) {
+        var relatedLinks = this.getLinksByNodes(nodes);
+        this.getNodes(nodes).forEach(function (Node) {
+            Node.transformToLink();
+        }, this);
+    }
+
     function Graph(selector, config) {
         if(config === undefined) config = {};
 
@@ -678,11 +702,17 @@
         render: render,
         data: data,
         nodes: nodes,
+        getNodes: getNodes,
+        getRenderedNodes: getRenderedNodes,
         addNode: addNode,
         removeNodes: removeNodes,
         clearNodes: clearNodes,
         hasNode: hasNode,
+        n2l: n2l,
         links: links,
+        getLinks: getLinks,
+        getRenderedLinks: getRenderedLinks,
+        getLinksByNodes: getLinksByNodes,
         addLink: addLink,
         hasLink: hasLink,
         removeLinks: removeLinks,
@@ -737,7 +767,16 @@
         return new Graph(selector);
     }
 
+    var utils = {
+        filterBy: filterBy,
+        getIds: getIds,
+        toArray: toArray,
+        getStrLen: getStrLen,
+        getOffsetCoordinate: getOffsetCoordinate
+    };
+
     exports.graph = index;
+    exports.utils = utils;
 
     Object.defineProperty(exports, '__esModule', { value: true });
 

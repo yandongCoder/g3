@@ -38,20 +38,25 @@
     d3.select("#hideBrush").on('click', graph.brush.hide);
 
     setTimeout(function(){
-       graph.links(links);
-    },500);
-
-    setTimeout(function(){
+        graph.links(links);
         graph.nodes({id: 7, label: "G", x: 80, y:170});
         graph.links({id: 99, label: "A->D", src: 2, dst: 4,direction: 0});
-        nodes[3]['label'] = "changedD";
-    }, 1000);
 
-    setTimeout(function(){
-        graph.removeNodes(nodes[0]);
-        graph.removeLinks(links[0]);
-        //graph._getSvgSelection().call(graph.zoom.zoomed, d3.zoomIdentity.scale(2.2));
-    }, 1500);
+        graph.n2l(4);
+    },500);
+//
+//    setTimeout(function(){
+//        graph.nodes({id: 7, label: "G", x: 80, y:170});
+//        graph.links({id: 99, label: "A->D", src: 2, dst: 4,direction: 0});
+//        nodes[3]['label'] = "changedD";
+//    }, 1000);
+//
+//    setTimeout(function(){
+//        graph.removeNodes(nodes[0]);
+//        graph.removeLinks(links[0]);
+//        //graph._getSvgSelection().call(graph.zoom.zoomed, d3.zoomIdentity.scale(2.2));
+//    }, 1500);
+
 
 //
 //    var graph2 = g3.graph("#my-svg2")

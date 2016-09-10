@@ -4,11 +4,16 @@ import height from "./height";
 import render from "./render";
 import data from "./data";
 import nodes from "./nodes";
+import getNodes from "./getNodes";
+import getRenderedNodes from "./getRenderedNodes";
 import addNode from "./addNode";
 import hasNode from "./hasNode";
 import removeNodes from "./removeNodes";
 import clearNodes from "./clearNodes";
 import links from "./links";
+import getLinks from "./getLinks";
+import getRenderedLinks from "./getRenderedLinks";
+import getLinksByNodes from "./getLinksByNodes";
 import addLink from "./addLink";
 import hasLink from "./hasLink";
 import removeLinks from "./removeLinks";
@@ -22,6 +27,7 @@ import scaleTo from "./scaleTo";
 import translateBy from "./translateBy";
 import keydowned from "./keydowned";
 import keyupped from "./keyupped";
+import n2l from "./transformNodeToLink";
 
 
 function Graph(selector, config) {
@@ -46,11 +52,17 @@ Graph.prototype = {
     render: render,
     data: data,
     nodes: nodes,
+    getNodes: getNodes,
+    getRenderedNodes: getRenderedNodes,
     addNode: addNode,
     removeNodes: removeNodes,
     clearNodes: clearNodes,
     hasNode: hasNode,
+    n2l: n2l,
     links: links,
+    getLinks: getLinks,
+    getRenderedLinks: getRenderedLinks,
+    getLinksByNodes: getLinksByNodes,
     addLink: addLink,
     hasLink: hasLink,
     removeLinks: removeLinks,

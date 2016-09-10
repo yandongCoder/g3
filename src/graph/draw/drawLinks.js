@@ -2,7 +2,7 @@ import getAbsUrl from "../../utils/getAbsUrl";
 
 export default function () {
     var self = this;
-    var linkPaths = this._getLinksSelection().data(this._links, function (Link) { return Link.getId() });
+    var linkPaths = this._getLinksSelection().data(this.getRenderedLinks(), function (Link) { return Link.getId() });
 
     linkPaths.enter()
         .append('path')

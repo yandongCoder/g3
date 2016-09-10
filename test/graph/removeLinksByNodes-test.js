@@ -17,10 +17,12 @@ tape("remove link by Link or LinkId", function(test){
     //by Id
     myGraph.removeNodes(1);
     test.equal(myGraph.links().length, 3);
-
+    test.equal(getLinkLenById(1), 0);
+    test.equal(getLinkLenById(3), 0);
     //by Link
     myGraph.removeNodes(links[1]);
     test.equal(myGraph.links().length, 2);
+    test.equal(getLinkLenById(2), 0);
 
     //by Id array
     myGraph.removeNodes([3]);
@@ -29,9 +31,15 @@ tape("remove link by Link or LinkId", function(test){
     //by Id obj
     myGraph.removeNodes({id: 4});
     test.equal(myGraph.links().length, 1);
+    test.equal(getLinkLenById(5), 0);
 
     //by Id obj Array
     myGraph.removeNodes({id: 5});
     test.equal(myGraph.links().length, 0);
+    test.equal(getLinkLenById(4), 0);
     test.end();
+
+    function getLinkLenById (id){
+        return myGraph.links().filter(function(Link){ return Link.getId() === id }).length;
+    }
 });

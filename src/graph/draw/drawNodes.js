@@ -1,7 +1,7 @@
 import getAbsUrl from "../../utils/getAbsUrl";
 
 export default function () {
-    var nodes = this._getNodesSelection().data(this._nodes, function (d) {
+    var nodes = this._getNodesSelection().data(this.getRenderedNodes(), function (d) {
         return d.id;
     });
 

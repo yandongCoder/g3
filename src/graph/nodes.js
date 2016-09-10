@@ -1,7 +1,7 @@
+import toArray from "../utils/toArray";
+
 export default function (nodes, cover) {
-    if(!Array.isArray(nodes)){
-        nodes = [nodes];
-    }
+    nodes = toArray(nodes);
 
     if(!arguments.length){
         return this._nodes;
