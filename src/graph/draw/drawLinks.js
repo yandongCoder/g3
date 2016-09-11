@@ -9,10 +9,9 @@ export default function () {
         .classed('link-path', true)
         .attr('id', function(Link){ return "link-path" + Link.getId()});
 
-    var all  = links.enter().merge(links);
+    var all  = this._getLinksSelection();
 
-    all.selectAll('path')
-        .attr('d', function (Link) { var c = Link.getCoordination();  return 'M ' + c.Sx + ' ' + c.Sy + ' L ' + c.Tx + ' ' + c.Ty; })
+    all.attr('d', function (Link) { var c = Link.getCoordination();  return 'M ' + c.Sx + ' ' + c.Sy + ' L ' + c.Tx + ' ' + c.Ty; })
         .style('marker-start', function (Link) { return Link.getStartArrow(); })
         .style('marker-end', function (Link) { return Link.getEndArrow(); });
 
@@ -34,14 +33,13 @@ export default function () {
         .style("pointer-events", "none");
 
 
-    var allLabels = linkLabels.enter().merge(linkLabels);
+    var allLabels = this._getLinksLabelSelection();
 
-    allLabels.selectAll('text.link-label')
-        .attr('dx', function(Link){ return Link.getTextCenter() })
+    allLabels.attr('dx', function(Link){return Link.getTextCenter(); })
         .attr('dy', 1)
         .attr('font-size', 13);
 
-    allLabels.selectAll('textPath')
+    allLabels.select('textPath')
         .text(function (Link) {
             return Link.label();
         })

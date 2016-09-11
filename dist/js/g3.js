@@ -313,6 +313,7 @@
             Xs = offset.Xs;
             Ys = offset.Ys;
         }
+
         if(this.hasTargetArrow()){
             Xd = offset.Xd;
             Yd = offset.Yd;
@@ -348,19 +349,25 @@
     function getTextCenter () {
         var coord = this.getCoordination();
 
-        // if(this.direction === DIRECTION.TO || this.direction === DIRECTION.DOUBLE){
-        //     Xs = offset.Xs;
-        //     Ys = offset.Ys;
-        // }
-        // if(this.direction === DIRECTION.FROM || this.direction === DIRECTION.DOUBLE){
-        //     Xd = offset.Xd;
-        //     Yd = offset.Yd;
-        // }
+
+        if(!this.hasSourceArrow()){
+            coord.Sx += this.source.size() / 2;
+            coord.Sy += this.source.size() / 2;
+        }
+
+        if(!this.hasTargetArrow()){
+            coord.Tx += this.target.size() / 2;
+            coord.Ty += this.target.size() / 2;
+        }
+
+        //console.log(coord);
+
 
         var x = Math.abs(coord.Sx - coord.Tx);
         var y = Math.abs(coord.Sy - coord.Ty);
         var z = Math.sqrt(x * x + y * y);
-        var charLength = getStrLen(this.label()) * 6 / 2;
+        //console.log(this.label(),getStrLen(this.label()));
+        var charLength = getStrLen(this.label()) * 6/ 2;
         //字长度
         return z / 2 - charLength;
     }
@@ -594,8 +601,8 @@
 
         var g = nodes.enter().append('g')
             .each(function(Node){ Node._element = this })//reference element to Node
-            .classed('node', true)
-            .call(this.dragNode);
+            .classed('node', true);
+            //.call(this.dragNode);
 
         //添加矩形
         g.append("rect")
@@ -607,25 +614,25 @@
             .append('xhtml:span');
 
         //Enter and Update
-        var all = nodes.enter().merge(nodes);
+        var all = this._getNodesSelection();
 
-        all.selectAll(".node").attr("transform", function (Node) { return Node.getTranslate(); });
+        all.attr("transform", function (Node) { return Node.getTranslate(); });
 
-        all.selectAll('rect')
+        all.select('rect')
             .attr("width", function(Node){ return Node.size()})
             .attr("height", function(Node){ return Node.size()})
             .style("fill", function(Node){ return Node.color() });
 
 
-        all.selectAll('.text-group')
+        all.select('.text-group')
             .attr('width', function (Node) { return Node.getLabelWidth(); })
             .attr("height", function(Node){ return Node.size()})
             .style("line-height", function(Node){ return Node.size() + "px" })
             .attr('transform', function(Node){return "translate(" + (1 + Node.size()) + ", 0)" })
 
-            .selectAll('div')
+            .select('div')
             .attr('title', function (Node) { return Node.label(); })
-            .selectAll('span')
+            .select('span')
             .text(function (Node) { return Node.label(); });
 
         nodes.exit().remove();
@@ -640,10 +647,9 @@
             .classed('link-path', true)
             .attr('id', function(Link){ return "link-path" + Link.getId()});
 
-        var all  = links.enter().merge(links);
+        var all  = this._getLinksSelection();
 
-        all.selectAll('path')
-            .attr('d', function (Link) { var c = Link.getCoordination();  return 'M ' + c.Sx + ' ' + c.Sy + ' L ' + c.Tx + ' ' + c.Ty; })
+        all.attr('d', function (Link) { var c = Link.getCoordination();  return 'M ' + c.Sx + ' ' + c.Sy + ' L ' + c.Tx + ' ' + c.Ty; })
             .style('marker-start', function (Link) { return Link.getStartArrow(); })
             .style('marker-end', function (Link) { return Link.getEndArrow(); });
 
@@ -665,14 +671,13 @@
             .style("pointer-events", "none");
 
 
-        var allLabels = linkLabels.enter().merge(linkLabels);
+        var allLabels = this._getLinksLabelSelection();
 
-        allLabels.selectAll('text.link-label')
-            .attr('dx', function(Link){ return Link.getTextCenter() })
+        allLabels.attr('dx', function(Link){return Link.getTextCenter(); })
             .attr('dy', 1)
             .attr('font-size', 13);
 
-        allLabels.selectAll('textPath')
+        allLabels.select('textPath')
             .text(function (Link) {
                 return Link.label();
             })
@@ -847,7 +852,7 @@
             return this._getSvgSelection().select('g.paths').selectAll("path");
         },
         _getLinksLabelSelection: function(){
-            return this._getSvgSelection().select('g.link-labels').selectAll('text');
+            return this._getSvgSelection().select('g.link-labels').selectAll('text.link-label');
         },
         _getForceGroup: function(){
             return this._forceGroupSelection;

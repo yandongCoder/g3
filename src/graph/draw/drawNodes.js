@@ -5,8 +5,8 @@ export default function () {
 
     var g = nodes.enter().append('g')
         .each(function(Node){ Node._element = this })//reference element to Node
-        .classed('node', true)
-        .call(this.dragNode);
+        .classed('node', true);
+        //.call(this.dragNode);
 
     //添加矩形
     g.append("rect")
@@ -18,25 +18,25 @@ export default function () {
         .append('xhtml:span');
 
     //Enter and Update
-    var all = nodes.enter().merge(nodes);
+    var all = this._getNodesSelection();
 
-    all.selectAll(".node").attr("transform", function (Node) { return Node.getTranslate(); });
+    all.attr("transform", function (Node) { return Node.getTranslate(); });
 
-    all.selectAll('rect')
+    all.select('rect')
         .attr("width", function(Node){ return Node.size()})
         .attr("height", function(Node){ return Node.size()})
         .style("fill", function(Node){ return Node.color() });
 
 
-    all.selectAll('.text-group')
+    all.select('.text-group')
         .attr('width', function (Node) { return Node.getLabelWidth(); })
         .attr("height", function(Node){ return Node.size()})
         .style("line-height", function(Node){ return Node.size() + "px" })
         .attr('transform', function(Node){return "translate(" + (1 + Node.size()) + ", 0)" })
 
-        .selectAll('div')
+        .select('div')
         .attr('title', function (Node) { return Node.label(); })
-        .selectAll('span')
+        .select('span')
         .text(function (Node) { return Node.label(); });
 
     nodes.exit().remove();
