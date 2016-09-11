@@ -1,17 +1,27 @@
 import getStrLen from "../../utils/getStrLen";
 import selected from "./selected";
+import transformToLink from "./transformToLink";
+import nudge from "./nudge";
+import color from "./color";
+import size from "./size";
+import label from "./label";
 
-export default function Node(data) {
+//data: data obj, graph: graphInstance
+export default function Node(data, graph) {
     this.id = data.id;
-    this.label = data.label;
+    this._label = data.label;
     this.x = data.x;
     this.y = data.y;
+    this._size = data.size || graph._nodeSize;
+    this._color = data.color;
     this._selected = false; //indicate whether node is select
 }
 
 Node.prototype = {
     constructor: Node,
     selected: selected,
+    transformToLink: transformToLink,
+    nudge: nudge,
     getId: function () {
         return this.id;
     },
@@ -21,16 +31,14 @@ Node.prototype = {
     getY: function () {
         return this.y;
     },
+    label: label,
     getLabelWidth: function(){
-        return getStrLen(this.getLabel()) * 9;
+        return getStrLen(this.label()) * 9;
     },
-    getLabel: function(){
-        return this.combinedLabel || this.label || "No Label";
-    },
-    getColor: function () {
-        return this.color || "#123456";
-    },
+    color: color,
+    size: size,
     getTranslate: function () {
         return "translate(" + this.x + "," + this.y + ")";
     }
+
 };

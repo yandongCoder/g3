@@ -1,3 +1,5 @@
 export default function () {
-    return this._links;
+    return this.getLinks(function(Link){
+       return !Link._transformed;
+    });
 }

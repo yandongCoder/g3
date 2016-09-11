@@ -60,7 +60,7 @@
   border-radius: 0;
 }
 .graph .nodes .node rect.circle {
-  rx: 15;
+  rx: 9999;
 }
 .graph .nodes .node .text-group > div {
   height: 100%;

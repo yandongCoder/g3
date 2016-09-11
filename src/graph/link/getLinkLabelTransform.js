@@ -1,8 +1,8 @@
 
-export default function (r, scaleFactor) {
-    var coord = this.getPath(r);
-    var rx = (coord.Xs + coord.Xd) / 2;
-    var ry = (coord.Ys + coord.Yd) / 2;
+export default function (scaleFactor) {
+    var coord = this.getCoordination();
+    var rx = (coord.Sx + coord.Tx) / 2;
+    var ry = (coord.Sy + coord.Ty) / 2;
 
     if (coord.Xd < coord.Xs) {
         return 'rotate(180 ' + rx + ' ' + ry + ') translate(' + rx + ' ' + ry + ') scale(' + 1 / scaleFactor + ') translate(' + -rx + ' ' + -ry + ')';

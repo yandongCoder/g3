@@ -14,12 +14,12 @@ export default function () {
 
     //不缩放text文字内容
     this._getNodesLabelSelection()
-        .attr("height", this._r * this._getCurrentScale())
-        .style("line-height", this._r * this._getCurrentScale() + "px")
-        .attr("transform", "translate(" + (1 + this._r) + ", 0) scale(" + 1 / d3.event.transform.k + ")");
+        .attr("height", function(Node){ return Node.size() * self._getCurrentScale(); })
+        .style("line-height", function(Node){ return Node.size() * self._getCurrentScale() + "px"; })
+        .attr("transform", function(Node){ return "translate(" + (1 + Node.size()) + ", 0) scale(" + 1 / d3.event.transform.k + ")"; });
 
     //linkLabels文字不缩放
-    this._getLinksLabelSelection().attr("transform", function(Link){ return Link.getLinkLabelTransform(self._r, d3.event.transform.k); });
+    this._getLinksLabelSelection().attr("transform", function(Link){ return Link.getLinkLabelTransform(d3.event.transform.k); });
     //缩放网络图
     this._getForceGroup().attr("transform", "translate(" + d3.event.transform.x + ", "+ d3.event.transform.y + ") scale(" + d3.event.transform.k + ")");
 

@@ -5,7 +5,7 @@
     <link rel="stylesheet" href="../dist/css/graph.css">
     <style>
         .svg1 {
-            width: 500px;
+            width: 1500px;
             height: 500px;
             background: beige;
         }
@@ -22,8 +22,8 @@
 <script src="../dist/js/g3.js"></script>
 <script src="../node_modules/d3/build/d3.js"></script>
 <script>
-    var nodes = [{id: 1, label: "A", x: 50, y: 50}, {id: 2, label: "A", x: 100, y: 100},{id: 2, label: "A", x: 130, y: 130},
-        {id: 3, label: "C", x: 250, y: 150}, {id: 4, label: "D", x: 150, y:230},
+    var nodes = [{id: 1, label: "A", x: 0, y: 0}, {id: 2, label: "A", x: 100, y: 100},{id: 2, label: "A", x: 130, y: 130},
+        {id: 3, label: "C", x: 450, y: 150, size: 100}, {id: 4, label: "D", x: 150, y:430},
         {id: 5, label: "E", x: 30, y: 250}, {id: 6, label: "F", x: 30, y:150}
     ];
     var links = [{id: 1, label: "A->B", src: 1, dst: 2,direction: 0},{id: 2, label: "C->D", src: 3, dst: 4,direction: 3},{id: 4, label: "C->D2", src: 3, dst: 4,direction: 2},{id: 5, label: "C->D3", src: 3, dst: 4,direction: 1},{id: 3, label: "E->F", src: 5, dst: 6, direction: 3}];
@@ -42,7 +42,9 @@
         graph.nodes({id: 7, label: "G", x: 80, y:170});
         graph.links({id: 99, label: "A->D", src: 2, dst: 4,direction: 0});
 
-        graph.n2l(4);
+        graph.nodes()[0].color("#442233").size(40).label("AAA");
+        graph.links()[0].label("updateed");
+        //graph.n2l(4);
     },500);
 //
 //    setTimeout(function(){

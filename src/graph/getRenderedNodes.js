@@ -1,3 +1,5 @@
 export default function () {
-    return this._nodes;
+    return this.getNodes(function(Node){
+        return !Node._transformed;
+    });
 }

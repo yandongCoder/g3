@@ -2,57 +2,52 @@ import getAbsUrl from "../../utils/getAbsUrl";
 
 export default function () {
     var self = this;
-    var linkPaths = this._getLinksSelection().data(this.getRenderedLinks(), function (Link) { return Link.getId() });
+    var links = this._getLinksSelection().data(this.getRenderedLinks(), function (Link) { return Link.getId() });
 
-    linkPaths.enter()
+    links.enter()
         .append('path')
         .classed('link-path', true)
-        .attr('id', function(Link){ return "link-path" + Link.getId()})
-        .attr('d', function (Link) {
-            return Link.getPath(self._r, true);
-        })
-        .style('marker-start', function (Link) {
-            return Link.getStartArrow();
-        })
-        .style('marker-end', function (Link) {
-            return Link.getEndArrow();
-        });
+        .attr('id', function(Link){ return "link-path" + Link.getId()});
+
+    var all  = links.enter().merge(links);
+
+    all.selectAll('path')
+        .attr('d', function (Link) { var c = Link.getCoordination();  return 'M ' + c.Sx + ' ' + c.Sy + ' L ' + c.Tx + ' ' + c.Ty; })
+        .style('marker-start', function (Link) { return Link.getStartArrow(); })
+        .style('marker-end', function (Link) { return Link.getEndArrow(); });
+
+
+    links.exit().remove();
+
+
 
     //绑定linkData数据到linkLabels
     var linkLabels = this._getLinksLabelSelection().data(this._links, function (Link) { return Link.getId(); });
 
     //按需增加新的LinkLabels(当linksData data > linkPaths element)
-    var linkTexts = linkLabels.enter().append('text')
-        //.filter(function(d){
-        //    return !d.hide;
-        //})
+    linkLabels.enter().append('text')
         .style("pointer-events", "none")
         .classed('link-label', true)
-        .attr('id', function (Link) {
-            return 'link-label' + Link.getId()
-        })
-        .attr('dx', function(Link){ return Link.getTextCenter(Link.getPath(self._r)) })
+        .attr('id', function (Link) { return 'link-label' + Link.getId(); })
+        .append('textPath')
+        .attr('xlink:href', function (Link) {  return getAbsUrl() + '#link-path' + Link.getId(); })
+        .style("pointer-events", "none");
+
+
+    var allLabels = linkLabels.enter().merge(linkLabels);
+
+    allLabels.selectAll('text.link-label')
+        .attr('dx', function(Link){ return Link.getTextCenter() })
         .attr('dy', 1)
         .attr('font-size', 13);
 
-
-    //根据当前数据重新生成textPath
-    linkTexts.append('textPath')
-        //.filter(function(d){
-        //    return !d.hide;
-        //})
-        .attr('xlink:href', function (Link) {
-            return getAbsUrl() + '#link-path' + Link.getId();
+    allLabels.selectAll('textPath')
+        .text(function (Link) {
+            return Link.label();
         })
-        .style("pointer-events", "none").text(function (Link) {
-            return Link.getLabel();
-        });
+        //反转字体，使字体总是朝上，该句放于该函数最后执行，提前会导致问题
+        .attr('transform', function(Link){ return Link.getLinkLabelTransform(self._getCurrentScale()); });
 
 
-
-    //反转字体，使字体总是朝上，该句放于该函数最后执行，提前会导致问题
-    linkTexts.attr('transform', function(Link){ return Link.getLinkLabelTransform(self._r, self._getCurrentScale()); });
-
-    linkPaths.exit().remove();
     linkLabels.exit().remove();
 }

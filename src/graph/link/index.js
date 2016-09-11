@@ -1,14 +1,17 @@
 import getNodeById from "../../utils/getNodeById";
 import hasST from "./hasST";
-import getPath from "./getPath";
+import getCoordination from "./getCoordination";
 import getStartArrow from "./getStartArrow";
 import getEndArrow from "./getEndArrow";
 import getTextCenter from "./getTextCenter";
 import getLinkLabelTransform from "./getLinkLabelTransform";
+import transformToLink from "./transformToLink";
+import label from "./label";
+import DIRECTION from "./direction";
 
 export default function Link(data, nodes) {
     this.id = data.id;
-    this.label = data.label;
+    this._label = data.label;
     this.src = data.src;
     this.dst = data.dst;
     this.direction = data.direction === undefined? 1: data.direction;//0: none, 1: from, 2: to, 3 double
@@ -20,15 +23,20 @@ export default function Link(data, nodes) {
 Link.prototype = {
     constructor: Link,
     hasST: hasST,
-    getPath: getPath,
+    transformToLink: transformToLink,
+    getCoordination: getCoordination,
     getStartArrow: getStartArrow,
     getEndArrow: getEndArrow,
     getTextCenter: getTextCenter,
     getLinkLabelTransform: getLinkLabelTransform,
+    label: label,
+    hasSourceArrow: function(){
+        return this.direction === DIRECTION.TO || this.direction === DIRECTION.DOUBLE;
+    },
+    hasTargetArrow: function(){
+        return this.direction === DIRECTION.FROM || this.direction === DIRECTION.DOUBLE;
+    },
     getId: function () {
         return this.id;
     },
-    getLabel: function(){
-        return this.combinedLabel || this.label || this.linkTypeName || 'No label';
-    }
 };

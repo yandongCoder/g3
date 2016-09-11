@@ -1,42 +1,43 @@
 import getAbsUrl from "../../utils/getAbsUrl";
 
 export default function () {
-    var nodes = this._getNodesSelection().data(this.getRenderedNodes(), function (d) {
-        return d.id;
-    });
+    var nodes = this._getNodesSelection().data(this.getRenderedNodes(), function (d) { return d.id;});
 
     var g = nodes.enter().append('g')
         .each(function(Node){ Node._element = this })//reference element to Node
-        .attr("transform", function (node) {
-            return node.getTranslate();
-        })
-        .classed('node', true);
-    
+        .classed('node', true)
+        .call(this.dragNode);
+
     //添加矩形
     g.append("rect")
-        .attr("width", this._r)
-        .attr("height", this._r)
         .attr("filter", "url(" + getAbsUrl() + "#shadow)")
-        .style("fill", function(Node){ return Node.getColor() });
-
-
-    var textGroup = g.append('svg:foreignObject')
+        .classed("circle", true);
+    g.append('svg:foreignObject')
         .attr('class', 'text-group')
-        .attr('width', function (Node) {
-            return Node.getLabelWidth();
-        })
-        .attr("height", this._r)
-        .style("line-height", this._r + 'px')
-        .attr('transform', "translate(" + (1 + this._r) + ", 0)");
+        .append("xhtml:div")
+        .append('xhtml:span');
 
-    textGroup.append("xhtml:div")
-        .attr('title', function (Node) {
-            return Node.getLabel();
-        })
-        .append('xhtml:span')
-        .text(function (Node) {
-            return Node.getLabel();
-        });
+    //Enter and Update
+    var all = nodes.enter().merge(nodes);
+
+    all.selectAll(".node").attr("transform", function (Node) { return Node.getTranslate(); });
+
+    all.selectAll('rect')
+        .attr("width", function(Node){ return Node.size()})
+        .attr("height", function(Node){ return Node.size()})
+        .style("fill", function(Node){ return Node.color() });
+
+
+    all.selectAll('.text-group')
+        .attr('width', function (Node) { return Node.getLabelWidth(); })
+        .attr("height", function(Node){ return Node.size()})
+        .style("line-height", function(Node){ return Node.size() + "px" })
+        .attr('transform', function(Node){return "translate(" + (1 + Node.size()) + ", 0)" })
+
+        .selectAll('div')
+        .attr('title', function (Node) { return Node.label(); })
+        .selectAll('span')
+        .text(function (Node) { return Node.label(); });
 
     nodes.exit().remove();
 }

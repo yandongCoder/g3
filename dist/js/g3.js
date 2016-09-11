@@ -99,7 +99,9 @@
     }
 
     function getRenderedNodes () {
-        return this._nodes;
+        return this.getNodes(function(Node){
+            return !Node._transformed;
+        });
     }
 
     //中文为2长度，非中文为1
@@ -128,17 +130,58 @@
         return this;
     }
 
-    function Node(data) {
+    function transformToLink () {
+        this._transformed = true;
+    }
+
+    function nudge (nudgeX, nudgeY) {
+        this.x += nudgeX;
+        this.y += nudgeY;
+    }
+
+    function color (color) {
+        if(!arguments.length) return this._color || "#123456";
+
+        this._color = color;
+        graph.render();
+
+        return this;
+    }
+
+    function size (diameter) {
+        if(!arguments.length) return this._size;
+
+        this._size = diameter;
+        graph.render();
+
+        return this;
+    }
+
+    function label (label) {
+        if(!arguments.length) return this._label || "No label";
+
+        this._label = label;
+        graph.render();
+
+        return this;
+    }
+
+    //data: data obj, graph: graphInstance
+    function Node(data, graph) {
         this.id = data.id;
-        this.label = data.label;
+        this._label = data.label;
         this.x = data.x;
         this.y = data.y;
+        this._size = data.size || graph._nodeSize;
+        this._color = data.color;
         this._selected = false; //indicate whether node is select
     }
 
     Node.prototype = {
         constructor: Node,
         selected: selected,
+        transformToLink: transformToLink,
+        nudge: nudge,
         getId: function () {
             return this.id;
         },
@@ -148,22 +191,20 @@
         getY: function () {
             return this.y;
         },
+        label: label,
         getLabelWidth: function(){
-            return getStrLen(this.getLabel()) * 9;
+            return getStrLen(this.label()) * 9;
         },
-        getLabel: function(){
-            return this.combinedLabel || this.label || "No Label";
-        },
-        getColor: function () {
-            return this.color || "#123456";
-        },
+        color: color,
+        size: size,
         getTranslate: function () {
             return "translate(" + this.x + "," + this.y + ")";
         }
+
     };
 
     function addNode (obj) {
-        var node = new Node(obj);
+        var node = new Node(obj, this);
         if(!this.hasNode(node)) this._nodes.push(node);
     }
 
@@ -216,7 +257,9 @@
     }
 
     function getRenderedLinks () {
-        return this._links;
+        return this.getLinks(function(Link){
+           return !Link._transformed;
+        });
     }
 
     //nodes could be: Node, [Node], Node id string, Node id array of string
@@ -238,20 +281,49 @@
         return (this.source !== undefined) && (this.target !== undefined);
     }
 
-    function getOffsetCoordinate (Xs, Ys, Xd, Yd, offsetLength) {
-        var offsetScale = d3.scaleLinear().domain([1, 20]).range([25, 50]).clamp(true);
-        var s = offsetScale(offsetLength) || 30;
-
+    function getOffsetCoordinate (Xs, Ys, Xd, Yd, offsetS, offsetD) {
         var l = Math.sqrt((Xd - Xs) * (Xd - Xs) + (Yd - Ys) * (Yd - Ys));
         var sin = (Yd - Ys) / l;
         var cos = (Xd - Xs) / l;
 
         return {
-            Xs: Xs + s * cos || Xs,
-            Ys: Ys + s * sin || Ys,
-            Xd: Xd - s * cos || Xd,
-            Yd: Yd - s * sin || Yd
+            Xs: Xs + offsetS * cos || Xs,
+            Ys: Ys + offsetS * sin || Ys,
+            Xd: Xd - offsetD * cos || Xd,
+            Yd: Yd - offsetD * sin || Yd
         }
+    }
+
+    function getCoordination () {
+
+        var sourceR = this.source.size() / 2;
+        var targetR = this.target.size() / 2;
+        var arrowSize = 10;
+
+        var Xs = this.source.x + sourceR,
+            Ys = this.source.y + sourceR,
+            Xd = this.target.x + targetR,
+            Yd = this.target.y + targetR;
+
+
+        var offset = getOffsetCoordinate(Xs, Ys, Xd, Yd, sourceR + arrowSize, targetR + arrowSize);
+
+
+        if(this.hasSourceArrow()){
+            Xs = offset.Xs;
+            Ys = offset.Ys;
+        }
+        if(this.hasTargetArrow()){
+            Xd = offset.Xd;
+            Yd = offset.Yd;
+        }
+
+        return {
+            Sx: Xs,
+            Sy: Ys,
+            Tx: Xd,
+            Ty: Yd
+        };
     }
 
     const DIRECTION = {
@@ -260,35 +332,6 @@
         TO: 2,
         DOUBLE: 3
     };
-
-    function getPath (r, asSvgPathAttr) {
-        var offset = getOffsetCoordinate(this.source.x, this.source.y, this.target.x, this.target.y, this.originalLinks ? this.originalLinks.length : 1);
-        var halfR = r / 2;
-
-        var Xs = this.source.x,
-            Ys = this.source.y,
-            Xd = this.target.x,
-            Yd = this.target.y;
-
-        if(this.direction === DIRECTION.TO || this.direction === DIRECTION.DOUBLE){
-            Xs = offset.Xs;
-            Ys = offset.Ys;
-        }
-        if(this.direction === DIRECTION.FROM || this.direction === DIRECTION.DOUBLE){
-            Xd = offset.Xd;
-            Yd = offset.Yd;
-        }
-
-        if(asSvgPathAttr)
-            return 'M ' + (Xs + halfR) + ' ' + (Ys + halfR) + ' L ' + (Xd + halfR) + ' ' + (Yd + halfR);
-        else
-            return {
-                Xs: Xs + halfR,
-                Ys: Ys + halfR,
-                Xd: Xd + halfR,
-                Yd: Yd + halfR
-            };
-    }
 
     function getStartArrow () {
         if(this.direction === DIRECTION.TO || this.direction === DIRECTION.DOUBLE){
@@ -302,20 +345,30 @@
         }
     }
 
-    function getTextCenter (pathCoord) {
+    function getTextCenter () {
+        var coord = this.getCoordination();
 
-        var x = Math.abs(pathCoord.Xs - pathCoord.Xd);
-        var y = Math.abs(pathCoord.Ys - pathCoord.Yd);
+        // if(this.direction === DIRECTION.TO || this.direction === DIRECTION.DOUBLE){
+        //     Xs = offset.Xs;
+        //     Ys = offset.Ys;
+        // }
+        // if(this.direction === DIRECTION.FROM || this.direction === DIRECTION.DOUBLE){
+        //     Xd = offset.Xd;
+        //     Yd = offset.Yd;
+        // }
+
+        var x = Math.abs(coord.Sx - coord.Tx);
+        var y = Math.abs(coord.Sy - coord.Ty);
         var z = Math.sqrt(x * x + y * y);
-        var charLength = getStrLen(this.getLabel()) * 6 / 2;
+        var charLength = getStrLen(this.label()) * 6 / 2;
         //字长度
         return z / 2 - charLength;
     }
 
-    function getLinkLabelTransform (r, scaleFactor) {
-        var coord = this.getPath(r);
-        var rx = (coord.Xs + coord.Xd) / 2;
-        var ry = (coord.Ys + coord.Yd) / 2;
+    function getLinkLabelTransform (scaleFactor) {
+        var coord = this.getCoordination();
+        var rx = (coord.Sx + coord.Tx) / 2;
+        var ry = (coord.Sy + coord.Ty) / 2;
 
         if (coord.Xd < coord.Xs) {
             return 'rotate(180 ' + rx + ' ' + ry + ') translate(' + rx + ' ' + ry + ') scale(' + 1 / scaleFactor + ') translate(' + -rx + ' ' + -ry + ')';
@@ -325,9 +378,22 @@
         }
     }
 
+    function transformToLink$1 () {
+        this._transformed = true;
+    }
+
+    function label$1 (label) {
+        if(!arguments.length) return this._label || "No label";
+
+        this._label = label;
+        graph.render();
+
+        return this;
+    }
+
     function Link(data, nodes) {
         this.id = data.id;
-        this.label = data.label;
+        this._label = data.label;
         this.src = data.src;
         this.dst = data.dst;
         this.direction = data.direction === undefined? 1: data.direction;//0: none, 1: from, 2: to, 3 double
@@ -339,17 +405,22 @@
     Link.prototype = {
         constructor: Link,
         hasST: hasST,
-        getPath: getPath,
+        transformToLink: transformToLink$1,
+        getCoordination: getCoordination,
         getStartArrow: getStartArrow,
         getEndArrow: getEndArrow,
         getTextCenter: getTextCenter,
         getLinkLabelTransform: getLinkLabelTransform,
+        label: label$1,
+        hasSourceArrow: function(){
+            return this.direction === DIRECTION.TO || this.direction === DIRECTION.DOUBLE;
+        },
+        hasTargetArrow: function(){
+            return this.direction === DIRECTION.FROM || this.direction === DIRECTION.DOUBLE;
+        },
         getId: function () {
             return this.id;
         },
-        getLabel: function(){
-            return this.combinedLabel || this.label || this.linkTypeName || 'No label';
-        }
     };
 
     function addLink (obj) {
@@ -465,6 +536,21 @@
         return brush;
     }
 
+    function DragNode () {
+        var self = this;
+        var drag = d3.drag()
+            .on("start", function (Node) {
+                d3.event.sourceEvent.stopPropagation();
+            })
+            .on("drag", function (Node) {
+                Node.nudge(d3.event.dx, d3.event.dy);
+                self.render();
+            }).on("end", function (Node) {
+
+            });
+        return drag;
+    }
+
     function init () {
         //init trigger only once a graph
         if(this._hasInit) return;
@@ -492,6 +578,10 @@
         this._getBrushSelection()
             .call(this.brush);
 
+        
+        //new drag instance for bind to nodes
+        this.dragNode = DragNode.call(this);
+
         this._hasInit = true;
     }
 
@@ -500,100 +590,96 @@
     }
 
     function drawNodes () {
-        var nodes = this._getNodesSelection().data(this.getRenderedNodes(), function (d) {
-            return d.id;
-        });
+        var nodes = this._getNodesSelection().data(this.getRenderedNodes(), function (d) { return d.id;});
 
         var g = nodes.enter().append('g')
             .each(function(Node){ Node._element = this })//reference element to Node
-            .attr("transform", function (node) {
-                return node.getTranslate();
-            })
-            .classed('node', true);
-        
+            .classed('node', true)
+            .call(this.dragNode);
+
         //添加矩形
         g.append("rect")
-            .attr("width", this._r)
-            .attr("height", this._r)
             .attr("filter", "url(" + getAbsUrl() + "#shadow)")
-            .style("fill", function(Node){ return Node.getColor() });
-
-
-        var textGroup = g.append('svg:foreignObject')
+            .classed("circle", true);
+        g.append('svg:foreignObject')
             .attr('class', 'text-group')
-            .attr('width', function (Node) {
-                return Node.getLabelWidth();
-            })
-            .attr("height", this._r)
-            .style("line-height", this._r + 'px')
-            .attr('transform', "translate(" + (1 + this._r) + ", 0)");
+            .append("xhtml:div")
+            .append('xhtml:span');
 
-        textGroup.append("xhtml:div")
-            .attr('title', function (Node) {
-                return Node.getLabel();
-            })
-            .append('xhtml:span')
-            .text(function (Node) {
-                return Node.getLabel();
-            });
+        //Enter and Update
+        var all = nodes.enter().merge(nodes);
+
+        all.selectAll(".node").attr("transform", function (Node) { return Node.getTranslate(); });
+
+        all.selectAll('rect')
+            .attr("width", function(Node){ return Node.size()})
+            .attr("height", function(Node){ return Node.size()})
+            .style("fill", function(Node){ return Node.color() });
+
+
+        all.selectAll('.text-group')
+            .attr('width', function (Node) { return Node.getLabelWidth(); })
+            .attr("height", function(Node){ return Node.size()})
+            .style("line-height", function(Node){ return Node.size() + "px" })
+            .attr('transform', function(Node){return "translate(" + (1 + Node.size()) + ", 0)" })
+
+            .selectAll('div')
+            .attr('title', function (Node) { return Node.label(); })
+            .selectAll('span')
+            .text(function (Node) { return Node.label(); });
 
         nodes.exit().remove();
     }
 
     function drawLinks () {
         var self = this;
-        var linkPaths = this._getLinksSelection().data(this.getRenderedLinks(), function (Link) { return Link.getId() });
+        var links = this._getLinksSelection().data(this.getRenderedLinks(), function (Link) { return Link.getId() });
 
-        linkPaths.enter()
+        links.enter()
             .append('path')
             .classed('link-path', true)
-            .attr('id', function(Link){ return "link-path" + Link.getId()})
-            .attr('d', function (Link) {
-                return Link.getPath(self._r, true);
-            })
-            .style('marker-start', function (Link) {
-                return Link.getStartArrow();
-            })
-            .style('marker-end', function (Link) {
-                return Link.getEndArrow();
-            });
+            .attr('id', function(Link){ return "link-path" + Link.getId()});
+
+        var all  = links.enter().merge(links);
+
+        all.selectAll('path')
+            .attr('d', function (Link) { var c = Link.getCoordination();  return 'M ' + c.Sx + ' ' + c.Sy + ' L ' + c.Tx + ' ' + c.Ty; })
+            .style('marker-start', function (Link) { return Link.getStartArrow(); })
+            .style('marker-end', function (Link) { return Link.getEndArrow(); });
+
+
+        links.exit().remove();
+
+
 
         //绑定linkData数据到linkLabels
         var linkLabels = this._getLinksLabelSelection().data(this._links, function (Link) { return Link.getId(); });
 
         //按需增加新的LinkLabels(当linksData data > linkPaths element)
-        var linkTexts = linkLabels.enter().append('text')
-            //.filter(function(d){
-            //    return !d.hide;
-            //})
+        linkLabels.enter().append('text')
             .style("pointer-events", "none")
             .classed('link-label', true)
-            .attr('id', function (Link) {
-                return 'link-label' + Link.getId()
-            })
-            .attr('dx', function(Link){ return Link.getTextCenter(Link.getPath(self._r)) })
+            .attr('id', function (Link) { return 'link-label' + Link.getId(); })
+            .append('textPath')
+            .attr('xlink:href', function (Link) {  return getAbsUrl() + '#link-path' + Link.getId(); })
+            .style("pointer-events", "none");
+
+
+        var allLabels = linkLabels.enter().merge(linkLabels);
+
+        allLabels.selectAll('text.link-label')
+            .attr('dx', function(Link){ return Link.getTextCenter() })
             .attr('dy', 1)
             .attr('font-size', 13);
 
-
-        //根据当前数据重新生成textPath
-        linkTexts.append('textPath')
-            //.filter(function(d){
-            //    return !d.hide;
-            //})
-            .attr('xlink:href', function (Link) {
-                return getAbsUrl() + '#link-path' + Link.getId();
+        allLabels.selectAll('textPath')
+            .text(function (Link) {
+                return Link.label();
             })
-            .style("pointer-events", "none").text(function (Link) {
-                return Link.getLabel();
-            });
+            //反转字体，使字体总是朝上，该句放于该函数最后执行，提前会导致问题
+            .attr('transform', function(Link){ return Link.getLinkLabelTransform(self._getCurrentScale()); });
 
 
-
-        //反转字体，使字体总是朝上，该句放于该函数最后执行，提前会导致问题
-        linkTexts.attr('transform', function(Link){ return Link.getLinkLabelTransform(self._r, self._getCurrentScale()); });
-
-        linkPaths.exit().remove();
         linkLabels.exit().remove();
     }
 
@@ -618,12 +704,12 @@
 
         //不缩放text文字内容
         this._getNodesLabelSelection()
-            .attr("height", this._r * this._getCurrentScale())
-            .style("line-height", this._r * this._getCurrentScale() + "px")
-            .attr("transform", "translate(" + (1 + this._r) + ", 0) scale(" + 1 / d3.event.transform.k + ")");
+            .attr("height", function(Node){ return Node.size() * self._getCurrentScale(); })
+            .style("line-height", function(Node){ return Node.size() * self._getCurrentScale() + "px"; })
+            .attr("transform", function(Node){ return "translate(" + (1 + Node.size()) + ", 0) scale(" + 1 / d3.event.transform.k + ")"; });
 
         //linkLabels文字不缩放
-        this._getLinksLabelSelection().attr("transform", function(Link){ return Link.getLinkLabelTransform(self._r, d3.event.transform.k); });
+        this._getLinksLabelSelection().attr("transform", function(Link){ return Link.getLinkLabelTransform(d3.event.transform.k); });
         //缩放网络图
         this._getForceGroup().attr("transform", "translate(" + d3.event.transform.x + ", "+ d3.event.transform.y + ") scale(" + d3.event.transform.k + ")");
 
@@ -674,10 +760,15 @@
 
     //nodes could be: Node, [Node], Node id string, Node id array of string
     function n2l (nodes) {
-        var relatedLinks = this.getLinksByNodes(nodes);
         this.getNodes(nodes).forEach(function (Node) {
             Node.transformToLink();
+
+            this.getLinksByNodes(Node).forEach(function(Link){
+               //Link.transformToLink();
+            });
         }, this);
+
+        this.render();
     }
 
     function Graph(selector, config) {
@@ -687,7 +778,7 @@
 
         this._hasInit = false; //init only once
 
-        this._r = config.r || 30;
+        this._nodeSize = config.nodeSize || 30;
         this._movable = config.movable || false;
         this._zoomable = config.zoomable || false;
         
@@ -753,7 +844,7 @@
             return this._getNodesSelection().selectAll('.text-group');
         },
         _getLinksSelection: function(){
-            return this._getSvgSelection().select('.paths').selectAll("path");
+            return this._getSvgSelection().select('g.paths').selectAll("path");
         },
         _getLinksLabelSelection: function(){
             return this._getSvgSelection().select('g.link-labels').selectAll('text');
