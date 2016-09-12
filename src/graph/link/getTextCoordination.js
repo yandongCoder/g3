@@ -1,21 +1,32 @@
-//textCoordination is coordination minus Node's radius
-export default function(){
-    var coord = this.getCoordination();
+import getOffsetCoordinate from "../../utils/getOffsetCoordinate";
 
-    var l = Math.sqrt((coord.Tx - coord.Sx) * (coord.Tx - coord.Sx) + (coord.Ty - coord.Sy) * (coord.Ty - coord.Sy));
-    var sin = (coord.Ty - coord.Sy) / l;
-    var cos = (coord.Tx - coord.Sx) / l;
+//Link coordination is Node center's coordination or coordination where arrow placed, if any.
+export default function () {
+
+    var sourceR = this.source.radius();
+    var targetR = this.target.radius();
+    var arrowSize = this.width() * 3;
+
+    var Sx = this.source.getX(),
+        Sy = this.source.getY(),
+        Tx = this.target.getX(),
+        Ty = this.target.getY();
 
 
-    if(!this.hasSourceArrow()){
-        coord.Sx -= this.source.radius() / 2 * cos;
-        coord.Sy -= this.source.radius() / 2 * sin;
+    var offset = getOffsetCoordinate(Sx, Sy, Tx, Ty, sourceR + arrowSize, targetR + arrowSize);
+
+
+    if(this.hasSourceArrow() || this.hasTargetArrow()){
+        Sx = offset.Sx;
+        Sy = offset.Sy;
+        Tx = offset.Tx;
+        Ty = offset.Ty;
     }
 
-    if(!this.hasTargetArrow()){
-        coord.Tx -= this.target.radius() / 2 * cos;
-        coord.Ty -= this.target.radius() / 2 * sin;
-    }
-
-    return coord;
+    return {
+        Sx: Sx,
+        Sy: Sy,
+        Tx: Tx,
+        Ty: Ty
+    };
 }

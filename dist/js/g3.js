@@ -167,15 +167,11 @@
     }
 
     function getX() {
-        return this.x - this.radius();
+        return this.x;
     }
 
     function getY() {
-        return this.y - this.radius();
-    }
-
-    function getTranslate () {
-        return "translate(" + this.getX() + "," + this.getY() + ")";
+        return this.y;
     }
 
     //data: data obj, graph: graphInstance
@@ -205,8 +201,7 @@
             return getStrLen(this.label()) * 9;
         },
         color: color,
-        radius: radius,
-        getTranslate: getTranslate
+        radius: radius
 
     };
 
@@ -292,20 +287,20 @@
         var l = Math.sqrt((Tx - Sx) * (Tx - Sx) + (Ty - Sy) * (Ty - Sy));
         var sin = (Ty - Sy) / l;
         var cos = (Tx - Sx) / l;
-
+        
         return {
-            Sx: Sx + offsetS * cos || Sx,
-            Sy: Sy + offsetS * sin || Sy,
-            Tx: Tx - offsetT * cos || Tx,
-            Ty: Ty - offsetT * sin || Ty
+            Sx: Sx + offsetS * cos,
+            Sy: Sy + offsetS * sin,
+            Tx: Tx - offsetT * cos,
+            Ty: Ty - offsetT * sin
         }
     }
 
     //Link coordination is Node center's coordination or coordination where arrow placed, if any.
     function getCoordination () {
 
-        var sourceR = this.source.radius() / 2;
-        var targetR = this.target.radius() / 2;
+        var sourceR = this.source.radius();
+        var targetR = this.target.radius();
         var arrowSize = this.width() * 3;
 
         var Sx = this.source.getX(),
@@ -334,26 +329,35 @@
         };
     }
 
-    //textCoordination is coordination minus Node's radius
-    function getTextCoordination(){
-        var coord = this.getCoordination();
+    //Link coordination is Node center's coordination or coordination where arrow placed, if any.
+    function getTextCoordination () {
 
-        var l = Math.sqrt((coord.Tx - coord.Sx) * (coord.Tx - coord.Sx) + (coord.Ty - coord.Sy) * (coord.Ty - coord.Sy));
-        var sin = (coord.Ty - coord.Sy) / l;
-        var cos = (coord.Tx - coord.Sx) / l;
+        var sourceR = this.source.radius();
+        var targetR = this.target.radius();
+        var arrowSize = this.width() * 3;
+
+        var Sx = this.source.getX(),
+            Sy = this.source.getY(),
+            Tx = this.target.getX(),
+            Ty = this.target.getY();
 
 
-        if(!this.hasSourceArrow()){
-            coord.Sx -= this.source.radius() / 2 * cos;
-            coord.Sy -= this.source.radius() / 2 * sin;
+        var offset = getOffsetCoordinate(Sx, Sy, Tx, Ty, sourceR + arrowSize, targetR + arrowSize);
+
+
+        if(this.hasSourceArrow() || this.hasTargetArrow()){
+            Sx = offset.Sx;
+            Sy = offset.Sy;
+            Tx = offset.Tx;
+            Ty = offset.Ty;
         }
 
-        if(!this.hasTargetArrow()){
-            coord.Tx -= this.target.radius() / 2 * cos;
-            coord.Ty -= this.target.radius() / 2 * sin;
-        }
-
-        return coord;
+        return {
+            Sx: Sx,
+            Sy: Sy,
+            Tx: Tx,
+            Ty: Ty
+        };
     }
 
     const DIRECTION = {
@@ -378,14 +382,22 @@
     function getTextCenter () {
         var coord = this.getTextCoordination();
 
-        var x = Math.abs(coord.Sx - coord.Tx);
-        var y = Math.abs(coord.Sy - coord.Ty);
+        var x = Math.abs(coord.Tx - coord.Sx);
+        var y = Math.abs(coord.Ty - coord.Sy);
         var z = Math.sqrt(x * x + y * y);
         //console.log(this.label(),getStrLen(this.label()));
         var charLength = getStrLen(this.label()) * 6.6 / 2;
 
-        //字长度
-        return z / 2 - charLength;
+
+        var dx = z / 2 - charLength;
+        if(this.hasSourceArrow() && (coord.Tx < coord.Sx) ){
+            return dx + this.target.radius();
+        }
+        else if (this.hasTargetArrow() && (coord.Tx > coord.Sx)){
+            return dx + this.source.radius();
+        }else{
+            return dx;
+        }
     }
 
     function getLinkLabelTransform (scaleFactor) {
@@ -636,9 +648,8 @@
             .call(this.dragNode);
 
         //添加矩形
-        g.append("rect")
-            .attr("filter", "url(" + getAbsUrl() + "#shadow)")
-            .classed("circle", true);
+        g.append("circle")
+            .attr("filter", "url(" + getAbsUrl() + "#shadow)");
         g.append('svg:foreignObject')
             .attr('class', 'text-group')
             .append("xhtml:div")
@@ -647,11 +658,10 @@
         //Enter and Update
         var all = this._getNodesSelection();
 
-        all.attr("transform", function (Node) { return Node.getTranslate(); });
+        all.attr("transform", function (Node) { return "translate(" + Node.getX() + "," + Node.getY() + ")";});
 
-        all.select('rect')
-            .attr("width", function(Node){ return Node.radius()})
-            .attr("height", function(Node){ return Node.radius()})
+        all.select('circle')
+            .attr("r", function(Node){ return Node.radius()})
             .style("fill", function(Node){ return Node.color() });
         
 
