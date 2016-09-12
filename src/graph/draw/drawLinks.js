@@ -11,9 +11,11 @@ export default function () {
 
     var all  = this._getLinksSelection();
 
-    all.attr('d', function (Link) { var c = Link.getCoordination();  return 'M ' + c.Sx + ' ' + c.Sy + ' L ' + c.Tx + ' ' + c.Ty; })
+    all
+        .attr('d', function (Link) { var c = Link.getCoordination();  return 'M ' + c.Sx + ' ' + c.Sy + ' L ' + c.Tx + ' ' + c.Ty; })
         .style('marker-start', function (Link) { return Link.getStartArrow(); })
-        .style('marker-end', function (Link) { return Link.getEndArrow(); });
+        .style('marker-end', function (Link) { return Link.getEndArrow(); })
+        .style('stroke-width', function(Link){ return Link.width()});
 
 
     links.exit().remove();
@@ -28,23 +30,26 @@ export default function () {
         .style("pointer-events", "none")
         .classed('link-label', true)
         .attr('id', function (Link) { return 'link-label' + Link.getId(); })
+        //.attr('text-anchor', 'middle')
         .append('textPath')
         .attr('xlink:href', function (Link) {  return getAbsUrl() + '#link-path' + Link.getId(); })
+        //.attr('startOffset', '50%')
         .style("pointer-events", "none");
 
 
     var allLabels = this._getLinksLabelSelection();
 
-    allLabels.attr('dx', function(Link){return Link.getTextCenter(); })
+    allLabels
+        .attr('dx', function(Link){return Link.getTextCenter(); })
         .attr('dy', 1)
-        .attr('font-size', 13);
+        .attr('font-size', 13)
+        //反转字体，使字体总是朝上，该句放于该函数最后执行，提前会导致问题
+        .attr('transform', function(Link){ return Link.getLinkLabelTransform(self._getCurrentScale()); });
 
     allLabels.select('textPath')
         .text(function (Link) {
             return Link.label();
-        })
-        //反转字体，使字体总是朝上，该句放于该函数最后执行，提前会导致问题
-        .attr('transform', function(Link){ return Link.getLinkLabelTransform(self._getCurrentScale()); });
+        });
 
 
     linkLabels.exit().remove();

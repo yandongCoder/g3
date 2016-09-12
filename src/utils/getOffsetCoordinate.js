@@ -1,12 +1,12 @@
-export default function (Xs, Ys, Xd, Yd, offsetS, offsetD) {
-    var l = Math.sqrt((Xd - Xs) * (Xd - Xs) + (Yd - Ys) * (Yd - Ys));
-    var sin = (Yd - Ys) / l;
-    var cos = (Xd - Xs) / l;
+export default function (Sx, Sy, Tx, Ty, offsetS, offsetD) {
+    var l = Math.sqrt((Tx - Sx) * (Tx - Sx) + (Ty - Sy) * (Ty - Sy));
+    var sin = (Ty - Sy) / l;
+    var cos = (Tx - Sx) / l;
 
     return {
-        Xs: Xs + offsetS * cos || Xs,
-        Ys: Ys + offsetS * sin || Ys,
-        Xd: Xd - offsetD * cos || Xd,
-        Yd: Yd - offsetD * sin || Yd
+        Sx: Sx + offsetS * cos || Sx,
+        Sy: Sy + offsetS * sin || Sy,
+        Tx: Tx - offsetD * cos || Tx,
+        Ty: Ty - offsetD * sin || Ty
     }
 }

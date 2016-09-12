@@ -38,6 +38,7 @@ function Graph(selector, config) {
     this._hasInit = false; //init only once
 
     this._nodeSize = config.nodeSize || 30;
+    this._linkWidth = config.linkWidth || 3;
     this._movable = config.movable || false;
     this._zoomable = config.zoomable || false;
     
@@ -106,7 +107,7 @@ Graph.prototype = {
         return this._getSvgSelection().select('g.paths').selectAll("path");
     },
     _getLinksLabelSelection: function(){
-        return this._getSvgSelection().select('g.link-labels').selectAll('text');
+        return this._getSvgSelection().select('g.link-labels').selectAll('text.link-label');
     },
     _getForceGroup: function(){
         return this._forceGroupSelection;

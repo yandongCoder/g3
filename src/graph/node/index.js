@@ -8,6 +8,7 @@ import label from "./label";
 
 //data: data obj, graph: graphInstance
 export default function Node(data, graph) {
+    this.graph = graph;
     this.id = data.id;
     this._label = data.label;
     this.x = data.x;
