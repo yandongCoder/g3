@@ -37,7 +37,7 @@ function Graph(selector, config) {
 
     this._hasInit = false; //init only once
 
-    this._nodeSize = config.nodeSize || 30;
+    this._radius= config.radius || 15;
     this._linkWidth = config.linkWidth || 3;
     this._movable = config.movable || false;
     this._zoomable = config.zoomable || false;

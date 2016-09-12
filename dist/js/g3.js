@@ -148,10 +148,10 @@
         return this;
     }
 
-    function size (diameter) {
-        if(!arguments.length) return this._size;
+    function radius (radius) {
+        if(!arguments.length) return this._radius;
 
-        this._size = diameter;
+        this._radius = radius;
         this.graph.render();
 
         return this;
@@ -166,6 +166,18 @@
         return this;
     }
 
+    function getX() {
+        return this.x - this.radius();
+    }
+
+    function getY() {
+        return this.y - this.radius();
+    }
+
+    function getTranslate () {
+        return "translate(" + this.getX() + "," + this.getY() + ")";
+    }
+
     //data: data obj, graph: graphInstance
     function Node(data, graph) {
         this.graph = graph;
@@ -173,7 +185,7 @@
         this._label = data.label;
         this.x = data.x;
         this.y = data.y;
-        this._size = data.size || graph._nodeSize;
+        this._radius = data.radius || graph._radius;
         this._color = data.color;
         this._selected = false; //indicate whether node is select
     }
@@ -186,21 +198,15 @@
         getId: function () {
             return this.id;
         },
-        getX: function(){
-            return this.x;
-        },
-        getY: function () {
-            return this.y;
-        },
+        getX: getX,
+        getY: getY,
         label: label,
         getLabelWidth: function(){
             return getStrLen(this.label()) * 9;
         },
         color: color,
-        size: size,
-        getTranslate: function () {
-            return "translate(" + this.x + "," + this.y + ")";
-        }
+        radius: radius,
+        getTranslate: getTranslate
 
     };
 
@@ -282,7 +288,7 @@
         return (this.source !== undefined) && (this.target !== undefined);
     }
 
-    function getOffsetCoordinate (Sx, Sy, Tx, Ty, offsetS, offsetD) {
+    function getOffsetCoordinate (Sx, Sy, Tx, Ty, offsetS, offsetT) {
         var l = Math.sqrt((Tx - Sx) * (Tx - Sx) + (Ty - Sy) * (Ty - Sy));
         var sin = (Ty - Sy) / l;
         var cos = (Tx - Sx) / l;
@@ -290,22 +296,22 @@
         return {
             Sx: Sx + offsetS * cos || Sx,
             Sy: Sy + offsetS * sin || Sy,
-            Tx: Tx - offsetD * cos || Tx,
-            Ty: Ty - offsetD * sin || Ty
+            Tx: Tx - offsetT * cos || Tx,
+            Ty: Ty - offsetT * sin || Ty
         }
     }
 
     //Link coordination is Node center's coordination or coordination where arrow placed, if any.
     function getCoordination () {
 
-        var sourceR = this.source.size() / 2;
-        var targetR = this.target.size() / 2;
+        var sourceR = this.source.radius() / 2;
+        var targetR = this.target.radius() / 2;
         var arrowSize = this.width() * 3;
 
-        var Sx = this.source.x + sourceR,
-            Sy = this.source.y + sourceR,
-            Tx = this.target.x + targetR,
-            Ty = this.target.y + targetR;
+        var Sx = this.source.getX(),
+            Sy = this.source.getY(),
+            Tx = this.target.getX(),
+            Ty = this.target.getY();
 
 
         var offset = getOffsetCoordinate(Sx, Sy, Tx, Ty, sourceR + arrowSize, targetR + arrowSize);
@@ -338,13 +344,13 @@
 
 
         if(!this.hasSourceArrow()){
-            coord.Sx -= this.source.size() / 2 * cos;
-            coord.Sy -= this.source.size() / 2 * sin;
+            coord.Sx -= this.source.radius() / 2 * cos;
+            coord.Sy -= this.source.radius() / 2 * sin;
         }
 
         if(!this.hasTargetArrow()){
-            coord.Tx -= this.target.size() / 2 * cos;
-            coord.Ty -= this.target.size() / 2 * sin;
+            coord.Tx -= this.target.radius() / 2 * cos;
+            coord.Ty -= this.target.radius() / 2 * sin;
         }
 
         return coord;
@@ -644,16 +650,16 @@
         all.attr("transform", function (Node) { return Node.getTranslate(); });
 
         all.select('rect')
-            .attr("width", function(Node){ return Node.size()})
-            .attr("height", function(Node){ return Node.size()})
+            .attr("width", function(Node){ return Node.radius()})
+            .attr("height", function(Node){ return Node.radius()})
             .style("fill", function(Node){ return Node.color() });
         
 
         all.select('.text-group')
             .attr('width', function (Node) { return Node.getLabelWidth(); })
-            .attr("height", function(Node){ return Node.size() * self._getCurrentScale(); })
-            .style("line-height", function(Node){ return Node.size() * self._getCurrentScale() + "px"; })
-            .attr("transform", function(Node){ return "translate(" + (1 + Node.size()) + ", 0) scale(" + 1 / self._getCurrentScale()+ ")"; })
+            .attr("height", function(Node){ return Node.radius() * self._getCurrentScale(); })
+            .style("line-height", function(Node){ return Node.radius() * self._getCurrentScale() + "px"; })
+            .attr("transform", function(Node){ return "translate(" + (1 + Node.radius()) + ", 0) scale(" + 1 / self._getCurrentScale()+ ")"; })
 
             .select('div')
             .attr('title', function (Node) { return Node.label(); })
@@ -803,7 +809,7 @@
 
         this._hasInit = false; //init only once
 
-        this._nodeSize = config.nodeSize || 30;
+        this._radius= config.radius || 15;
         this._linkWidth = config.linkWidth || 3;
         this._movable = config.movable || false;
         this._zoomable = config.zoomable || false;

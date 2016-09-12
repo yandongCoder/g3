@@ -3,8 +3,9 @@ import selected from "./selected";
 import transformToLink from "./transformToLink";
 import nudge from "./nudge";
 import color from "./color";
-import size from "./size";
+import radius from "./radius";
 import label from "./label";
+import {getX, getY, getTranslate} from "./getXY";
 
 //data: data obj, graph: graphInstance
 export default function Node(data, graph) {
@@ -13,7 +14,7 @@ export default function Node(data, graph) {
     this._label = data.label;
     this.x = data.x;
     this.y = data.y;
-    this._size = data.size || graph._nodeSize;
+    this._radius = data.radius || graph._radius;
     this._color = data.color;
     this._selected = false; //indicate whether node is select
 }
@@ -26,20 +27,14 @@ Node.prototype = {
     getId: function () {
         return this.id;
     },
-    getX: function(){
-        return this.x;
-    },
-    getY: function () {
-        return this.y;
-    },
+    getX: getX,
+    getY: getY,
     label: label,
     getLabelWidth: function(){
         return getStrLen(this.label()) * 9;
     },
     color: color,
-    size: size,
-    getTranslate: function () {
-        return "translate(" + this.x + "," + this.y + ")";
-    }
+    radius: radius,
+    getTranslate: getTranslate
 
 };

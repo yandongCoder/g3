@@ -8,13 +8,13 @@ export default function(){
 
 
     if(!this.hasSourceArrow()){
-        coord.Sx -= this.source.size() / 2 * cos;
-        coord.Sy -= this.source.size() / 2 * sin;
+        coord.Sx -= this.source.radius() / 2 * cos;
+        coord.Sy -= this.source.radius() / 2 * sin;
     }
 
     if(!this.hasTargetArrow()){
-        coord.Tx -= this.target.size() / 2 * cos;
-        coord.Ty -= this.target.size() / 2 * sin;
+        coord.Tx -= this.target.radius() / 2 * cos;
+        coord.Ty -= this.target.radius() / 2 * sin;
     }
 
     return coord;

@@ -24,16 +24,16 @@ export default function () {
     all.attr("transform", function (Node) { return Node.getTranslate(); });
 
     all.select('rect')
-        .attr("width", function(Node){ return Node.size()})
-        .attr("height", function(Node){ return Node.size()})
+        .attr("width", function(Node){ return Node.radius()})
+        .attr("height", function(Node){ return Node.radius()})
         .style("fill", function(Node){ return Node.color() });
     
 
     all.select('.text-group')
         .attr('width', function (Node) { return Node.getLabelWidth(); })
-        .attr("height", function(Node){ return Node.size() * self._getCurrentScale(); })
-        .style("line-height", function(Node){ return Node.size() * self._getCurrentScale() + "px"; })
-        .attr("transform", function(Node){ return "translate(" + (1 + Node.size()) + ", 0) scale(" + 1 / self._getCurrentScale()+ ")"; })
+        .attr("height", function(Node){ return Node.radius() * self._getCurrentScale(); })
+        .style("line-height", function(Node){ return Node.radius() * self._getCurrentScale() + "px"; })
+        .attr("transform", function(Node){ return "translate(" + (1 + Node.radius()) + ", 0) scale(" + 1 / self._getCurrentScale()+ ")"; })
 
         .select('div')
         .attr('title', function (Node) { return Node.label(); })

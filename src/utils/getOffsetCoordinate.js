@@ -1,4 +1,4 @@
-export default function (Sx, Sy, Tx, Ty, offsetS, offsetD) {
+export default function (Sx, Sy, Tx, Ty, offsetS, offsetT) {
     var l = Math.sqrt((Tx - Sx) * (Tx - Sx) + (Ty - Sy) * (Ty - Sy));
     var sin = (Ty - Sy) / l;
     var cos = (Tx - Sx) / l;
@@ -6,7 +6,7 @@ export default function (Sx, Sy, Tx, Ty, offsetS, offsetD) {
     return {
         Sx: Sx + offsetS * cos || Sx,
         Sy: Sy + offsetS * sin || Sy,
-        Tx: Tx - offsetD * cos || Tx,
-        Ty: Ty - offsetD * sin || Ty
+        Tx: Tx - offsetT * cos || Tx,
+        Ty: Ty - offsetT * sin || Ty
     }
 }
