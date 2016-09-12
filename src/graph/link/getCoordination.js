@@ -5,7 +5,7 @@ export default function () {
 
     var sourceR = this.source.size() / 2;
     var targetR = this.target.size() / 2;
-    var arrowSize = 10;
+    var arrowSize = this.width() * 3;
 
     var Sx = this.source.x + sourceR,
         Sy = this.source.y + sourceR,

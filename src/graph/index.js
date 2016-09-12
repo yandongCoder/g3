@@ -41,6 +41,7 @@ function Graph(selector, config) {
     this._linkWidth = config.linkWidth || 3;
     this._movable = config.movable || false;
     this._zoomable = config.zoomable || false;
+
     
     this._nodes = [];
     this._links = [];
