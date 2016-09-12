@@ -5,7 +5,7 @@ import nudge from "./nudge";
 import color from "./color";
 import radius from "./radius";
 import label from "./label";
-import {getX, getY, getTranslate} from "./getXY";
+import {getX, getY} from "./getXY";
 
 //data: data obj, graph: graphInstance
 export default function Node(data, graph) {
@@ -34,7 +34,6 @@ Node.prototype = {
         return getStrLen(this.label()) * 9;
     },
     color: color,
-    radius: radius,
-    getTranslate: getTranslate
+    radius: radius
 
 };

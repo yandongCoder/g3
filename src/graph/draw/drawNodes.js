@@ -10,9 +10,8 @@ export default function () {
         .call(this.dragNode);
 
     //添加矩形
-    g.append("rect")
-        .attr("filter", "url(" + getAbsUrl() + "#shadow)")
-        .classed("circle", true);
+    g.append("circle")
+        .attr("filter", "url(" + getAbsUrl() + "#shadow)");
     g.append('svg:foreignObject')
         .attr('class', 'text-group')
         .append("xhtml:div")
@@ -21,11 +20,10 @@ export default function () {
     //Enter and Update
     var all = this._getNodesSelection();
 
-    all.attr("transform", function (Node) { return Node.getTranslate(); });
+    all.attr("transform", function (Node) { return "translate(" + Node.getX() + "," + Node.getY() + ")";});
 
-    all.select('rect')
-        .attr("width", function(Node){ return Node.radius()})
-        .attr("height", function(Node){ return Node.radius()})
+    all.select('circle')
+        .attr("r", function(Node){ return Node.radius()})
         .style("fill", function(Node){ return Node.color() });
     
 
