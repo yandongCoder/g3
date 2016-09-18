@@ -1,6 +1,6 @@
 
 export default function (scaleFactor) {
-    var coord = this.getCoordination();
+    var coord = this.getCoordination(true);
     var rx = (coord.Sx + coord.Tx) / 2;
     var ry = (coord.Sy + coord.Ty) / 2;
 

@@ -2,7 +2,7 @@ var tape = require("tape"),
     jsdom = require("jsdom"),
     g3 = require("../../../dist/js/g3");
 
-tape("get Link's text center correctly", function(test){
+tape("get Link's text dx offset correctly", function(test){
     var document = jsdom.jsdom('<svg id="graph"></svg>');
     var svg = document.querySelector("#graph");
 
@@ -12,10 +12,10 @@ tape("get Link's text center correctly", function(test){
         .links([{id: 1, src: 1, dst: 2, direction: 0, label: "a", width: 5}, {id: 2, src: 1, dst: 2, direction: 1, label: "a", width: 5}, {id: 3, src: 1, dst: 2, direction: 2, label: "a", width: 5}, {id: 4, src: 1, dst: 2, direction: 3, label: "a", width: 5}]);
 
 
-    test.equal(myGraph.links()[0].getTextCenter(), 46.7);
-    test.equal(myGraph.links()[1].getTextCenter(), 44.2);
-    test.equal(myGraph.links()[2].getTextCenter(), 14.2);
-    test.equal(myGraph.links()[3].getTextCenter(), 6.7);
+    test.equal(myGraph.links()[0].getTextOffset(), 51.7);
+    test.equal(myGraph.links()[1].getTextOffset(), 44.2);
+    test.equal(myGraph.links()[2].getTextOffset(), 14.2);
+    test.equal(myGraph.links()[3].getTextOffset(), 6.7);
 
 
 
@@ -25,10 +25,10 @@ tape("get Link's text center correctly", function(test){
         .links([{id: 1, src: 1, dst: 2, direction: 0, label: "a", width: 5}, {id: 2, src: 1, dst: 2, direction: 1, label: "a", width: 5}, {id: 3, src: 1, dst: 2, direction: 2, label: "a", width: 5}, {id: 4, src: 1, dst: 2, direction: 3, label: "a", width: 5}]);
 
 
-    test.equal(myGraph.links()[0].getTextCenter(), 46.7);
-    test.equal(myGraph.links()[1].getTextCenter(), 44.2);
-    test.equal(myGraph.links()[2].getTextCenter(), 14.2);
-    test.equal(myGraph.links()[3].getTextCenter(), 6.7);
+    test.equal(myGraph.links()[0].getTextOffset(), 51.7);
+    test.equal(myGraph.links()[1].getTextOffset(), 44.2);
+    test.equal(myGraph.links()[2].getTextOffset(), 14.2);
+    test.equal(myGraph.links()[3].getTextOffset(), 6.7);
 
 
     test.end();

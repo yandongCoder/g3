@@ -3,7 +3,7 @@ import hasST from "./hasST";
 import getCoordination from "./getCoordination";
 import getStartArrow from "./getStartArrow";
 import getEndArrow from "./getEndArrow";
-import getTextCenter from "./getTextOffset";
+import getTextOffset from "./getTextOffset";
 import getLinkLabelTransform from "./getLinkLabelTransform";
 import transformToLink from "./transformToLink";
 import label from "./label";
@@ -23,7 +23,6 @@ export default function Link(data, nodes, graph) {
     this.target = getNodeById(this.dst, nodes);
 }
 
-
 Link.prototype = {
     constructor: Link,
     hasST: hasST,
@@ -31,7 +30,7 @@ Link.prototype = {
     getCoordination: getCoordination,
     getStartArrow: getStartArrow,
     getEndArrow: getEndArrow,
-    getTextCenter: getTextCenter,
+    getTextOffset: getTextOffset,
     getLinkLabelTransform: getLinkLabelTransform,
     label: label,
     width: width,

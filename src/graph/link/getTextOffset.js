@@ -11,12 +11,12 @@ export default function () {
     var charLength = getStrLen(this.label()) * 6.6 / 2;
 
     var dx = z / 2 - charLength;
-
+    
     return dx + textLeftOffset();
 
     function textLeftOffset(){
-        if(coord.Sx <= coord.Tx && self.hasTargetArrow() && !self.hasSourceArrow()) return self.source.radius();
-        else if((coord.Sx > coord.Tx) && !self.hasTargetArrow() && self.hasSourceArrow()) return self.target.radius();
+        if((self.hasTargetArrow() && !self.hasSourceArrow()) || (!self.hasTargetArrow() && !self.hasSourceArrow())) return self.source.radius();
+        //else if(!self.hasTargetArrow() && self.hasSourceArrow()) return self.target.radius();
         else return 0;
     }
 }

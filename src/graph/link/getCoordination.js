@@ -27,7 +27,7 @@ export default function (forText) {
         Ty = offset.Ty;
     }
 
-    if(forText && (this.hasSourceArrow() || this.hasTargetArrow()) ){
+    if(forText){
         Sx = offset.Sx;
         Sy = offset.Sy;
         Tx = offset.Tx;

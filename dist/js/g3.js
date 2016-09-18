@@ -323,7 +323,7 @@
             Ty = offset.Ty;
         }
 
-        if(forText && (this.hasSourceArrow() || this.hasTargetArrow()) ){
+        if(forText){
             Sx = offset.Sx;
             Sy = offset.Sy;
             Tx = offset.Tx;
@@ -359,7 +359,7 @@
             return "";
     }
 
-    function getTextCenter () {
+    function getTextOffset () {
         var self = this;
         var coord = this.getCoordination(true);
 
@@ -370,18 +370,18 @@
         var charLength = getStrLen(this.label()) * 6.6 / 2;
 
         var dx = z / 2 - charLength;
-
+        
         return dx + textLeftOffset();
 
         function textLeftOffset(){
-            if(coord.Sx <= coord.Tx && self.hasTargetArrow() && !self.hasSourceArrow()) return self.source.radius();
-            else if((coord.Sx > coord.Tx) && !self.hasTargetArrow() && self.hasSourceArrow()) return self.target.radius();
+            if((self.hasTargetArrow() && !self.hasSourceArrow()) || (!self.hasTargetArrow() && !self.hasSourceArrow())) return self.source.radius();
+            //else if(!self.hasTargetArrow() && self.hasSourceArrow()) return self.target.radius();
             else return 0;
         }
     }
 
     function getLinkLabelTransform (scaleFactor) {
-        var coord = this.getCoordination();
+        var coord = this.getCoordination(true);
         var rx = (coord.Sx + coord.Tx) / 2;
         var ry = (coord.Sy + coord.Ty) / 2;
 
@@ -429,7 +429,6 @@
         this.target = getNodeById(this.dst, nodes);
     }
 
-
     Link.prototype = {
         constructor: Link,
         hasST: hasST,
@@ -437,7 +436,7 @@
         getCoordination: getCoordination,
         getStartArrow: getStartArrow,
         getEndArrow: getEndArrow,
-        getTextCenter: getTextCenter,
+        getTextOffset: getTextOffset,
         getLinkLabelTransform: getLinkLabelTransform,
         label: label$1,
         width: width$1,
@@ -699,7 +698,7 @@
         var allLabels = this._getLinksLabelSelection();
 
         allLabels
-            .attr('dx', function(Link){return Link.getTextCenter(); })
+            .attr('dx', function(Link){return Link.getTextOffset(); })
             .attr('dy', 1)
             .attr('font-size', 13)
             //反转字体，使字体总是朝上，该句放于该函数最后执行，提前会导致问题

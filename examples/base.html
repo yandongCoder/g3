@@ -22,12 +22,17 @@
 <script src="../dist/js/g3.js"></script>
 <script src="../node_modules/d3/build/d3.js"></script>
 <script>
-    var nodes = [{id: 1, label: "A", x: 0, y: 0, radius: 30}, {id: 2, label: "A", x: 100, y: 0, radius: 20},{id: 2, label: "A", x: 130, y: 130},
-        {id: 3, label: "C", x: 450, y: 150, size: 100}, {id: 4, label: "D", x: 150, y:430},
-        {id: 5, label: "E", x: 30, y: 250}, {id: 6, label: "F", x: 30, y:150},
-        {id: 7, label: "X", x: 0, y: 40}, {id: 8, label: "Y", x: 100, y: 40}
+    var nodes = [{id: 1, label: "A", x: 0, y: 0, radius: 30}, {id: 2, label: "A", x: 100, y: 0, radius: 20},
+        {id: 3, label: "C", x: 0, y: 100, radius: 30}, {id: 4, label: "D", x: 100, y: 100, radius: 20},
+        {id: 5, label: "E", x: 0, y: 200, radius: 30}, {id: 6, label: "F", x: 100, y: 200, radius: 20},
+        {id: 7, label: "X", x: 0, y: 300, radius: 30}, {id: 8, label: "Y", x: 100, y: 300, radius: 20}
     ];
-    var links = [{id: 1, label: "A", src: 1, dst: 2,direction: 1, width: 5}];
+    var links = [{id: 1, label: "A", src: 1, dst: 2,direction: 1, width: 5},
+        {id: 2, label: "C", src: 3, dst: 4,direction: 2, width: 5},
+        {id: 3, label: "E", src: 5, dst: 6,direction: 3, width: 5},
+        {id: 4, label: "X", src: 7, dst: 8,direction: 0, width: 5}
+
+    ];
 
 
     var myGraph = g3.graph("#my-svg")

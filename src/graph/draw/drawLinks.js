@@ -40,7 +40,7 @@ export default function () {
     var allLabels = this._getLinksLabelSelection();
 
     allLabels
-        .attr('dx', function(Link){return Link.getTextCenter(); })
+        .attr('dx', function(Link){return Link.getTextOffset(); })
         .attr('dy', 1)
         .attr('font-size', 13)
         //反转字体，使字体总是朝上，该句放于该函数最后执行，提前会导致问题
