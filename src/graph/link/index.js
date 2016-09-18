@@ -4,6 +4,8 @@ import getCoordination from "./getCoordination";
 import getTextCoordination from "./getTextCoordination";
 import getStartArrow from "./getStartArrow";
 import getEndArrow from "./getEndArrow";
+import arrowPointLeft from "./arrowPointLeft";
+import arrowPointRight from "./arrowPointRight";
 import getTextCenter from "./getTextCenter";
 import getLinkLabelTransform from "./getLinkLabelTransform";
 import transformToLink from "./transformToLink";
@@ -42,6 +44,8 @@ Link.prototype = {
     hasTargetArrow: function(){
         return this.direction === DIRECTION.FROM || this.direction === DIRECTION.DOUBLE;
     },
+    arrowPointLeft: arrowPointLeft,
+    arrowPointRight: arrowPointRight,
     getId: function () {
         return this.id;
     },

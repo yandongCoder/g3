@@ -34,14 +34,13 @@ tape("Judge Link's arrow point to right, only if Link is one-way arrow.", functi
     test.equal(myGraph.links()[0].arrowPointRight(), false);
 
     test.equal(myGraph.links()[1].arrowPointLeft(), false);
-    test.equal(myGraph.links()[1].arrowPointRight(), false);
+    test.equal(myGraph.links()[1].arrowPointRight(), true);
 
     test.equal(myGraph.links()[2].arrowPointLeft(), false);
     test.equal(myGraph.links()[2].arrowPointRight(), false);
 
     test.equal(myGraph.links()[3].arrowPointLeft(), false);
     test.equal(myGraph.links()[3].arrowPointLeft(), false);
-    test.end();
 
     test.end();
 });

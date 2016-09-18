@@ -34,7 +34,7 @@ tape("Judge Link's arrow point to left, only if Link is one-way arrow.", functio
     test.equal(myGraph.links()[0].arrowPointRight(), false);
 
     test.equal(myGraph.links()[1].arrowPointLeft(), false);
-    test.equal(myGraph.links()[1].arrowPointRight(), false);
+    test.equal(myGraph.links()[1].arrowPointRight(), true);
 
     test.equal(myGraph.links()[2].arrowPointLeft(), false);
     test.equal(myGraph.links()[2].arrowPointRight(), false);

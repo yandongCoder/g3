@@ -9,24 +9,25 @@ tape("get Link's text center correctly", function(test){
     //horizontal
     var myGraph = g3.graph(svg)
         .nodes([{id: 1, x: 0, y: 0}, {id: 2, x: 100, y: 0}])
-        .links([{id: 1, src: 1, dst: 2, direction: 0, label: "a"}, {id: 2, src: 1, dst: 2, direction: 1}, {id: 3, src: 1, dst: 2, direction: 2}, {id: 4, src: 1, dst: 2, direction: 3}]);
+        .links([{id: 1, src: 1, dst: 2, direction: 0, label: "a"}, {id: 2, src: 1, dst: 2, direction: 1, label: "a"}, {id: 3, src: 1, dst: 2, direction: 2, label: "a"}, {id: 4, src: 1, dst: 2, direction: 3, label: "a"}]);
 
 
     test.equal(myGraph.links()[0].getTextCenter(), 46.7);
-    //test.equal(myGraph.links()[1].getTextCenter(), 31.7);
-    // test.deepEqual(myGraph.links()[2].getTextCoordination(), {Sx: 24, Sy: 0, Tx: 76, Ty: 0});
-    // test.deepEqual(myGraph.links()[3].getTextCoordination(), {Sx: 24, Sy: 0, Tx: 76, Ty: 0});
+    test.equal(myGraph.links()[1].getTextCenter(), 37.7);
+    test.equal(myGraph.links()[2].getTextCenter(), 22.7);
+    test.equal(myGraph.links()[3].getTextCenter(), 22.7);
 
 
     //vertical
-    myGraph.nodes([{id: 3, x: 100, y: 0, radius: 30}, {id: 4, x: 100, y: 100, radius: 50}])
-        .links([{id: 5, src: 3, dst: 4, direction: 0, width: 10}, {id: 6, src: 3, dst: 4, direction: 1, width: 10}, {id: 7, src: 3, dst: 4, direction: 2, width: 10}, {id: 8, src: 3, dst: 4, direction: 3, width: 10}]);
+    myGraph = g3.graph(svg)
+        .nodes([{id: 1, x: 0, y: 0}, {id: 2, x: 0, y: 100}])
+        .links([{id: 1, src: 1, dst: 2, direction: 0, label: "a"}, {id: 2, src: 1, dst: 2, direction: 1, label: "a"}, {id: 3, src: 1, dst: 2, direction: 2, label: "a"}, {id: 4, src: 1, dst: 2, direction: 3, label: "a"}]);
 
 
-    // test.deepEqual(myGraph.links()[4].getTextCoordination(), {Sx: 100, Sy: 0, Tx: 100, Ty: 100});
-    // test.deepEqual(myGraph.links()[5].getTextCoordination(), {Sx: 100, Sy: 60, Tx: 100, Ty: 20});
-    // test.deepEqual(myGraph.links()[6].getTextCoordination(), {Sx: 100, Sy: 60, Tx: 100, Ty: 20});
-    // test.deepEqual(myGraph.links()[7].getTextCoordination(), {Sx: 100, Sy: 60, Tx: 100, Ty: 20});
+    test.equal(myGraph.links()[0].getTextCenter(), 46.7);
+    test.equal(myGraph.links()[1].getTextCenter(), 37.7);
+    test.equal(myGraph.links()[2].getTextCenter(), 22.7);
+    test.equal(myGraph.links()[3].getTextCenter(), 22.7);
 
 
     test.end();
