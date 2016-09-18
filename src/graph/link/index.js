@@ -4,8 +4,6 @@ import getCoordination from "./getCoordination";
 import getTextCoordination from "./getTextCoordination";
 import getStartArrow from "./getStartArrow";
 import getEndArrow from "./getEndArrow";
-import arrowPointLeft from "./arrowPointLeft";
-import arrowPointRight from "./arrowPointRight";
 import getTextCenter from "./getTextCenter";
 import getLinkLabelTransform from "./getLinkLabelTransform";
 import transformToLink from "./transformToLink";
@@ -26,6 +24,7 @@ export default function Link(data, nodes, graph) {
     this.target = getNodeById(this.dst, nodes);
 }
 
+
 Link.prototype = {
     constructor: Link,
     hasST: hasST,
@@ -44,9 +43,7 @@ Link.prototype = {
     hasTargetArrow: function(){
         return this.direction === DIRECTION.FROM || this.direction === DIRECTION.DOUBLE;
     },
-    arrowPointLeft: arrowPointLeft,
-    arrowPointRight: arrowPointRight,
     getId: function () {
         return this.id;
-    },
+    }
 };

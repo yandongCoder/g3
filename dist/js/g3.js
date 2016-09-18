@@ -384,21 +384,8 @@
            return "";
    }
 
-   function arrowPointLeft () {
-       var coord = this.getTextCoordination();
-
-       return (coord.Sx < coord.Tx && !this.hasTargetArrow() && this.hasSourceArrow())
-           || ((coord.Sx > coord.Tx) && this.hasTargetArrow() && !this.hasSourceArrow());
-   }
-
-   function arrowPointRight () {
-       var coord = this.getTextCoordination();
-
-       return (coord.Sx <= coord.Tx && this.hasTargetArrow() && !this.hasSourceArrow())
-           || ((coord.Sx > coord.Tx) && !this.hasTargetArrow() && this.hasSourceArrow());
-   }
-
    function getTextCenter () {
+       var self = this;
        var coord = this.getTextCoordination();
 
        var x = Math.abs(coord.Tx - coord.Sx);
@@ -409,15 +396,13 @@
 
        var dx = z / 2 - charLength;
 
-       //console.log(z);
-       //console.log(dx);
+       return dx + textLeftOffset();
 
-       if (this.arrowPointRight()){
-           return dx + this.source.radius();
-       }else{
-           return dx;
+       function textLeftOffset(){
+           if(coord.Sx <= coord.Tx && self.hasTargetArrow() && !self.hasSourceArrow()) return self.source.radius();
+           else if((coord.Sx > coord.Tx) && !self.hasTargetArrow() && self.hasSourceArrow()) return self.target.radius();
+           else return 0;
        }
-
    }
 
    function getLinkLabelTransform (scaleFactor) {
@@ -469,6 +454,7 @@
        this.target = getNodeById(this.dst, nodes);
    }
 
+
    Link.prototype = {
        constructor: Link,
        hasST: hasST,
@@ -487,11 +473,9 @@
        hasTargetArrow: function(){
            return this.direction === DIRECTION.FROM || this.direction === DIRECTION.DOUBLE;
        },
-       arrowPointLeft: arrowPointLeft,
-       arrowPointRight: arrowPointRight,
        getId: function () {
            return this.id;
-       },
+       }
    };
 
    function addLink (obj) {

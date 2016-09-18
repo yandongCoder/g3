@@ -1,6 +1,7 @@
 import getStrLen from "../../utils/getStrLen";
 
 export default function () {
+    var self = this;
     var coord = this.getTextCoordination();
 
     var x = Math.abs(coord.Tx - coord.Sx);
@@ -11,13 +12,11 @@ export default function () {
 
     var dx = z / 2 - charLength;
 
-    //console.log(z);
-    //console.log(dx);
+    return dx + textLeftOffset();
 
-    if (this.arrowPointRight()){
-        return dx + this.source.radius();
-    }else{
-        return dx;
+    function textLeftOffset(){
+        if(coord.Sx <= coord.Tx && self.hasTargetArrow() && !self.hasSourceArrow()) return self.source.radius();
+        else if((coord.Sx > coord.Tx) && !self.hasTargetArrow() && self.hasSourceArrow()) return self.target.radius();
+        else return 0;
     }
-
 }
