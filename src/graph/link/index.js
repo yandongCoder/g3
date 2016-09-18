@@ -1,10 +1,9 @@
 import getNodeById from "../../utils/getNodeById";
 import hasST from "./hasST";
 import getCoordination from "./getCoordination";
-import getTextCoordination from "./getTextCoordination";
 import getStartArrow from "./getStartArrow";
 import getEndArrow from "./getEndArrow";
-import getTextCenter from "./getTextCenter";
+import getTextCenter from "./getTextOffset";
 import getLinkLabelTransform from "./getLinkLabelTransform";
 import transformToLink from "./transformToLink";
 import label from "./label";
@@ -30,7 +29,6 @@ Link.prototype = {
     hasST: hasST,
     transformToLink: transformToLink,
     getCoordination: getCoordination,
-    getTextCoordination: getTextCoordination,
     getStartArrow: getStartArrow,
     getEndArrow: getEndArrow,
     getTextCenter: getTextCenter,

@@ -2,7 +2,7 @@ import getStrLen from "../../utils/getStrLen";
 
 export default function () {
     var self = this;
-    var coord = this.getTextCoordination();
+    var coord = this.getCoordination(true);
 
     var x = Math.abs(coord.Tx - coord.Sx);
     var y = Math.abs(coord.Ty - coord.Sy);
