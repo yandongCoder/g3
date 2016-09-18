@@ -3,17 +3,20 @@ import getOffsetCoordinate from "../../utils/getOffsetCoordinate";
 //Link coordination is Node center's coordination or coordination where arrow placed, if any.
 export default function () {
 
-    var sourceR = this.source.radius();
-    var targetR = this.target.radius();
-    var arrowSize = this.width() * 3;
+    var sourceOffset = this.source.radius();
+    var targetOffset = this.target.radius();
+    var arrowLength = this.width() * 3;
 
-    var Sx = this.source.getX(),
+   var Sx = this.source.getX(),
         Sy = this.source.getY(),
         Tx = this.target.getX(),
         Ty = this.target.getY();
 
 
-    var offset = getOffsetCoordinate(Sx, Sy, Tx, Ty, sourceR + arrowSize, targetR + arrowSize);
+    if(this.hasSourceArrow()) sourceOffset += arrowLength;
+    if(this.hasTargetArrow()) targetOffset += arrowLength;
+
+    var offset = getOffsetCoordinate(Sx, Sy, Tx, Ty, sourceOffset, targetOffset);
 
 
     if(this.hasSourceArrow() || this.hasTargetArrow()){

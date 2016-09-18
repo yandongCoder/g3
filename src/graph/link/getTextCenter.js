@@ -11,6 +11,9 @@ export default function () {
 
     var dx = z / 2 - charLength;
 
+    //console.log(z);
+    //console.log(dx);
+
     if (this.arrowPointRight()){
         return dx + this.source.radius();
     }else{
