@@ -4,6 +4,7 @@ import toArray from "./toArray";
 import getStrLen from "./getStrLen";
 import getOffsetCoordinate from "./getOffsetCoordinate";
 import getAbsUrl from "./getAbsUrl";
+import parseHTML from "./parseHTML";
 
 var utils = {
     filterBy: filterBy,
@@ -11,7 +12,8 @@ var utils = {
     getAbsUrl: getAbsUrl,
     toArray: toArray,
     getStrLen: getStrLen,
-    getOffsetCoordinate: getOffsetCoordinate
+    getOffsetCoordinate: getOffsetCoordinate,
+    parseHTML: parseHTML
 };
 
 export default utils;

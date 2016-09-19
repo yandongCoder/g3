@@ -884,13 +884,20 @@
         return new Graph(selector);
     }
 
+    function parseHTML (str) {
+        var tmp = document.implementation.createHTMLDocument();
+        tmp.body.innerHTML = str;
+        return tmp.body.children[0];
+    }
+
     var utils = {
         filterBy: filterBy,
         getIds: getIds,
         getAbsUrl: getAbsUrl,
         toArray: toArray,
         getStrLen: getStrLen,
-        getOffsetCoordinate: getOffsetCoordinate
+        getOffsetCoordinate: getOffsetCoordinate,
+        parseHTML: parseHTML
     };
 
     exports.graph = index;
