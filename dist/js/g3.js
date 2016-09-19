@@ -616,8 +616,8 @@
         this._hasInit = true;
     }
 
-    function getAbsUrl () {
-        return window.location.href.split('#')[0];
+    function getAbsUrl (url) {
+        return (url || window.location.href).split('#')[0];
     }
 
     function drawNodes () {
@@ -887,6 +887,7 @@
     var utils = {
         filterBy: filterBy,
         getIds: getIds,
+        getAbsUrl: getAbsUrl,
         toArray: toArray,
         getStrLen: getStrLen,
         getOffsetCoordinate: getOffsetCoordinate

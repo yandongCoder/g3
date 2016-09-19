@@ -1,3 +1,3 @@
-export default function () {
-    return window.location.href.split('#')[0];
+export default function (url) {
+    return (url || window.location.href).split('#')[0];
 }

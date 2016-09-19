@@ -1,7 +1,7 @@
 export default function () {
     var self = this;
     var brush = d3.brush()
-        .extent([[0, 0], [500, 500]])
+        .extent([[0, 0], [1500, 500]])
         .on('start', function () {
             if (!d3.event.selection) return; // Ignore empty selections.
             
