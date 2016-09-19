@@ -276,7 +276,7 @@
         });
     }
 
-    function getNodeById (id, Nodes) {
+    function filterById (id, Nodes) {
         return Nodes.filter(function(d){
             return d.id === id;
         })[0];
@@ -429,8 +429,8 @@
         this.dst = data.dst;
         this.direction = data.direction === undefined? 1: data.direction;//0: none, 1: from, 2: to, 3 double
 
-        this.source = getNodeById(this.src, nodes);
-        this.target = getNodeById(this.dst, nodes);
+        this.source = filterById(this.src, nodes);
+        this.target = filterById(this.dst, nodes);
     }
 
     Link.prototype = {
@@ -892,6 +892,7 @@
 
     var utils = {
         filterBy: filterBy,
+        filterById: filterById,
         getIds: getIds,
         getAbsUrl: getAbsUrl,
         toArray: toArray,

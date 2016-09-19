@@ -1,4 +1,4 @@
-import getNodeById from "../../utils/getNodeById";
+import getNodeById from "../../utils/filterById";
 import hasST from "./hasST";
 import getCoordination from "./getCoordination";
 import getStartArrow from "./getStartArrow";
