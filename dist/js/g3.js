@@ -34,6 +34,7 @@
             this._init();
             this._draw();
         //}.bind(this),0);
+            //console.log('render');
 
             return this;
 
@@ -125,7 +126,8 @@
         if(!arguments.length) return this._selected;
 
         this._selected = selected;
-        d3.select(this._element).classed("selected", selected);
+
+        this.graph.render();
 
         return this;
     }
@@ -137,6 +139,8 @@
     function nudge (nudgeX, nudgeY) {
         this.x += nudgeX;
         this.y += nudgeY;
+        this.graph.render();
+        return this;
     }
 
     function color (color) {
@@ -158,7 +162,7 @@
     }
 
     function label (label) {
-        if(!arguments.length) return this._label || "No label";
+        if(!arguments.length) return this._label || "";
 
         this._label = label;
         this.graph.render();
@@ -183,7 +187,7 @@
         this.y = data.y;
         this._radius = data.radius || graph._radius;
         this._color = data.color;
-        this._selected = false; //indicate whether node is select
+        this._selected = data.selected || false; //indicate whether node is select
     }
 
     Node.prototype = {
@@ -529,7 +533,7 @@
     function Brush () {
         var self = this;
         var brush = d3.brush()
-            .extent([[0, 0], [500, 500]])
+            .extent([[0, 0], [1500, 500]])
             .on('start', function () {
                 if (!d3.event.selection) return; // Ignore empty selections.
                 
@@ -572,7 +576,6 @@
             })
             .on("drag", function (Node) {
                 Node.nudge(d3.event.dx, d3.event.dy);
-                self.render();
             }).on("end", function (Node) {
 
             });
@@ -624,6 +627,7 @@
         var g = nodes.enter().append('g')
             .each(function(Node){ Node._element = this })//reference element to Node
             .classed('node', true)
+            .classed("selected", function(Node){return Node.selected()})
             .call(this.dragNode);
 
         //添加矩形

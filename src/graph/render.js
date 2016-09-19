@@ -4,6 +4,7 @@ export default function () {
         this._init();
         this._draw();
     //}.bind(this),0);
+        //console.log('render');
 
         return this;
 

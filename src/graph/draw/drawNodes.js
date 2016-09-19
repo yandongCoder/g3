@@ -7,6 +7,7 @@ export default function () {
     var g = nodes.enter().append('g')
         .each(function(Node){ Node._element = this })//reference element to Node
         .classed('node', true)
+        .classed("selected", function(Node){return Node.selected()})
         .call(this.dragNode);
 
     //添加矩形

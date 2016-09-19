@@ -6,7 +6,6 @@ export default function () {
         })
         .on("drag", function (Node) {
             Node.nudge(d3.event.dx, d3.event.dy);
-            self.render();
         }).on("end", function (Node) {
 
         });

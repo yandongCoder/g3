@@ -22,7 +22,7 @@
 <script src="../node_modules/jquery/dist/jquery.min.js"></script>
 <script src="../dist/js/g3.js"></script>
 <script>
-    var nodes = [{id: 1, label: "A", x: 0, y: 0, radius: 30}, {id: 2, label: "A", x: 100, y: 0, radius: 20},
+    var nodes = [{id: 1, label: "A", x: 0, y: 0, radius: 30, color: "red"}, {id: 2, label: "A", x: 100, y: 0, radius: 20},
         {id: 3, label: "C", x: 0, y: 100, radius: 30}, {id: 4, label: "D", x: 100, y: 100, radius: 20},
         {id: 5, label: "E", x: 0, y: 200, radius: 30}, {id: 6, label: "F", x: 100, y: 200, radius: 20},
         {id: 7, label: "X", x: 0, y: 300, radius: 30}, {id: 8, label: "Y", x: 100, y: 300, radius: 20}
@@ -46,13 +46,13 @@
         myGraph.links(links);
         //myGraph.nodes({id: 7, label: "G", x: 80, y:170});
         //myGraph.links({id: 99, label: "A->D", src: 2, dst: 4,direction: 0});
-
+        console.dir(document.querySelector(".nodes").querySelectorAll(".node")[0].querySelector('circle').getAttribute('r'));
         //myGraph.nodes()[0].color("#442233").label("AAA");
         //graph.n2l(4);
-        $.getJSON('http://localhost/magneto_api/g3.php/nodes')
-                .then(function(data){
-                    myGraph.nodes(data);
-                });
+//        $.getJSON('http://localhost/magneto_api/g3.php/nodes')
+//                .then(function(data){
+//                    myGraph.nodes(data);
+//                });
     },500);
 
 //    setTimeout(function(){
