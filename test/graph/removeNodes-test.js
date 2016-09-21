@@ -40,6 +40,6 @@ tape("remove node by Node or NodeId", function(test){
     test.end();
 
     function getNodeLenById (id){
-        return myGraph.nodes().filter(function(Node){ return Node.getId() === id }).length;
+        return myGraph.nodes().filter(function(Node){ return Node.id === id }).length;
     }
 });

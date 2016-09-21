@@ -2,7 +2,7 @@ var tape = require("tape"),
     jsdom = require("jsdom"),
     g3 = require("../../dist/js/g3");
 
-tape("get nodes by id filter", function(test){
+tape("get links by id filter", function(test){
     var document = jsdom.jsdom('<svg id="graph"></svg>');
     var svg = document.querySelector("#graph");
 

@@ -41,6 +41,6 @@ tape("remove link by Link or LinkId", function(test){
     test.end();
 
     function getLinkLenById (id){
-        return myGraph.links().filter(function(Link){ return Link.getId() === id }).length;
+        return myGraph.links().filter(function(Link){ return Link.id === id }).length;
     }
 });

@@ -1,5 +1,5 @@
-export default function (link) {
-    var ids = this._links.map(function(d){return d.id});
+export default function (obj) {
+    var ids = this._links.map(function(Link){return Link.id});
 
-    return ids.indexOf(link.id) !== -1;
+    return ids.indexOf(obj.id) !== -1;
 }
