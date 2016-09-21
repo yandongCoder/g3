@@ -7,10 +7,13 @@ export default function () {
     homoLinks.forEach(function(Link){
         Link._merged = true;
     });
-    
-   this.graph.addLink(deriveLinkFromLinks(homoLinks));
+
+    var newLink = deriveLinkFromLinks(homoLinks);
+    newLink.mergedBy = homoLinks;
+
+    this.graph.addLink(newLink);
 
     this.graph.render();
-    
+
     return this;
 }
