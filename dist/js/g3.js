@@ -101,7 +101,7 @@
 
     function getRenderedNodes () {
         return this.getNodes(function(Node){
-            return !Node._transformed;
+            return !Node.transformed();
         });
     }
 
@@ -124,7 +124,6 @@
 
     function selected (selected) {
         if(!arguments.length) return this._selected;
-
         this._selected = selected;
 
         this.graph.render();
@@ -132,8 +131,12 @@
         return this;
     }
 
-    function transformToLink () {
-        this._transformed = true;
+    function transformed (transformed) {
+        if(!arguments.length) return this._transformed || false;
+
+        this._transformed = transformed;
+        
+        return this;
     }
 
     function nudge (nudgeX, nudgeY) {
@@ -178,6 +181,30 @@
         return this.y;
     }
 
+    function NtoL () {
+        //var contractedLinks = this.getContractLinksOfNode(Node);
+        //
+        // relatedLinks.forEach(function(Link){
+        //     Node.transformed(true);
+        //     Link.transformed(true);
+        // });
+        //
+        // this.links(this.newLinkTransformedBy(Link, Node, Link));
+
+        this.graph.render();
+    }
+
+    function getConnectedLinks () {
+        return this.graph._links.filter(function (Link) {
+            return  (Link.source === this) || (Link.target === this);
+        }, this);
+    }
+
+    function getContractedLinks (Node) {
+        var connectedLinks = this.getConnectedLinks();
+        return [];
+    }
+
     //data: data obj, graph: graphInstance
     function Node(data, graph) {
         this.graph = graph;
@@ -190,14 +217,12 @@
         this._selected = data.selected || false; //indicate whether node is select
     }
 
+
     Node.prototype = {
         constructor: Node,
         selected: selected,
-        transformToLink: transformToLink,
+        transformed: transformed,
         nudge: nudge,
-        getId: function () {
-            return this.id;
-        },
         getX: getX,
         getY: getY,
         label: label,
@@ -205,8 +230,10 @@
             return getStrLen(this.label()) * 9;
         },
         color: color,
-        radius: radius
-
+        radius: radius,
+        NtoL: NtoL,
+        getConnectedLinks: getConnectedLinks,
+        getContractedLinks: getContractedLinks
     };
 
     function addNode (obj) {
@@ -214,19 +241,17 @@
         if(!this.hasNode(node)) this._nodes.push(node);
     }
 
-    function hasNode (node) {
-        var ids = this._nodes.map(function(d){return d.id});
+    function hasNode (obj) {
+        var ids = this._nodes.map(function(Node){return Node.id});
 
-        return ids.indexOf(node.id) !== -1;
+        return ids.indexOf(obj.id) !== -1;
     }
 
     //nodes could be: Node, [Node], Node id string, Node id array of string
     function removeNodes (nodes) {
-
-        //remove links first
-        this._removeLinksByNodes(nodes);
-
         this.getNodes(nodes).forEach(function(Node){
+            //remove links first
+            this._removeLinksOfNode(Node);
             this._nodes.splice(this._nodes.indexOf(Node), 1);
         }, this);
 
@@ -264,21 +289,13 @@
 
     function getRenderedLinks () {
         return this.getLinks(function(Link){
-           return !Link._transformed;
-        });
-    }
-
-    //nodes could be: Node, [Node], Node id string, Node id array of string
-    function getLinksByNodes (nodes) {
-        var removedNodes = this.getNodes(nodes);
-        return this._links.filter(function (Link) {
-            return  (removedNodes.indexOf(Link.source) !== -1) || (removedNodes.indexOf(Link.target) !== -1);
+           return !Link.transformed();
         });
     }
 
     function filterById (id, Nodes) {
-        return Nodes.filter(function(d){
-            return d.id === id;
+        return Nodes.filter(function(Node){
+            return Node.id === id;
         })[0];
     }
 
@@ -398,12 +415,16 @@
         }
     }
 
-    function transformToLink$1 () {
-        this._transformed = true;
+    function transformed$1 (transformed) {
+        if(!arguments.length) return this._transformed || false;
+
+        this._transformed = transformed;
+
+        return this;
     }
 
     function label$1 (label) {
-        if(!arguments.length) return this._label || "";
+        if(!arguments.length) return this._label;
 
         this._label = label;
         this.graph.render();
@@ -420,11 +441,258 @@
         return this;
     }
 
+    function color$1 (color) {
+        if(!arguments.length) return this._color;
+
+        this._color = color;
+        this.graph.render();
+
+        return this;
+    }
+
+    // Real Life Color Mixer by Camilo Tapia (github.com/Camme)
+    // Emulate color mixing as if you where mixing real life colors, ie substractive colors
+    //
+    // Usage:
+    //
+    // RLColorMixer.mixColorS(arrayOfColors);
+    // where arrayOFColos is an array of hex rgb colors ['#ff0000', '#00ff00'] or an array with the amoutn of each color
+    // [{color: '#ff0000', parts: 10}, {color: '#00ff00', parts: 2}].
+    // or a mizture of the two.
+    //
+    // You can also snap to the nearest color in an array of hex rgb colors:
+    // RLColorMixer.findNearest(orgColorinHex, listOfColors);
+    //
+    // Example:
+    // RLColorMixer.findNearest('#fff000', ['#ff0000', '#ff0f00']);
+    //
+
+    var defaults = { result: "ryb", hex: true };
+
+    function mix() {
+
+
+        var options = JSON.parse(JSON.stringify(defaults));
+
+        // check if the last arguments is an options object
+        var lastObject = arguments[arguments.length - 1];
+        if (typeof lastObject == "object" && lastObject.constructor != Array) {
+            var customOptions = lastObject;
+            options.result = customOptions.result || options.result;
+            options.hex = typeof customOptions.hex != "undefined" ? customOptions.hex : options.hex;
+            arguments.length--;
+        }
+
+        var colors = [];
+
+        // check if we got an array, but not if the array is just a representation of hex
+        if (arguments[0].constructor == Array && typeof arguments[0][0] != "number") {
+            colors = arguments[0];
+        } else {
+            colors = arguments;
+        }
+
+        //normalize, ie make sure all colors are in the same format
+        var normalized = [];
+        for(var i = 0, ii = colors.length; i < ii; i++){
+            var color = colors[i];
+            if (typeof color == "string") {
+                color = hexToArray(color);
+            }
+            normalized.push(color);
+        }
+
+        var newColor = mixRYB(normalized);
+
+        if (options.result == "rgb") {
+            newColor = rybToRgb(newColor);
+        }
+
+        if (options.hex) {
+            newColor = arrayToHex(newColor);
+        }
+
+        return newColor;
+
+    }
+
+    function mixRYB(colors) {
+
+        var newR = 0;
+        var newY = 0;
+        var newB = 0;
+
+        var total = 0;
+
+        var maxR = 0;
+        var maxY = 0;
+        var maxB = 0;
+
+        for(var i = 0, ii = colors.length; i < ii; i++){
+
+            var color = colors[i];
+
+            newR += color[0];
+            newY += color[1];
+            newB += color[2];
+
+        }
+
+        // Calculate the max of all sums for each color
+        var max = Math.max(newR, newY, newB);
+
+        // Now calculate each channel as a percentage of the max
+        var totalR = Math.floor(newR / max * 255);
+        var totalY = Math.floor(newY / max * 255);
+        var totalB = Math.floor(newB / max * 255);
+
+        return [totalR, totalY, totalB];
+
+    }
+
+    function hexToArray(hex) {
+        var hex = hex.replace("#", '');
+        var r = parseInt(hex.substr(0, 2), 16);
+        var g = parseInt(hex.substr(2, 2), 16);
+        var b = parseInt(hex.substr(4, 2), 16);
+        return [r, g, b];
+    }
+
+
+    function arrayToHex(rgbArray) {
+        var rHex = Math.round(rgbArray[0]).toString(16); rHex = rHex.length == 1 ? "0" + rHex : rHex;
+        var gHex = Math.round(rgbArray[1]).toString(16); gHex = gHex.length == 1 ? "0" + gHex : gHex;
+        var bHex = Math.round(rgbArray[2]).toString(16); bHex = bHex.length == 1 ? "0" + bHex : bHex;
+        return rHex + gHex + bHex;;
+    }
+
+    function cubicInt(t, A, B){
+        var weight = t*t*(3-2*t);
+        return A + weight*(B-A);
+    }
+
+    function getR(iR, iY, iB) {
+        // red
+        var x0 = cubicInt(iB, 1.0, 0.163);
+        var x1 = cubicInt(iB, 1.0, 0.0);
+        var x2 = cubicInt(iB, 1.0, 0.5);
+        var x3 = cubicInt(iB, 1.0, 0.2);
+        var y0 = cubicInt(iY, x0, x1);
+        var y1 = cubicInt(iY, x2, x3);
+        return Math.ceil (255 * cubicInt(iR, y0, y1));
+    }
+
+    function getG(iR, iY, iB) {
+        // green
+        var x0 = cubicInt(iB, 1.0, 0.373);
+        var x1 = cubicInt(iB, 1.0, 0.66);
+        var x2 = cubicInt(iB, 0.0, 0.0);
+        var x3 = cubicInt(iB, 0.5, 0.094);
+        var y0 = cubicInt(iY, x0, x1);
+        var y1 = cubicInt(iY, x2, x3);
+        return Math.ceil (255 * cubicInt(iR, y0, y1));
+    }
+
+    function getB(iR, iY, iB) {
+        // blue
+        var x0 = cubicInt(iB, 1.0, 0.6);
+        var x1 = cubicInt(iB, 0.0, 0.2);
+        var x2 = cubicInt(iB, 0.0, 0.5);
+        var x3 = cubicInt(iB, 0.0, 0.0);
+        var y0 = cubicInt(iY, x0, x1);
+        var y1 = cubicInt(iY, x2, x3);
+        return Math.ceil (255 * cubicInt(iR, y0, y1));
+    }
+
+    function rybToRgb(color, options){
+
+        if (typeof color == "string") {
+            color = hexToArray(color);
+        }
+
+        var R = color[0] / 255;
+        var Y = color[1] / 255;
+        var B = color[2] / 255;
+        var R1 = getR(R,Y,B) ;
+        var G1 = getG(R,Y,B) ;
+        var B1 = getB(R,Y,B) ;
+        var ret = [ R1, G1, B1 ];
+
+        if (options && options.hex == true) {
+            ret = arrayToHex(ret);
+        }
+
+        return ret;
+    }
+
+    //  colorMixer.mix = mix;
+    //  colorMixer.rybToRgb = rybToRgb;
+    //  colorMixer.findNearest = findNearest;
+
+    var colorMixer = {
+        mix: mix
+    };
+
+    function deriveLinkFromLinks (Links) {
+
+        var obj = {};
+        obj.id = "derived:" + concat("id");
+        obj.label = concat("label");
+        obj.width = average('width');
+        obj.color = "#"+  colorMixer.mix(Links.map(function(Link){return Link.color()}));
+        obj.direction = direction();
+        
+        function concat(key){
+            return Links.map(function(Link){
+                return Link[key] instanceof Function ? Link[key]() : Link[key];
+            }).join("&");
+        }
+
+        function average(key){
+            return Links.reduce(function(p, Link){
+                return p + (Link[key] instanceof Function ? Link[key]() : Link[key]);
+            }, 0) / Links.length;
+        }
+
+        function direction(){
+            return Links.reduce(function(p, Link){
+                if(p === DIRECTION.NONE) return Link.direction;
+                if(Link.direction === DIRECTION.NONE) return p;
+                if(p === DIRECTION.DOUBLE || Link.direction === DIRECTION.DOUBLE) return DIRECTION.DOUBLE;
+                if((p === DIRECTION.FROM && Link.direction === DIRECTION.TO) || (p === DIRECTION.TO && Link.direction === DIRECTION.FROM)) return DIRECTION.DOUBLE;
+                if(p === Link.direction) return p;
+            }, DIRECTION.NONE);
+        }
+        return obj;
+    }
+
+    function merge () {
+        this._merged = true;
+
+        var homoLinks = this.getHomoLinks();
+
+        homoLinks.forEach(function(Link){
+            Link._merged = true;
+        });
+        
+    //    this.graph.addLink(deriveLinkFromLinks(homoLinks));
+
+        return this;
+    }
+
+    function getHomoLinks () {
+        return this.graph._links.filter(function(Link){
+            return (Link.source === this.source || Link.source === this.target) &&
+                    (Link.target === this.source || Link.target === this.target);
+        }, this) || [];
+    }
+
     function Link(data, nodes, graph) {
         this.graph = graph;
         this.id = data.id;
-        this._label = data.label;
-        this._width = data.width || graph._linkWidth;
+        this._label = data.label || "";
+        this._width = data.width || graph._linkWidth || 3;
+        this._color = data.color || "#a1a1a1";
         this.src = data.src;
         this.dst = data.dst;
         this.direction = data.direction === undefined? 1: data.direction;//0: none, 1: from, 2: to, 3 double
@@ -433,10 +701,11 @@
         this.target = filterById(this.dst, nodes);
     }
 
+
     Link.prototype = {
         constructor: Link,
         hasST: hasST,
-        transformToLink: transformToLink$1,
+        transformed: transformed$1,
         getCoordination: getCoordination,
         getStartArrow: getStartArrow,
         getEndArrow: getEndArrow,
@@ -444,14 +713,14 @@
         getLinkLabelTransform: getLinkLabelTransform,
         label: label$1,
         width: width$1,
+        merge: merge,
+        color: color$1,
+        getHomoLinks: getHomoLinks,
         hasSourceArrow: function(){
             return this.direction === DIRECTION.TO || this.direction === DIRECTION.DOUBLE;
         },
         hasTargetArrow: function(){
             return this.direction === DIRECTION.FROM || this.direction === DIRECTION.DOUBLE;
-        },
-        getId: function () {
-            return this.id;
         }
     };
 
@@ -460,10 +729,10 @@
         if(!this.hasLink(link) && link.hasST()) this._links.push(link);
     }
 
-    function hasLink (link) {
-        var ids = this._links.map(function(d){return d.id});
+    function hasLink (obj) {
+        var ids = this._links.map(function(Link){return Link.id});
 
-        return ids.indexOf(link.id) !== -1;
+        return ids.indexOf(obj.id) !== -1;
     }
 
     //links could be: Link, [Link], Link id string, Link id array of string
@@ -475,12 +744,10 @@
         this.render();
     }
 
-    //nodes could be: Node, [Node], Node id string, Node id array of string
-    function removeLinksByNodes (nodes) {
-        this.getLinksByNodes(nodes).map(function (Link) {
+    function removeLinksOfNode (Node) {
+        Node.getConnectedLinks().map(function (Link) {
             this._links.splice(this._links.indexOf(Link), 1);
         }, this);
-
     }
 
     function clearLinks () {
@@ -622,12 +889,11 @@
 
     function drawNodes () {
         var self = this;
-        var nodes = this._getNodesSelection().data(this.getRenderedNodes(), function (d) { return d.id;});
+        var nodes = this._getNodesSelection().data(this.getRenderedNodes(), function (Node) { return Node.id;});
 
         var g = nodes.enter().append('g')
             .each(function(Node){ Node._element = this })//reference element to Node
             .classed('node', true)
-            .classed("selected", function(Node){return Node.selected()})
             .call(this.dragNode);
 
         //添加矩形
@@ -641,7 +907,8 @@
         //Enter and Update
         var all = this._getNodesSelection();
 
-        all.attr("transform", function (Node) { return "translate(" + Node.getX() + "," + Node.getY() + ")";});
+        all.attr("transform", function (Node) { return "translate(" + Node.getX() + "," + Node.getY() + ")";})
+            .classed("selected", function(Node){return Node.selected()});
 
         all.select('circle')
             .attr("r", function(Node){ return Node.radius()})
@@ -664,12 +931,12 @@
 
     function drawLinks () {
         var self = this;
-        var links = this._getLinksSelection().data(this.getRenderedLinks(), function (Link) { return Link.getId() });
+        var links = this._getLinksSelection().data(this.getRenderedLinks(), function (Link) { return Link.id });
 
         links.enter()
             .append('path')
             .classed('link-path', true)
-            .attr('id', function(Link){ return "link-path" + Link.getId()});
+            .attr('id', function(Link){ return "link-path" + Link.id});
 
         var all  = this._getLinksSelection();
 
@@ -677,7 +944,8 @@
             .attr('d', function (Link) { var c = Link.getCoordination();  return 'M ' + c.Sx + ' ' + c.Sy + ' L ' + c.Tx + ' ' + c.Ty; })
             .style('marker-start', function (Link) { return Link.getStartArrow(); })
             .style('marker-end', function (Link) { return Link.getEndArrow(); })
-            .style('stroke-width', function(Link){ return Link.width()});
+            .style('stroke-width', function(Link){ return Link.width(); })
+            .style('stroke', function(Link){ return Link.color(); });
 
 
         links.exit().remove();
@@ -685,16 +953,16 @@
 
 
         //绑定linkData数据到linkLabels
-        var linkLabels = this._getLinksLabelSelection().data(this._links, function (Link) { return Link.getId(); });
+        var linkLabels = this._getLinksLabelSelection().data(this._links, function (Link) { return Link.id; });
 
         //按需增加新的LinkLabels(当linksData data > linkPaths element)
         linkLabels.enter().append('text')
             .style("pointer-events", "none")
             .classed('link-label', true)
-            .attr('id', function (Link) { return 'link-label' + Link.getId(); })
+            .attr('id', function (Link) { return 'link-label' + Link.id; })
             //.attr('text-anchor', 'middle')
             .append('textPath')
-            .attr('xlink:href', function (Link) {  return getAbsUrl() + '#link-path' + Link.getId(); })
+            .attr('xlink:href', function (Link) {  return getAbsUrl() + '#link-path' + Link.id; })
             //.attr('startOffset', '50%')
             .style("pointer-events", "none");
 
@@ -782,17 +1050,9 @@
         }
     }
 
-    //nodes could be: Node, [Node], Node id string, Node id array of string
-    function n2l (nodes) {
-        this.getNodes(nodes).forEach(function (Node) {
-            Node.transformToLink();
-
-            this.getLinksByNodes(Node).forEach(function(Link){
-               //Link.transformToLink();
-            });
-        }, this);
-
-        this.render();
+    // N Links
+    function newLinkTransformedBy (Node, links) {
+        
     }
 
     function Graph(selector, config) {
@@ -825,16 +1085,15 @@
         removeNodes: removeNodes,
         clearNodes: clearNodes,
         hasNode: hasNode,
-        n2l: n2l,
         links: links,
         getLinks: getLinks,
         getRenderedLinks: getRenderedLinks,
-        getLinksByNodes: getLinksByNodes,
         addLink: addLink,
         hasLink: hasLink,
         removeLinks: removeLinks,
-        _removeLinksByNodes: removeLinksByNodes,
+        _removeLinksOfNode: removeLinksOfNode,
         clearLinks: clearLinks,
+        newLinkTransformedBy: newLinkTransformedBy,
         transform: transform,
         scaleTo: scaleTo,
         translateBy: translateBy,
@@ -898,7 +1157,8 @@
         toArray: toArray,
         getStrLen: getStrLen,
         getOffsetCoordinate: getOffsetCoordinate,
-        parseHTML: parseHTML
+        parseHTML: parseHTML,
+        deriveLinkFromLinks: deriveLinkFromLinks
     };
 
     exports.graph = index;

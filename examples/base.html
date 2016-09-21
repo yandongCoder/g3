@@ -22,15 +22,16 @@
 <script src="../node_modules/jquery/dist/jquery.min.js"></script>
 <script src="../dist/js/g3.js"></script>
 <script>
-    var nodes = [{id: 1, label: "A", x: 0, y: 0, radius: 30, color: "red"}, {id: 2, label: "A", x: 100, y: 0, radius: 20},
+    var nodes = [{id: 1, label: "A", x: 0, y: 0, radius: 30, color: "#547895"}, {id: 2, label: "A", x: 100, y: 0, radius: 20},
         {id: 3, label: "C", x: 0, y: 100, radius: 30}, {id: 4, label: "D", x: 100, y: 100, radius: 20},
         {id: 5, label: "E", x: 0, y: 200, radius: 30}, {id: 6, label: "F", x: 100, y: 200, radius: 20},
         {id: 7, label: "X", x: 0, y: 300, radius: 30}, {id: 8, label: "Y", x: 100, y: 300, radius: 20}
     ];
-    var links = [{id: 1, label: "A订单", src: 1, dst: 2,direction: 1, width: 5},
-        {id: 2, label: "C", src: 3, dst: 4,direction: 2, width: 5},
-        {id: 3, label: "E", src: 5, dst: 6,direction: 3, width: 5},
-        {id: 4, label: "X", src: 7, dst: 8,direction: 0, width: 5}
+    var links = [{id: 1, label: "A", src: 1, dst: 2,direction: 1, width: 5},
+        {id: 2, label: "C", src: 1, dst: 3,direction: 2, width: 5},
+        {id: 3, label: "E,F", src: 5, dst: 6,direction: 3, width: 5},
+        {id: 4, label: "E,F", src: 6, dst: 5},
+        {id: 5, label: "X", src: 7, dst: 8,direction: 0, width: 5, color: 'blue'}
 
     ];
 
@@ -44,9 +45,11 @@
 
     setTimeout(function(){
         myGraph.links(links);
+        g3.utils.deriveLinkFromLinks(myGraph.links());
+        //myGraph.removeNodes(nodes[4]);
         //myGraph.nodes({id: 7, label: "G", x: 80, y:170});
         //myGraph.links({id: 99, label: "A->D", src: 2, dst: 4,direction: 0});
-        console.dir(document.querySelector(".nodes").querySelectorAll(".node")[0].querySelector('circle').getAttribute('r'));
+        //myGraph.nodes()[0].NtoL(true);
         //myGraph.nodes()[0].color("#442233").label("AAA");
         //graph.n2l(4);
 //        $.getJSON('http://localhost/magneto_api/g3.php/nodes')
