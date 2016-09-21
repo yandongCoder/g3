@@ -14,6 +14,8 @@ tape("derive new Link from received Links", function(test){
     var linkObj = g3.utils.deriveLinkFromLinks(myGraph.links());
     test.equal(linkObj.id, "derived:1&2");
     test.equal(linkObj.label, "L1&L2");
+    test.equal(linkObj.src, myGraph.links()[0].src);
+    test.equal(linkObj.dst, myGraph.links()[0].dst);
     test.equal(linkObj.width, 4);
     test.equal(linkObj.color, "#ffff00");
     test.equal(linkObj.direction, 3);

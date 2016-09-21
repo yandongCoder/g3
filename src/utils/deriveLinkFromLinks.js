@@ -6,6 +6,8 @@ export default function (Links) {
     obj.id = "derived:" + concat("id");
     obj.label = concat("label");
     obj.width = average('width');
+    obj.src = Links[0].src;
+    obj.dst = Links[0].dst;
     obj.color = "#"+  colorMixer.mix(Links.map(function(Link){return Link.color()}));
     obj.direction = direction();
     
