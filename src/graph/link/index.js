@@ -11,7 +11,9 @@ import width from "./width";
 import color from "./color";
 import direction from "./direction";
 import DIRECTION from "./DIRECTION-CONSTANT";
+import remove from "./remove";
 import merge from "./merge";
+import unmerge from "./unmerge";
 import getHomoLinks from "./getHomoLinks";
 
 export default function Link(data, nodes, graph) {
@@ -26,6 +28,8 @@ export default function Link(data, nodes, graph) {
 
     this.source = getNodeById(this.src, nodes);
     this.target = getNodeById(this.dst, nodes);
+
+    this.mergedBy = data.mergedBy;
 }
 
 
@@ -40,7 +44,9 @@ Link.prototype = {
     getLinkLabelTransform: getLinkLabelTransform,
     label: label,
     width: width,
+    remove: remove,
     merge: merge,
+    unmerge: unmerge,
     color: color,
     direction: direction,
     getHomoLinks: getHomoLinks,
