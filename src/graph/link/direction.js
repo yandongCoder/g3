@@ -1,8 +1,8 @@
-const DIRECTION = {
-    NONE: 0,
-    FROM: 1,
-    TO: 2,
-    DOUBLE: 3
-};
+export default function (direction) {
+    if(!arguments.length) return this._direction;
 
-export default DIRECTION;
+    this._direction = direction;
+    this.graph.render();
+
+    return this;
+}
