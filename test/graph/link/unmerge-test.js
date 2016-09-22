@@ -51,14 +51,9 @@ tape("Unmerge a Link merged by another merged Link, so unmerge again", function(
         .links([{id:1, src: 1, dst: 2}, {id:2, src: 1, dst: 2}, {id:3, src: 2, dst: 1}, {id:4, src: 3, dst: 2}]);
 
     myGraph.links()[0].merge();
-
     myGraph.links({id: 5, src: 1, dst: 2});
     myGraph.links()[4].merge();
 
-    test.equal(myGraph.links().length, 7);
-    test.equal(myGraph.getRenderedLinks().length, 2);
-    test.deepEqual(myGraph.links()[6].mergedBy, [myGraph.links()[4], myGraph.links()[5]]);
-    test.deepEqual(myGraph.links()[6].mergedBy[0], myGraph.links()[4]);
 
     myGraph.links()[6].unmerge();
     test.equal(myGraph.links().length, 6);
@@ -67,6 +62,8 @@ tape("Unmerge a Link merged by another merged Link, so unmerge again", function(
     myGraph.links()[4].unmerge();
     test.equal(myGraph.links().length, 5);
     test.equal(myGraph.getRenderedLinks().length, 5);
+
+    test.equal(myGraph.getLinks(function(Link){return Link.groupBy}).length, 0);
 
     test.end();
 
