@@ -14,10 +14,11 @@ import DIRECTION from "./DIRECTION-CONSTANT";
 import remove from "./remove";
 import merged from "./merged";
 import merge from "./merge";
+import flattenMerge from "./flattenMerge";
 import unmerge from "./unmerge";
 import getHomoLinks from "./getHomoLinks";
 
-export default function Link(data, nodes, graph) {
+export default function Link(data, graph) {
     this.graph = graph;
     this.id = data.id;
     this._label = data.label || "";
@@ -27,10 +28,11 @@ export default function Link(data, nodes, graph) {
     this.dst = data.dst;
     this._direction = data.direction === undefined? 1: data.direction;//0: none, 1: from, 2: to, 3 double
 
-    this.source = getNodeById(this.src, nodes);
-    this.target = getNodeById(this.dst, nodes);
+    this.source = getNodeById(this.src, this.graph._nodes);
+    this.target = getNodeById(this.dst, this.graph._nodes);
 
     this._merged = data.merged || false;
+
     this.mergedBy = data.mergedBy;
 }
 
@@ -49,6 +51,7 @@ Link.prototype = {
     remove: remove,
     merged: merged,
     merge: merge,
+    flattenMerge: flattenMerge,
     unmerge: unmerge,
     color: color,
     direction: direction,
