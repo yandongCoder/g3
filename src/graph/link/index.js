@@ -15,6 +15,7 @@ import remove from "./remove";
 import merged from "./merged";
 import merge from "./merge";
 import flattenMerge from "./flattenMerge";
+import hasBeenMerged from "./hasBeenMerged";
 import unmerge from "./unmerge";
 import getHomoLinks from "./getHomoLinks";
 
@@ -50,6 +51,7 @@ Link.prototype = {
     width: width,
     remove: remove,
     merged: merged,
+    _hasBeenMerged: hasBeenMerged,
     merge: merge,
     flattenMerge: flattenMerge,
     unmerge: unmerge,
