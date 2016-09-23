@@ -53,7 +53,6 @@ tape("merge Links, add new Link between this couple Nodes, merge again.", functi
     test.equal(myGraph.links().length, 6);
     test.equal(myGraph.getRenderedLinks().length, 3);
     
-    myGraph.links()[4].merge();
     myGraph.links()[1].merge();//idempotent (幂等性)
     
     test.equal(myGraph.links().length, 7);
