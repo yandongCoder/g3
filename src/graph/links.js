@@ -12,9 +12,10 @@ export default function (links, cover) {
     }
 
     links.forEach(function(v){
-        this.addLink(v);
+        this._addLink(v);
     },this);
 
+    this._preLinksTransfer();
     this.render();
     
     return this;
