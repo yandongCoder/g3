@@ -29,23 +29,26 @@
     ];
     var links = [{id: 1, label: "A", src: 1, dst: 2,direction: 1, width: 5},
         {id: 2, label: "C", src: 1, dst: 3,direction: 2, width: 5},
-        {id: 3, label: "E,F", src: 5, dst: 6,direction: 3, width: 5},
-        {id: 4, label: "E,F", src: 6, dst: 5},
+        {id: 3, label: "EF1", src: 5, dst: 6,direction: 3, width: 5},
+        {id: 4, label: "EF2", src: 6, dst: 5, direction: 3},
         {id: 5, label: "X", src: 7, dst: 8,direction: 0, width: 5, color: 'blue'}
 
     ];
 
+
     var myGraph = g3.graph("#my-svg")
             .width(300)
             .height(300)
-            .nodes(nodes);
+            .nodes([{id: 1, label: "a", x: 100, y: 100}, {id: 2, label: "b", x: 200, y: 200}, {id: 3, label: "c", x: 300, y: 300}])
+            .links([{id:1, label: "a", src: 1, dst: 2}, {id:2, label: "b", src: 1, dst: 2}, {id:3, label: "c", src: 2, dst: 1}, {id:4, label: "d", src: 3, dst: 2}]);
 
     d3.select("#showBrush").on('click', myGraph.brush.show);
     d3.select("#hideBrush").on('click', myGraph.brush.hide);
 
+    //myGraph.nodes()[1].NtoL();
     setTimeout(function(){
-        myGraph.links(links);
-        g3.utils.deriveLinkFromLinks(myGraph.links());
+        //myGraph.links({id:6, label: "added", src: 5, dst: 6});
+        //myGraph.links()[6].merge();
         //myGraph.removeNodes(nodes[4]);
         //myGraph.nodes({id: 7, label: "G", x: 80, y:170});
         //myGraph.links({id: 99, label: "A->D", src: 2, dst: 4,direction: 0});
@@ -57,7 +60,10 @@
 //                    myGraph.nodes(data);
 //                });
     },500);
-
+//
+//    setTimeout(function () {
+//        myGraph.links()[7].unmerge();
+//    }, 2000);
 //    setTimeout(function(){
 //        myGraph.links()[0].label("updateed");
 //    },2000);

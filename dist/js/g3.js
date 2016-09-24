@@ -65,7 +65,7 @@
         }
 
         nodes.forEach(function(v){
-            this.addNode(v);
+            this._addNode(v);
         },this);
 
         this.render();
@@ -181,118 +181,6 @@
         return this.y;
     }
 
-    function NtoL () {
-        //var contractedLinks = this.getContractLinksOfNode(Node);
-        //
-        // relatedLinks.forEach(function(Link){
-        //     Node.transformed(true);
-        //     Link.transformed(true);
-        // });
-        //
-        // this.links(this.newLinkTransformedBy(Link, Node, Link));
-
-        this.graph.render();
-    }
-
-    function getConnectedLinks () {
-        return this.graph._links.filter(function (Link) {
-            return  (Link.source === this) || (Link.target === this);
-        }, this);
-    }
-
-    function getContractedLinks (Node) {
-        var connectedLinks = this.getConnectedLinks();
-        return [];
-    }
-
-    //data: data obj, graph: graphInstance
-    function Node(data, graph) {
-        this.graph = graph;
-        this.id = data.id;
-        this._label = data.label;
-        this.x = data.x;
-        this.y = data.y;
-        this._radius = data.radius || graph._radius;
-        this._color = data.color;
-        this._selected = data.selected || false; //indicate whether node is select
-    }
-
-
-    Node.prototype = {
-        constructor: Node,
-        selected: selected,
-        transformed: transformed,
-        nudge: nudge,
-        getX: getX,
-        getY: getY,
-        label: label,
-        getLabelWidth: function(){
-            return getStrLen(this.label()) * 9;
-        },
-        color: color,
-        radius: radius,
-        NtoL: NtoL,
-        getConnectedLinks: getConnectedLinks,
-        getContractedLinks: getContractedLinks
-    };
-
-    function addNode (obj) {
-        var node = new Node(obj, this);
-        if(!this.hasNode(node)) this._nodes.push(node);
-    }
-
-    function hasNode (obj) {
-        var ids = this._nodes.map(function(Node){return Node.id});
-
-        return ids.indexOf(obj.id) !== -1;
-    }
-
-    //nodes could be: Node, [Node], Node id string, Node id array of string
-    function removeNodes (nodes) {
-        this.getNodes(nodes).forEach(function(Node){
-            //remove links first
-            this._removeLinksOfNode(Node);
-            this._nodes.splice(this._nodes.indexOf(Node), 1);
-        }, this);
-
-        this.render();
-
-    }
-
-    function clearNodes () {
-        this._nodes = [];
-    }
-
-    function links (links, cover) {
-        links = toArray(links);
-
-        if(!arguments.length){
-            return this._links;
-        }
-
-        if(cover){
-            this.clearLinks();
-        }
-
-        links.forEach(function(v){
-            this.addLink(v);
-        },this);
-
-        this.render();
-        
-        return this;
-    }
-
-    function getLinks (filter) {
-        return filterBy(filter, this._links);
-    }
-
-    function getRenderedLinks () {
-        return this.getLinks(function(Link){
-           return !Link.transformed();
-        });
-    }
-
     function filterById (id, Nodes) {
         return Nodes.filter(function(Node){
             return Node.id === id;
@@ -367,14 +255,14 @@
     };
 
     function getStartArrow () {
-        if(this.direction === DIRECTION.TO || this.direction === DIRECTION.DOUBLE)
+        if(this.direction() === DIRECTION.TO || this.direction() === DIRECTION.DOUBLE)
             return "url(" + window.location.href.split('#')[0] + "#start-arrow)";
         else
             return "";
     }
 
     function getEndArrow () {
-        if(this.direction === DIRECTION.FROM || this.direction === DIRECTION.DOUBLE)
+        if(this.direction() === DIRECTION.FROM || this.direction() === DIRECTION.DOUBLE)
             return "url(" + window.location.href.split('#')[0] + "#end-arrow)";
         else
             return "";
@@ -447,6 +335,31 @@
         this._color = color;
         this.graph.render();
 
+        return this;
+    }
+
+    function direction (direction) {
+        if(!arguments.length) return this._direction;
+
+        this._direction = direction;
+        this.graph.render();
+
+        return this;
+    }
+
+    function remove () {
+        this.graph._links.splice(this.graph._links.indexOf(this), 1);
+
+        this.graph.render();
+
+        return this;
+    }
+
+    function merged (merged) {
+        if(!arguments.length) return this._merged === undefined? false : this._merged;
+
+        this._merged = merged;
+        
         return this;
     }
 
@@ -633,49 +546,80 @@
         mix: mix
     };
 
+    function concat(key, objArray){
+        return objArray.map(function(obj){
+            return obj[key] instanceof Function ? obj[key]() : obj[key];
+        }).join("&");
+    }
+
+    function average(key, objArray){
+        return objArray.reduce(function(p, obj){
+                return p + (obj[key] instanceof Function ? obj[key]() : obj[key]);
+            }, 0) / objArray.length;
+    }
+
+    function direction$1(Links){
+        return Links.reduce(function(p, Link){
+            if(p === DIRECTION.NONE) return Link.direction();
+            if(Link.direction() === DIRECTION.NONE) return p;
+            if(p === DIRECTION.DOUBLE || Link.direction() === DIRECTION.DOUBLE) return DIRECTION.DOUBLE;
+            if((p === DIRECTION.FROM && Link.direction() === DIRECTION.TO) || (p === DIRECTION.TO && Link.direction() === DIRECTION.FROM)) return DIRECTION.DOUBLE;
+            if(p === Link.direction()) return p;
+        }, DIRECTION.NONE);
+    }
+
     function deriveLinkFromLinks (Links) {
 
         var obj = {};
-        obj.id = "derived:" + concat("id");
-        obj.label = concat("label");
-        obj.width = average('width');
+        obj.id = "derived:" + concat("id", Links);
+        obj.label = concat("label", Links);
+        obj.width = average('width', Links);
+        obj.src = Links[0].src;
+        obj.dst = Links[0].dst;
         obj.color = "#"+  colorMixer.mix(Links.map(function(Link){return Link.color()}));
-        obj.direction = direction();
+        obj.direction = direction$1(Links);
+
+
         
-        function concat(key){
-            return Links.map(function(Link){
-                return Link[key] instanceof Function ? Link[key]() : Link[key];
-            }).join("&");
-        }
-
-        function average(key){
-            return Links.reduce(function(p, Link){
-                return p + (Link[key] instanceof Function ? Link[key]() : Link[key]);
-            }, 0) / Links.length;
-        }
-
-        function direction(){
-            return Links.reduce(function(p, Link){
-                if(p === DIRECTION.NONE) return Link.direction;
-                if(Link.direction === DIRECTION.NONE) return p;
-                if(p === DIRECTION.DOUBLE || Link.direction === DIRECTION.DOUBLE) return DIRECTION.DOUBLE;
-                if((p === DIRECTION.FROM && Link.direction === DIRECTION.TO) || (p === DIRECTION.TO && Link.direction === DIRECTION.FROM)) return DIRECTION.DOUBLE;
-                if(p === Link.direction) return p;
-            }, DIRECTION.NONE);
-        }
         return obj;
     }
 
     function merge () {
-        this._merged = true;
+        //每个Link本身只能被合并一次，也意味着只能存在于唯一一个Link的mergedBy属性中，for idempotent, 幂等性
+        var toMergedLinks = this.getHomoLinks().filter(function(Link){ return !Link.merged()});
 
-        var homoLinks = this.getHomoLinks();
+        if(toMergedLinks.length <= 1) return;
 
-        homoLinks.forEach(function(Link){
-            Link._merged = true;
+        toMergedLinks.forEach(function(Link){
+            Link.merged(true);
         });
         
-    //    this.graph.addLink(deriveLinkFromLinks(homoLinks));
+        var newLink = deriveLinkFromLinks(toMergedLinks);
+        newLink.mergedBy = toMergedLinks;
+
+        this.graph._addLink(newLink);
+
+        this.graph.render();
+
+        return this;
+    }
+
+    function flattenMerge () {
+        this.getHomoLinks().forEach(function(Link){
+           Link.unmerge();
+        });
+
+        this.merge();
+    }
+
+    function unmerge () {
+        if(!this.mergedBy) return;
+
+        this.mergedBy.forEach(function(Link){
+            Link.merged(false);
+        });
+
+        this.remove();
 
         return this;
     }
@@ -687,18 +631,22 @@
         }, this) || [];
     }
 
-    function Link(data, nodes, graph) {
+    function Link(data, graph) {
         this.graph = graph;
         this.id = data.id;
         this._label = data.label || "";
-        this._width = data.width || graph._linkWidth || 3;
+        this._width = data.width || (graph && graph._linkWidth) || 3;
         this._color = data.color || "#a1a1a1";
         this.src = data.src;
         this.dst = data.dst;
-        this.direction = data.direction === undefined? 1: data.direction;//0: none, 1: from, 2: to, 3 double
+        this._direction = data.direction === undefined? 1: data.direction;//0: none, 1: from, 2: to, 3 double
 
-        this.source = filterById(this.src, nodes);
-        this.target = filterById(this.dst, nodes);
+        this.source = graph && filterById(this.src, this.graph._nodes);
+        this.target = graph && filterById(this.dst, this.graph._nodes);
+
+        this._needMerged = data.merged || false;
+
+        this.mergedBy = data.mergedBy;
     }
 
 
@@ -713,19 +661,179 @@
         getLinkLabelTransform: getLinkLabelTransform,
         label: label$1,
         width: width$1,
+        remove: remove,
+        merged: merged,
         merge: merge,
+        flattenMerge: flattenMerge,
+        unmerge: unmerge,
         color: color$1,
+        direction: direction,
         getHomoLinks: getHomoLinks,
         hasSourceArrow: function(){
-            return this.direction === DIRECTION.TO || this.direction === DIRECTION.DOUBLE;
+            return this.direction() === DIRECTION.TO || this.direction() === DIRECTION.DOUBLE;
         },
         hasTargetArrow: function(){
-            return this.direction === DIRECTION.FROM || this.direction === DIRECTION.DOUBLE;
+            return this.direction() === DIRECTION.FROM || this.direction() === DIRECTION.DOUBLE;
         }
     };
 
+    function deriveLinkFromLNL (srcLinks, Node, dstLinks) {
+        srcLinks = srcLinks.length > 1? new Link(deriveLinkFromLinks(srcLinks)): srcLinks[0];
+        dstLinks = dstLinks.length > 1? new Link(deriveLinkFromLinks(dstLinks)): dstLinks[0];
+
+        var obj = {};
+        obj.id = "derived:(" + srcLinks.id + ")" + Node.id + "(" + dstLinks.id + ")";
+        obj.label = "(" + srcLinks.label() + ")" + Node.label() + "(" + dstLinks.label() + ")";
+        obj.src = srcLinks.src === Node.id? srcLinks.dst: srcLinks.src;
+        obj.dst = dstLinks.src === Node.id? dstLinks.dst: dstLinks.src;
+        obj.width = (srcLinks.width() + dstLinks.width()) / 2;
+        obj.color = Node.color();
+        obj.direction = direction$1([srcLinks, dstLinks]);
+
+        return obj;
+    }
+
+    function NtoL () {
+        var contractedLinks = this.getConnectedLinks(true);
+
+        if(contractedLinks.length !== 2) return;
+
+        this.transformed(true);
+        contractedLinks.forEach(function(group){
+            group.forEach(function(Link){Link.transformed(true);});
+        });
+        
+        this.graph._addLink(deriveLinkFromLNL(contractedLinks[0], this, contractedLinks[1]));
+
+        this.graph.render();
+    }
+
+    function getConnectedLinks (grouped) {
+        var connectedLinks = this.graph._links.filter(function (Link) {
+            return  ((Link.source === this) || (Link.target === this)) && !Link.merged();
+        }, this);
+
+        
+        if(grouped){
+            var separated = {};
+
+            connectedLinks.forEach(function(Link){
+                var separatedId = Link.src === this.id? Link.dst: Link.src;
+                if(separated[separatedId] === undefined) separated[separatedId] = [];
+                separated[separatedId].push(Link);
+            },this);
+
+            var connectedLinks = [];
+            for (var k in separated){
+                connectedLinks.push(separated[k]);
+            }
+        }
+
+        return connectedLinks;
+    }
+
+    function remove$1 () {
+        this.graph._nodes.splice(this.graph._nodes.indexOf(this), 1);
+    }
+
+    //data: data obj, graph: graphInstance
+    function Node(data, graph) {
+        this.graph = graph;
+        this.id = data.id;
+        this._label = data.label;
+        this.x = data.x;
+        this.y = data.y;
+        this._radius = data.radius || graph._radius;
+        this._color = data.color;
+        this._selected = data.selected || false; //indicate whether node is select
+    }
+
+
+    Node.prototype = {
+        constructor: Node,
+        selected: selected,
+        transformed: transformed,
+        nudge: nudge,
+        getX: getX,
+        getY: getY,
+        label: label,
+        getLabelWidth: function(){
+            return getStrLen(this.label()) * 9;
+        },
+        color: color,
+        radius: radius,
+        remove: remove$1,
+        NtoL: NtoL,
+        getConnectedLinks: getConnectedLinks
+    };
+
+    function addNode (obj) {
+        var node = new Node(obj, this);
+        if(!this.hasNode(node)) this._nodes.push(node);
+    }
+
+    function hasNode (obj) {
+        var ids = this._nodes.map(function(Node){return Node.id});
+
+        return ids.indexOf(obj.id) !== -1;
+    }
+
+    //nodes could be: Node, [Node], Node id string, Node id array of string
+    function removeNodes (nodes) {
+        this.getNodes(nodes).forEach(function(Node){
+            //remove links first
+            this._removeLinksOfNode(Node);
+            Node.remove();
+        }, this);
+
+        this.render();
+
+    }
+
+    function clearNodes () {
+        this._nodes = [];
+    }
+
+    function preLinksTransfer () {
+        this._links.forEach(function(Link){
+            if(Link._needMerged) Link.flattenMerge();
+            delete Link._needMerged;
+        });
+    }
+
+    function links (links, cover) {
+        links = toArray(links);
+
+        if(!arguments.length){
+            return this._links;
+        }
+
+        if(cover){
+            this.clearLinks();
+        }
+
+        links.forEach(function(v){
+            this._addLink(v);
+        },this);
+
+        this._preLinksTransfer();
+        this.render();
+        
+        return this;
+    }
+
+    function getLinks (filter) {
+        return filterBy(filter, this._links);
+    }
+
+    function getRenderedLinks () {
+        return this.getLinks(function(Link){
+           return !Link.transformed() && !Link.merged();
+        });
+    }
+
     function addLink (obj) {
-        var link = new Link(obj, this._nodes, this);
+        var link = new Link(obj, this);
         if(!this.hasLink(link) && link.hasST()) this._links.push(link);
     }
 
@@ -738,15 +846,15 @@
     //links could be: Link, [Link], Link id string, Link id array of string
     function removeLinks (links) {
         this.getLinks(links).forEach(function(Link){
-            this._links.splice(this._links.indexOf(Link), 1);
+            Link.remove();
         }, this);
-        
+
         this.render();
     }
 
     function removeLinksOfNode (Node) {
         Node.getConnectedLinks().map(function (Link) {
-            this._links.splice(this._links.indexOf(Link), 1);
+            Link.remove();
         }, this);
     }
 
@@ -1050,11 +1158,6 @@
         }
     }
 
-    // N Links
-    function newLinkTransformedBy (Node, links) {
-        
-    }
-
     function Graph(selector, config) {
         if(config === undefined) config = {};
 
@@ -1081,19 +1184,19 @@
         nodes: nodes,
         getNodes: getNodes,
         getRenderedNodes: getRenderedNodes,
-        addNode: addNode,
+        _addNode: addNode,
         removeNodes: removeNodes,
         clearNodes: clearNodes,
         hasNode: hasNode,
+        _preLinksTransfer: preLinksTransfer,
         links: links,
         getLinks: getLinks,
         getRenderedLinks: getRenderedLinks,
-        addLink: addLink,
+        _addLink: addLink,
         hasLink: hasLink,
         removeLinks: removeLinks,
         _removeLinksOfNode: removeLinksOfNode,
         clearLinks: clearLinks,
-        newLinkTransformedBy: newLinkTransformedBy,
         transform: transform,
         scaleTo: scaleTo,
         translateBy: translateBy,
@@ -1149,6 +1252,10 @@
         return tmp.body.children[0];
     }
 
+    function safeExecute (maybeFunction) {
+        return (maybeFunction instanceof Function)? maybeFunction(): maybeFunction;
+    }
+
     var utils = {
         filterBy: filterBy,
         filterById: filterById,
@@ -1158,7 +1265,12 @@
         getStrLen: getStrLen,
         getOffsetCoordinate: getOffsetCoordinate,
         parseHTML: parseHTML,
-        deriveLinkFromLinks: deriveLinkFromLinks
+        deriveLinkFromLinks: deriveLinkFromLinks,
+        deriveLinkFromLNL: deriveLinkFromLNL,
+        concat: concat,
+        average: average,
+        direction: direction$1,
+        safeExecute: safeExecute
     };
 
     exports.graph = index;

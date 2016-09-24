@@ -12,7 +12,7 @@ export default function (nodes, cover) {
     }
 
     nodes.forEach(function(v){
-        this.addNode(v);
+        this._addNode(v);
     },this);
 
     this.render();

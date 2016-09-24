@@ -10,14 +10,14 @@ import addNode from "./addNode";
 import hasNode from "./hasNode";
 import removeNodes from "./removeNodes";
 import clearNodes from "./clearNodes";
+import preLinksTransfer from "./preLinksTransfer";
 import links from "./links";
 import getLinks from "./getLinks";
 import getRenderedLinks from "./getRenderedLinks";
-import getLinksByNodes from "./getLinksByNodes";
 import addLink from "./addLink";
 import hasLink from "./hasLink";
 import removeLinks from "./removeLinks";
-import removeLinksByNodes from "./removeLinksByNodes";
+import removeLinksOfNode from "./removeLinksOfNode";
 import clearLinks from "./clearLinks";
 import init from "./init/init";
 import draw from "./draw/index";
@@ -27,8 +27,6 @@ import scaleTo from "./scaleTo";
 import translateBy from "./translateBy";
 import keydowned from "./keydowned";
 import keyupped from "./keyupped";
-import n2l from "./transformNodeToLink";
-
 
 function Graph(selector, config) {
     if(config === undefined) config = {};
@@ -56,19 +54,18 @@ Graph.prototype = {
     nodes: nodes,
     getNodes: getNodes,
     getRenderedNodes: getRenderedNodes,
-    addNode: addNode,
+    _addNode: addNode,
     removeNodes: removeNodes,
     clearNodes: clearNodes,
     hasNode: hasNode,
-    n2l: n2l,
+    _preLinksTransfer: preLinksTransfer,
     links: links,
     getLinks: getLinks,
     getRenderedLinks: getRenderedLinks,
-    getLinksByNodes: getLinksByNodes,
-    addLink: addLink,
+    _addLink: addLink,
     hasLink: hasLink,
     removeLinks: removeLinks,
-    _removeLinksByNodes: removeLinksByNodes,
+    _removeLinksOfNode: removeLinksOfNode,
     clearLinks: clearLinks,
     transform: transform,
     scaleTo: scaleTo,

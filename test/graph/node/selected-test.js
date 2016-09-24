@@ -17,10 +17,13 @@ tape("select a Node", function(test){
     test.equal(myGraph.nodes()[1].selected(), false);
     test.equal(document.querySelector(".nodes").querySelectorAll(".node")[1].className, "node");
 
-    myGraph.nodes()[0].selected(true);
-    test.equal(myGraph.nodes()[0].selected(), true);
-    test.equal(document.querySelector(".nodes").querySelectorAll(".node")[0].className, "node selected");
+    myGraph.nodes()[1].selected(true);
+    test.equal(myGraph.nodes()[1].selected(), true);
+    test.equal(document.querySelector(".nodes").querySelectorAll(".node")[1].className, "node selected");
 
+    myGraph.nodes()[0].selected(false);
+    test.equal(myGraph.nodes()[0].selected(), false);
+    test.equal(document.querySelector(".nodes").querySelectorAll(".node")[0].className, "node");
 
     test.end();
 });

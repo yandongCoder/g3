@@ -2,7 +2,7 @@ export default function (grouped) {
     var connectedLinks = this.graph._links.filter(function (Link) {
         return  ((Link.source === this) || (Link.target === this)) && !Link.merged();
     }, this);
-
+    
     if(grouped){
         var separated = {};
 

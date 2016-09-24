@@ -1,11 +1,14 @@
 import getStrLen from "../../utils/getStrLen";
 import selected from "./selected";
-import transformToLink from "./transformToLink";
+import transformed from "./transformed";
 import nudge from "./nudge";
 import color from "./color";
 import radius from "./radius";
 import label from "./label";
 import {getX, getY} from "./getXY";
+import NtoL from "./NtoL";
+import getConnectedLinks from "./getConnectedLinks";
+import remove from "./remove";
 
 //data: data obj, graph: graphInstance
 export default function Node(data, graph) {
@@ -19,14 +22,12 @@ export default function Node(data, graph) {
     this._selected = data.selected || false; //indicate whether node is select
 }
 
+
 Node.prototype = {
     constructor: Node,
     selected: selected,
-    transformToLink: transformToLink,
+    transformed: transformed,
     nudge: nudge,
-    getId: function () {
-        return this.id;
-    },
     getX: getX,
     getY: getY,
     label: label,
@@ -34,6 +35,8 @@ Node.prototype = {
         return getStrLen(this.label()) * 9;
     },
     color: color,
-    radius: radius
-
+    radius: radius,
+    remove: remove,
+    NtoL: NtoL,
+    getConnectedLinks: getConnectedLinks
 };
