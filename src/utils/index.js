@@ -9,6 +9,7 @@ import parseHTML from "./parseHTML";
 import deriveLinkFromLinks from "./deriveLinkFromLinks";
 import deriveLinkFromLNL from "./deriveLinkFromLNL";
 import concat from "./concat";
+import average from "./average";
 
 var utils = {
     filterBy: filterBy,
@@ -21,7 +22,8 @@ var utils = {
     parseHTML: parseHTML,
     deriveLinkFromLinks: deriveLinkFromLinks,
     deriveLinkFromLNL: deriveLinkFromLNL,
-    concat: concat
+    concat: concat,
+    average: average
 };
 
 export default utils;
