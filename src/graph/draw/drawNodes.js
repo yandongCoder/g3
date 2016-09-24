@@ -2,12 +2,11 @@ import getAbsUrl from "../../utils/getAbsUrl";
 
 export default function () {
     var self = this;
-    var nodes = this._getNodesSelection().data(this.getRenderedNodes(), function (d) { return d.id;});
+    var nodes = this._getNodesSelection().data(this.getRenderedNodes(), function (Node) { return Node.id;});
 
     var g = nodes.enter().append('g')
         .each(function(Node){ Node._element = this })//reference element to Node
         .classed('node', true)
-        .classed("selected", function(Node){return Node.selected()})
         .call(this.dragNode);
 
     //添加矩形
@@ -21,7 +20,8 @@ export default function () {
     //Enter and Update
     var all = this._getNodesSelection();
 
-    all.attr("transform", function (Node) { return "translate(" + Node.getX() + "," + Node.getY() + ")";});
+    all.attr("transform", function (Node) { return "translate(" + Node.getX() + "," + Node.getY() + ")";})
+        .classed("selected", function(Node){return Node.selected()});
 
     all.select('circle')
         .attr("r", function(Node){ return Node.radius()})
