@@ -15,7 +15,6 @@ import remove from "./remove";
 import merged from "./merged";
 import merge from "./merge";
 import flattenMerge from "./flattenMerge";
-import hasBeenMerged from "./hasBeenMerged";
 import unmerge from "./unmerge";
 import getHomoLinks from "./getHomoLinks";
 
@@ -23,16 +22,16 @@ export default function Link(data, graph) {
     this.graph = graph;
     this.id = data.id;
     this._label = data.label || "";
-    this._width = data.width || graph._linkWidth || 3;
+    this._width = data.width || (graph && graph._linkWidth) || 3;
     this._color = data.color || "#a1a1a1";
     this.src = data.src;
     this.dst = data.dst;
     this._direction = data.direction === undefined? 1: data.direction;//0: none, 1: from, 2: to, 3 double
 
-    this.source = getNodeById(this.src, this.graph._nodes);
-    this.target = getNodeById(this.dst, this.graph._nodes);
+    this.source = graph && getNodeById(this.src, this.graph._nodes);
+    this.target = graph && getNodeById(this.dst, this.graph._nodes);
 
-    this._merged = data.merged || false;
+    this._needMerged = data.merged || false;
 
     this.mergedBy = data.mergedBy;
 }
@@ -51,7 +50,6 @@ Link.prototype = {
     width: width,
     remove: remove,
     merged: merged,
-    _hasBeenMerged: hasBeenMerged,
     merge: merge,
     flattenMerge: flattenMerge,
     unmerge: unmerge,
