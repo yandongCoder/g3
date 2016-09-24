@@ -11,6 +11,7 @@ import deriveLinkFromLNL from "./deriveLinkFromLNL";
 import concat from "./deriveConcat";
 import average from "./deriveAverage";
 import direction from "./deriveDirection";
+import safeExecute from "./safeExecute";
 
 var utils = {
     filterBy: filterBy,
@@ -25,7 +26,8 @@ var utils = {
     deriveLinkFromLNL: deriveLinkFromLNL,
     concat: concat,
     average: average,
-    direction: direction
+    direction: direction,
+    safeExecute: safeExecute
 };
 
 export default utils;
