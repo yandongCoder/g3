@@ -8,8 +8,9 @@ import getAbsUrl from "./getAbsUrl";
 import parseHTML from "./parseHTML";
 import deriveLinkFromLinks from "./deriveLinkFromLinks";
 import deriveLinkFromLNL from "./deriveLinkFromLNL";
-import concat from "./concat";
-import average from "./average";
+import concat from "./deriveConcat";
+import average from "./deriveAverage";
+import direction from "./deriveDirection";
 
 var utils = {
     filterBy: filterBy,
@@ -23,7 +24,8 @@ var utils = {
     deriveLinkFromLinks: deriveLinkFromLinks,
     deriveLinkFromLNL: deriveLinkFromLNL,
     concat: concat,
-    average: average
+    average: average,
+    direction: direction
 };
 
 export default utils;
