@@ -7,6 +7,8 @@ import getOffsetCoordinate from "./getOffsetCoordinate";
 import getAbsUrl from "./getAbsUrl";
 import parseHTML from "./parseHTML";
 import deriveLinkFromLinks from "./deriveLinkFromLinks";
+import deriveLinkFromLNL from "./deriveLinkFromLNL";
+import concat from "./concat";
 
 var utils = {
     filterBy: filterBy,
@@ -17,7 +19,9 @@ var utils = {
     getStrLen: getStrLen,
     getOffsetCoordinate: getOffsetCoordinate,
     parseHTML: parseHTML,
-    deriveLinkFromLinks: deriveLinkFromLinks
+    deriveLinkFromLinks: deriveLinkFromLinks,
+    deriveLinkFromLNL: deriveLinkFromLNL,
+    concat: concat
 };
 
 export default utils;
