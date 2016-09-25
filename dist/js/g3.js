@@ -631,6 +631,20 @@
        }, this) || [];
    }
 
+   function LtoN () {
+       console.log(this.transformedBy);
+       if(!this.transformedBy) return;
+       this.transformedBy.node.transformed(false);
+
+       this.transformedBy.links.forEach(function(Link){
+           Link.transformed(false);
+       });
+
+       this.remove();
+
+       return this;
+   }
+
    function Link(data, graph) {
        this.graph = graph;
        this.id = data.id;
@@ -667,6 +681,7 @@
        merge: merge,
        flattenMerge: flattenMerge,
        unmerge: unmerge,
+       LtoN: LtoN,
        color: color$1,
        direction: direction,
        getHomoLinks: getHomoLinks,
@@ -698,7 +713,7 @@
        var contractedLinks = this.getConnectedLinks(true);
 
        if(contractedLinks.length !== 2) return;
-
+       
        this.transformed(true);
        contractedLinks.forEach(function(group){
            group.forEach(function(Link){Link.transformed(true);});
@@ -710,7 +725,6 @@
            node: this,
            links: contractedLinks[0].concat(contractedLinks[1])
        };
-
 
       this.graph._addLink(newLink);
 

@@ -4,7 +4,7 @@ export default function () {
     var contractedLinks = this.getConnectedLinks(true);
 
     if(contractedLinks.length !== 2) return;
-
+    
     this.transformed(true);
     contractedLinks.forEach(function(group){
         group.forEach(function(Link){Link.transformed(true);});
@@ -16,7 +16,6 @@ export default function () {
         node: this,
         links: contractedLinks[0].concat(contractedLinks[1])
     };
-
 
    this.graph._addLink(newLink);
 
