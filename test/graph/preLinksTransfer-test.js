@@ -33,7 +33,7 @@ tape("PreMerge using flatten merge, so not has nested mergedBy", function(test){
 
 });
 
-tape("if a new kink added to mergedLinks between couple Nodes, merged only if new link's merge is true, otherwise not", function(test){
+tape("If a new kink added to mergedLinks between couple Nodes, merged only if new link's merge is true, otherwise not", function(test){
     var document = jsdom.jsdom('<svg id="graph"></svg>');
     var svg = document.querySelector("#graph");
 
@@ -51,4 +51,24 @@ tape("if a new kink added to mergedLinks between couple Nodes, merged only if ne
     test.deepEqual(myGraph.links()[4].mergedBy, [myGraph.links()[0], myGraph.links()[1], myGraph.links()[2]]);
     test.end();
 
+});
+
+tape("Auto transform added new Link to LNL, if new Link's source or target is transformed", function(test){
+    var document = jsdom.jsdom('<svg id="graph"></svg>');
+    var svg = document.querySelector("#graph");
+
+    var myGraph = g3.graph(svg)
+        .nodes([{id: 1}, {id: 2}, {id: 3}])
+        .links([{id:1, src: 1, dst: 2}, {id: 2, src: 1, dst: 3}]);
+
+    myGraph.nodes()[0].NtoL();
+    myGraph.links({id: 3, src: 1, dst: 2});
+
+    test.equal(myGraph.links().length, 4);
+    test.equal(myGraph.getRenderedLinks().length, 1);
+
+    test.deepEqual(myGraph.links()[3].transformedBy.links, [myGraph.links()[0], myGraph.links()[2], myGraph.links()[1]]);
+
+
+    test.end();
 });
