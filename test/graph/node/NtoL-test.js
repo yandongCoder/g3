@@ -73,6 +73,13 @@ tape("Add new Link to transformed LNL, and transform this Link, it equivalent to
 
     test.deepEqual(myGraph.links()[3].transformedBy.links, [myGraph.links()[0], myGraph.links()[2], myGraph.links()[1]]);
 
+    myGraph.links()[3].LtoN();
+
+    test.equal(myGraph.getRenderedNodes().length, 3);
+    test.equal(myGraph.links().length, 3);
+    test.equal(myGraph.getRenderedLinks().length, 3);
+
+
 
     test.end();
 });
