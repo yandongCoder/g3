@@ -12,7 +12,7 @@ export default function (grouped) {
             separated[separatedId].push(Link);
         },this);
 
-        var connectedLinks = [];
+        connectedLinks = [];
         for (var k in separated){
             connectedLinks.push(separated[k]);
         }

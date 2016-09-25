@@ -41,7 +41,7 @@ tape("Only if Node directly connect two Nodes(one Node between two Nodes), trans
         .links([{id:1, src: 1, dst: 2}, {id: 2, src: 1, dst: 3}]);
 
     myGraph.nodes()[0].NtoL();
-    test.equal(myGraph.nodes().length, 3);
+    myGraph.nodes()[0].NtoL();//冪等性
     test.equal(myGraph.getRenderedNodes().length, 2);
     test.equal(myGraph.nodes()[0].transformed(), true);
 
@@ -52,6 +52,27 @@ tape("Only if Node directly connect two Nodes(one Node between two Nodes), trans
 
     test.deepEqual(myGraph.links()[2].transformedBy.node, myGraph.nodes()[0]);
     test.deepEqual(myGraph.links()[2].transformedBy.links, [myGraph.links()[0], myGraph.links()[1]]);
+
+    test.end();
+});
+
+tape("Add new Link to transformed LNL, and transform this Link, it equivalent to transform them together.", function(test){
+    var document = jsdom.jsdom('<svg id="graph"></svg>');
+    var svg = document.querySelector("#graph");
+
+    var myGraph = g3.graph(svg)
+        .nodes([{id: 1}, {id: 2}, {id: 3}])
+        .links([{id:1, src: 1, dst: 2}, {id: 2, src: 1, dst: 3}]);
+
+    myGraph.nodes()[0].NtoL();
+    myGraph.links({id: 3, src: 1, dst: 2});
+    myGraph.nodes()[0].NtoL();
+
+    test.equal(myGraph.links().length, 4);
+    test.equal(myGraph.getRenderedLinks().length, 1);
+
+    test.deepEqual(myGraph.links()[3].transformedBy.links, [myGraph.links()[0], myGraph.links()[2], myGraph.links()[1]]);
+
 
     test.end();
 });

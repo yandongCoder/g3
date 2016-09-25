@@ -632,7 +632,6 @@
    }
 
    function LtoN () {
-       console.log(this.transformedBy);
        if(!this.transformedBy) return;
        this.transformedBy.node.transformed(false);
 
@@ -660,8 +659,8 @@
 
        this._needMerged = data.merged || false;
 
-       this.mergedBy = data.mergedBy;
-       this.transformedBy = data.transformedBy;
+       if(data.mergedBy) this.mergedBy = data.mergedBy;
+       if(data.transformedBy) this.transformedBy = data.transformedBy;
    }
 
 
@@ -710,6 +709,8 @@
    }
 
    function NtoL () {
+       if(this.transformedTo) this.transformedTo.LtoN();//transform a Node that has been transformed before, transform back first.
+
        var contractedLinks = this.getConnectedLinks(true);
 
        if(contractedLinks.length !== 2) return;
@@ -726,7 +727,7 @@
            links: contractedLinks[0].concat(contractedLinks[1])
        };
 
-      this.graph._addLink(newLink);
+      this.transformedTo = this.graph._addLink(newLink);
 
        this.graph.render();
    }
@@ -745,7 +746,7 @@
                separated[separatedId].push(Link);
            },this);
 
-           var connectedLinks = [];
+           connectedLinks = [];
            for (var k in separated){
                connectedLinks.push(separated[k]);
            }
@@ -857,6 +858,8 @@
    function addLink (obj) {
        var link = new Link(obj, this);
        if(!this.hasLink(link) && link.hasST()) this._links.push(link);
+
+       return link;
    }
 
    function hasLink (obj) {

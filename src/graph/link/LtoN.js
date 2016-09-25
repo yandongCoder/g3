@@ -1,5 +1,4 @@
 export default function () {
-    console.log(this.transformedBy);
     if(!this.transformedBy) return;
     this.transformedBy.node.transformed(false);
 

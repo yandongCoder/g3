@@ -18,7 +18,7 @@ tape("Transform Link to Node according to transformedBy", function(test){
     myGraph.links()[2].LtoN();
     test.equal(myGraph.getRenderedNodes().length, 3);
     test.equal(myGraph.nodes()[0].transformed(), false);
-
+    
     test.equal(myGraph.links().length, 2);
     test.equal(myGraph.getRenderedLinks().length, 2);
     test.equal(myGraph.links()[0].transformed(), false);
