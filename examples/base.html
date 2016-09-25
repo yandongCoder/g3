@@ -46,13 +46,14 @@
     d3.select("#hideBrush").on('click', myGraph.brush.hide);
 
 
+    myGraph.links()[0].merge();
     myGraph.nodes()[1].NtoL();
     //myGraph.nodes()[1].NtoL();
     setTimeout(function(){
-        myGraph.links({id: 5, label: "e", src: 3, dst: 2});
+       // myGraph.links({id: 5, label: "e", src: 3, dst: 2});
         //myGraph.links({id:5, label: "e", src: 1, dst: 2});
         //myGraph.links()[4].unmerge();
-        //myGraph.links()[5].LtoN();
+        myGraph.links()[5].LtoN();
         //myGraph.links({id:6, label: "added", src: 5, dst: 6});
         //myGraph.links()[6].merge();
         //myGraph.removeNodes(nodes[4]);
