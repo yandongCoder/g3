@@ -9,8 +9,16 @@ export default function () {
     contractedLinks.forEach(function(group){
         group.forEach(function(Link){Link.transformed(true);});
     });
-    
-    this.graph._addLink(deriveLinkFromLNL(contractedLinks[0], this, contractedLinks[1]));
+
+    var newLink = deriveLinkFromLNL(contractedLinks[0], this, contractedLinks[1]);
+
+    newLink.transformedBy = {
+        node: this,
+        links: contractedLinks[0].concat(contractedLinks[1])
+    };
+
+
+   this.graph._addLink(newLink);
 
     this.graph.render();
 }

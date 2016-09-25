@@ -34,6 +34,7 @@ export default function Link(data, graph) {
     this._needMerged = data.merged || false;
 
     this.mergedBy = data.mergedBy;
+    this.transformedBy = data.transformedBy;
 }
 
 

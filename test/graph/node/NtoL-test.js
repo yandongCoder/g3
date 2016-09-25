@@ -50,5 +50,8 @@ tape("Only if Node directly connect two Nodes(one Node between two Nodes), trans
     test.equal(myGraph.links()[0].transformed(), true);
     test.equal(myGraph.links()[1].transformed(), true);
 
+    test.deepEqual(myGraph.links()[2].transformedBy.node, myGraph.nodes()[0]);
+    test.deepEqual(myGraph.links()[2].transformedBy.links, [myGraph.links()[0], myGraph.links()[1]]);
+
     test.end();
 });
