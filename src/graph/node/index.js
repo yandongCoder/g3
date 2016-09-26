@@ -20,6 +20,8 @@ export default function Node(data, graph) {
     this._radius = data.radius || graph._radius;
     this._color = data.color;
     this._selected = data.selected || false; //indicate whether node is select
+
+    this._needTransformed = data.transformed || false;
 }
 
 
