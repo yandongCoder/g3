@@ -9,6 +9,7 @@ import {getX, getY} from "./getXY";
 import NtoL from "./NtoL";
 import getConnectedLinks from "./getConnectedLinks";
 import remove from "./remove";
+import grouped from "./grouped";
 
 //data: data obj, graph: graphInstance
 export default function Node(data, graph) {
@@ -40,5 +41,6 @@ Node.prototype = {
     radius: radius,
     remove: remove,
     NtoL: NtoL,
-    getConnectedLinks: getConnectedLinks
+    getConnectedLinks: getConnectedLinks,
+    grouped: grouped
 };

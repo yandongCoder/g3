@@ -762,6 +762,14 @@
        this.graph._nodes.splice(this.graph._nodes.indexOf(this), 1);
    }
 
+   function grouped (grouped) {
+       if(!arguments.length) return this._grouped === undefined? false : this._grouped;
+
+       this._grouped = grouped;
+
+       return this;
+   }
+
    //data: data obj, graph: graphInstance
    function Node(data, graph) {
        this.graph = graph;
@@ -792,7 +800,8 @@
        radius: radius,
        remove: remove$1,
        NtoL: NtoL,
-       getConnectedLinks: getConnectedLinks
+       getConnectedLinks: getConnectedLinks,
+       grouped: grouped
    };
 
    function addNode (obj) {
@@ -1194,8 +1203,10 @@
        }
    }
 
-   function group () {
-
+   function group (Nodes) {
+       Nodes.forEach(function(Node){
+           Node.grouped(true);
+       });
    }
 
    function Graph(selector, config) {
