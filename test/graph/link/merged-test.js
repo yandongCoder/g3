@@ -8,7 +8,7 @@ tape("get and set _merge property of a Link", function(test){
 
 
     var myGraph = g3.graph(svg)
-        .nodes([{id: 1, x: 0, y: 0}, {id: 2, x: 100, y: 0}])
+        .nodes([{id: 1}, {id: 2}])
         .links([{id: 1, src: 1, dst: 2}, {id: 2, src: 1, dst: 2}]);
 
     test.equal(myGraph.links()[0].merged(), false);

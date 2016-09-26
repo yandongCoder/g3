@@ -26,6 +26,8 @@ import scaleTo from "./scaleTo";
 import translateBy from "./translateBy";
 import keydowned from "./keydowned";
 import keyupped from "./keyupped";
+import group from "./group";
+import getContainLinks from "./getContainLinks";
 
 function Graph(selector, config) {
     if(config === undefined) config = {};
@@ -60,6 +62,7 @@ Graph.prototype = {
     links: links,
     getLinks: getLinks,
     getRenderedLinks: getRenderedLinks,
+    getContainLinks: getContainLinks,
     _addLink: addLink,
     hasLink: hasLink,
     removeLinks: removeLinks,
@@ -68,6 +71,7 @@ Graph.prototype = {
     transform: transform,
     scaleTo: scaleTo,
     translateBy: translateBy,
+    group: group,
     _keydowned: keydowned,
     _keyupped: keyupped,
     _init: init,

@@ -1213,8 +1213,17 @@
    }
 
    function group (Nodes) {
+       var containLinks = this.getContainLinks(Nodes);
        Nodes.forEach(function(Node){
            Node.grouped(true);
+       });
+   }
+
+   function getContainLinks (Nodes) {
+       var ids = Nodes.map(function(Node){return Node.id});
+       
+       return this._links.filter(function(Link){
+           return (ids.indexOf(Link.source.id) !== -1) && (ids.indexOf(Link.target.id) !== -1);
        });
    }
 
@@ -1251,6 +1260,7 @@
        links: links,
        getLinks: getLinks,
        getRenderedLinks: getRenderedLinks,
+       getContainLinks: getContainLinks,
        _addLink: addLink,
        hasLink: hasLink,
        removeLinks: removeLinks,
