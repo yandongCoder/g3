@@ -2,7 +2,6 @@ import select from "../utils/select";
 import width from "./width";
 import height from "./height";
 import render from "./render";
-import data from "./data";
 import nodes from "./nodes";
 import getNodes from "./getNodes";
 import getRenderedNodes from "./getRenderedNodes";
@@ -50,7 +49,6 @@ Graph.prototype = {
     width: width,
     height: height,
     render: render,
-    data: data,
     nodes: nodes,
     getNodes: getNodes,
     getRenderedNodes: getRenderedNodes,
