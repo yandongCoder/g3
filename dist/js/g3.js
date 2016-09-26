@@ -745,7 +745,7 @@
 
    function getConnectedLinks (grouped) {
        var connectedLinks = this.graph._links.filter(function (Link) {
-           return  ((Link.source === this) || (Link.target === this)) && !Link.merged();
+           return  ((Link.source === this) || (Link.target === this)) && !Link.merged() && (Link.transformed() === this.transformed());
        }, this);
        
        if(grouped){
