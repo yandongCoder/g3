@@ -6,7 +6,7 @@ import direction from "../utils/deriveDirection";
 export default function (Links) {
 
     var obj = {};
-    obj.id = "derived:" + concat("id", Links);
+    obj.id = "merged:" + concat("id", Links);
     obj.label = concat("label", Links);
     obj.width = average('width', Links);
     obj.src = Links[0].src;

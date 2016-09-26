@@ -7,7 +7,7 @@ export default function (srcLinks, Node, dstLinks) {
     dstLinks = dstLinks.length > 1? new Link(deriveLinkFromLinks(dstLinks)): dstLinks[0];
 
     var obj = {};
-    obj.id = "derived:(" + srcLinks.id + ")" + Node.id + "(" + dstLinks.id + ")";
+    obj.id = "transformed:(" + srcLinks.id + ")" + Node.id + "(" + dstLinks.id + ")";
     obj.label = "(" + srcLinks.label() + ")" + Node.label() + "(" + dstLinks.label() + ")";
     obj.src = srcLinks.src === Node.id? srcLinks.dst: srcLinks.src;
     obj.dst = dstLinks.src === Node.id? dstLinks.dst: dstLinks.src;

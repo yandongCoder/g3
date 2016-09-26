@@ -40,14 +40,6 @@
 
    }
 
-   function data (data) {
-       if(!arguments.length){
-           return data;
-       }
-       this._data = data;
-       return this;
-   }
-
    function toArray (maybeArr) {
        if(!Array.isArray(maybeArr)) maybeArr = [maybeArr];
        return maybeArr;
@@ -573,7 +565,7 @@
    function deriveLinkFromLinks (Links) {
 
        var obj = {};
-       obj.id = "derived:" + concat("id", Links);
+       obj.id = "merged:" + concat("id", Links);
        obj.label = concat("label", Links);
        obj.width = average('width', Links);
        obj.src = Links[0].src;
@@ -708,7 +700,7 @@
        dstLinks = dstLinks.length > 1? new Link(deriveLinkFromLinks(dstLinks)): dstLinks[0];
 
        var obj = {};
-       obj.id = "derived:(" + srcLinks.id + ")" + Node.id + "(" + dstLinks.id + ")";
+       obj.id = "transformed:(" + srcLinks.id + ")" + Node.id + "(" + dstLinks.id + ")";
        obj.label = "(" + srcLinks.label() + ")" + Node.label() + "(" + dstLinks.label() + ")";
        obj.src = srcLinks.src === Node.id? srcLinks.dst: srcLinks.src;
        obj.dst = dstLinks.src === Node.id? dstLinks.dst: dstLinks.src;
@@ -1202,6 +1194,10 @@
        }
    }
 
+   function group () {
+
+   }
+
    function Graph(selector, config) {
        if(config === undefined) config = {};
 
@@ -1224,7 +1220,6 @@
        width: width,
        height: height,
        render: render,
-       data: data,
        nodes: nodes,
        getNodes: getNodes,
        getRenderedNodes: getRenderedNodes,
@@ -1244,6 +1239,7 @@
        transform: transform,
        scaleTo: scaleTo,
        translateBy: translateBy,
+       group: group,
        _keydowned: keydowned,
        _keyupped: keyupped,
        _init: init,
