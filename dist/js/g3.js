@@ -93,7 +93,7 @@
 
    function getRenderedNodes () {
        return this.getNodes(function(Node){
-           return !Node.transformed();
+           return !Node.transformed() && !Node.grouped();
        });
    }
 
@@ -880,7 +880,7 @@
 
    function getRenderedLinks () {
        return this.getLinks(function(Link){
-          return !Link.transformed() && !Link.merged();
+          return !Link.transformed() && !Link.merged() && !Link.grouped();
        });
    }
 
@@ -1212,7 +1212,20 @@
        }
    }
 
+   function deriveNodeFromNodes (Nodes) {
+       var obj = {};
+       obj.id = "grouped:" + concat("id", Nodes);
+       obj.label = concat("label", Nodes);
+       obj.radius = average('radius', Nodes);
+       obj.x = average('x', Nodes);
+       obj.y = average('y', Nodes);
+       obj.color = "#"+  colorMixer.mix(Nodes.map(function(Link){return Link.color()}));
+
+       return obj;
+   }
+
    function group (Nodes) {
+
        var containLinks = this.getContainLinks(Nodes);
        Nodes.forEach(function(Node){
            Node.grouped(true);
@@ -1221,6 +1234,12 @@
        containLinks.forEach(function(Link){
            Link.grouped(true);
        });
+
+       var newNode = deriveNodeFromNodes(Nodes);
+
+       this._addNode(newNode);
+
+       this.render();
    }
 
    function getContainLinks (Nodes) {
@@ -1324,18 +1343,6 @@
        var tmp = document.implementation.createHTMLDocument();
        tmp.body.innerHTML = str;
        return tmp.body.children[0];
-   }
-
-   function deriveNodeFromNodes (Nodes) {
-       var obj = {};
-       obj.id = "grouped:" + concat("id", Nodes);
-       obj.label = concat("label", Nodes);
-       obj.radius = average('radius', Nodes);
-       obj.x = average('x', Nodes);
-       obj.y = average('y', Nodes);
-       obj.color = "#"+  colorMixer.mix(Nodes.map(function(Link){return Link.color()}));
-
-       return obj;
    }
 
    function safeExecute (maybeFunction) {

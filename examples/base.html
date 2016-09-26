@@ -45,8 +45,8 @@
     d3.select("#showBrush").on('click', myGraph.brush.show);
     d3.select("#hideBrush").on('click', myGraph.brush.hide);
 
-    //myGraph.nodes()[1].NtoL();
-    //myGraph.nodes()[2].NtoL();
+    myGraph.group([myGraph.nodes()[0], myGraph.nodes()[1]]);
+    console.log(myGraph.getRenderedNodes());
 
     //myGraph.links()[0].merge();
     //console.log(myGraph.nodes()[2].getConnectedLinks());
