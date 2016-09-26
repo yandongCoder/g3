@@ -9,11 +9,13 @@ export default function () {
     toMergedLinks.forEach(function(Link){
         Link.merged(true);
     });
-    
-    var newLink = deriveLinkFromLinks(toMergedLinks);
-    newLink.mergedBy = toMergedLinks;
 
-    this.graph._addLink(newLink);
+    var linkObj = deriveLinkFromLinks(toMergedLinks);
+    linkObj.mergedBy = toMergedLinks;
+
+    var Link = this.graph._addLink(linkObj);
+
+    Link.NtoL();
 
     this.graph.render();
 

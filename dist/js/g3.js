@@ -593,11 +593,13 @@
        toMergedLinks.forEach(function(Link){
            Link.merged(true);
        });
-       
-       var newLink = deriveLinkFromLinks(toMergedLinks);
-       newLink.mergedBy = toMergedLinks;
 
-       this.graph._addLink(newLink);
+       var linkObj = deriveLinkFromLinks(toMergedLinks);
+       linkObj.mergedBy = toMergedLinks;
+
+       var Link = this.graph._addLink(linkObj);
+
+       Link.NtoL();
 
        this.graph.render();
 
@@ -644,6 +646,11 @@
        return this;
    }
 
+   function NtoL$1 () {
+       if(!this.transformed() && this.source.transformed()) this.source.NtoL();
+       if(!this.transformed() && this.target.transformed()) this.target.NtoL();
+   }
+
    function Link(data, graph) {
        this.graph = graph;
        this.id = data.id;
@@ -681,6 +688,7 @@
        flattenMerge: flattenMerge,
        unmerge: unmerge,
        LtoN: LtoN,
+       NtoL: NtoL$1,
        color: color$1,
        direction: direction,
        getHomoLinks: getHomoLinks,
@@ -822,8 +830,7 @@
            if(Link._needMerged) Link.flattenMerge();
            delete Link._needMerged;
 
-           if(!Link.transformed() && Link.source.transformed()) Link.source.NtoL();
-           if(!Link.transformed() && Link.target.transformed()) Link.target.NtoL();
+           Link.NtoL();
        });
    }
 

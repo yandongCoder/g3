@@ -18,6 +18,7 @@ import flattenMerge from "./flattenMerge";
 import unmerge from "./unmerge";
 import getHomoLinks from "./getHomoLinks";
 import LtoN from "./LtoN";
+import NtoL from "./NtoL";
 
 export default function Link(data, graph) {
     this.graph = graph;
@@ -56,6 +57,7 @@ Link.prototype = {
     flattenMerge: flattenMerge,
     unmerge: unmerge,
     LtoN: LtoN,
+    NtoL: NtoL,
     color: color,
     direction: direction,
     getHomoLinks: getHomoLinks,
