@@ -39,7 +39,7 @@
     var myGraph = g3.graph("#my-svg")
             .width(300)
             .height(300)
-            .nodes([{id: 1, label: "a", x: 100, y: 100}, {id: 2, label: "b", x: 200, y: 200}, {id: 3, label: "c", x: 300, y: 300}])
+            .nodes([{id: 1, label: "a", x: 100, y: 100}, {id: 2, label: "b", x: 100, y: 100}, {id: 3, label: "c", x: 300, y: 300}])
             .links([{id:1, label: "a", src: 1, dst: 2}, {id:2, label: "b", src: 1, dst: 2}, {id:3, label: "c", src: 2, dst: 1}, {id:4, label: "d", src: 3, dst: 2}]);
 
     d3.select("#showBrush").on('click', myGraph.brush.show);
