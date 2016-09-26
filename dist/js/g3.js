@@ -646,6 +646,14 @@
        if(!this.transformed() && this.target.transformed()) this.target.NtoL();
    }
 
+   function grouped (grouped) {
+       if(!arguments.length) return this._grouped === undefined? false : this._grouped;
+
+       this._grouped = grouped;
+
+       return this;
+   }
+
    function Link(data, graph) {
        this.graph = graph;
        this.id = data.id;
@@ -682,6 +690,7 @@
        merge: merge,
        flattenMerge: flattenMerge,
        unmerge: unmerge,
+       grouped: grouped,
        LtoN: LtoN,
        NtoL: NtoL$1,
        color: color$1,
@@ -762,7 +771,7 @@
        this.graph._nodes.splice(this.graph._nodes.indexOf(this), 1);
    }
 
-   function grouped (grouped) {
+   function grouped$1 (grouped) {
        if(!arguments.length) return this._grouped === undefined? false : this._grouped;
 
        this._grouped = grouped;
@@ -801,7 +810,7 @@
        remove: remove$1,
        NtoL: NtoL,
        getConnectedLinks: getConnectedLinks,
-       grouped: grouped
+       grouped: grouped$1
    };
 
    function addNode (obj) {
