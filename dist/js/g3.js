@@ -1217,6 +1217,10 @@
        Nodes.forEach(function(Node){
            Node.grouped(true);
        });
+
+       containLinks.forEach(function(Link){
+           Link.grouped(true);
+       });
    }
 
    function getContainLinks (Nodes) {
@@ -1322,6 +1326,18 @@
        return tmp.body.children[0];
    }
 
+   function deriveNodeFromNodes (Nodes) {
+       var obj = {};
+       obj.id = "grouped:" + concat("id", Nodes);
+       obj.label = concat("label", Nodes);
+       obj.radius = average('radius', Nodes);
+       obj.x = average('x', Nodes);
+       obj.y = average('y', Nodes);
+       obj.color = "#"+  colorMixer.mix(Nodes.map(function(Link){return Link.color()}));
+
+       return obj;
+   }
+
    function safeExecute (maybeFunction) {
        return (maybeFunction instanceof Function)? maybeFunction(): maybeFunction;
    }
@@ -1337,6 +1353,7 @@
        parseHTML: parseHTML,
        deriveLinkFromLinks: deriveLinkFromLinks,
        deriveLinkFromLNL: deriveLinkFromLNL,
+       deriveNodeFromNodes: deriveNodeFromNodes,
        concat: concat,
        average: average,
        direction: direction$1,

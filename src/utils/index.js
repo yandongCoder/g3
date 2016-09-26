@@ -8,6 +8,7 @@ import getAbsUrl from "./getAbsUrl";
 import parseHTML from "./parseHTML";
 import deriveLinkFromLinks from "./deriveLinkFromLinks";
 import deriveLinkFromLNL from "./deriveLinkFromLNL";
+import deriveNodeFromNodes from "./deriveNodeFromNodes";
 import concat from "./deriveConcat";
 import average from "./deriveAverage";
 import direction from "./deriveDirection";
@@ -24,6 +25,7 @@ var utils = {
     parseHTML: parseHTML,
     deriveLinkFromLinks: deriveLinkFromLinks,
     deriveLinkFromLNL: deriveLinkFromLNL,
+    deriveNodeFromNodes: deriveNodeFromNodes,
     concat: concat,
     average: average,
     direction: direction,
