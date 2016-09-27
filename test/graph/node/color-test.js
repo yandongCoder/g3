@@ -7,7 +7,7 @@ tape("get and set color of a Node", function(test){
     var svg = document.querySelector("#graph");
 
 
-    var myGraph = g3.graph(svg)
+    var myGraph = g3.graph(svg, {autoRender: true})
         .nodes([{id: 1, x: 0, y: 0, color: "red"}, {id: 2, x: 100, y: 0}]);
 
 

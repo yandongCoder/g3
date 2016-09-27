@@ -28,15 +28,16 @@
        return this;
    }
 
-   function render () {
+   function render (internalCall) {
+       if(internalCall && !this._autoRender) return;
        //clearTimeout(this._renderDelay);
        //this._renderDelay = setTimeout(function(){
-           this._init();
-           this._draw();
+       this._init();
+       this._draw();
        //}.bind(this),0);
            //console.log('render');
 
-           return this;
+       return this;
 
    }
 
@@ -60,7 +61,7 @@
            this._addNode(v);
        },this);
 
-       this.render();
+       this.render(true);
        
        return this;
    }
@@ -118,7 +119,7 @@
        if(!arguments.length) return this._selected;
        this._selected = selected;
 
-       this.graph.render();
+       this.graph.render(true);
 
        return this;
    }
@@ -134,7 +135,7 @@
    function nudge (nudgeX, nudgeY) {
        this.x += nudgeX;
        this.y += nudgeY;
-       this.graph.render();
+       this.graph.render(true);
        return this;
    }
 
@@ -142,7 +143,7 @@
        if(!arguments.length) return this._color || "#123456";
 
        this._color = color;
-       this.graph.render();
+       this.graph.render(true);
 
        return this;
    }
@@ -151,7 +152,7 @@
        if(!arguments.length) return this._radius;
 
        this._radius = radius;
-       this.graph.render();
+       this.graph.render(true);
 
        return this;
    }
@@ -160,7 +161,7 @@
        if(!arguments.length) return this._label || "";
 
        this._label = label;
-       this.graph.render();
+       this.graph.render(true);
 
        return this;
    }
@@ -309,7 +310,7 @@
        if(!arguments.length) return this._label;
 
        this._label = label;
-       this.graph.render();
+       this.graph.render(true);
 
        return this;
    }
@@ -318,7 +319,7 @@
        if(!arguments.length) return this._width;
 
        this._width = width;
-       this.graph.render();
+       this.graph.render(true);
 
        return this;
    }
@@ -327,7 +328,7 @@
        if(!arguments.length) return this._color;
 
        this._color = color;
-       this.graph.render();
+       this.graph.render(true);
 
        return this;
    }
@@ -336,7 +337,7 @@
        if(!arguments.length) return this._direction;
 
        this._direction = direction;
-       this.graph.render();
+       this.graph.render(true);
 
        return this;
    }
@@ -344,7 +345,7 @@
    function remove () {
        this.graph._links.splice(this.graph._links.indexOf(this), 1);
 
-       this.graph.render();
+       this.graph.render(true);
 
        return this;
    }
@@ -595,7 +596,7 @@
 
        Link.NtoL();
 
-       this.graph.render();
+       this.graph.render(true);
 
        return this;
    }
@@ -741,7 +742,7 @@
 
       this.transformedTo = this.graph._addLink(newLink);
 
-       this.graph.render();
+       this.graph.render(true);
    }
 
    function getConnectedLinks (grouped) {
@@ -834,7 +835,7 @@
            Node.remove();
        }, this);
 
-       this.render();
+       this.render(true);
 
    }
 
@@ -871,7 +872,8 @@
        },this);
 
        this._preLinksTransfer();
-       this.render();
+       
+       this.render(true);
        
        return this;
    }
@@ -905,7 +907,7 @@
            Link.remove();
        }, this);
 
-       this.render();
+       this.render(true);
    }
 
    function removeLinksOfNode (Node) {
@@ -1250,8 +1252,7 @@
            if(Nodes.indexOf(Link.target) !== -1) Link.target = newNode;
        });
 
-
-       this.render();
+       this.render(true);
    }
 
    function getContainLinks (Nodes) {
@@ -1281,7 +1282,8 @@
        this._movable = config.movable || false;
        this._zoomable = config.zoomable || false;
 
-       
+       this._autoRender  = config.autoRender || false;
+
        this._nodes = [];
        this._links = [];
    }
@@ -1355,8 +1357,8 @@
        }
    };
 
-   function index (selector) {
-       return new Graph(selector);
+   function index (selector, config) {
+       return new Graph(selector, config);
    }
 
    function parseHTML (str) {

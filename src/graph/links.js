@@ -16,7 +16,8 @@ export default function (links, cover) {
     },this);
 
     this._preLinksTransfer();
-    this.render();
+    
+    this.render(true);
     
     return this;
 }

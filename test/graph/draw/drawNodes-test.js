@@ -9,7 +9,7 @@ tape("nodes DOM should correspond _nodes always", function(test){
     var svg = document.querySelector("#graph");
     global.window = document.defaultView;
 
-    var myGraph = g3.graph(svg);
+    var myGraph = g3.graph(svg, {autoRender: true});
 
     var nodes = [{id: 1}, {id: 2},{id: 3},{id: 4}, {id: 5},{id: 6}];
     myGraph.nodes(nodes);

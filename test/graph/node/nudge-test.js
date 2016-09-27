@@ -7,7 +7,7 @@ tape("Nudge a Node", function(test){
     var svg = document.querySelector("#graph");
 
 
-    var myGraph = g3.graph(svg)
+    var myGraph = g3.graph(svg, {autoRender: true})
         .nodes([{id: 1, x: 5, y: 0}, {id: 2, x: 100, y: 0}]);
 
 

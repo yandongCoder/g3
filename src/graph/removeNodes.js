@@ -6,6 +6,6 @@ export default function (nodes) {
         Node.remove();
     }, this);
 
-    this.render();
+    this.render(true);
 
 }

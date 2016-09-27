@@ -42,7 +42,8 @@ function Graph(selector, config) {
     this._movable = config.movable || false;
     this._zoomable = config.zoomable || false;
 
-    
+    this._autoRender  = config.autoRender || false;
+
     this._nodes = [];
     this._links = [];
 }
@@ -116,6 +117,6 @@ Graph.prototype = {
     }
 };
 
-export default function (selector) {
-    return new Graph(selector);
+export default function (selector, config) {
+    return new Graph(selector, config);
 }
