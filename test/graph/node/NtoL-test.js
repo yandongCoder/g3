@@ -1,12 +1,8 @@
 var tape = require("tape"),
-    jsdom = require("jsdom"),
     g3 = require("../../../dist/js/g3");
 
 tape("Do not transform Node to Link if the Node connect less than two Nodes", function(test){
-    var document = jsdom.jsdom('<svg id="graph"></svg>');
-    var svg = document.querySelector("#graph");
-
-    var myGraph = g3.graph(svg)
+    var myGraph = g3.graph()
         .nodes([{id: 1}, {id: 2}])
         .links([{id:1, src: 1, dst: 2}]);
 
@@ -18,10 +14,7 @@ tape("Do not transform Node to Link if the Node connect less than two Nodes", fu
 });
 
 tape("Do not transform Node to Link if the Node connect more than two Nodes", function(test){
-    var document = jsdom.jsdom('<svg id="graph"></svg>');
-    var svg = document.querySelector("#graph");
-
-    var myGraph = g3.graph(svg)
+    var myGraph = g3.graph()
         .nodes([{id: 1}, {id: 2}, {id: 3}, {id: 4}])
         .links([{id:1, src: 1, dst: 2}, {id:2, src: 1, dst: 3}, {id:3, src: 1, dst: 4}]);
 
@@ -33,10 +26,7 @@ tape("Do not transform Node to Link if the Node connect more than two Nodes", fu
 });
 
 tape("Only if Node directly connect two Nodes(one Node between two Nodes), transform this Node to Link ", function(test){
-    var document = jsdom.jsdom('<svg id="graph"></svg>');
-    var svg = document.querySelector("#graph");
-
-    var myGraph = g3.graph(svg)
+    var myGraph = g3.graph()
         .nodes([{id: 1}, {id: 2}, {id: 3}])
         .links([{id:1, src: 1, dst: 2}, {id: 2, src: 1, dst: 3}]);
 
@@ -57,10 +47,7 @@ tape("Only if Node directly connect two Nodes(one Node between two Nodes), trans
 });
 
 tape("Add new Link to transformed LNL, and transform this Link, it equivalent to transform them together.", function(test){
-    var document = jsdom.jsdom('<svg id="graph"></svg>');
-    var svg = document.querySelector("#graph");
-
-    var myGraph = g3.graph(svg)
+    var myGraph = g3.graph()
         .nodes([{id: 1}, {id: 2}, {id: 3}])
         .links([{id:1, src: 1, dst: 2}, {id: 2, src: 1, dst: 3}]);
 
@@ -83,10 +70,7 @@ tape("Add new Link to transformed LNL, and transform this Link, it equivalent to
 });
 
 tape("Merge Links first, then transform to LNL", function(test){
-    var document = jsdom.jsdom('<svg id="graph"></svg>');
-    var svg = document.querySelector("#graph");
-
-    var myGraph = g3.graph(svg)
+    var myGraph = g3.graph()
         .nodes([{id: 1}, {id: 2}, {id: 3}])
         .links([{id:1, src: 1, dst: 2}, {id:2, src: 1, dst: 2}, {id: 3, src: 1, dst: 3}]);
 
@@ -107,10 +91,7 @@ tape("Merge Links first, then transform to LNL", function(test){
 });
 
 tape("Transform to LNL first, then merge Links, it's same as Merge Links first, then transform to LNL", function(test){
-    var document = jsdom.jsdom('<svg id="graph"></svg>');
-    var svg = document.querySelector("#graph");
-
-    var myGraph = g3.graph(svg)
+    var myGraph = g3.graph()
         .nodes([{id: 1}, {id: 2}, {id: 3}])
         .links([{id:1, src: 1, dst: 2}, {id:2, src: 1, dst: 2}, {id: 3, src: 1, dst: 3}]);
 

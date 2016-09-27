@@ -1,5 +1,4 @@
 var tape = require("tape"),
-    jsdom = require("jsdom"),
     g3 = require("../../dist/js/g3");
 
 tape('concat property of a objectArray', function(test){

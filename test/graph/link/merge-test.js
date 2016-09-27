@@ -1,12 +1,8 @@
 var tape = require("tape"),
-    jsdom = require("jsdom"),
     g3 = require("../../../dist/js/g3");
 
 tape("Merge all Links between a couple Nodes", function(test){
-    var document = jsdom.jsdom('<svg id="graph"></svg>');
-    var svg = document.querySelector("#graph");
-
-    var myGraph = g3.graph(svg)
+    var myGraph = g3.graph()
         .nodes([{id: 1}, {id: 2}, {id: 3}])
         .links([{id:1, src: 1, dst: 2}, {id:2, src: 1, dst: 2}, {id:3, src: 2, dst: 1}, {id:4, src: 3, dst: 2}]);
 
@@ -23,10 +19,7 @@ tape("Merge all Links between a couple Nodes", function(test){
 });
 
 tape("Don't merge Link if only one Link between a couple Nodes", function(test){
-    var document = jsdom.jsdom('<svg id="graph"></svg>');
-    var svg = document.querySelector("#graph");
-
-    var myGraph = g3.graph(svg)
+    var myGraph = g3.graph()
         .nodes([{id: 1}, {id: 2}, {id: 3}])
         .links([{id:1, src: 1, dst: 2}, {id:2, src: 1, dst: 2}, {id:3, src: 2, dst: 1}, {id:4, src: 3, dst: 2}]);
 
@@ -38,10 +31,7 @@ tape("Don't merge Link if only one Link between a couple Nodes", function(test){
 });
 
 tape("Merge Links that has been transformed(NtoL)", function(test){
-    var document = jsdom.jsdom('<svg id="graph"></svg>');
-    var svg = document.querySelector("#graph");
-
-    var myGraph = g3.graph(svg)
+    var myGraph = g3.graph()
         .nodes([{id: 1}, {id: 2}, {id: 3}])
         .links([{id:1, src: 1, dst: 2}, {id:2, src: 1, dst: 2}, {id:3, src: 2, dst: 1}, {id:4, src: 3, dst: 2}]);
 
@@ -54,10 +44,7 @@ tape("Merge Links that has been transformed(NtoL)", function(test){
 });
 
 tape("Merge Links, add new Link between this couple Nodes, merge again.", function(test){
-    var document = jsdom.jsdom('<svg id="graph"></svg>');
-    var svg = document.querySelector("#graph");
-    
-    var myGraph = g3.graph(svg)
+    var myGraph = g3.graph()
         .nodes([{id: 1}, {id: 2}, {id: 3}])
         .links([{id:1, src: 1, dst: 2}, {id:2, src: 1, dst: 2}, {id:3, src: 2, dst: 1}, {id:4, src: 3, dst: 2}]);
     

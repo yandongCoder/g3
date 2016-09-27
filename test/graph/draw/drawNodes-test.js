@@ -37,3 +37,38 @@ tape("nodes DOM should correspond _nodes always", function(test){
     test.equal(myGraph.nodes().length, document.querySelector('.nodes').querySelectorAll('.node').length);
     test.end();
 });
+
+tape("Node's DOM should correspond Node's property", function(test){
+    var document = jsdom.jsdom('<svg id="graph"></svg>');
+    var svg = document.querySelector("#graph");
+
+
+    var myGraph = g3.graph(svg, {autoRender: true})
+        .nodes({id: 1, x: 5, y: 0, label: "a", selected: true, radius: 30, color: "#123444"});
+
+    //label DOM
+    test.equal(document.querySelector(".nodes").querySelectorAll(".node")[0].querySelector(".text-group").querySelector('span').textContent, "a");
+    myGraph.nodes()[0].label('abc');
+    test.equal(document.querySelector(".nodes").querySelectorAll(".node")[0].querySelector(".text-group").querySelector('span').textContent, "abc");
+
+    //selected class DOM
+    test.equal(document.querySelector(".nodes").querySelectorAll(".node")[0].className, "node selected");
+    myGraph.nodes()[0].selected(false);
+    test.equal(document.querySelector(".nodes").querySelectorAll(".node")[0].className, "node");
+
+    //radius Attribute
+    test.equal(document.querySelector(".nodes").querySelectorAll(".node")[0].querySelector("circle").getAttribute('r'), '30');
+    myGraph.nodes()[0].radius(40);
+    test.equal(document.querySelector(".nodes").querySelectorAll(".node")[0].querySelector("circle").getAttribute('r'), '40');
+
+    //X, Y DOM
+    test.equal(document.querySelector(".nodes").querySelectorAll(".node")[0].getAttribute('transform'), 'translate(5,0)');
+    myGraph.nodes()[0].nudge(10, 10);
+    test.equal(document.querySelector(".nodes").querySelectorAll(".node")[0].getAttribute("transform"), 'translate(15,10)');
+
+    //color Attribute
+    test.equal(document.querySelector(".nodes").querySelectorAll(".node")[0].querySelector("circle").style.fill, "#123444");
+    myGraph.nodes()[0].color('#666888');
+    test.equal(document.querySelector(".nodes").querySelectorAll(".node")[0].querySelector("circle").style.fill, "#666888");
+    test.end();
+});

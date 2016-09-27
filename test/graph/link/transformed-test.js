@@ -1,12 +1,8 @@
 var tape = require("tape"),
-    jsdom = require("jsdom"),
     g3 = require("../../../dist/js/g3");
 
 tape("Transform Link should mark this Link's _transform true.", function(test){
-    var document = jsdom.jsdom('<svg id="graph"></svg>');
-    var svg = document.querySelector("#graph");
-
-    var myGraph = g3.graph(svg)
+    var myGraph = g3.graph()
         .nodes([{id: 1}, {id: 2}, {id: 3}])
         .links([{id:1, src: 1, dst: 2}]);
 

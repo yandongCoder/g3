@@ -1,13 +1,8 @@
 var tape = require("tape"),
-    jsdom = require("jsdom"),
 g3 = require("../../dist/js/g3");
 
 tape("add link to graph", function(test){
-    var document = jsdom.jsdom('<svg id="graph"></svg>');
-    var svg = document.querySelector("#graph");
-
-    var myGraph = g3.graph(svg);
-
+    var myGraph = g3.graph();
 
     //could not add link which not has source or target in nodes
     myGraph.links([{id: 1, label: "A->B", src: 1, dst: 2,direction: 0},{id: 2, label: "C->D", src: 3, dst: 4,direction: 3}]);

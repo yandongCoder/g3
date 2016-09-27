@@ -1,12 +1,8 @@
 var tape = require("tape"),
-    jsdom = require("jsdom"),
     g3 = require("../../dist/js/g3");
 
 tape("If any one of links Data between a couple Nodes marked merged, then merge them", function(test){
-    var document = jsdom.jsdom('<svg id="graph"></svg>');
-    var svg = document.querySelector("#graph");
-    
-    var myGraph = g3.graph(svg)
+    var myGraph = g3.graph()
         .nodes([{id: 1}, {id: 2}, {id: 3}])
         .links([{id:1, src: 1, dst: 2, merged: true}, {id:2, src: 1, dst: 2}, {id:3, src: 2, dst: 1}, {id:4, src: 3, dst: 2}]);
     
@@ -18,10 +14,7 @@ tape("If any one of links Data between a couple Nodes marked merged, then merge 
 });
 
 tape("PreMerge using flatten merge, so not has nested mergedBy", function(test){
-    var document = jsdom.jsdom('<svg id="graph"></svg>');
-    var svg = document.querySelector("#graph");
-
-    var myGraph = g3.graph(svg)
+    var myGraph = g3.graph()
         .nodes([{id: 1}, {id: 2}, {id: 3}])
         .links([{id:1, src: 1, dst: 2, merged: true}, {id:2, src: 1, dst: 2}, {id:3, src: 2, dst: 1}, {id:4, src: 3, dst: 2}]);
 
@@ -32,10 +25,7 @@ tape("PreMerge using flatten merge, so not has nested mergedBy", function(test){
 });
 
 tape("If a new kink added to mergedLinks between couple Nodes, merged only if new link's merge is true, otherwise not", function(test){
-    var document = jsdom.jsdom('<svg id="graph"></svg>');
-    var svg = document.querySelector("#graph");
-
-    var myGraph = g3.graph(svg)
+    var myGraph = g3.graph()
         .nodes([{id: 1}, {id: 2}, {id: 3}])
         .links([{id:1, src: 1, dst: 2, merged: true}, {id:2, src: 1, dst: 2}, {id:3, src: 2, dst: 1}, {id:4, src: 3, dst: 2}]);
 
@@ -51,10 +41,7 @@ tape("If a new kink added to mergedLinks between couple Nodes, merged only if ne
 });
 
 tape("Auto transform added new Link to LNL, if new Link's source or target is transformed", function(test){
-    var document = jsdom.jsdom('<svg id="graph"></svg>');
-    var svg = document.querySelector("#graph");
-
-    var myGraph = g3.graph(svg)
+    var myGraph = g3.graph()
         .nodes([{id: 1}, {id: 2}, {id: 3}])
         .links([{id:1, src: 1, dst: 2}, {id: 2, src: 1, dst: 3}]);
 
@@ -66,15 +53,11 @@ tape("Auto transform added new Link to LNL, if new Link's source or target is tr
 
     test.deepEqual(myGraph.links()[3].transformedBy.links, [myGraph.links()[0], myGraph.links()[2], myGraph.links()[1]]);
 
-
     test.end();
 });
 
 tape("If Node's 'transformed' is marked, transform this Node", function(test){
-    var document = jsdom.jsdom('<svg id="graph"></svg>');
-    var svg = document.querySelector("#graph");
-
-    var myGraph = g3.graph(svg)
+    var myGraph = g3.graph()
         .nodes([{id: 1}, {id: 2, transformed: true}, {id: 3}])
         .links([{id:1, src: 1, dst: 2}, {id:2, src: 1, dst: 2}, {id:3, src: 2, dst: 1}, {id:4, src: 3, dst: 2}]);
 

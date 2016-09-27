@@ -1,13 +1,9 @@
 var tape = require("tape"),
-    jsdom = require("jsdom"),
     g3 = require("../../dist/js/g3");
 
 
 tape("derive new Link from received Links&Node&Links", function(test){
-    var document = jsdom.jsdom('<svg id="graph"></svg>');
-    var svg = document.querySelector("#graph");
-
-    var myGraph = g3.graph(svg)
+    var myGraph = g3.graph()
         .nodes([{id: 1, label: "a", size: 50}, {id: 2, label: "b", color: "#445987"}, {id:3, label: "c"}])
         .links([{id: 1, src: 1, dst: 2, label: "L1", color: "#ff0000", width: 5, direction: 1}, {id: 2, src: 2, dst: 1, label: "L2", color: "#00ff00", direction: 2},  {id: 3, src: 2, dst: 3, label: "L3", color: "#00ff00", direction: 2}]);
 

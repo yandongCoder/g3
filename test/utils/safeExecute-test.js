@@ -1,5 +1,4 @@
 var tape = require("tape"),
-    jsdom = require("jsdom"),
     g3 = require("../../dist/js/g3");
 
 tape('If argument is function, execute and return result, else directly return itself', function(test){

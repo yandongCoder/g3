@@ -1,12 +1,8 @@
 var tape = require("tape"),
-    jsdom = require("jsdom"),
     g3 = require("../../../dist/js/g3");
 
 tape("remove a Node", function(test){
-    var document = jsdom.jsdom('<svg id="graph"></svg>');
-    var svg = document.querySelector("#graph");
-
-    var myGraph = g3.graph(svg);
+    var myGraph = g3.graph();
 
 
     var nodes = [{id: 1}, {id: 2},{id: 3},{id: 4}, {id: 5},{id: 6}];

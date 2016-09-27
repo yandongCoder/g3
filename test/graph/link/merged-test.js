@@ -1,13 +1,8 @@
 var tape = require("tape"),
-    jsdom = require("jsdom"),
     g3 = require("../../../dist/js/g3");
 
 tape("get and set _merge property of a Link", function(test){
-    var document = jsdom.jsdom('<svg id="graph"></svg>');
-    var svg = document.querySelector("#graph");
-
-
-    var myGraph = g3.graph(svg)
+    var myGraph = g3.graph()
         .nodes([{id: 1}, {id: 2}])
         .links([{id: 1, src: 1, dst: 2}, {id: 2, src: 1, dst: 2}]);
 
