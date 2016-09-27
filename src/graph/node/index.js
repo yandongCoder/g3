@@ -10,6 +10,7 @@ import NtoL from "./NtoL";
 import getConnectedLinks from "./getConnectedLinks";
 import remove from "./remove";
 import grouped from "./grouped";
+import ungroup from "./ungroup";
 
 //data: data obj, graph: graphInstance
 export default function Node(data, graph) {
@@ -42,5 +43,6 @@ Node.prototype = {
     remove: remove,
     NtoL: NtoL,
     getConnectedLinks: getConnectedLinks,
-    grouped: grouped
+    grouped: grouped,
+    ungroup: ungroup
 };
