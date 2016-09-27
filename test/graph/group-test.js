@@ -2,20 +2,25 @@ var tape = require("tape"),
     jsdom = require("jsdom"),
     g3 = require("../../dist/js/g3");
 
-tape("Group two nodes", function(test){
+tape("Group two Nodes which contain a Link, attach no Links", function(test){
     var document = jsdom.jsdom('<svg id="graph"></svg>');
     var svg = document.querySelector("#graph");
 
     var myGraph = g3.graph(svg)
-        .nodes([{id: 1}, {id: 2}, {id: 3}, {id: 4}])
-        .links([{id:1, src: 1, dst: 2}, {id:2, src: 2, dst: 3}, {id: 3, src: 3, dst: 4}]);
+        .nodes([{id: 1}, {id: 2}, {id: 3}])
+        .links([{id:1, src: 1, dst: 2}, {id:2, src: 2, dst: 3}]);
 
-    myGraph.group([myGraph.nodes()[1], myGraph.nodes()[2]]);
+    myGraph.group([myGraph.nodes()[0], myGraph.nodes()[1]]);
 
-    test.equal(myGraph.nodes().length, 5);
-    test.equal(myGraph.getRenderedNodes().length, 3);
+    test.equal(myGraph.getRenderedNodes().length, 22);
 
-    test.equal(myGraph.getRenderedLinks().length, 2);
+    test.equal(myGraph.nodes()[0].grouped(), true);
+    test.equal(myGraph.nodes()[1].grouped(), true);
+    test.deepEqual(myGraph.nodes()[3].groupedBy.nodes, [myGraph.nodes()[0], myGraph.nodes()[1]]);
+    test.deepEqual(myGraph.nodes()[3].groupedBy.links, [myGraph.links()[0]]);
 
+    test.deepEqual(myGraph.links()[1].source, myGraph.nodes()[3]);
+
+    
     test.end();
 });
