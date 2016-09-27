@@ -1243,10 +1243,17 @@
    }
 
    function getContainLinks (Nodes) {
-       var ids = Nodes.map(function(Node){return Node.id});
-       
+       var ids = getIds(Nodes);
        return this._links.filter(function(Link){
            return (ids.indexOf(Link.source.id) !== -1) && (ids.indexOf(Link.target.id) !== -1);
+       });
+   }
+
+   function getAttachedLinks (Nodes) {
+       var ids = getIds(Nodes);
+       return this._links.filter(function(Link){
+           return ( (ids.indexOf(Link.source.id) === -1) && (ids.indexOf(Link.target.id) !== -1) ) ||
+               ( (ids.indexOf(Link.source.id) !== -1) && (ids.indexOf(Link.target.id) === -1) );
        });
    }
 
@@ -1284,6 +1291,7 @@
        getLinks: getLinks,
        getRenderedLinks: getRenderedLinks,
        getContainLinks: getContainLinks,
+       getAttachedLinks: getAttachedLinks,
        _addLink: addLink,
        hasLink: hasLink,
        removeLinks: removeLinks,

@@ -28,6 +28,7 @@ import keydowned from "./keydowned";
 import keyupped from "./keyupped";
 import group from "./group";
 import getContainLinks from "./getContainLinks";
+import getAttachedLinks from "./getAttachedLinks";
 
 function Graph(selector, config) {
     if(config === undefined) config = {};
@@ -63,6 +64,7 @@ Graph.prototype = {
     getLinks: getLinks,
     getRenderedLinks: getRenderedLinks,
     getContainLinks: getContainLinks,
+    getAttachedLinks: getAttachedLinks,
     _addLink: addLink,
     hasLink: hasLink,
     removeLinks: removeLinks,
