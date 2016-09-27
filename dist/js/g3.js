@@ -583,7 +583,7 @@
 
    function merge () {
        //每个Link本身只能被合并一次，也意味着只能存在于唯一一个Link的mergedBy属性中，for idempotent, 幂等性
-       var toMergedLinks = this.getHomoLinks().filter(function(Link){ return !Link.merged()});
+       var toMergedLinks = this.getHomoLinks().filter(function(Link){ return !Link.merged() && !Link.grouped()});
 
        if(toMergedLinks.length <= 1) return;
 
@@ -1231,6 +1231,9 @@
    }
 
    function group (Nodes) {
+
+       Nodes = Nodes.filter(function(Node){ return !Node.grouped() });
+       if(Nodes.length <= 1) return;
 
        Nodes.forEach(function(Node){
            Node.grouped(true);

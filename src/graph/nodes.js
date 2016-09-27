@@ -15,6 +15,8 @@ export default function (nodes, cover) {
         this._addNode(v);
     },this);
 
+    //this._preTransfer();
+
     this.render(true);
     
     return this;

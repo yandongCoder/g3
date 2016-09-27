@@ -15,7 +15,7 @@ export default function (links, cover) {
         this._addLink(v);
     },this);
 
-    this._preLinksTransfer();
+    this._preTransfer();
     
     this.render(true);
     

@@ -43,6 +43,19 @@ tape("Merge Links that has been transformed(NtoL)", function(test){
 
 });
 
+tape("Grouped Links could not apply merge operation.", function(test){
+    var myGraph = g3.graph()
+        .nodes([{id: 1}, {id: 2}, {id: 3}])
+        .links([{id:1, src: 1, dst: 2}, {id:2, src: 1, dst: 2}, {id:3, src: 2, dst: 1}, {id:4, src: 3, dst: 2}]);
+
+    myGraph.group([myGraph.nodes()[0], myGraph.nodes()[1]]);
+    myGraph.links()[0].merge();
+    test.equal(myGraph.links().length, 4);
+    test.equal(myGraph.getRenderedLinks().length, 1);
+    test.end();
+
+});
+
 tape("Merge Links, add new Link between this couple Nodes, merge again.", function(test){
     var myGraph = g3.graph()
         .nodes([{id: 1}, {id: 2}, {id: 3}])

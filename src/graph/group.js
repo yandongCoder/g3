@@ -2,6 +2,9 @@ import deriveNodeFromNodes from "../utils/deriveNodeFromNodes";
 
 export default function (Nodes) {
 
+    Nodes = Nodes.filter(function(Node){ return !Node.grouped() });
+    if(Nodes.length <= 1) return;
+
     Nodes.forEach(function(Node){
         Node.grouped(true);
     });
