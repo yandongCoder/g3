@@ -12,3 +12,14 @@ tape("Get attached Links of Nodes", function(test){
 
     test.end();
 });
+
+tape("Get attached Links of Nodes should exclude merged Links", function(test){
+    var myGraph = g3.graph()
+        .nodes([{id: 1}, {id: 2}, {id: 3}, {id: 4}])
+        .links([{id: 1, src: 1, dst: 2}, {id: 2, src: 2, dst: 3}, {id: 3, src: 3, dst: 2}, {id: 4, src: 3, dst: 4}]);
+
+    myGraph.links()[1].merge();
+    test.deepEqual(myGraph.getAttachedLinks([myGraph.nodes()[0], myGraph.nodes()[1]]), [myGraph.links()[4]]);
+
+    test.end();
+});

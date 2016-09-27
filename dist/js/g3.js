@@ -61,6 +61,8 @@
            this._addNode(v);
        },this);
 
+       //this._preTransfer();
+
        this.render(true);
        
        return this;
@@ -843,7 +845,7 @@
        this._nodes = [];
    }
 
-   function preLinksTransfer () {
+   function preTransfer () {
        this._links.forEach(function(Link){
            if(Link._needMerged) Link.flattenMerge();
            delete Link._needMerged;
@@ -871,7 +873,7 @@
            this._addLink(v);
        },this);
 
-       this._preLinksTransfer();
+       this._preTransfer();
        
        this.render(true);
        
@@ -1258,15 +1260,15 @@
    function getContainLinks (Nodes) {
        var ids = getIds(Nodes);
        return this._links.filter(function(Link){
-           return (ids.indexOf(Link.source.id) !== -1) && (ids.indexOf(Link.target.id) !== -1);
+           return (ids.indexOf(Link.source.id) !== -1) && (ids.indexOf(Link.target.id) !== -1) && !Link.merged();
        });
    }
 
    function getAttachedLinks (Nodes) {
        var ids = getIds(Nodes);
        return this._links.filter(function(Link){
-           return ( (ids.indexOf(Link.source.id) === -1) && (ids.indexOf(Link.target.id) !== -1) ) ||
-               ( (ids.indexOf(Link.source.id) !== -1) && (ids.indexOf(Link.target.id) === -1) );
+           return ( (ids.indexOf(Link.source.id) === -1 && ids.indexOf(Link.target.id) !== -1) || (ids.indexOf(Link.source.id) !== -1 && ids.indexOf(Link.target.id) === -1) )
+               && !Link.merged();
        });
    }
 
@@ -1300,7 +1302,7 @@
        removeNodes: removeNodes,
        clearNodes: clearNodes,
        hasNode: hasNode,
-       _preLinksTransfer: preLinksTransfer,
+       _preTransfer: preTransfer,
        links: links,
        getLinks: getLinks,
        getRenderedLinks: getRenderedLinks,
