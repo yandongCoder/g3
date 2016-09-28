@@ -33,7 +33,7 @@ import getAttachedLinks from "./getAttachedLinks";
 function Graph(selector, config) {
     if(config === undefined) config = {};
 
-    this._svg = select(selector);
+    this._canvas = select(selector);
 
     this._hasInit = false; //init only once
 
@@ -81,7 +81,7 @@ Graph.prototype = {
     _draw: draw,
     _zoomed: zoomed,
     _getCurrentTransform: function(){
-        return d3.zoomTransform(this._svg);
+        return d3.zoomTransform(this._canvas);
     },
     _getCurrentScale: function(){
         return this._getCurrentTransform().k;
@@ -94,7 +94,7 @@ Graph.prototype = {
         return this._getSvgSelection().select('g.brush');
     },
     _getSvgSelection: function(duration){
-        var svgSelection = d3.select(this._svg);
+        var svgSelection = d3.select(this._canvas);
 
         if(duration) svgSelection = svgSelection.transition(Math.random()).duration(duration);
 

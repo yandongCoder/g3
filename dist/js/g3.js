@@ -782,6 +782,22 @@
        return this;
    }
 
+   function ungroup () {
+       if(!this.groupedBy || this.grouped()) return;
+
+       this.groupedBy.nodes.forEach(function(Node){
+           Node.grouped(false);
+       });
+       this.groupedBy.links.forEach(function(Link){
+           Link.grouped(false);
+       });
+
+       this.remove();
+
+       this.graph.render(true);
+       return this;
+   }
+
    //data: data obj, graph: graphInstance
    function Node(data, graph) {
        this.graph = graph;
@@ -813,7 +829,8 @@
        remove: remove$1,
        NtoL: NtoL,
        getConnectedLinks: getConnectedLinks,
-       grouped: grouped$1
+       grouped: grouped$1,
+       ungroup: ungroup
    };
 
    function addNode (obj) {
@@ -942,7 +959,7 @@
                            '</radialGradient>' +
                    '</defs>';
 
-       this._svg.insertAdjacentHTML("afterbegin", str);
+       this._canvas.insertAdjacentHTML("afterbegin", str);
    }
 
    function appendPreElement () {
@@ -1278,7 +1295,7 @@
    function Graph(selector, config) {
        if(config === undefined) config = {};
 
-       this._svg = select(selector);
+       this._canvas = select(selector);
 
        this._hasInit = false; //init only once
 
@@ -1326,7 +1343,7 @@
        _draw: draw,
        _zoomed: zoomed,
        _getCurrentTransform: function(){
-           return d3.zoomTransform(this._svg);
+           return d3.zoomTransform(this._canvas);
        },
        _getCurrentScale: function(){
            return this._getCurrentTransform().k;
@@ -1339,7 +1356,7 @@
            return this._getSvgSelection().select('g.brush');
        },
        _getSvgSelection: function(duration){
-           var svgSelection = d3.select(this._svg);
+           var svgSelection = d3.select(this._canvas);
 
            if(duration) svgSelection = svgSelection.transition(Math.random()).duration(duration);
 

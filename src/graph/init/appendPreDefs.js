@@ -18,5 +18,5 @@ export default function () {
                         '</radialGradient>' +
                 '</defs>';
 
-    this._svg.insertAdjacentHTML("afterbegin", str);
+    this._canvas.insertAdjacentHTML("afterbegin", str);
 }
