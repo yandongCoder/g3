@@ -45,7 +45,9 @@ function Graph(selector, config) {
     this._autoRender  = config.autoRender || false;
 
     this._nodes = [];
+    this._nodesHash = {};
     this._links = [];
+    this._linksHash = {};
 }
 
 Graph.prototype = {

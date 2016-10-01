@@ -31,8 +31,8 @@ export default function Link(data, graph) {
     this.dst = data.dst;
     this._direction = data.direction === undefined? 1: data.direction;//0: none, 1: from, 2: to, 3 double
 
-    this.source = graph && getNodeById(this.src, this.graph._nodes);
-    this.target = graph && getNodeById(this.dst, this.graph._nodes);
+    this.source = graph && this.graph._nodesHash[this.src];
+    this.target = graph && this.graph._nodesHash[this.dst];
 
     this._needMerged = data.merged || false;
 

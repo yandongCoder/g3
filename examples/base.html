@@ -12,7 +12,7 @@
     </style>
 </head>
 <body>
-<canvas id="my-graph" width="1500" height="350"></canvas>
+<svg id="my-graph" width="1500" height="350"></svg>
 <button id="showBrush">show brush</button>
 <button id="hideBrush">hide brush</button>
 </body>
@@ -65,10 +65,11 @@
         //myGraph.nodes()[0].NtoL(true);
         //myGraph.nodes()[0].color("#442233").label("AAA");
         //graph.n2l(4);
-//        $.getJSON('http://localhost/magneto_api/g3.php/nodes')
-//                .then(function(data){
-//                    myGraph.nodes(data);
-//                });
+        $.getJSON('http://localhost/magneto_api/g3.php/nodes')
+                .then(function(data){
+                    myGraph.nodes(data.nodes)
+                            .links(data.links);
+                });
     },500);
 //
 //    setTimeout(function () {

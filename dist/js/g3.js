@@ -345,6 +345,7 @@
    }
 
    function remove () {
+       delete this.graph._linksHash[this.id];
        this.graph._links.splice(this.graph._links.indexOf(this), 1);
 
        this.graph.render(true);
@@ -667,8 +668,8 @@
        this.dst = data.dst;
        this._direction = data.direction === undefined? 1: data.direction;//0: none, 1: from, 2: to, 3 double
 
-       this.source = graph && filterById(this.src, this.graph._nodes);
-       this.target = graph && filterById(this.dst, this.graph._nodes);
+       this.source = graph && this.graph._nodesHash[this.src];
+       this.target = graph && this.graph._nodesHash[this.dst];
 
        this._needMerged = data.merged || false;
 
@@ -771,6 +772,7 @@
    }
 
    function remove$1 () {
+       delete this.graph._nodesHash[this.id];
        this.graph._nodes.splice(this.graph._nodes.indexOf(this), 1);
    }
 
@@ -835,15 +837,15 @@
 
    function addNode (obj) {
        var node = new Node(obj, this);
-       if(!this.hasNode(node)) this._nodes.push(node);
-
+       if(!this.hasNode(node)){
+           this._nodesHash[node.id] = node;
+           this._nodes.push(node);
+       }
        return node;
    }
 
    function hasNode (obj) {
-       var ids = this._nodes.map(function(Node){return Node.id});
-
-       return ids.indexOf(obj.id) !== -1;
+       return this._nodesHash[obj.id]? true: false;
    }
 
    //nodes could be: Node, [Node], Node id string, Node id array of string
@@ -909,15 +911,16 @@
 
    function addLink (obj) {
        var link = new Link(obj, this);
-       if(!this.hasLink(link) && link.hasST()) this._links.push(link);
+       if(!this.hasLink(link) && link.hasST()){
+           this._linksHash[link.id] = link;
+           this._links.push(link);
+       }
 
        return link;
    }
 
    function hasLink (obj) {
-       var ids = this._links.map(function(Link){return Link.id});
-
-       return ids.indexOf(obj.id) !== -1;
+       return this._linksHash[obj.id]? true: false;
    }
 
    //links could be: Link, [Link], Link id string, Link id array of string
@@ -1307,7 +1310,9 @@
        this._autoRender  = config.autoRender || false;
 
        this._nodes = [];
+       this._nodesHash = {};
        this._links = [];
+       this._linksHash = {};
    }
 
    Graph.prototype = {
