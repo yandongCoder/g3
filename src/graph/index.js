@@ -34,6 +34,7 @@ function Graph(selector, config) {
     if(config === undefined) config = {};
 
     this._canvas = select(selector);
+    if(this._canvas && this._canvas.nodeName === "CANVAS") this._ctx = this._canvas.getContext("2d");
 
     this._hasInit = false; //init only once
 
@@ -45,7 +46,9 @@ function Graph(selector, config) {
     this._autoRender  = config.autoRender || false;
 
     this._nodes = [];
+    this._nodesHash = {};
     this._links = [];
+    this._linksHash = {};
 }
 
 Graph.prototype = {
@@ -90,30 +93,12 @@ Graph.prototype = {
         var transform = this._getCurrentTransform();
         return [transform.x, transform.y];
     },
-    _getBrushSelection: function () {
-        return this._getSvgSelection().select('g.brush');
-    },
-    _getSvgSelection: function(duration){
-        var svgSelection = d3.select(this._canvas);
+    _getCanvas: function(duration){
+        var canvas = d3.select(this._canvas);
 
-        if(duration) svgSelection = svgSelection.transition(Math.random()).duration(duration);
+        if(duration) canvas = canvas.transition(Math.random()).duration(duration);
 
-        return svgSelection
-    },
-    _getNodesSelection: function(){
-        return this._getSvgSelection().select('.nodes').selectAll("g.node");
-    },
-    _getNodesLabelSelection: function(){
-        return this._getNodesSelection().selectAll('.text-group');
-    },
-    _getLinksSelection: function(){
-        return this._getSvgSelection().select('g.paths').selectAll("path");
-    },
-    _getLinksLabelSelection: function(){
-        return this._getSvgSelection().select('g.link-labels').selectAll('text.link-label');
-    },
-    _getForceGroup: function(){
-        return this._forceGroupSelection;
+        return canvas
     }
 };
 
