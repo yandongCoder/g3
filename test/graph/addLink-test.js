@@ -3,7 +3,7 @@ var tape = require("tape"),
     g3 = require("../../dist/js/g3");
 
 tape("Push new link to graph's links", function(test){
-    var document = jsdom.jsdom('<svg id="graph"></svg>');
+    var document = jsdom.jsdom('<canvas id="graph"></canvas>');
     var svg = document.querySelector("#graph");
     global.window = document.defaultView;
     global.document = document;

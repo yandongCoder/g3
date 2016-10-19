@@ -56,10 +56,11 @@
        if(cover){
            this.clearNodes();
        }
-
+       console.time("addNodes");
        nodes.forEach(function(v){
            this._addNode(v);
        },this);
+       console.timeEnd("addNodes");
 
        //this._preTransfer();
 
@@ -177,9 +178,13 @@
    }
 
    function filterById (id, Nodes) {
-       return Nodes.filter(function(Node){
-           return Node.id === id;
-       })[0];
+       for(var i = Nodes.length; i--;){
+           if(Nodes[i]['id'] === id) {
+               var Node = Nodes[i];
+               break;
+           }
+       }
+       return Node;
    }
 
    //Link has source and target Node in _nodes
@@ -345,6 +350,7 @@
    }
 
    function remove () {
+       delete this.graph._linksHash[this.id];
        this.graph._links.splice(this.graph._links.indexOf(this), 1);
 
        this.graph.render(true);
@@ -667,9 +673,9 @@
        this.dst = data.dst;
        this._direction = data.direction === undefined? 1: data.direction;//0: none, 1: from, 2: to, 3 double
 
-       this.source = graph && filterById(this.src, this.graph._nodes);
-       this.target = graph && filterById(this.dst, this.graph._nodes);
-
+       this.source = graph && this.graph._nodesHash[this.src];
+       this.target = graph && this.graph._nodesHash[this.dst];
+       
        this._needMerged = data.merged || false;
 
        if(data.mergedBy) this.mergedBy = data.mergedBy;
@@ -771,6 +777,7 @@
    }
 
    function remove$1 () {
+       delete this.graph._nodesHash[this.id];
        this.graph._nodes.splice(this.graph._nodes.indexOf(this), 1);
    }
 
@@ -835,15 +842,15 @@
 
    function addNode (obj) {
        var node = new Node(obj, this);
-       if(!this.hasNode(node)) this._nodes.push(node);
-
+       if(!this.hasNode(node)){
+           this._nodesHash[node.id] = node;
+           this._nodes.push(node);
+       }
        return node;
    }
 
    function hasNode (obj) {
-       var ids = this._nodes.map(function(Node){return Node.id});
-
-       return ids.indexOf(obj.id) !== -1;
+       return this._nodesHash[obj.id]? true: false;
    }
 
    //nodes could be: Node, [Node], Node id string, Node id array of string
@@ -886,9 +893,11 @@
            this.clearLinks();
        }
 
+       console.time("addLinks");
        links.forEach(function(v){
            this._addLink(v);
        },this);
+       console.timeEnd("addLinks");
 
        this._preTransfer();
        
@@ -909,15 +918,16 @@
 
    function addLink (obj) {
        var link = new Link(obj, this);
-       if(!this.hasLink(link) && link.hasST()) this._links.push(link);
+       if(!this.hasLink(link) && link.hasST()){
+           this._linksHash[link.id] = link;
+           this._links.push(link);
+       }
 
        return link;
    }
 
    function hasLink (obj) {
-       var ids = this._links.map(function(Link){return Link.id});
-
-       return ids.indexOf(obj.id) !== -1;
+       return this._linksHash[obj.id]? true: false;
    }
 
    //links could be: Link, [Link], Link id string, Link id array of string
@@ -939,40 +949,6 @@
        this._links = [];
    }
 
-   function appendPreDefs () {
-       let str = '<defs>'+
-                           '<filter id="shadow" x="-20%" y="-20%" width="200%" height="200%" type="Shadow" shadowoffsetx="5" shadowoffsety="5" shadowblur="5" shadowcolor="rgba(0,0,0)">' +
-                               '<feOffset result="offOut" in="SourceGraphic" dx="0" dy="3"></feOffset>' +
-                               '<feColorMatrix result="matrixOut" in="offOut" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.5 0"></feColorMatrix>' +
-                               '<feGaussianBlur result="blurOut" in="matrixOut" stdDeviation="2"></feGaussianBlur>' +
-                               '<feBlend in="SourceGraphic" in2="blurOut" mode="normal"></feBlend>' +
-                           '</filter>' +
-                           '<marker id="start-arrow" viewBox="0 -5 10 10" refX="10" markerWidth="3" markerHeight="3" orient="auto"><path d="M10,-5L0,0L10,5"></path></marker>' +
-                           '<marker id="end-arrow" viewBox="0 -5 10 10" refX="0" markerWidth="3" markerHeight="3" orient="auto"><path d="M0,-5L10,0L0,5"></path></marker>' +
-                           '<marker id="end-arrow-hover" viewBox="0 -5 10 10" refX="0" markerWidth="3" markerHeight="3" orient="auto"><path d="M0,-5L10,0L0,5"></path></marker>' +
-                           '<marker id="end-arrow-selected" viewBox="0 -5 10 10" refX="0" markerWidth="3" markerHeight="3" orient="auto"><path d="M0,-5L10,0L0,5"></path></marker>' +
-                           '<radialGradient id="linear" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">' +
-                               '<stop offset="0%" style="stop-color:rgb(255，255,255);stop-opacity:0" />' +
-                               '<stop offset="90%" style="stop-color:rgb(255,255,255);stop-opacity:1" />' +
-                               '<stop offset="98%" style="stop-color:rgb(255,255,255);stop-opacity:1" />' +
-                               '<stop offset="100%" style="stop-color:rgb(222，222, 222);stop-opacity:1" />' +
-                           '</radialGradient>' +
-                   '</defs>';
-
-       this._canvas.insertAdjacentHTML("afterbegin", str);
-   }
-
-   function appendPreElement () {
-       var svg = this._getSvgSelection();
-       this._brushSelection = svg.append("g").attr("class", "brush");
-
-       var forceGroup = this._forceGroupSelection = svg.append('g').attr('class', 'force');
-       
-       forceGroup.append("g").attr("class", "paths");
-       forceGroup.append("g").attr("class", "link-labels");
-       forceGroup.append("g").attr("class", "nodes");
-   }
-
    function Zoom() {
        return d3.zoom().scaleExtent([0.1, 2.2])
            .on('start', function () {
@@ -982,52 +958,18 @@
            });
    }
 
-   function Brush () {
-       var self = this;
-       var brush = d3.brush()
-           .extent([[0, 0], [1500, 500]])
-           .on('start', function () {
-               if (!d3.event.selection) return; // Ignore empty selections.
-               
-               self._getNodesSelection().each(function (Node) {
-                   Node.pselected = d3.event.sourceEvent.ctrlKey && Node.selected();
-               });
-           })
-           .on('brush', function () {
-               if (!d3.event.selection) return; // Ignore empty selections.
-
-               var extent = d3.event.selection;
-               var t = self._getCurrentTransform();
-
-               self._getNodesSelection().each(function(Node){
-                   Node.selected(Node.pselected ^ ( (extent[0][0] - t.x) / t.k  <= Node.getX() && Node.getX() < (extent[1][0] - t.x) / t.k  && (extent[0][1] - t.y) / t.k <= Node.getY() && Node.getY() < (extent[1][1] - t.y) / t.k ));
-               });
-
-           })
-           .on('end', function () {
-               if (!d3.event.selection) return; // Ignore empty selections.
-               self._getBrushSelection()
-                   .call(brush.move, null);
-           });
-
-       brush.show = function(){
-           self._getBrushSelection().style('display', 'block');
-       };
-       brush.hide = function(){
-           self._getBrushSelection().style('display', 'none');
-       };
-
-       return brush;
-   }
-
-   function DragNode () {
+   function Drag () {
        var self = this;
        var drag = d3.drag()
+           .container(this._canvas)
+           .subject(function(){
+               return self.getRenderedNodes()[2];
+           })
            .on("start", function (Node) {
                d3.event.sourceEvent.stopPropagation();
            })
-           .on("drag", function (Node) {
-               Node.nudge(d3.event.dx, d3.event.dy);
+           .on("drag", function () {
+               d3.event.subject.nudge(d3.event.dx, d3.event.dy);
            }).on("end", function (Node) {
 
            });
@@ -1037,33 +979,30 @@
    function init () {
        //init trigger only once a graph
        if(this._hasInit) return;
-
-
-       //add predefined DOM
-       appendPreElement.call(this);
-       appendPreDefs.call(this);
-
-       this._getSvgSelection()
-           .classed("graph", true);
+       
+       //this._getSvgSelection()
+       //    .classed("graph", true);
 
        //bind listener to page for keyboard shortCuts and mouse events
        d3.select(document.body)
            .on("keydown.brush", this._keydowned.bind(this))
            .on("keyup.brush", this._keyupped.bind(this));
 
+
+       //add drag behavior to graph
+       this._getCanvas()
+           .call(Drag.call(this));
+
+
        //add zoom instance to graph
        this.zoom = Zoom.call(this);
-       this._getSvgSelection()
+       this._getCanvas()
            .call(this.zoom);
 
        //add brush instance to graph
-       this.brush = Brush.call(this);
-       this._getBrushSelection()
-           .call(this.brush);
-
-       
-       //new drag instance for bind to nodes
-       this.dragNode = DragNode.call(this);
+       // this.brush = Brush.call(this);
+       // this._getBrushSelection()
+       //     .call(this.brush);
 
        this._hasInit = true;
    }
@@ -1072,107 +1011,37 @@
        return (url || window.location.href).split('#')[0];
    }
 
-   function drawNodes () {
-       var self = this;
-       var nodes = this._getNodesSelection().data(this.getRenderedNodes(), function (Node) { return Node.id;});
-
-       var g = nodes.enter().append('g')
-           .each(function(Node){ Node._element = this })//reference element to Node
-           .classed('node', true)
-           .call(this.dragNode);
-
-       //添加矩形
-       g.append("circle")
-           .attr("filter", "url(" + getAbsUrl() + "#shadow)");
-       g.append('svg:foreignObject')
-           .attr('class', 'text-group')
-           .append("xhtml:div")
-           .append('xhtml:span');
-
-       //Enter and Update
-       var all = this._getNodesSelection();
-
-       all.attr("transform", function (Node) { return "translate(" + Node.getX() + "," + Node.getY() + ")";})
-           .classed("selected", function(Node){return Node.selected()});
-
-       all.select('circle')
-           .attr("r", function(Node){ return Node.radius()})
-           .style("fill", function(Node){ return Node.color() });
-       
-
-       all.select('.text-group')
-           .attr('width', function (Node) { return Node.getLabelWidth(); })
-           .attr("height", function(Node){ return Node.radius() * self._getCurrentScale(); })
-           .style("line-height", function(Node){ return Node.radius() * self._getCurrentScale() + "px"; })
-           .attr("transform", function(Node){ return "translate(" + (1 + Node.radius()) + ", 0) scale(" + 1 / self._getCurrentScale()+ ")"; })
-
-           .select('div')
-           .attr('title', function (Node) { return Node.label(); })
-           .select('span')
-           .text(function (Node) { return Node.label(); });
-
-       nodes.exit().remove();
+   function drawNodes(){
+       var ctx = this._ctx;
+       console.time('drawNode');
+       this.getRenderedNodes().forEach(function(Node){
+           ctx.beginPath();
+           ctx.moveTo(Node.getX(), Node.getY());
+           ctx.fillStyle = Node.color();
+           //ctx.arc(Node.getX(), Node.getY(), Node.radius(), 0, 2 * Math.PI);
+           ctx.rect(Node.getX(), Node.getY(), Node.radius(), Node.radius());
+           ctx.fill();
+       });
+       console.timeEnd('drawNode');
    }
 
    function drawLinks () {
-       var self = this;
-       var links = this._getLinksSelection().data(this.getRenderedLinks(), function (Link) { return Link.id });
-
-       links.enter()
-           .append('path')
-           .classed('link-path', true)
-           .attr('id', function(Link){ return "link-path" + Link.id});
-
-       var all  = this._getLinksSelection();
-
-       all
-           .attr('d', function (Link) { var c = Link.getCoordination();  return 'M ' + c.Sx + ' ' + c.Sy + ' L ' + c.Tx + ' ' + c.Ty; })
-           .style('marker-start', function (Link) { return Link.getStartArrow(); })
-           .style('marker-end', function (Link) { return Link.getEndArrow(); })
-           .style('stroke-width', function(Link){ return Link.width(); })
-           .style('stroke', function(Link){ return Link.color(); });
-
-
-       links.exit().remove();
-
-
-
-       //绑定linkData数据到linkLabels
-       var linkLabels = this._getLinksLabelSelection().data(this._links, function (Link) { return Link.id; });
-
-       //按需增加新的LinkLabels(当linksData data > linkPaths element)
-       linkLabels.enter().append('text')
-           .style("pointer-events", "none")
-           .classed('link-label', true)
-           .attr('id', function (Link) { return 'link-label' + Link.id; })
-           //.attr('text-anchor', 'middle')
-           .append('textPath')
-           .attr('xlink:href', function (Link) {  return getAbsUrl() + '#link-path' + Link.id; })
-           //.attr('startOffset', '50%')
-           .style("pointer-events", "none");
-
-
-       var allLabels = this._getLinksLabelSelection();
-
-       allLabels
-           .attr('dx', function(Link){return Link.getTextOffset(); })
-           .attr('dy', 1)
-           .attr('font-size', 13)
-           //反转字体，使字体总是朝上，该句放于该函数最后执行，提前会导致问题
-           .attr('transform', function(Link){ return Link.getLinkLabelTransform(self._getCurrentScale()); });
-
-       allLabels.select('textPath')
-           .text(function (Link) {
-               return Link.label();
-           });
-
-
-       linkLabels.exit().remove();
+       var ctx = this._ctx;
+       console.time('drawLink');
+       this.getRenderedLinks().forEach(function(Link){
+           ctx.beginPath();
+           ctx.moveTo(Link.source.getX(), Link.source.getY());
+           ctx.lineTo(Link.target.getX(), Link.target.getY());
+           ctx.strokeStyle = Link.color();
+           ctx.stroke();
+       });
+       console.timeEnd('drawLink');
    }
 
    function draw () {
-       drawNodes.call(this);
+       this._ctx.clearRect(0, 0, 1500, 500);
        drawLinks.call(this);
+       drawNodes.call(this);
    }
 
    function zoomed () {
@@ -1190,7 +1059,7 @@
 
 
        //缩放网络图
-       this._getForceGroup().attr("transform", "translate(" + d3.event.transform.x + ", "+ d3.event.transform.y + ") scale(" + self._getCurrentScale() + ")");
+       //this._getForceGroup().attr("transform", "translate(" + d3.event.transform.x + ", "+ d3.event.transform.y + ") scale(" + self._getCurrentScale() + ")");
 
        self.render();
 
@@ -1203,7 +1072,7 @@
        var transformed = d3.zoomIdentity;
        if(typeof k === "number") transformed = transformed.scale(k);
        if(typeof x === "number" && typeof y === "number") transformed = transformed.translate(x, y);
-       this._getSvgSelection(duration).call(this.zoom.transform, transformed);
+       this._getCanvas(duration).call(this.zoom.transform, transformed);
    }
 
    function scaleTo (k, duration) {
@@ -1296,6 +1165,7 @@
        if(config === undefined) config = {};
 
        this._canvas = select(selector);
+       if(this._canvas && this._canvas.nodeName === "CANVAS") this._ctx = this._canvas.getContext("2d");
 
        this._hasInit = false; //init only once
 
@@ -1307,7 +1177,9 @@
        this._autoRender  = config.autoRender || false;
 
        this._nodes = [];
+       this._nodesHash = {};
        this._links = [];
+       this._linksHash = {};
    }
 
    Graph.prototype = {
@@ -1352,30 +1224,12 @@
            var transform = this._getCurrentTransform();
            return [transform.x, transform.y];
        },
-       _getBrushSelection: function () {
-           return this._getSvgSelection().select('g.brush');
-       },
-       _getSvgSelection: function(duration){
-           var svgSelection = d3.select(this._canvas);
+       _getCanvas: function(duration){
+           var canvas = d3.select(this._canvas);
 
-           if(duration) svgSelection = svgSelection.transition(Math.random()).duration(duration);
+           if(duration) canvas = canvas.transition(Math.random()).duration(duration);
 
-           return svgSelection
-       },
-       _getNodesSelection: function(){
-           return this._getSvgSelection().select('.nodes').selectAll("g.node");
-       },
-       _getNodesLabelSelection: function(){
-           return this._getNodesSelection().selectAll('.text-group');
-       },
-       _getLinksSelection: function(){
-           return this._getSvgSelection().select('g.paths').selectAll("path");
-       },
-       _getLinksLabelSelection: function(){
-           return this._getSvgSelection().select('g.link-labels').selectAll('text.link-label');
-       },
-       _getForceGroup: function(){
-           return this._forceGroupSelection;
+           return canvas
        }
    };
 

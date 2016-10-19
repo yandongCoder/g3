@@ -3,6 +3,7 @@ import drawLinks from "./drawLinks";
 
 
 export default function () {
-    drawNodes.call(this);
+    this._ctx.clearRect(0, 0, 1500, 500);
     drawLinks.call(this);
+    drawNodes.call(this);
 }

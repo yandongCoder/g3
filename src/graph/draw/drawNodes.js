@@ -1,6 +1,20 @@
 import getAbsUrl from "../../utils/getAbsUrl";
 
-export default function () {
+export default function(){
+    var ctx = this._ctx;
+    console.time('drawNode');
+    this.getRenderedNodes().forEach(function(Node){
+        ctx.beginPath();
+        ctx.moveTo(Node.getX(), Node.getY());
+        ctx.fillStyle = Node.color();
+        //ctx.arc(Node.getX(), Node.getY(), Node.radius(), 0, 2 * Math.PI);
+        ctx.rect(Node.getX(), Node.getY(), Node.radius(), Node.radius());
+        ctx.fill();
+    });
+    console.timeEnd('drawNode');
+}
+
+function svg () {
     var self = this;
     var nodes = this._getNodesSelection().data(this.getRenderedNodes(), function (Node) { return Node.id;});
 
@@ -26,7 +40,7 @@ export default function () {
     all.select('circle')
         .attr("r", function(Node){ return Node.radius()})
         .style("fill", function(Node){ return Node.color() });
-    
+
 
     all.select('.text-group')
         .attr('width', function (Node) { return Node.getLabelWidth(); })

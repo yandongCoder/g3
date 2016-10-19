@@ -1,6 +1,19 @@
 import getAbsUrl from "../../utils/getAbsUrl";
 
 export default function () {
+    var ctx = this._ctx;
+    console.time('drawLink');
+    this.getRenderedLinks().forEach(function(Link){
+        ctx.beginPath();
+        ctx.moveTo(Link.source.getX(), Link.source.getY());
+        ctx.lineTo(Link.target.getX(), Link.target.getY());
+        ctx.strokeStyle = Link.color();
+        ctx.stroke();
+    });
+    console.timeEnd('drawLink');
+}
+
+function drawLink () {
     var self = this;
     var links = this._getLinksSelection().data(this.getRenderedLinks(), function (Link) { return Link.id });
 

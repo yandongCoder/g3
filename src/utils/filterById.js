@@ -1,5 +1,9 @@
 export default function (id, Nodes) {
-    return Nodes.filter(function(Node){
-        return Node.id === id;
-    })[0];
+    for(var i = Nodes.length; i--;){
+        if(Nodes[i]['id'] === id) {
+            var Node = Nodes[i];
+            break;
+        }
+    }
+    return Node;
 }

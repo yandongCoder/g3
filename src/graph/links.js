@@ -11,9 +11,11 @@ export default function (links, cover) {
         this.clearLinks();
     }
 
+    console.time("addLinks");
     links.forEach(function(v){
         this._addLink(v);
     },this);
+    console.timeEnd("addLinks");
 
     this._preTransfer();
     

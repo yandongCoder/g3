@@ -10,10 +10,11 @@ export default function (nodes, cover) {
     if(cover){
         this.clearNodes();
     }
-
+    console.time("addNodes");
     nodes.forEach(function(v){
         this._addNode(v);
     },this);
+    console.timeEnd("addNodes");
 
     //this._preTransfer();
 
