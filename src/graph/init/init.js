@@ -2,7 +2,7 @@ import appendPreDefs from "./appendPreDefs";
 import appendPreElement from "./appendPreElement";
 import Zoom from "./Zoom";
 import Brush from "./Brush";
-import DragNode from "./DragNode";
+import dragNode from "./dragNode";
 
 export default function () {
     //init trigger only once a graph
@@ -33,7 +33,7 @@ export default function () {
 
     
     //new drag instance for bind to nodes
-    this.dragNode = DragNode.call(this);
+    this.dragNode = dragNode.call(this);
 
     this._hasInit = true;
 }

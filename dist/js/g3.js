@@ -1023,7 +1023,7 @@
        return brush;
    }
 
-   function DragNode () {
+   function dragNode () {
        var self = this;
        var drag = d3.drag()
            .on("start", function (Node) {
@@ -1066,7 +1066,7 @@
 
        
        //new drag instance for bind to nodes
-       this.dragNode = DragNode.call(this);
+       this.dragNode = dragNode.call(this);
 
        this._hasInit = true;
    }
