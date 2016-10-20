@@ -5,8 +5,8 @@ var tape = require("tape"),
 tape("append svg pre defs correctly", function(test){
     var document = jsdom.jsdom('<svg id="graph"></svg>');
     var svg = document.querySelector("#graph");
-    g3.graph(svg).render();
-
+    g3.graph(svg,{autoRender: true}).render();
+    
     test.equal(svg.firstElementChild.nodeName, "DEFS");
 
     test.notEqual(document.querySelector('#shadow'), null);

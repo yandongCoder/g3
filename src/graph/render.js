@@ -1,5 +1,5 @@
 export default function (internalCall) {
-    if(internalCall && !this._autoRender) return;
+    if(!this._autoRender) return this;
     //clearTimeout(this._renderDelay);
     //this._renderDelay = setTimeout(function(){
     this._init();

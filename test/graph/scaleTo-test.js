@@ -3,7 +3,6 @@ var tape = require("tape"),
     g3 = require("../../dist/js/g3"),
     d3 = require("d3");
 
-
 tape("scale graph to specified k", function(test){
     var document = jsdom.jsdom('<svg id="graph"></svg>');
     var svg = document.querySelector("#graph");
@@ -11,7 +10,7 @@ tape("scale graph to specified k", function(test){
 
     global.SVGElement = function SVGElement() {};//TODO Jsdom not has SVGElement implement yet, this sentence just void test error
     
-    var myGraph = g3.graph(svg).render();
+    var myGraph = g3.graph(svg, {autoRender: true}).render();
 
     test.equal(d3.zoomTransform(svg).k, 1);
 
