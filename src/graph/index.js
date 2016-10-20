@@ -30,6 +30,7 @@ import keyupped from "./keyupped";
 import group from "./group";
 import getContainLinks from "./getContainLinks";
 import getAttachedLinks from "./getAttachedLinks";
+import draged from "./draged";
 
 function Graph(selector, config) {
     if(config === undefined) config = {};
@@ -79,6 +80,7 @@ Graph.prototype = {
     scaleTo: scaleTo,
     translateBy: translateBy,
     group: group,
+    draged: draged,
     _keydowned: keydowned,
     _keyupped: keyupped,
     _init: init,

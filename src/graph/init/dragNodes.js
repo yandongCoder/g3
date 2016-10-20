@@ -4,9 +4,8 @@ export default function () {
         .on("start", function (Node) {
             d3.event.sourceEvent.stopPropagation();
         })
-        .on("drag", function (Node) {
-            Node.nudge(d3.event.dx, d3.event.dy);
-        }).on("end", function (Node) {
+        .on("drag", this.draged.bind(this))
+        .on("end", function (Node) {
 
         });
     return drag;

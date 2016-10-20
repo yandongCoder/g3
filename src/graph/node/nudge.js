@@ -1,6 +1,8 @@
-export default function (nudgeX, nudgeY) {
+export default function (nudgeX, nudgeY, notRender) {
     this.x += nudgeX;
     this.y += nudgeY;
-    this.graph.render(true);
+
+    if(!notRender) this.graph.render(true);
+
     return this;
 }

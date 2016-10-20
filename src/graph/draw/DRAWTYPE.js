@@ -1,7 +1,7 @@
 const DRAWTYPE = {
-    ALL: 0,
+    FORCEDRAW: "forceDraw",
     TRANSFORM: 1,
-    DRAG: 2
+    NUDGE: 2
 };
 
 export default DRAWTYPE;

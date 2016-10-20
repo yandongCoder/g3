@@ -28,12 +28,13 @@
        return this;
    }
 
-   function render (internalCall) {
-       if(!this._autoRender) return this;
+   function render (forceDraw, drawType) {
+       if(forceDraw && !this._autoRender) return this;
+
        //clearTimeout(this._renderDelay);
        //this._renderDelay = setTimeout(function(){
        this._init();
-       this._draw();
+       this._draw(drawType);
        //}.bind(this),0);
            //console.log('render');
 
@@ -94,6 +95,12 @@
        return filterBy(filter, this._nodes);
    }
 
+   function getSelectedNodes () {
+       return this.getNodes(function(Node){
+           return Node.selected();
+       });
+   }
+
    function getRenderedNodes () {
        return this.getNodes(function(Node){
            return !Node.transformed() && !Node.grouped();
@@ -134,10 +141,12 @@
        return this;
    }
 
-   function nudge (nudgeX, nudgeY) {
+   function nudge (nudgeX, nudgeY, notRender) {
        this.x += nudgeX;
        this.y += nudgeY;
-       this.graph.render(true);
+
+       if(!notRender) this.graph.render(true);
+
        return this;
    }
 
@@ -1029,9 +1038,8 @@
            .on("start", function (Node) {
                d3.event.sourceEvent.stopPropagation();
            })
-           .on("drag", function (Node) {
-               Node.nudge(d3.event.dx, d3.event.dy);
-           }).on("end", function (Node) {
+           .on("drag", this.draged.bind(this))
+           .on("end", function (Node) {
 
            });
        return drag;
@@ -1075,7 +1083,21 @@
        return (url || window.location.href).split('#')[0];
    }
 
-   function drawNodes () {
+   const DRAWTYPE = {
+       FORCEDRAW: "forceDraw",
+       TRANSFORM: 1,
+       NUDGE: 2
+   };
+
+   function drawNodes (drawType) {
+       // if(drawType === DRAWTYPE.NUDGE){
+       //     //Enter and Update
+       //     var all = this._getNodesSelection();
+       //
+       //     all.attr("transform", function (Node) { return "translate(" + Node.getX() + "," + Node.getY() + ")";})
+       //         .classed("selected", function(Node){return Node.selected()});
+       //     return;
+       // }
        var self = this;
        var nodes = this._getNodesSelection().data(this.getRenderedNodes(), function (Node) { return Node.id;});
 
@@ -1115,10 +1137,17 @@
            .text(function (Node) { return Node.label(); });
 
        nodes.exit().remove();
+
    }
 
-   function drawLinks () {
+   function drawLinks (drawType) {
        var self = this;
+
+       // if(drawType === DRAWTYPE.NUDGE){
+       //     return;
+       // }
+
+
        var links = this._getLinksSelection().data(this.getRenderedLinks(), function (Link) { return Link.id });
 
        links.enter()
@@ -1173,9 +1202,9 @@
        linkLabels.exit().remove();
    }
 
-   function draw () {
-       drawNodes.call(this);
-       drawLinks.call(this);
+   function draw (drawType) {
+       drawNodes.call(this, drawType);
+       drawLinks.call(this, drawType);
    }
 
    function zoomed () {
@@ -1295,6 +1324,15 @@
        });
    }
 
+   function draged (currentNode) {
+       this.getNodes(function(Node){ return Node.selected() || (Node === currentNode)})
+       .forEach(function(Node){
+           Node.nudge(d3.event.dx, d3.event.dy, true);
+       });
+
+       this.render(true, DRAWTYPE.NUDGE);
+   }
+
    function Graph(selector, config) {
        if(config === undefined) config = {};
 
@@ -1322,6 +1360,7 @@
        render: render,
        nodes: nodes,
        getNodes: getNodes,
+       getSelectedNodes: getSelectedNodes,
        getRenderedNodes: getRenderedNodes,
        _addNode: addNode,
        removeNodes: removeNodes,
@@ -1342,6 +1381,7 @@
        scaleTo: scaleTo,
        translateBy: translateBy,
        group: group,
+       draged: draged,
        _keydowned: keydowned,
        _keyupped: keyupped,
        _init: init,

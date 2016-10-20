@@ -2,7 +2,7 @@ import appendPreDefs from "./appendPreDefs";
 import appendPreElement from "./appendPreElement";
 import Zoom from "./Zoom";
 import Brush from "./Brush";
-import dragNode from "./dragNode";
+import dragNode from "./dragNodes";
 
 export default function () {
     //init trigger only once a graph
