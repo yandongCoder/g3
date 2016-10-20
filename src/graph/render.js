@@ -1,5 +1,6 @@
-export default function (internalCall) {
-    if(!this._autoRender) return this;
+export default function (forceDraw) {
+    if(forceDraw && !this._autoRender) return this;
+
     //clearTimeout(this._renderDelay);
     //this._renderDelay = setTimeout(function(){
     this._init();
