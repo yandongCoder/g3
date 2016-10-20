@@ -4,6 +4,7 @@ import height from "./height";
 import render from "./render";
 import nodes from "./nodes";
 import getNodes from "./getNodes";
+import getSelectedNodes from "./getSelectedNodes";
 import getRenderedNodes from "./getRenderedNodes";
 import addNode from "./addNode";
 import hasNode from "./hasNode";
@@ -57,6 +58,7 @@ Graph.prototype = {
     render: render,
     nodes: nodes,
     getNodes: getNodes,
+    getSelectedNodes: getSelectedNodes,
     getRenderedNodes: getRenderedNodes,
     _addNode: addNode,
     removeNodes: removeNodes,
