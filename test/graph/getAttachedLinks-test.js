@@ -2,7 +2,7 @@ var tape = require("tape"),
     g3 = require("../../dist/js/g3");
 
 tape("Get attached Links of Nodes", function(test){
-    var myGraph = g3.graph()
+    var myGraph = g3.graph(null, {ifRender: false})
         .nodes([{id: 1}, {id: 2}, {id: 3}, {id: 4}])
         .links([{id: 1, src: 1, dst: 2}, {id: 2, src: 2, dst: 3}, {id: 3, src: 3, dst: 2}, {id: 4, src: 3, dst: 4}]);
 
@@ -14,7 +14,7 @@ tape("Get attached Links of Nodes", function(test){
 });
 
 tape("Get attached Links of Nodes should exclude merged Links", function(test){
-    var myGraph = g3.graph()
+    var myGraph = g3.graph(null, {ifRender: false})
         .nodes([{id: 1}, {id: 2}, {id: 3}, {id: 4}])
         .links([{id: 1, src: 1, dst: 2}, {id: 2, src: 2, dst: 3}, {id: 3, src: 3, dst: 2}, {id: 4, src: 3, dst: 4}]);
 

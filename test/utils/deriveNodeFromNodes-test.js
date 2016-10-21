@@ -3,7 +3,7 @@ var tape = require("tape"),
 
 
 tape("Derive new Node from received Nodes", function(test){
-    var myGraph = g3.graph()
+    var myGraph = g3.graph(null, {ifRender: false})
         .nodes([{id: 1, label: "a", radius: 51, x: 100, y: 100}, {id: 2, label: "b", color: "#445987", x: 200, y: 200}, {id:3, label: "c", x: 300, y: 300}]);
 
     var nodeObj = g3.utils.deriveNodeFromNodes(myGraph.nodes());

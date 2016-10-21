@@ -3,7 +3,7 @@ var tape = require("tape"),
 
 tape("get Link's path coordination correctly", function(test){
     //horizontal
-    var myGraph = g3.graph()
+    var myGraph = g3.graph(null, {ifRender: false})
         .nodes([{id: 1, x: 0, y: 0}, {id: 2, x: 100, y: 0}])
         .links([{id: 1, src: 1, dst: 2, direction: 0}, {id: 2, src: 1, dst: 2, direction: 1}, {id: 3, src: 1, dst: 2, direction: 2}, {id: 4, src: 1, dst: 2, direction: 3}]);
 
@@ -26,7 +26,7 @@ tape("get Link's path coordination correctly", function(test){
 
 tape("get Link's text coordination correctly", function(test){
     //horizontal
-    var myGraph = g3.graph()
+    var myGraph = g3.graph(null, {ifRender: false})
         .nodes([{id: 1, x: 0, y: 0, radius: 30}, {id: 2, x: 100, y: 0, radius: 20}])
         .links([{id: 1, src: 1, dst: 2, direction: 0, width: 5}, {id: 2, src: 1, dst: 2, direction: 1, width: 5}, {id: 3, src: 1, dst: 2, direction: 2, width: 5}, {id: 4, src: 1, dst: 2, direction: 3, width: 5}]);
 

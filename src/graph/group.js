@@ -27,5 +27,5 @@ export default function (Nodes) {
         if(Nodes.indexOf(Link.target) !== -1) Link.target = newNode;
     });
 
-    this.render(true);
+    this.render();
 }

@@ -2,7 +2,7 @@ var tape = require("tape"),
     g3 = require("../../../dist/js/g3");
 
 tape("remove a Node", function(test){
-    var myGraph = g3.graph();
+    var myGraph = g3.graph(null, {ifRender: false});
 
 
     var nodes = [{id: 1}, {id: 2},{id: 3},{id: 4}, {id: 5},{id: 6}];

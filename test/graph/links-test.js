@@ -2,7 +2,7 @@ var tape = require("tape"),
 g3 = require("../../dist/js/g3");
 
 tape("add link to graph", function(test){
-    var myGraph = g3.graph();
+    var myGraph = g3.graph(null, {ifRender: false});
 
     //could not add link which not has source or target in nodes
     myGraph.links([{id: 1, label: "A->B", src: 1, dst: 2,direction: 0},{id: 2, label: "C->D", src: 3, dst: 4,direction: 3}]);

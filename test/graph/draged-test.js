@@ -3,7 +3,7 @@ var tape = require("tape"),
 
 //TODO dispatch drag event
 tape("Nudge multiple Nodes", function(test){
-    // var myGraph = g3.graph()
+    // var myGraph = g3.graph(null, {ifRender: false})
     //     .nodes([{id: 1, x: 5, y: 0, selected: true}, {id: 2, x: 100, y: 0, selected: true}])
     //     .links([{id:1, src: 1, dst: 2}]);
     //

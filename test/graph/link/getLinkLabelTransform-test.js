@@ -3,7 +3,7 @@ var tape = require("tape"),
 
 tape("Transform label, make label text always upward", function(test){
     //horizontal
-    var myGraph = g3.graph()
+    var myGraph = g3.graph(null, {ifRender: false})
         .nodes([{id: 1, x: 0, y: 0, radius: 30}, {id: 2, x: 100, y: 0, radius: 20}])
         .links([{id: 1, src: 1, dst: 2, direction: 1}, {id: 2, src: 2, dst: 1, direction: 1}]);
 

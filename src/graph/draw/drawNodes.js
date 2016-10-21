@@ -18,12 +18,9 @@ export default function (drawType) {
     var g = nodes.enter().append('g')
         .each(function(Node){ Node._element = this })//reference element to Node
         .classed('node', true)
-        .on("click", function(){
-            console.log(123);
-        })
         .on("mousedown", function (Node) {
-            console.log(Node.selected());
             if (!Node.selected()) {
+                self.unselectNodes();
                 Node.selected(true);
             } else {
                 previousPosition = [d3.event.clientX, d3.event.clientY];

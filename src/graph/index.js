@@ -46,7 +46,7 @@ function Graph(selector, config) {
     this._movable = config.movable || false;
     this._zoomable = config.zoomable || false;
 
-    this._autoRender  = config.autoRender || false;
+    this._ifRender  = config.ifRender !== undefined? config.ifRender: true;
 
     this._nodes = [];
     this._nodesHash = {};

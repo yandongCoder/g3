@@ -1,8 +1,8 @@
-export default function (selected, notRender) {
+export default function (selected) {
     if(!arguments.length) return this._selected;
     this._selected = selected;
 
-    if(!notRender) this.graph.render(true);
+    this.graph.render();
 
     return this;
 }

@@ -2,7 +2,7 @@ var tape = require("tape"),
     g3 = require("../../dist/js/g3");
 
 tape("derive new Link from received Links", function(test){
-    var myGraph = g3.graph()
+    var myGraph = g3.graph(null, {ifRender: false})
         .nodes([{id: 1}, {id: 2}])
         .links([{id: 1, src: 1, dst: 2, label: "L1", color: "#ff0000", width: 5, direction: 1}, {id: 2, src: 2, dst: 1, label: "L2", color: "#00ff00", direction: 2}]);
 

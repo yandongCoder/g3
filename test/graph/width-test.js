@@ -3,7 +3,7 @@ var tape = require("tape"),
 
 
 tape("set width, and get it back", function(test){
-    var myGraph = g3.graph()
+    var myGraph = g3.graph(null, {ifRender: false})
         .width(100);
     //TODO add new test
     test.equal(myGraph.width(), 100);

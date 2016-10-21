@@ -6,7 +6,7 @@ import getIds from "./getIds";
 export default function (filter, objArray) {
     if(typeof filter === "function"){
         var filtered = filter;
-    }else if(filter === undefined){
+    }else if(filter === undefined || filter === null){
         filtered = function(){return true};
     }else{
         var ids = getIds(toArray(filter));

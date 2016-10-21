@@ -4,5 +4,5 @@ export default function (links) {
         Link.remove();
     }, this);
 
-    this.render(true);
+    this.render();
 }

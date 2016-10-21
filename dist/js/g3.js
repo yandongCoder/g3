@@ -28,16 +28,18 @@
        return this;
    }
 
-   function render (forceDraw, drawType) {
-       if(forceDraw && !this._autoRender) return this;
+   function render (callback, drawType) {
+       if(!this._ifRender) return this;
 
-       //clearTimeout(this._renderDelay);
-       //this._renderDelay = setTimeout(function(){
        this._init();
-       this._draw(drawType);
-       //}.bind(this),0);
-           //console.log('render');
 
+       var self = this;
+       clearTimeout(this._renderDelay);
+       this._renderDelay = setTimeout(function(){
+           self._draw(drawType);
+           if(callback instanceof Function) callback();
+       }, 0);
+       //console.log('render');
        return this;
 
    }
@@ -64,7 +66,7 @@
 
        //this._preTransfer();
 
-       this.render(true);
+       this.render();
        
        return this;
    }
@@ -81,7 +83,7 @@
    function filterBy (filter, objArray) {
        if(typeof filter === "function"){
            var filtered = filter;
-       }else if(filter === undefined){
+       }else if(filter === undefined || filter === null){
            filtered = function(){return true};
        }else{
            var ids = getIds(toArray(filter));
@@ -126,11 +128,11 @@
        return len;
    };
 
-   function selected (selected, notRender) {
+   function selected (selected) {
        if(!arguments.length) return this._selected;
        this._selected = selected;
 
-       if(!notRender) this.graph.render(true);
+       this.graph.render();
 
        return this;
    }
@@ -143,11 +145,11 @@
        return this;
    }
 
-   function nudge (nudgeX, nudgeY, notRender) {
+   function nudge (nudgeX, nudgeY) {
        this.x += nudgeX;
        this.y += nudgeY;
 
-       if(!notRender) this.graph.render(true);
+       this.graph.render();
 
        return this;
    }
@@ -156,7 +158,7 @@
        if(!arguments.length) return this._color || "#123456";
 
        this._color = color;
-       this.graph.render(true);
+       this.graph.render();
 
        return this;
    }
@@ -165,7 +167,7 @@
        if(!arguments.length) return this._radius;
 
        this._radius = radius;
-       this.graph.render(true);
+       this.graph.render();
 
        return this;
    }
@@ -174,7 +176,7 @@
        if(!arguments.length) return this._label || "";
 
        this._label = label;
-       this.graph.render(true);
+       this.graph.render();
 
        return this;
    }
@@ -323,7 +325,7 @@
        if(!arguments.length) return this._label;
 
        this._label = label;
-       this.graph.render(true);
+       this.graph.render();
 
        return this;
    }
@@ -332,7 +334,7 @@
        if(!arguments.length) return this._width;
 
        this._width = width;
-       this.graph.render(true);
+       this.graph.render();
 
        return this;
    }
@@ -341,7 +343,7 @@
        if(!arguments.length) return this._color;
 
        this._color = color;
-       this.graph.render(true);
+       this.graph.render();
 
        return this;
    }
@@ -350,7 +352,7 @@
        if(!arguments.length) return this._direction;
 
        this._direction = direction;
-       this.graph.render(true);
+       this.graph.render();
 
        return this;
    }
@@ -359,7 +361,7 @@
        delete this.graph._linksHash[this.id];
        this.graph._links.splice(this.graph._links.indexOf(this), 1);
 
-       this.graph.render(true);
+       this.graph.render();
 
        return this;
    }
@@ -610,7 +612,7 @@
 
        Link.NtoL();
 
-       this.graph.render(true);
+       this.graph.render();
 
        return this;
    }
@@ -756,7 +758,7 @@
 
       this.transformedTo = this.graph._addLink(newLink);
 
-       this.graph.render(true);
+       this.graph.render();
    }
 
    function getConnectedLinks (grouped) {
@@ -807,7 +809,7 @@
 
        this.remove();
 
-       this.graph.render(true);
+       this.graph.render();
        return this;
    }
 
@@ -867,7 +869,7 @@
            Node.remove();
        }, this);
 
-       this.render(true);
+       this.render();
 
    }
 
@@ -878,14 +880,14 @@
    function selectNodes (filter) {
        this.getNodes(filter).forEach(function(Node){
            Node.selected(true, true);
-           this.render(true);
+           this.render();
        }, this);
    }
 
    function unselectNodes (filter) {
        this.getNodes(filter).forEach(function(Node){
            Node.selected(false, true);
-           this.render(true);
+           this.render();
        }, this);
    }
 
@@ -919,7 +921,7 @@
 
        this._preTransfer();
        
-       this.render(true);
+       this.render();
        
        return this;
    }
@@ -954,7 +956,7 @@
            Link.remove();
        }, this);
 
-       this.render(true);
+       this.render();
    }
 
    function removeLinksOfNode (Node) {
@@ -1124,6 +1126,7 @@
            .classed('node', true)
            .on("mousedown", function (Node) {
                if (!Node.selected()) {
+                   self.unselectNodes();
                    Node.selected(true);
                } else {
                    previousPosition = [d3.event.clientX, d3.event.clientY];
@@ -1180,8 +1183,7 @@
        // if(drawType === DRAWTYPE.NUDGE){
        //     return;
        // }
-
-
+       
        var links = this._getLinksSelection().data(this.getRenderedLinks(), function (Link) { return Link.id });
 
        links.enter()
@@ -1340,7 +1342,7 @@
            if(Nodes.indexOf(Link.target) !== -1) Link.target = newNode;
        });
 
-       this.render(true);
+       this.render();
    }
 
    function getContainLinks (Nodes) {
@@ -1379,7 +1381,7 @@
        this._movable = config.movable || false;
        this._zoomable = config.zoomable || false;
 
-       this._autoRender  = config.autoRender || false;
+       this._ifRender  = config.ifRender !== undefined? config.ifRender: true;
 
        this._nodes = [];
        this._nodesHash = {};

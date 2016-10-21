@@ -10,6 +10,6 @@ export default function () {
 
     this.remove();
 
-    this.graph.render(true);
+    this.graph.render();
     return this;
 }

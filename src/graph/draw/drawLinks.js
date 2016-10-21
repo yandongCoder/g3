@@ -1,7 +1,13 @@
 import getAbsUrl from "../../utils/getAbsUrl";
+import DRAWTYPE from "./DRAWTYPE";
 
-export default function () {
+export default function (drawType) {
     var self = this;
+
+    // if(drawType === DRAWTYPE.NUDGE){
+    //     return;
+    // }
+    
     var links = this._getLinksSelection().data(this.getRenderedLinks(), function (Link) { return Link.id });
 
     links.enter()

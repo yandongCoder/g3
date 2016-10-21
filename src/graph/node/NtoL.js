@@ -21,5 +21,5 @@ export default function () {
 
    this.transformedTo = this.graph._addLink(newLink);
 
-    this.graph.render(true);
+    this.graph.render();
 }

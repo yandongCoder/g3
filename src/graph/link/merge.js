@@ -17,7 +17,7 @@ export default function () {
 
     Link.NtoL();
 
-    this.graph.render(true);
+    this.graph.render();
 
     return this;
 }

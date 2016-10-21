@@ -2,7 +2,7 @@ var tape = require("tape"),
     g3 = require("../../../dist/js/g3");
 
 tape("Transform Link to Node according to transformedBy", function(test){
-    var myGraph = g3.graph()
+    var myGraph = g3.graph(null, {ifRender: false})
         .nodes([{id: 1}, {id: 2}, {id: 3}])
         .links([{id:1, src: 1, dst: 2}, {id: 2, src: 1, dst: 3}]);
 

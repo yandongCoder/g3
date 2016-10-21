@@ -2,7 +2,7 @@ var tape = require("tape"),
     g3 = require("../../dist/js/g3");
 
 tape("Group two Nodes which contain a Link, attach no Links", function(test){
-    var myGraph = g3.graph()
+    var myGraph = g3.graph(null, {ifRender: false})
         .nodes([{id: 1}, {id: 2}, {id: 3}])
         .links([{id:1, src: 1, dst: 2}, {id:2, src: 2, dst: 3}]);
 
@@ -22,7 +22,7 @@ tape("Group two Nodes which contain a Link, attach no Links", function(test){
 });
 
 tape("A Node could only grouped once.", function(test){
-    var myGraph = g3.graph()
+    var myGraph = g3.graph(null, {ifRender: false})
         .nodes([{id: 1}, {id: 2}, {id: 3}, {id: 4}])
         .links([{id:1, src: 1, dst: 2}, {id:2, src: 2, dst: 3}, {id: 3, src: 3, dst: 4}]);
 
@@ -41,7 +41,7 @@ tape("A Node could only grouped once.", function(test){
 });
 
 tape("Can't group only one node.", function(test){
-    var myGraph = g3.graph()
+    var myGraph = g3.graph(null, {ifRender: false})
         .nodes({id: 1});
 
     myGraph.group(myGraph.nodes());

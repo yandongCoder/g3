@@ -2,7 +2,7 @@ var tape = require("tape"),
     g3 = require("../../../dist/js/g3");
 
 tape("Merge all Links between a couple Nodes", function(test){
-    var myGraph = g3.graph()
+    var myGraph = g3.graph(null, {ifRender: false})
         .nodes([{id: 1}, {id: 2}, {id: 3}])
         .links([{id:1, src: 1, dst: 2}, {id:2, src: 1, dst: 2}, {id:3, src: 2, dst: 1}, {id:4, src: 3, dst: 2}]);
 
@@ -19,7 +19,7 @@ tape("Merge all Links between a couple Nodes", function(test){
 });
 
 tape("Don't merge Link if only one Link between a couple Nodes", function(test){
-    var myGraph = g3.graph()
+    var myGraph = g3.graph(null, {ifRender: false})
         .nodes([{id: 1}, {id: 2}, {id: 3}])
         .links([{id:1, src: 1, dst: 2}, {id:2, src: 1, dst: 2}, {id:3, src: 2, dst: 1}, {id:4, src: 3, dst: 2}]);
 
@@ -31,7 +31,7 @@ tape("Don't merge Link if only one Link between a couple Nodes", function(test){
 });
 
 tape("Merge Links that has been transformed(NtoL)", function(test){
-    var myGraph = g3.graph()
+    var myGraph = g3.graph(null, {ifRender: false})
         .nodes([{id: 1}, {id: 2}, {id: 3}])
         .links([{id:1, src: 1, dst: 2}, {id:2, src: 1, dst: 2}, {id:3, src: 2, dst: 1}, {id:4, src: 3, dst: 2}]);
 
@@ -44,7 +44,7 @@ tape("Merge Links that has been transformed(NtoL)", function(test){
 });
 
 tape("Grouped Links could not apply merge operation.", function(test){
-    var myGraph = g3.graph()
+    var myGraph = g3.graph(null, {ifRender: false})
         .nodes([{id: 1}, {id: 2}, {id: 3}])
         .links([{id:1, src: 1, dst: 2}, {id:2, src: 1, dst: 2}, {id:3, src: 2, dst: 1}, {id:4, src: 3, dst: 2}]);
 
@@ -57,7 +57,7 @@ tape("Grouped Links could not apply merge operation.", function(test){
 });
 
 tape("Merge Links, add new Link between this couple Nodes, merge again.", function(test){
-    var myGraph = g3.graph()
+    var myGraph = g3.graph(null, {ifRender: false})
         .nodes([{id: 1}, {id: 2}, {id: 3}])
         .links([{id:1, src: 1, dst: 2}, {id:2, src: 1, dst: 2}, {id:3, src: 2, dst: 1}, {id:4, src: 3, dst: 2}]);
     

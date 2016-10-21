@@ -5,7 +5,7 @@ var tape = require("tape"),
 tape("a graph call init only once in first render", function(test){
     var document = jsdom.jsdom('<svg id="graph"></svg>');
     var svg = document.querySelector("#graph");
-    myGraph = g3.graph(svg, {autoRender: true}).render();
+    myGraph = g3.graph(svg);
     myGraph.render();
     myGraph.render();
 

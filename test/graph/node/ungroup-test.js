@@ -2,7 +2,7 @@ var tape = require("tape"),
     g3 = require("../../../dist/js/g3");
 
 tape("Ungroup grouped Node", function(test){
-    var myGraph = g3.graph()
+    var myGraph = g3.graph(null, {ifRender: false})
         .nodes([{id: 1}, {id: 2}, {id: 3}])
         .links([{id:1, src: 1, dst: 2}, {id:2, src: 2, dst: 3}]);
 
@@ -17,7 +17,7 @@ tape("Ungroup grouped Node", function(test){
 });
 
 tape("Can't ungroup grouped Node", function(test){
-    var myGraph = g3.graph()
+    var myGraph = g3.graph(null, {ifRender: false})
         .nodes([{id: 1}, {id: 2}, {id: 3}])
         .links([{id:1, src: 1, dst: 2}, {id:2, src: 2, dst: 3}]);
 
