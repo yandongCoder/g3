@@ -124,11 +124,11 @@
        return len;
    };
 
-   function selected (selected) {
+   function selected (selected, notRender) {
        if(!arguments.length) return this._selected;
        this._selected = selected;
 
-       this.graph.render(true);
+       if(!notRender) this.graph.render(true);
 
        return this;
    }
@@ -873,6 +873,13 @@
        this._nodes = [];
    }
 
+   function selectNodes (filter) {
+       this.getNodes(filter).forEach(function(Node){
+           Node.selected(true, true);
+           this.render(true);
+       }, this);
+   }
+
    function preTransfer () {
        this._links.forEach(function(Link){
            if(Link._needMerged) Link.flattenMerge();
@@ -1106,11 +1113,7 @@
        var g = nodes.enter().append('g')
            .each(function(Node){ Node._element = this })//reference element to Node
            .classed('node', true)
-           .on("click", function(){
-               console.log(123);
-           })
            .on("mousedown", function (Node) {
-               console.log(Node.selected());
                if (!Node.selected()) {
                    Node.selected(true);
                } else {
@@ -1387,6 +1390,7 @@
        _addNode: addNode,
        removeNodes: removeNodes,
        clearNodes: clearNodes,
+       selectNodes: selectNodes,
        hasNode: hasNode,
        _preTransfer: preTransfer,
        links: links,

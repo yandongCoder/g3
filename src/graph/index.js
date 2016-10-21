@@ -10,6 +10,7 @@ import addNode from "./addNode";
 import hasNode from "./hasNode";
 import removeNodes from "./removeNodes";
 import clearNodes from "./clearNodes";
+import selectNodes from "./selectNodes";
 import preTransfer from "./preTransfer";
 import links from "./links";
 import getLinks from "./getLinks";
@@ -64,6 +65,7 @@ Graph.prototype = {
     _addNode: addNode,
     removeNodes: removeNodes,
     clearNodes: clearNodes,
+    selectNodes: selectNodes,
     hasNode: hasNode,
     _preTransfer: preTransfer,
     links: links,
