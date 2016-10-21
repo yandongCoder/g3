@@ -24,6 +24,10 @@ tape("get nodes by id filter", function(test){
 
     //by Id obj Array
     test.deepEqual(myGraph.getNodes([{id: 5}, {id: 6}]), [myGraph.nodes()[4], myGraph.nodes()[5]]);
+
+    //get all
+    test.equal(myGraph.getNodes().length, 6);
+
     test.end();
     
 });

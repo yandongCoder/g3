@@ -81,6 +81,8 @@
    function filterBy (filter, objArray) {
        if(typeof filter === "function"){
            var filtered = filter;
+       }else if(filter === undefined){
+           filtered = function(){return true};
        }else{
            var ids = getIds(toArray(filter));
 
@@ -880,6 +882,13 @@
        }, this);
    }
 
+   function unselectNodes (filter) {
+       this.getNodes(filter).forEach(function(Node){
+           Node.selected(false, true);
+           this.render(true);
+       }, this);
+   }
+
    function preTransfer () {
        this._links.forEach(function(Link){
            if(Link._needMerged) Link.flattenMerge();
@@ -1391,6 +1400,7 @@
        removeNodes: removeNodes,
        clearNodes: clearNodes,
        selectNodes: selectNodes,
+       unselectNodes: unselectNodes,
        hasNode: hasNode,
        _preTransfer: preTransfer,
        links: links,
