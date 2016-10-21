@@ -1101,9 +1101,31 @@
        var self = this;
        var nodes = this._getNodesSelection().data(this.getRenderedNodes(), function (Node) { return Node.id;});
 
+       var previousPosition = [];
+
        var g = nodes.enter().append('g')
            .each(function(Node){ Node._element = this })//reference element to Node
            .classed('node', true)
+           .on("click", function(){
+               console.log(123);
+           })
+           .on("mousedown", function (Node) {
+               console.log(Node.selected());
+               if (!Node.selected()) {
+                   Node.selected(true);
+               } else {
+                   previousPosition = [d3.event.clientX, d3.event.clientY];
+               }
+           })
+           .on("mouseup", function (Node) {
+               //如果坐标与mousedown时相等，并点击的是左键，则为点击事件，否则则为拖动事件或弹出菜单
+               //或者点击没有选中节点右键时，则选右键所在节点
+               if ((previousPosition[0] === d3.event.clientX && previousPosition[1] === d3.event.clientY && d3.event.which === 1)
+                   || (d3.event.which === 3 && !d.selected())
+               ) {
+                   Node.selected(true);
+               }
+           })
            .call(this.dragNode);
 
        //添加矩形
