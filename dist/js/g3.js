@@ -39,9 +39,7 @@
            self._draw(drawType);
            if(callback instanceof Function) callback();
        }, 0);
-       //console.log('render');
        return this;
-
    }
 
    function toArray (maybeArr) {
@@ -1125,12 +1123,9 @@
            .each(function(Node){ Node._element = this })//reference element to Node
            .classed('node', true)
            .on("mousedown", function (Node) {
-               if (!Node.selected()) {
-                   self.unselectNodes();
-                   Node.selected(true);
-               } else {
-                   previousPosition = [d3.event.clientX, d3.event.clientY];
-               }
+               if(!d3.event.ctrlKey) self.unselectNodes();
+               Node.selected(!Node.selected());
+               previousPosition = [d3.event.clientX, d3.event.clientY];
            })
            .on("mouseup", function (Node) {
                //如果坐标与mousedown时相等，并点击的是左键，则为点击事件，否则则为拖动事件或弹出菜单

@@ -59,3 +59,44 @@ tape("Node's DOM should correspond Node's property", function(test){
         });
     });
 });
+
+tape("select Node event", function(test){
+    var document = jsdom.jsdom('<svg id="graph"></svg>');
+    var svg = document.querySelector("#graph");
+
+    var myGraph = g3.graph(svg);
+
+    var nodes = [{id: 1}, {id: 2},{id: 3},{id: 4}, {id: 5},{id: 6}];
+    myGraph.nodes(nodes);
+
+    myGraph.render(function(){
+
+        //Select a Node when mousedown, and unselect others
+        var event = new window.MouseEvent("mousedown");
+        document.querySelectorAll('.node')[0].dispatchEvent(event);
+        document.querySelectorAll('.node')[1].dispatchEvent(event);
+
+        test.equal(myGraph.nodes()[0].selected(), false);
+        test.equal(myGraph.nodes()[1].selected(), true);
+
+
+        //Don't unselect others when press Ctrl key
+        myGraph.unselectNodes();
+        var eventCtrl = new window.MouseEvent("mousedown", {ctrlKey: true});
+        document.querySelectorAll('.node')[0].dispatchEvent(eventCtrl);
+        document.querySelectorAll('.node')[1].dispatchEvent(eventCtrl);
+
+        test.equal(myGraph.nodes()[0].selected(), true);
+        test.equal(myGraph.nodes()[1].selected(), true);
+
+
+        //toggle Node selected status when press Ctrl key
+        myGraph.unselectNodes();
+        document.querySelectorAll('.node')[0].dispatchEvent(eventCtrl);
+        test.equal(myGraph.nodes()[0].selected(), true);
+        document.querySelectorAll('.node')[0].dispatchEvent(eventCtrl);
+        test.equal(myGraph.nodes()[0].selected(), false);
+
+        test.end();
+    });
+});

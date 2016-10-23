@@ -9,7 +9,5 @@ export default function (callback, drawType) {
         self._draw(drawType);
         if(callback instanceof Function) callback();
     }, 0);
-    //console.log('render');
     return this;
-
 }
