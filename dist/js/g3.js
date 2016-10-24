@@ -1065,13 +1065,21 @@
        //init trigger only once a graph
        if(this._hasInit) return;
 
+       var self = this;
 
        //add predefined DOM
        appendPreElement.call(this);
        appendPreDefs.call(this);
 
+
        this._getSvgSelection()
-           .classed("graph", true);
+           .classed("graph", true)
+           .on('click', function(){
+               if (d3.event.srcElement.nodeName !== 'svg') return;
+
+               //scope.cMenu.hide();
+               self.unselectNodes();
+           });
 
        //bind listener to page for keyboard shortCuts and mouse events
        d3.select(document.body)
@@ -1122,19 +1130,9 @@
        var g = nodes.enter().append('g')
            .each(function(Node){ Node._element = this })//reference element to Node
            .classed('node', true)
-           .on("mousedown", function (Node) {
+           .on('click', function(Node){
                if(!d3.event.ctrlKey) self.unselectNodes();
                Node.selected(!Node.selected());
-               previousPosition = [d3.event.clientX, d3.event.clientY];
-           })
-           .on("mouseup", function (Node) {
-               //如果坐标与mousedown时相等，并点击的是左键，则为点击事件，否则则为拖动事件或弹出菜单
-               //或者点击没有选中节点右键时，则选右键所在节点
-               if ((previousPosition[0] === d3.event.clientX && previousPosition[1] === d3.event.clientY && d3.event.which === 1)
-                   || (d3.event.which === 3 && !d.selected())
-               ) {
-                   Node.selected(true);
-               }
            })
            .call(this.dragNode);
 

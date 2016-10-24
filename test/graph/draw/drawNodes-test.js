@@ -72,17 +72,16 @@ tape("select Node event", function(test){
     myGraph.render(function(){
 
         //Select a Node when mousedown, and unselect others
-        var event = new window.MouseEvent("mousedown");
-        document.querySelectorAll('.node')[0].dispatchEvent(event);
-        document.querySelectorAll('.node')[1].dispatchEvent(event);
+        document.querySelectorAll('.node')[0].click();
+        document.querySelectorAll('.node')[1].click();
 
         test.equal(myGraph.nodes()[0].selected(), false);
         test.equal(myGraph.nodes()[1].selected(), true);
 
-
+        
         //Don't unselect others when press Ctrl key
         myGraph.unselectNodes();
-        var eventCtrl = new window.MouseEvent("mousedown", {ctrlKey: true});
+        var eventCtrl = new window.MouseEvent("click", {ctrlKey: true});
         document.querySelectorAll('.node')[0].dispatchEvent(eventCtrl);
         document.querySelectorAll('.node')[1].dispatchEvent(eventCtrl);
 
