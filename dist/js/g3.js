@@ -1075,7 +1075,7 @@
        this._getSvgSelection()
            .classed("graph", true)
            .on('click', function(){
-               if (d3.event.srcElement.nodeName !== 'svg') return;
+               if (d3.event.target.nodeName !== 'svg') return;
 
                //scope.cMenu.hide();
                self.unselectNodes();

@@ -8,13 +8,21 @@ export default function () {
     //init trigger only once a graph
     if(this._hasInit) return;
 
+    var self = this;
 
     //add predefined DOM
     appendPreElement.call(this);
     appendPreDefs.call(this);
 
+
     this._getSvgSelection()
-        .classed("graph", true);
+        .classed("graph", true)
+        .on('click', function(){
+            if (d3.event.target.nodeName !== 'svg') return;
+
+            //scope.cMenu.hide();
+            self.unselectNodes();
+        });
 
     //bind listener to page for keyboard shortCuts and mouse events
     d3.select(document.body)

@@ -22,6 +22,10 @@
 <script src="../node_modules/jquery/dist/jquery.min.js"></script>
 <script src="../dist/js/g3.js"></script>
 <script>
+    d3.select(document.body).on('click', function(){
+        console.log('123');
+    });
+
     var nodes = [{id: 1, label: "A", x: 0, y: 0, radius: 30, color: "#547895"}, {id: 2, label: "A", x: 100, y: 0, radius: 20},
         {id: 3, label: "C", x: 0, y: 100, radius: 30}, {id: 4, label: "D", x: 100, y: 100, radius: 20},
         {id: 5, label: "E", x: 0, y: 200, radius: 30}, {id: 6, label: "F", x: 100, y: 200, radius: 20},
@@ -41,20 +45,20 @@
             .height(300)
             .nodes([{id: 1, label: "a", x: 100, y: 100}, {id: 2, label: "b", x: 200, y: 200}, {id: 3, label: "c", x: 300, y: 300}, {id: 4, label: "d", x: 400, y: 200}])
             .links([{id:1, label: "a", src: 1, dst: 2}, {id:2, label: "b", src: 1, dst: 2}, {id:3, label: "c", src: 2, dst: 1}, {id:4, label: "d", src: 3, dst: 2}, {id:5, label: "e", src: 3, dst: 4}]);
-    
-//    d3.select("#showBrush").on('click', myGraph.brush.show);
-//    d3.select("#hideBrush").on('click', myGraph.brush.hide);
 
-//    myGraph.group([myGraph.nodes()[0], myGraph.nodes()[1]]);
-//    myGraph.links()[0].merge();
-    //myGraph.group([myGraph.nodes()[2], myGraph.nodes()[4]]);
-    //myGraph.group([myGraph.nodes()[3], myGraph.nodes()[5]]);
+    d3.select("#showBrush").on('click', myGraph.brush.show);
+    d3.select("#hideBrush").on('click', myGraph.brush.hide);
+
+    myGraph.group([myGraph.nodes()[0], myGraph.nodes()[1]]);
+    myGraph.links()[0].merge();
+    //    myGraph.group([myGraph.nodes()[2], myGraph.nodes()[4]]);
+    //    myGraph.group([myGraph.nodes()[3], myGraph.nodes()[5]]);
 
 
     //myGraph.links()[0].merge();
     //console.log(myGraph.nodes()[2].getConnectedLinks());
     setTimeout(function(){
-       // myGraph.links({id: 5, label: "e", src: 3, dst: 2});
+        // myGraph.links({id: 5, label: "e", src: 3, dst: 2});
         //myGraph.links({id:5, label: "e", src: 1, dst: 2});
         //myGraph.links()[4].unmerge();
         //myGraph.links()[5].LtoN();
@@ -72,34 +76,36 @@
 //                            .links(data.links);
 //                });
     },500);
-//
-//    setTimeout(function () {
-//        myGraph.links()[7].unmerge();
-//    }, 2000);
-//    setTimeout(function(){
-//        myGraph.links()[0].label("updateed");
-//    },2000);
-//
-//    setTimeout(function(){
-//        graph.nodes({id: 7, label: "G", x: 80, y:170});
-//        graph.links({id: 99, label: "A->D", src: 2, dst: 4,direction: 0});
-//        nodes[3]['label'] = "changedD";
-//    }, 1000);
-//
-//    setTimeout(function(){
-//        //graph.removeNodes(nodes[0]);
-//        //graph.removeLinks(links[0]);
-//        myGraph._getSvgSelection().call(myGraph.zoom.transform, d3.zoomIdentity.scale(2.2));
-//    }, 1500);
+    //
+    //    setTimeout(function () {
+    //        myGraph.links()[7].unmerge();
+    //    }, 2000);
+    //    setTimeout(function(){
+    //        myGraph.links()[0].label("updateed");
+    //    },2000);
+    //
+    //    setTimeout(function(){
+    //        graph.nodes({id: 7, label: "G", x: 80, y:170});
+    //        graph.links({id: 99, label: "A->D", src: 2, dst: 4,direction: 0});
+    //        nodes[3]['label'] = "changedD";
+    //    }, 1000);
+    //
+    //    setTimeout(function(){
+    //        //graph.removeNodes(nodes[0]);
+    //        //graph.removeLinks(links[0]);
+    //        myGraph._getSvgSelection().call(myGraph.zoom.transform, d3.zoomIdentity.scale(2.2));
+    //    }, 1500);
 
 
-//
-//    var graph2 = g3.graph("#my-svg2")
-//            .width(300)
-//            .height(300)
-//            .nodes(nodes)
-//            .links(links);
-//
-//    graph2.render();
+    //
+    //    var graph2 = g3.graph("#my-svg2")
+    //            .width(300)
+    //            .height(300)
+    //            .nodes(nodes)
+    //            .links(links);
+    //
+    //    graph2.render();
+
+
 
 </script>
