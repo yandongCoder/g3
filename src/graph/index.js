@@ -1,6 +1,4 @@
 import select from "../utils/select";
-import width from "./width";
-import height from "./height";
 import render from "./render";
 import nodes from "./nodes";
 import getNodes from "./getNodes";
@@ -56,8 +54,6 @@ function Graph(selector, config) {
 
 Graph.prototype = {
     constructor: Graph,
-    width: width,
-    height: height,
     render: render,
     nodes: nodes,
     getNodes: getNodes,
