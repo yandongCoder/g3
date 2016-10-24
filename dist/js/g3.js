@@ -1130,7 +1130,7 @@
        var g = nodes.enter().append('g')
            .each(function(Node){ Node._element = this })//reference element to Node
            .classed('node', true)
-           .on('click', function(Node){
+           .on('mousedown', function(Node){
                if(!d3.event.ctrlKey) self.unselectNodes();
                Node.selected(!Node.selected());
            })
