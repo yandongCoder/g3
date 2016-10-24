@@ -9,25 +9,6 @@
        return typeof selector === "string"? document.querySelector(selector): selector;
    }
 
-   function width (width) {
-       if(!arguments.length) {
-           return this._width;
-       }
-       
-       this._width = width;
-
-       return this;
-   }
-
-   function height (height) {
-       if(!arguments.length) {
-           return this._height;
-       }
-       this._height = height;
-
-       return this;
-   }
-
    function render (callback, drawType) {
        if(!this._ifRender) return this;
 
@@ -328,7 +309,7 @@
        return this;
    }
 
-   function width$1 (width) {
+   function width (width) {
        if(!arguments.length) return this._width;
 
        this._width = width;
@@ -699,7 +680,7 @@
        getTextOffset: getTextOffset,
        getLinkLabelTransform: getLinkLabelTransform,
        label: label$1,
-       width: width$1,
+       width: width,
        remove: remove,
        merged: merged,
        merge: merge,
@@ -1384,8 +1365,6 @@
 
    Graph.prototype = {
        constructor: Graph,
-       width: width,
-       height: height,
        render: render,
        nodes: nodes,
        getNodes: getNodes,
