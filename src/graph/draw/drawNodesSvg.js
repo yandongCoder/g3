@@ -3,7 +3,7 @@ import DRAWTYPE from "./DRAWTYPE";
 
 export default function (drawType) {
     if(drawType === DRAWTYPE.NUDGE){
-        var selectedNodes = this._getSelectedNodesSelection()
+        var selectedNodes = this._getSelectedNodesSelection();
 
         selectedNodes.attr("transform", function (Node) { return "translate(" + Node.getX() + "," + Node.getY() + ")";});
         return;

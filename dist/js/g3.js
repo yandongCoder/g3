@@ -12,12 +12,16 @@
    function render (callback, drawType) {
        if(!this.config.ifRender) return this;
 
-       this._init();
+       var canvasType = this._canvas.nodeName;
+
+       if(canvasType === 'svg'){
+           this._init();
+       }
 
        var self = this;
        clearTimeout(this._renderDelay);
        this._renderDelay = setTimeout(function(){
-           self._draw(drawType);
+           self._draw(drawType, canvasType);
            if(callback instanceof Function) callback();
        }, 0);
        return this;
@@ -1094,9 +1098,9 @@
        NUDGE: 2
    };
 
-   function drawNodes (drawType) {
+   function drawNodesSvg (drawType) {
        if(drawType === DRAWTYPE.NUDGE){
-           var selectedNodes = this._getSelectedNodesSelection()
+           var selectedNodes = this._getSelectedNodesSelection();
 
            selectedNodes.attr("transform", function (Node) { return "translate(" + Node.getX() + "," + Node.getY() + ")";});
            return;
@@ -1150,7 +1154,7 @@
 
    }
 
-   function drawLinks (drawType) {
+   function drawLinksSvg (drawType) {
        var self = this;
 
        // if(drawType === DRAWTYPE.NUDGE){
@@ -1211,9 +1215,35 @@
        linkLabels.exit().remove();
    }
 
-   function draw (drawType) {
-       drawNodes.call(this, drawType);
-       drawLinks.call(this, drawType);
+   function drawCanvas () {
+       var context = this._canvas.getContext("2d");
+
+       context.clearRect(0, 0, this._canvas.width, this._canvas.height);
+
+       context.strokeStyle = "#ccc";
+       context.beginPath();
+       this.getRenderedLinks().forEach(function(Link) {
+           context.moveTo(Link.source.getX(), Link.source.getY());
+           context.lineTo(Link.target.getX(), Link.target.getY());
+       });
+       context.stroke();
+
+       context.beginPath();
+       this.getRenderedNodes().forEach(function(Node) {
+           context.fillStyle = Node.color();
+           context.moveTo(Node.getX(), Node.getY());
+           context.arc(Node.getX(), Node.getY(), Node.radius(), 0, 2 * Math.PI);
+       });
+       context.fill();
+   }
+
+   function draw (drawType, canvasType) {
+       if(canvasType === 'svg'){
+           drawNodesSvg.call(this, drawType);
+           drawLinksSvg.call(this, drawType);
+       }else if(canvasType === 'CANVAS'){
+           drawCanvas.call(this);
+       }
    }
 
    function zoomed () {

@@ -1,10 +1,12 @@
+svg.graph {
+  height: 100%;
+  width: 100%; }
+
 .graph {
   display: block;
   position: relative;
   overflow: hidden;
   cursor: move;
-  height: 100%;
-  width: 100%;
   background-color: #f1f1f1; }
   .graph .graph-tooltip {
     display: none;
