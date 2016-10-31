@@ -58,7 +58,6 @@
     width: 80px;
     pointer-events: none; }
     .graph .nodes .node .text-group > div > span {
-      color: blue;
       pointer-events: auto;
       text-overflow: ellipsis;
       overflow: hidden;
