@@ -106,6 +106,9 @@ Graph.prototype = {
 
         return svgSelection
     },
+    _getSelectedNodesSelection: function(){
+        return this._getSvgSelection().select('.nodes').selectAll("g.node.selected");
+    },
     _getNodesSelection: function(){
         return this._getSvgSelection().select('.nodes').selectAll("g.node");
     },

@@ -2,24 +2,23 @@ import getAbsUrl from "../../utils/getAbsUrl";
 import DRAWTYPE from "./DRAWTYPE";
 
 export default function (drawType) {
-    // if(drawType === DRAWTYPE.NUDGE){
-    //     //Enter and Update
-    //     var all = this._getNodesSelection();
-    //
-    //     all.attr("transform", function (Node) { return "translate(" + Node.getX() + "," + Node.getY() + ")";})
-    //         .classed("selected", function(Node){return Node.selected()});
-    //     return;
-    // }
+    if(drawType === DRAWTYPE.NUDGE){
+        var selectedNodes = this._getSelectedNodesSelection()
+
+        selectedNodes.attr("transform", function (Node) { return "translate(" + Node.getX() + "," + Node.getY() + ")";});
+        return;
+    }
     var self = this;
     var nodes = this._getNodesSelection().data(this.getRenderedNodes(), function (Node) { return Node.id;});
-
-    var previousPosition = [];
 
     var g = nodes.enter().append('g')
         .each(function(Node){ Node._element = this })//reference element to Node
         .classed('node', true)
         .on('mousedown', function(Node){
-            if(!d3.event.ctrlKey) self.unselectNodes();
+            if(!d3.event.ctrlKey){
+                if(Node.selected()) return;
+                self.unselectNodes();
+            }
             Node.selected(!Node.selected());
         })
         .call(this.dragNode);

@@ -70,6 +70,7 @@
           width: 80px;
           pointer-events: none;
           >span{
+            color: blue;
             pointer-events: auto;
             text-overflow: ellipsis;
             overflow: hidden;
@@ -144,6 +145,7 @@
       fill: #a1a1a1;
     }
   }
+
   #start-arrow-hover, #end-arrow-hover{
     path{
       fill-opacity: 1;
