@@ -10,7 +10,7 @@ tape("links DOM should correspond _links always", function(test){
     global.window = document.defaultView;
 
     var myGraph = g3.graph(svg);
-
+    console.log(myGraph.config);
 
     myGraph.nodes([{id: 1}, {id: 2},{id: 3},{id: 4}, {id: 5},{id: 6}]);
     var links = [{id: 1, src: 1, dst: 2}, {id: 2, src: 2, dst: 3}, {id: 3, src: 1, dst: 5}, {id: 4, src: 5, dst: 6}, {id: 5, src: 5, dst: 2}];

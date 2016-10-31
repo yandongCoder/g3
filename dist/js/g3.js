@@ -10,7 +10,7 @@
    }
 
    function render (callback, drawType) {
-       if(!this._ifRender) return this;
+       if(!this.config.ifRender) return this;
 
        this._init();
 
@@ -654,7 +654,7 @@
        this.graph = graph;
        this.id = data.id;
        this._label = data.label || "";
-       this._width = data.width || (graph && graph._linkWidth) || 3;
+       this._width = data.width || (graph && graph.config.linkWidth);
        this._color = data.color || "#a1a1a1";
        this.src = data.src;
        this.dst = data.dst;
@@ -799,7 +799,7 @@
        this._label = data.label;
        this.x = data.x;
        this.y = data.y;
-       this._radius = data.radius || graph._radius;
+       this._radius = data.radius || graph.config.radius;
        this._color = data.color;
        this._selected = data.selected || false; //indicate whether node is select
 
@@ -1342,20 +1342,22 @@
        this.render(true, DRAWTYPE.NUDGE);
    }
 
+   const DEFAULT_CONFIG = {
+       radius: 15,
+       linkWidth: 3,
+       movable: true,
+       zoomable: true,
+       ifRender: true
+   };
+
    function Graph(selector, config) {
-       if(config === undefined) config = {};
+
+       this.config = Object.assign({}, DEFAULT_CONFIG, config || {});
 
        this._canvas = select(selector);
 
        this._hasInit = false; //init only once
-
-       this._radius= config.radius || 15;
-       this._linkWidth = config.linkWidth || 3;
-       this._movable = config.movable || false;
-       this._zoomable = config.zoomable || false;
-
-       this._ifRender  = config.ifRender !== undefined? config.ifRender: true;
-
+       
        this._nodes = [];
        this._nodesHash = {};
        this._links = [];

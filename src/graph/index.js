@@ -31,21 +31,16 @@ import group from "./group";
 import getContainLinks from "./getContainLinks";
 import getAttachedLinks from "./getAttachedLinks";
 import draged from "./draged";
+import defaultConfig from "./defaultConfig";
 
 function Graph(selector, config) {
-    if(config === undefined) config = {};
+
+    this.config = Object.assign({}, defaultConfig, config || {});
 
     this._canvas = select(selector);
 
     this._hasInit = false; //init only once
-
-    this._radius= config.radius || 15;
-    this._linkWidth = config.linkWidth || 3;
-    this._movable = config.movable || false;
-    this._zoomable = config.zoomable || false;
-
-    this._ifRender  = config.ifRender !== undefined? config.ifRender: true;
-
+    
     this._nodes = [];
     this._nodesHash = {};
     this._links = [];

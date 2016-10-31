@@ -1,5 +1,5 @@
 export default function (callback, drawType) {
-    if(!this._ifRender) return this;
+    if(!this.config.ifRender) return this;
 
     this._init();
 

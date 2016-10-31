@@ -1,0 +1,9 @@
+const DEFAULT_CONFIG = {
+    radius: 15,
+    linkWidth: 3,
+    movable: true,
+    zoomable: true,
+    ifRender: true
+};
+
+export default DEFAULT_CONFIG;
