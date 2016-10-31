@@ -1,5 +1,5 @@
-import drawNodes from "./drawNodes";
-import drawLinks from "./drawLinks";
+import drawNodes from "./drawNodesSvg";
+import drawLinks from "./drawLinksSvg";
 
 export default function (drawType) {
     drawNodes.call(this, drawType);
