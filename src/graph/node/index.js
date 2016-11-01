@@ -19,7 +19,7 @@ export default function Node(data, graph) {
     this._label = data.label;
     this.x = data.x;
     this.y = data.y;
-    this._radius = data.radius || graph._radius;
+    this._radius = data.radius || graph.config.radius;
     this._color = data.color;
     this._selected = data.selected || false; //indicate whether node is select
 

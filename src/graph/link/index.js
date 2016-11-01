@@ -25,7 +25,7 @@ export default function Link(data, graph) {
     this.graph = graph;
     this.id = data.id;
     this._label = data.label || "";
-    this._width = data.width || (graph && graph._linkWidth) || 3;
+    this._width = data.width || (graph && graph.config.linkWidth);
     this._color = data.color || "#a1a1a1";
     this.src = data.src;
     this.dst = data.dst;

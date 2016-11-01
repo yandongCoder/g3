@@ -1,7 +1,7 @@
 import appendPreDefs from "./appendPreDefs";
 import appendPreElement from "./appendPreElement";
-import Zoom from "./Zoom";
-import Brush from "./Brush";
+import Zoom from "./zoom";
+import Brush from "./brush";
 import dragNode from "./dragNodes";
 
 export default function () {
