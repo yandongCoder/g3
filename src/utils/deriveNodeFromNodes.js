@@ -10,6 +10,7 @@ export default function (Nodes) {
     obj.x = average('x', Nodes);
     obj.y = average('y', Nodes);
     obj.color = "#"+  colorMixer.mix(Nodes.map(function(Link){return Link.color()}));
+    obj.selected = Nodes.every(function(Node){ return Node.selected()});
 
     return obj;
 }
