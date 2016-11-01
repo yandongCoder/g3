@@ -861,11 +861,7 @@
    }
 
    function selectNodes (filter, unselectOther) {
-       if(unselectOther){
-           this.getSelectedNodes().forEach(function(Node){
-               Node.selected(false);
-           });
-       }
+       if(unselectOther) this.unselectNodes();
        this.getNodes(filter).forEach(function(Node){
            Node.selected(true);
        }, this);
@@ -878,6 +874,13 @@
            Node.selected(false, true);
            this.render();
        }, this);
+   }
+
+   function inverseSelection () {
+       var Nodes = this.getRenderedNodes();
+       for(var i = Nodes.length; i--;){
+           Nodes[i].selected(!Nodes[i].selected());
+       }
    }
 
    function preTransfer () {
@@ -1414,6 +1417,7 @@
        clearNodes: clearNodes,
        selectNodes: selectNodes,
        unselectNodes: unselectNodes,
+       inverseSelection: inverseSelection,
        hasNode: hasNode,
        _preTransfer: preTransfer,
        links: links,
