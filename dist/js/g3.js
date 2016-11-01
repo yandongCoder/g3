@@ -860,8 +860,8 @@
        this._nodes = [];
    }
 
-   function selectNodes (filter, unselectOther) {
-       if(unselectOther) this.unselectNodes();
+   function selectNodes (filter, retainOther) {
+       if(!retainOther) this.unselectNodes();
        this.getNodes(filter).forEach(function(Node){
            Node.selected(true);
        }, this);
@@ -876,11 +876,43 @@
        }, this);
    }
 
-   function inverseSelection () {
-       var Nodes = this.getRenderedNodes();
-       for(var i = Nodes.length; i--;){
-           Nodes[i].selected(!Nodes[i].selected());
+   function getInvertedNodes (filter) {
+       var Nodes = this.getNodes(filter);
+       return this.getRenderedNodes().filter(function(Node){
+           return Nodes.indexOf(Node) === -1;
+       });
+   }
+
+   function getRelatedNodes (filter) {
+       var Nodes = this.getNodes(filter);
+       var argLength = Nodes.length;
+
+       for (var i = 0; i < Nodes.length; i++) {
+           var adjList = getAdjNode(Nodes[i], this);
+           adjList.forEach(function (Node) {
+               if (Nodes.indexOf(Node) === -1) {
+                   Nodes.push(Node);
+               }
+           });
        }
+
+       //minus original Nodes
+       Nodes = Nodes.filter(function(Node, i){
+           return i >= argLength;
+       });
+       return Nodes;
+   }
+
+   function getAdjNode(Node, self) {
+       var Nodes = [];
+       self.getRenderedLinks().forEach(function (Link) {
+           if (Link.source === Node && (Nodes.indexOf(Link.target) === -1)) {
+               Nodes.push(Link.target);
+           } else if (Link.target === Node && (Nodes.indexOf(Link.source) === -1)) {
+               Nodes.push(Link.source);
+           }
+       });
+       return Nodes;
    }
 
    function preTransfer () {
@@ -1417,7 +1449,8 @@
        clearNodes: clearNodes,
        selectNodes: selectNodes,
        unselectNodes: unselectNodes,
-       inverseSelection: inverseSelection,
+       getInvertedNodes: getInvertedNodes,
+       getRelatedNodes: getRelatedNodes,
        hasNode: hasNode,
        _preTransfer: preTransfer,
        links: links,
