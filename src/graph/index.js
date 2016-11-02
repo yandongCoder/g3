@@ -35,6 +35,7 @@ import getContainLinks from "./getContainLinks";
 import getAttachedLinks from "./getAttachedLinks";
 import draged from "./draged";
 import defaultConfig from "./defaultConfig";
+import findShortestPath from "./findShortestPath";
 
 function Graph(selector, config) {
 
@@ -82,6 +83,7 @@ Graph.prototype = {
     translateBy: translateBy,
     group: group,
     draged: draged,
+    findShortestPath: findShortestPath,
     _keydowned: keydowned,
     _keyupped: keyupped,
     _init: init,
