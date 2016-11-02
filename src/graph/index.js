@@ -12,6 +12,7 @@ import selectNodes from "./selectNodes";
 import unselectNodes from "./unselectNodes";
 import getInvertedNodes from "./getInvertedNodes";
 import getRelatedNodes from "./getRelatedNodes";
+import getLinkedNodes from "./getLinkedNodes";
 import preTransfer from "./preTransfer";
 import links from "./links";
 import getLinks from "./getLinks";
@@ -63,6 +64,7 @@ Graph.prototype = {
     unselectNodes: unselectNodes,
     getInvertedNodes: getInvertedNodes,
     getRelatedNodes: getRelatedNodes,
+    getLinkedNodes: getLinkedNodes,
     hasNode: hasNode,
     _preTransfer: preTransfer,
     links: links,

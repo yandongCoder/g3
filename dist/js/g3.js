@@ -242,20 +242,20 @@
 
    const DIRECTION = {
        NONE: 0,
-       FROM: 1,
-       TO: 2,
+       S2D: 1,
+       D2S: 2,
        DOUBLE: 3
    };
 
    function getStartArrow () {
-       if(this.direction() === DIRECTION.TO || this.direction() === DIRECTION.DOUBLE)
+       if(this.direction() === DIRECTION.D2S || this.direction() === DIRECTION.DOUBLE)
            return "url(" + window.location.href.split('#')[0] + "#start-arrow)";
        else
            return "";
    }
 
    function getEndArrow () {
-       if(this.direction() === DIRECTION.FROM || this.direction() === DIRECTION.DOUBLE)
+       if(this.direction() === DIRECTION.S2D || this.direction() === DIRECTION.DOUBLE)
            return "url(" + window.location.href.split('#')[0] + "#end-arrow)";
        else
            return "";
@@ -557,7 +557,7 @@
            if(p === DIRECTION.NONE) return Link.direction();
            if(Link.direction() === DIRECTION.NONE) return p;
            if(p === DIRECTION.DOUBLE || Link.direction() === DIRECTION.DOUBLE) return DIRECTION.DOUBLE;
-           if((p === DIRECTION.FROM && Link.direction() === DIRECTION.TO) || (p === DIRECTION.TO && Link.direction() === DIRECTION.FROM)) return DIRECTION.DOUBLE;
+           if((p === DIRECTION.S2D && Link.direction() === DIRECTION.D2S) || (p === DIRECTION.D2S && Link.direction() === DIRECTION.S2D)) return DIRECTION.DOUBLE;
            if(p === Link.direction()) return p;
        }, DIRECTION.NONE);
    }
@@ -697,10 +697,10 @@
        direction: direction,
        getHomoLinks: getHomoLinks,
        hasSourceArrow: function(){
-           return this.direction() === DIRECTION.TO || this.direction() === DIRECTION.DOUBLE;
+           return this.direction() === DIRECTION.D2S || this.direction() === DIRECTION.DOUBLE;
        },
        hasTargetArrow: function(){
-           return this.direction() === DIRECTION.FROM || this.direction() === DIRECTION.DOUBLE;
+           return this.direction() === DIRECTION.S2D || this.direction() === DIRECTION.DOUBLE;
        }
    };
 
@@ -913,6 +913,29 @@
            }
        });
        return Nodes;
+   }
+
+   function getLinkedNodes (filter, type) {
+       var Nodes = this.getNodes(filter);
+
+       var relatedNodes = [];
+
+       this.getRenderedLinks().forEach(function (Link) {
+           if(type === 'none' && Link.direction() !== DIRECTION.NONE) return;
+           if(type === 'double' && Link.direction() !== DIRECTION.DOUBLE) return;
+           if (Nodes.indexOf(Link.source) !== -1) {
+               if(type === 'in' && Link.direction() !== DIRECTION.D2S) return;
+               if(type === 'out' && Link.direction() !== DIRECTION.S2D) return;
+               relatedNodes.push(Link.target);
+           }
+           if (Nodes.indexOf(Link.target) !== -1) {
+               if(type === 'in' && Link.direction() !== DIRECTION.S2D) return;
+               if(type === 'out' && Link.direction() !== DIRECTION.D2S) return;
+                   relatedNodes.push(Link.source);
+           }
+       });
+
+       return relatedNodes;
    }
 
    function preTransfer () {
@@ -1451,6 +1474,7 @@
        unselectNodes: unselectNodes,
        getInvertedNodes: getInvertedNodes,
        getRelatedNodes: getRelatedNodes,
+       getLinkedNodes: getLinkedNodes,
        hasNode: hasNode,
        _preTransfer: preTransfer,
        links: links,

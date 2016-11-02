@@ -64,9 +64,9 @@ Link.prototype = {
     direction: direction,
     getHomoLinks: getHomoLinks,
     hasSourceArrow: function(){
-        return this.direction() === DIRECTION.TO || this.direction() === DIRECTION.DOUBLE;
+        return this.direction() === DIRECTION.D2S || this.direction() === DIRECTION.DOUBLE;
     },
     hasTargetArrow: function(){
-        return this.direction() === DIRECTION.FROM || this.direction() === DIRECTION.DOUBLE;
+        return this.direction() === DIRECTION.S2D || this.direction() === DIRECTION.DOUBLE;
     }
 };
