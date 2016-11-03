@@ -36,6 +36,7 @@ import getAttachedLinks from "./getAttachedLinks";
 import draged from "./draged";
 import defaultConfig from "./defaultConfig";
 import findShortestPath from "./findShortestPath";
+import gridLayout from "./gridLayout";
 
 function Graph(selector, config) {
 
@@ -84,6 +85,7 @@ Graph.prototype = {
     group: group,
     draged: draged,
     findShortestPath: findShortestPath,
+    gridLayout: gridLayout,
     _keydowned: keydowned,
     _keyupped: keyupped,
     _init: init,

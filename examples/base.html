@@ -51,6 +51,9 @@
             .nodes([{id: 1, label: "a", x: 100, y: 100}, {id: 2, label: "b", x: 200, y: 300}, {id: 3, label: "c", x: 300, y: 300}, {id: 4, label: "d", x: 400, y: 200}, {id: 5, label: "e", x: 300, y: 100}])
             .links([{id: 1, src: 1, dst: 2, direction: 0}, {id: 2, src: 1, dst: 3, direction: 1}, {id: 3, src: 1, dst: 4, direction: 2}, {id: 4, src: 1, dst: 5, direction: 3}]);
 
+
+
+
     d3.select("#showBrush").on('click', myGraph.brush.show);
     d3.select("#hideBrush").on('click', myGraph.brush.hide);
 
@@ -63,6 +66,8 @@
     //console.log(myGraph.nodes()[2].getConnectedLinks());
     setTimeout(
             function getRemoteData(){
+                var myGrid = myGraph.gridLayout().nodeSize([100, 100]).padding([70, 70]);
+                myGrid(myGraph.nodes());
         // myGraph.links({id: 5, label: "e", src: 3, dst: 2});
         //myGraph.links({id:5, label: "e", src: 1, dst: 2});
         //myGraph.links()[4].unmerge();

@@ -204,4 +204,4 @@ function _getAdjacentLinkList (id, Links) {
         }
     });
     return ret;
-};
+}

@@ -1,7 +1,7 @@
 var tape = require("tape"),
     g3 = require("../../dist/js/g3");
 
-tape("FindShortestPath will return Nodes and Links in this path", function(test){
+tape("FindShortestPath will return Nodes and Links in shortest path", function(test){
     var myGraph = g3.graph(null, {ifRender: false})
         .nodes([{id: 1}, {id: 2}, {id: 3}, {id: 4}, {id: 5}, {id: 6}, {id: 7}, {id: 8}])
         .links([{id: 1, src: 1, dst: 2}, {id: 2, src: 2, dst: 3}, {id: 3, src: 2, dst: 4}, {id: 4, src: 4, dst: 5}, {id: 5, src: 4, dst: 6}, {id: 6, src: 6, dst: 7}, {id: 7, src: 7, dst: 8}, {id: 8, src: 6, dst: 8}]);
