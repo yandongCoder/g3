@@ -37,6 +37,8 @@ import draged from "./draged";
 import defaultConfig from "./defaultConfig";
 import findShortestPath from "./findShortestPath";
 import gridLayout from "./gridLayout";
+import forceLayout from "./forceLayout";
+import hierarchyLayout from "./hierarchyLayout";
 
 function Graph(selector, config) {
 
@@ -86,6 +88,8 @@ Graph.prototype = {
     draged: draged,
     findShortestPath: findShortestPath,
     gridLayout: gridLayout,
+    forceLayout: forceLayout,
+    hierarchyLayout: hierarchyLayout,
     _keydowned: keydowned,
     _keyupped: keyupped,
     _init: init,
