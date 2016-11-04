@@ -9,7 +9,8 @@ tape("Ungroup a grouped Node", function(test){
     myGraph.group([myGraph.nodes()[0], myGraph.nodes()[1]]);
 
     myGraph.nodes()[3].ungroup();
-
+    
+    test.deepEqual(myGraph.links()[1].source, myGraph.nodes()[1]);
     test.equal(myGraph.getRenderedNodes().length, 3);
     test.equal(myGraph.getRenderedLinks().length, 2);
 

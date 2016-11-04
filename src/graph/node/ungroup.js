@@ -7,6 +7,10 @@ export default function () {
     this.groupedBy.links.forEach(function(Link){
         Link.grouped(false);
     });
+    this.groupedBy.attachedLinks.forEach(function(attachedLink){
+        if(attachedLink.originalSource) attachedLink.link.source = attachedLink.originalSource;
+        else attachedLink.link.target = attachedLink.originalTarget;
+    });
 
     this.remove();
 

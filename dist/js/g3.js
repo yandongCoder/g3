@@ -789,6 +789,10 @@
        this.groupedBy.links.forEach(function(Link){
            Link.grouped(false);
        });
+       this.groupedBy.attachedLinks.forEach(function(attachedLink){
+           if(attachedLink.originalSource) attachedLink.link.source = attachedLink.originalSource;
+           else attachedLink.link.target = attachedLink.originalTarget;
+       });
 
        this.remove();
 
@@ -1411,11 +1415,11 @@
        attachedLinks.forEach(function(Link){
            var attachedLink = {"link": Link};
            if(Nodes.indexOf(Link.source) !== -1) {
-               attachedLink['source'] = Link.source;
+               attachedLink.originalSource = Link.source;
                Link.source = newNode;
            }
            if(Nodes.indexOf(Link.target) !== -1) {
-               attachedLink['target'] = Link.target;
+               attachedLink.originalTarget = Link.target;
                Link.target = newNode;
            }
            newNode.groupedBy.attachedLinks.push(attachedLink);
