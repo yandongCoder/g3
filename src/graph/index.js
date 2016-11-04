@@ -31,6 +31,7 @@ import translateBy from "./translateBy";
 import keydowned from "./keydowned";
 import keyupped from "./keyupped";
 import group from "./group";
+import flattenGroup from "./flattenGroup";
 import getContainLinks from "./getContainLinks";
 import getAttachedLinks from "./getAttachedLinks";
 import draged from "./draged";
@@ -85,6 +86,7 @@ Graph.prototype = {
     scaleTo: scaleTo,
     translateBy: translateBy,
     group: group,
+    flattenGroup: flattenGroup,
     draged: draged,
     findShortestPath: findShortestPath,
     gridLayout: gridLayout,

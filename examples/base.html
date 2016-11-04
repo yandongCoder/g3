@@ -60,7 +60,7 @@
             }, {id: 4, src: 2, dst: 5, direction: 3}, {id: 5, src: 3, dst: 4, direction: 3}, {id: 6, src: 3, dst: 5, direction: 3}]);
 
     myGraph.group([myGraph.nodes()[1], myGraph.nodes()[2]]);
-    myGraph.group([myGraph.nodes()[0], myGraph.nodes()[5]]);
+    myGraph.flattenGroup([myGraph.nodes()[0], myGraph.nodes()[5]]);
 
     d3.select("#showBrush").on('click', myGraph.brush.show);
     d3.select("#hideBrush").on('click', myGraph.brush.hide);
@@ -76,7 +76,7 @@
 //    myGrid(myGraph.nodes());
     setTimeout(
             function getRemoteData() {
-                //myGraph.nodes()[5].ungroup();
+                myGraph.nodes()[5].ungroup();
 //                var forceLayout = myGraph
 //                        .forceLayout()
 //                        .nodes(myGraph.nodes())
