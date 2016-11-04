@@ -19,14 +19,24 @@ export default function (filter) {
 
     newNode.groupedBy = {
         nodes: Nodes,
-        links: containLinks
+        links: containLinks,
+        attachedLinks: []
     };
 
     var attachedLinks = this.getAttachedLinks(Nodes);
+    
     attachedLinks.forEach(function(Link){
-        if(Nodes.indexOf(Link.source) !== -1) Link.source = newNode;
-        if(Nodes.indexOf(Link.target) !== -1) Link.target = newNode;
+        var attachedLink = {"link": Link};
+        if(Nodes.indexOf(Link.source) !== -1) {
+            attachedLink['source'] = Link.source;
+            Link.source = newNode;
+        }
+        if(Nodes.indexOf(Link.target) !== -1) {
+            attachedLink['target'] = Link.target;
+            Link.target = newNode;
+        }
+        newNode.groupedBy.attachedLinks.push(attachedLink);
     });
-
+    
     this.render();
 }

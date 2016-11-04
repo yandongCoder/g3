@@ -1402,16 +1402,53 @@
 
        newNode.groupedBy = {
            nodes: Nodes,
-           links: containLinks
+           links: containLinks,
+           attachedLinks: []
        };
 
        var attachedLinks = this.getAttachedLinks(Nodes);
+       
        attachedLinks.forEach(function(Link){
-           if(Nodes.indexOf(Link.source) !== -1) Link.source = newNode;
-           if(Nodes.indexOf(Link.target) !== -1) Link.target = newNode;
+           var attachedLink = {"link": Link};
+           if(Nodes.indexOf(Link.source) !== -1) {
+               attachedLink['source'] = Link.source;
+               Link.source = newNode;
+           }
+           if(Nodes.indexOf(Link.target) !== -1) {
+               attachedLink['target'] = Link.target;
+               Link.target = newNode;
+           }
+           newNode.groupedBy.attachedLinks.push(attachedLink);
        });
-
+       
        this.render();
+   }
+
+   function flattenGroup (filter) {
+       var Nodes = this.getNodes(filter)
+           .filter(function(Node){ return !Node.grouped() });
+
+       if(Nodes.length <= 1) return;
+
+       var ungroupedNodes = [];
+       
+       Nodes.forEach(function(Node){
+           ungroupNode(Node);
+       });
+       
+       this.group(ungroupedNodes);
+       
+       
+       function ungroupNode (Node){
+           if(Node.groupedBy){
+               Node.ungroup();
+               Node.groupedBy.nodes.forEach(function(Node){
+                   ungroupNode(Node);
+               });
+           }else{
+               ungroupedNodes.push(Node);
+           }
+       }
    }
 
    function getContainLinks (Nodes) {
@@ -2056,6 +2093,7 @@
        scaleTo: scaleTo,
        translateBy: translateBy,
        group: group,
+       flattenGroup: flattenGroup,
        draged: draged,
        findShortestPath: findShortestPath,
        gridLayout: gridLayout,
