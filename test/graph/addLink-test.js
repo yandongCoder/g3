@@ -2,6 +2,9 @@ var tape = require("tape"),
     jsdom = require("jsdom"),
     g3 = require("../../dist/js/g3");
 
+global.d3 = require("d3");
+global._ = require('underscore');
+
 tape("Push new link to graph's links", function(test){
     var document = jsdom.jsdom('<svg id="graph"></svg>');
     var svg = document.querySelector("#graph");

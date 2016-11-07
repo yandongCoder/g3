@@ -1,13 +1,10 @@
 var tape = require("tape"),
     jsdom = require("jsdom"),
     g3 = require("../../../dist/js/g3");
-    d3 = require("d3");
-
 
 tape("nodes DOM should correspond _nodes always", function(test){
     var document = jsdom.jsdom('<svg id="graph"></svg>');
     var svg = document.querySelector("#graph");
-    global.window = document.defaultView;
 
     var myGraph = g3.graph(svg);
 

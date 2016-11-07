@@ -1,7 +1,6 @@
 var tape = require("tape"),
     jsdom = require("jsdom"),
-    g3 = require("../../dist/js/g3"),
-    d3 = require("d3");
+    g3 = require("../../dist/js/g3");
 
 
 tape("transform graph to specified k, x, y", function(test){

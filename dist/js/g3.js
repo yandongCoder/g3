@@ -1428,6 +1428,10 @@
        this.render();
    }
 
+   function groupBy () {
+       console.log(_);
+   }
+
    function flattenGroup (filter) {
        var Nodes = this.getNodes(filter)
            .filter(function(Node){ return !Node.grouped() });
@@ -2097,6 +2101,7 @@
        scaleTo: scaleTo,
        translateBy: translateBy,
        group: group,
+       groupBy: groupBy,
        flattenGroup: flattenGroup,
        draged: draged,
        findShortestPath: findShortestPath,
