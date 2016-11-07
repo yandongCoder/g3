@@ -15,17 +15,36 @@ import ungroup from "./ungroup";
 //data: data obj, graph: graphInstance
 export default function Node(data, graph) {
     this.graph = graph;
-    this.id = data.id;
-    this._label = data.label;
-    this.x = data.x;
-    this.y = data.y;
-    this._radius = data.radius || graph.config.radius;
-    this._color = data.color;
+
+    //default
+    this._radius = graph.config.radius;
     this._selected = data.selected || false; //indicate whether node is select
-
-    this._needTransformed = data.transformed || false;
+    this._needTransformed = false;
+    
+    for (var prop in data) {
+        if (data.hasOwnProperty(prop)) {
+            switch (prop) {
+                case "label":
+                    this._label = data[prop];
+                    break;
+                case "radius":
+                    this._radius = data.radius;
+                    break;
+                case "color":
+                    this._color = data.color;
+                    break;
+                case "selected":
+                    this._selected = data.selected;
+                    break;
+                case "transformed":
+                    this._needTransformed = data.transformed;
+                    break;
+                default:
+                    if(this[prop] === undefined) this[prop] = data[prop];
+            }
+        }
+    }
 }
-
 
 Node.prototype = {
     constructor: Node,
@@ -35,7 +54,7 @@ Node.prototype = {
     getX: getX,
     getY: getY,
     label: label,
-    getLabelWidth: function(){
+    getLabelWidth: function () {
         return getStrLen(this.label()) * 9;
     },
     color: color,
