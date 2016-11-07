@@ -94,6 +94,11 @@
        });
    }
 
+   function getUngroupedNodes (filter) {
+       return this.getNodes(filter)
+           .filter(function(Node){ return !Node.grouped() });
+   }
+
    //中文为2长度，非中文为1
 
    function getStrLen (str) {
@@ -1388,8 +1393,7 @@
    }
 
    function group (filter) {
-       var Nodes = this.getNodes(filter)
-           .filter(function(Node){ return !Node.grouped() });
+       var Nodes = this.getUngroupedNodes(filter);
        
        if(Nodes.length <= 1) return;
 
@@ -1428,13 +1432,20 @@
        this.render();
    }
 
-   function groupBy () {
-       console.log(_);
+   function groupBy (Nodes, groupedBy) {
+       _.chain(Nodes)
+           .filter(function (d) {
+               return d.combined;
+           })
+           .groupBy(function (d) {
+               return d.tmpRelatedNodesId + d.objectType;
+           })
+           .toArray()
+           .value();
    }
 
    function flattenGroup (filter) {
-       var Nodes = this.getNodes(filter)
-           .filter(function(Node){ return !Node.grouped() });
+       var Nodes = this.getUngroupedNodes(filter);
 
        if(Nodes.length <= 1) return;
 
@@ -2077,6 +2088,7 @@
        getNodes: getNodes,
        getSelectedNodes: getSelectedNodes,
        getRenderedNodes: getRenderedNodes,
+       getUngroupedNodes: getUngroupedNodes,
        _addNode: addNode,
        removeNodes: removeNodes,
        clearNodes: clearNodes,

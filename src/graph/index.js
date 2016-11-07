@@ -4,6 +4,7 @@ import nodes from "./nodes";
 import getNodes from "./getNodes";
 import getSelectedNodes from "./getSelectedNodes";
 import getRenderedNodes from "./getRenderedNodes";
+import getUngroupedNodes from "./getUngroupedNodes";
 import addNode from "./addNode";
 import hasNode from "./hasNode";
 import removeNodes from "./removeNodes";
@@ -31,6 +32,7 @@ import translateBy from "./translateBy";
 import keydowned from "./keydowned";
 import keyupped from "./keyupped";
 import group from "./group";
+import groupBy from "./groupBy";
 import flattenGroup from "./flattenGroup";
 import getContainLinks from "./getContainLinks";
 import getAttachedLinks from "./getAttachedLinks";
@@ -62,6 +64,7 @@ Graph.prototype = {
     getNodes: getNodes,
     getSelectedNodes: getSelectedNodes,
     getRenderedNodes: getRenderedNodes,
+    getUngroupedNodes: getUngroupedNodes,
     _addNode: addNode,
     removeNodes: removeNodes,
     clearNodes: clearNodes,
@@ -86,6 +89,7 @@ Graph.prototype = {
     scaleTo: scaleTo,
     translateBy: translateBy,
     group: group,
+    groupBy: groupBy,
     flattenGroup: flattenGroup,
     draged: draged,
     findShortestPath: findShortestPath,
