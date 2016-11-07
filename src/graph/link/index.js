@@ -1,4 +1,3 @@
-import getNodeById from "../../utils/filterById";
 import hasST from "./hasST";
 import getCoordination from "./getCoordination";
 import getStartArrow from "./getStartArrow";
@@ -38,6 +37,10 @@ export default function Link(data, graph) {
 
     if(data.mergedBy) this.mergedBy = data.mergedBy;
     if(data.transformedBy) this.transformedBy = data.transformedBy;
+    
+    for (var prop in data) {
+        if (data.hasOwnProperty(prop) && this[prop] === undefined) this[prop] = data[prop];
+    }
 }
 
 
