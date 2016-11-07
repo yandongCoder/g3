@@ -1,6 +1,5 @@
 export default function (filter) {
-    var Nodes = this.getNodes(filter)
-        .filter(function(Node){ return !Node.grouped() });
+    var Nodes = this.getUngroupedNodes(filter);
 
     if(Nodes.length <= 1) return;
 
