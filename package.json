@@ -4,7 +4,8 @@
   "description": "graph data visualization based on D3.js",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "pretest": "rollup -c -m -n g3",
+    "test": "tape test/**/*-test.js"
   },
   "repository": {
     "type": "git",
