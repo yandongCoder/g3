@@ -5,4 +5,4 @@ const DIRECTION = {
     DOUBLE: 3
 };
 
-export default DIRECTION;
+export {DIRECTION};

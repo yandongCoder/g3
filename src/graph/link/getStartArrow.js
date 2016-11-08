@@ -1,4 +1,4 @@
-import DIRECTION from "./DIRECTION-CONSTANT";
+import {DIRECTION} from "./CONSTANT";
 
 export default function () {
     if(this.direction() === DIRECTION.D2S || this.direction() === DIRECTION.DOUBLE)

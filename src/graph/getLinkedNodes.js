@@ -1,4 +1,4 @@
-import DIRECTION from "./link/DIRECTION-CONSTANT";
+import {DIRECTION} from "./link/CONSTANT";
 
 export default function (filter, type) {
     var Nodes = this.getNodes(filter);

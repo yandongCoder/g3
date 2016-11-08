@@ -9,7 +9,7 @@ import label from "./label";
 import width from "./width";
 import color from "./color";
 import direction from "./direction";
-import DIRECTION from "./DIRECTION-CONSTANT";
+import {DIRECTION} from "./CONSTANT";
 import remove from "./remove";
 import merged from "./merged";
 import merge from "./merge";
