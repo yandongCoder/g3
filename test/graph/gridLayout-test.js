@@ -13,6 +13,6 @@ tape("Grid layout will make Nodes in a grid network", function(test){
     test.equal(myGraph.nodes()[2].y,  170);
     test.equal(myGraph.nodes()[3].x,  170);
     test.equal(myGraph.nodes()[3].y,  170);
-    test.equal(myGraph.nodes()[4].x,  undefined);
+    test.equal(myGraph.nodes()[4].x,  0);
     test.end();
 });

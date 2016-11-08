@@ -803,13 +803,33 @@ function ungroup () {
     return this;
 }
 
+function getJSON () {
+    var json = {};
+    for (var prop in this) {
+        if (prop === 'groupedBy') {
+            json[prop] = {nodes: [], links: [], attachedLinks: []};
+            this[prop].nodes.forEach(function(Node){json[prop].nodes.push(Node.id);});
+            this[prop].links.forEach(function(Link){json[prop].links.push(Link.id);});
+            this[prop].attachedLinks.forEach(function(obj){
+                json[prop].attachedLinks.push({link: obj.link.id, originalSource: obj.originalSource.id});
+            });
+            
+        } else if (this.hasOwnProperty(prop) && (prop !== "_element") && (prop !== "_needTransformed")) {
+            var jsonProp = prop.replace(/_/, "");
+            json[jsonProp] = this[prop];
+        }
+    }
+    
+    return JSON.stringify(json);
+}
+
 //data: data obj, graph: graphInstance
 function Node(data, graph) {
-    this.graph = graph;
+    Object.defineProperty(this, 'graph', { value: graph, enumerable: false, configurable: true, writable: true });
     this.id = data.id;
     this._label = data.label;
-    this.x = data.x;
-    this.y = data.y;
+    this.x = data.x || 0;
+    this.y = data.y || 0;
     this._radius = data.radius || graph.config.radius;
     this._color = data.color;
     this._selected = data.selected || false; //indicate whether node is select
@@ -839,7 +859,8 @@ Node.prototype = {
     NtoL: NtoL,
     getConnectedLinks: getConnectedLinks,
     grouped: grouped$1,
-    ungroup: ungroup
+    ungroup: ungroup,
+    getJSON: getJSON
 };
 
 function addNode (obj) {

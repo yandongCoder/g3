@@ -11,14 +11,15 @@ import getConnectedLinks from "./getConnectedLinks";
 import remove from "./remove";
 import grouped from "./grouped";
 import ungroup from "./ungroup";
+import getJSON from "./getJSON";
 
 //data: data obj, graph: graphInstance
 export default function Node(data, graph) {
-    this.graph = graph;
+    Object.defineProperty(this, 'graph', { value: graph, enumerable: false, configurable: true, writable: true });
     this.id = data.id;
     this._label = data.label;
-    this.x = data.x;
-    this.y = data.y;
+    this.x = data.x || 0;
+    this.y = data.y || 0;
     this._radius = data.radius || graph.config.radius;
     this._color = data.color;
     this._selected = data.selected || false; //indicate whether node is select
@@ -48,5 +49,6 @@ Node.prototype = {
     NtoL: NtoL,
     getConnectedLinks: getConnectedLinks,
     grouped: grouped,
-    ungroup: ungroup
+    ungroup: ungroup,
+    getJSON: getJSON
 };
