@@ -6,8 +6,11 @@ export default function (type) {
 
     this.graph.render();
     
-    console.log(this.mergedBy && (type !== LINK_REMOVE_TYPE.UNMERGE));
     if(this.mergedBy && (type !== LINK_REMOVE_TYPE.UNMERGE) ) this.mergedBy.forEach(function(Link){Link.remove(); });
+    if(this.transformedBy && (type !== LINK_REMOVE_TYPE.L2N)){
+        this.transformedBy.node.remove();
+        this.transformedBy.links.forEach(function(Link){Link.remove();});
+    }
 
     return this;
 }

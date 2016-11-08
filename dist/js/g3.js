@@ -246,6 +246,11 @@ const DIRECTION = {
     DOUBLE: 3
 };
 
+const LINK_REMOVE_TYPE = {
+    UNMERGE: 1,
+    L2N: 2
+};
+
 function getStartArrow () {
     if(this.direction() === DIRECTION.D2S || this.direction() === DIRECTION.DOUBLE)
         return "url(" + window.location.href.split('#')[0] + "#start-arrow)";
@@ -339,11 +344,17 @@ function direction (direction) {
     return this;
 }
 
-function remove () {
+function remove (type) {
     delete this.graph._linksHash[this.id];
     this.graph._links.splice(this.graph._links.indexOf(this), 1);
 
     this.graph.render();
+    
+    if(this.mergedBy && (type !== LINK_REMOVE_TYPE.UNMERGE) ) this.mergedBy.forEach(function(Link){Link.remove(); });
+    if(this.transformedBy && (type !== LINK_REMOVE_TYPE.L2N)){
+        this.transformedBy.node.remove();
+        this.transformedBy.links.forEach(function(Link){Link.remove();});
+    }
 
     return this;
 }
@@ -610,7 +621,7 @@ function flattenMerge () {
 function unmerge () {
     if(!this.mergedBy) return;
 
-    this.remove();
+    this.remove(LINK_REMOVE_TYPE.UNMERGE);
 
     this.mergedBy.forEach(function(Link){
         Link.merged(false);
@@ -635,7 +646,7 @@ function LtoN () {
         Link.transformed(false);
     });
 
-    this.remove();
+    this.remove(LINK_REMOVE_TYPE.L2N);
 
     return this;
 }

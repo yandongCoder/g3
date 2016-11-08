@@ -1,3 +1,5 @@
+import {LINK_REMOVE_TYPE} from "./CONSTANT";
+
 export default function () {
     if(!this.transformedBy) return;
     this.transformedBy.node.transformed(false);
@@ -6,7 +8,7 @@ export default function () {
         Link.transformed(false);
     });
 
-    this.remove();
+    this.remove(LINK_REMOVE_TYPE.L2N);
 
     return this;
 }

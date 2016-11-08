@@ -6,7 +6,8 @@ const DIRECTION = {
 };
 
 const LINK_REMOVE_TYPE = {
-    UNMERGE: 1
+    UNMERGE: 1,
+    L2N: 2
 };
 
 export {DIRECTION, LINK_REMOVE_TYPE};
