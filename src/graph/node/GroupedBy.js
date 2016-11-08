@@ -42,7 +42,10 @@ function getOnlyId(){
     this.nodes.forEach(function(Node){onlyId.nodes.push(Node.id);});
     this.links.forEach(function(Link){onlyId.links.push(Link.id);});
     this.attachedLinks.forEach(function(obj){
-        onlyId.attachedLinks.push({link: obj.link.id, originalSource: obj.originalSource.id});
+        var attachedLink = {link: obj.link.id};
+        if(obj.originalSource) attachedLink.originalSource = obj.originalSource.id;
+        if(obj.originalTarget) attachedLink.originalTarget = obj.originalTarget.id;
+        onlyId.attachedLinks.push(attachedLink);
     });
     return onlyId;
 }
