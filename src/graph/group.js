@@ -1,3 +1,5 @@
+import GroupedBy from "./node/GroupedBy";
+
 import deriveNodeFromNodes from "../utils/deriveNodeFromNodes";
 
 export default function (filter) {
@@ -15,27 +17,10 @@ export default function (filter) {
     });
 
     var newNode = this._addNode(deriveNodeFromNodes(Nodes));
-
-    newNode.groupedBy = {
-        nodes: Nodes,
-        links: containLinks,
-        attachedLinks: []
-    };
-
+    
     var attachedLinks = this.getAttachedLinks(Nodes);
     
-    attachedLinks.forEach(function(Link){
-        var attachedLink = {"link": Link};
-        if(Nodes.indexOf(Link.source) !== -1) {
-            attachedLink.originalSource = Link.source;
-            Link.source = newNode;
-        }
-        if(Nodes.indexOf(Link.target) !== -1) {
-            attachedLink.originalTarget = Link.target;
-            Link.target = newNode;
-        }
-        newNode.groupedBy.attachedLinks.push(attachedLink);
-    });
+    newNode.groupedBy = new GroupedBy(newNode, Nodes, containLinks, attachedLinks);
     
     this.render();
 }
