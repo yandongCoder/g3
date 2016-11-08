@@ -5,4 +5,8 @@ const DIRECTION = {
     DOUBLE: 3
 };
 
-export {DIRECTION};
+const LINK_REMOVE_TYPE = {
+    UNMERGE: 1
+};
+
+export {DIRECTION, LINK_REMOVE_TYPE};

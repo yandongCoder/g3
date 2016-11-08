@@ -1,7 +1,7 @@
 var tape = require("tape"),
     g3 = require("../../../dist/js/g3");
 
-tape("remove a Link", function(test){
+tape("Remove a Link", function(test){
     var myGraph = g3.graph(null, {ifRender: false});
 
 
@@ -21,4 +21,17 @@ tape("remove a Link", function(test){
     function getLinkLenById (id){
         return myGraph.links().filter(function(Link){ return Link.id === id }).length;
     }
+});
+
+tape("Remove a merged Link will remove Links in mergedBy too", function(test){
+    var myGraph = g3.graph(null, {ifRender: false})
+        .nodes([{id: 1}, {id: 2}])
+        .links([{id:1, src: 1, dst: 2}, {id:2, src: 1, dst: 2}, {id:3, src: 2, dst: 1}]);
+    
+    myGraph.links()[0].merge();
+    
+    myGraph.links()[3].remove();
+    test.equal(myGraph.links().length, 0);
+    
+    test.end();
 });
