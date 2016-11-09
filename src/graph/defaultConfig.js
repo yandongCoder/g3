@@ -3,7 +3,8 @@ const DEFAULT_CONFIG = {
     linkWidth: 3,
     movable: true,
     zoomable: true,
-    ifRender: true
+    ifRender: true,
+    color: "#123456"
 };
 
 export default DEFAULT_CONFIG;

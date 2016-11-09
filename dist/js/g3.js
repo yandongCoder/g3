@@ -681,7 +681,7 @@ function getJSON () {
         }
     }
     
-    return JSON.stringify(json);
+    return json;
 }
 
 function Link(data, graph) {
@@ -845,18 +845,18 @@ function getJSON$1 () {
         }
     }
     
-    return JSON.stringify(json);
+    return json;
 }
 
 //data: data obj, graph: graphInstance
 function Node(data, graph) {
     this.graph = graph;
     this.id = data.id;
-    this._label = data.label;
+    this._label = data.label || "";
     this.x = data.x || 0;
     this.y = data.y || 0;
     this._radius = data.radius || graph.config.radius;
-    this._color = data.color;
+    this._color = data.color || graph.config.color;
     this._selected = data.selected || false; //indicate whether node is select
     
     this._needTransformed = data.transformed || false;
@@ -1590,7 +1590,8 @@ const DEFAULT_CONFIG = {
     linkWidth: 3,
     movable: true,
     zoomable: true,
-    ifRender: true
+    ifRender: true,
+    color: "#123456"
 };
 
 function findShortestPath$1 (fromNode, toNode, Nodes, Links) {

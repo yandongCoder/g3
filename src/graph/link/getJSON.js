@@ -15,5 +15,5 @@ export default function () {
         }
     }
     
-    return JSON.stringify(json);
+    return json;
 }
