@@ -134,6 +134,8 @@ function transformed (transformed) {
 }
 
 function nudge (nudgeX, nudgeY) {
+    if(!this.graph.config.movable) return;
+    
     this.x += nudgeX;
     this.y += nudgeY;
 
@@ -2159,6 +2161,10 @@ function hierarchyLayout (selectedNodes, relatedLinks, width, height) {
 
 };
 
+function getJSON$2 () {
+    
+}
+
 function Graph(selector, config) {
 
     this.config = Object.assign({}, DEFAULT_CONFIG, config || {});
@@ -2196,6 +2202,7 @@ Graph.prototype = {
     getRenderedLinks: getRenderedLinks,
     getContainLinks: getContainLinks,
     getAttachedLinks: getAttachedLinks,
+    getJSON: getJSON$2,
     _addLink: addLink,
     hasLink: hasLink,
     removeLinks: removeLinks,
