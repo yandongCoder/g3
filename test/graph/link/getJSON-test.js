@@ -22,3 +22,15 @@ tape("Link's mergedBy property only maintain id array in json string.", function
     
     test.end();
 });
+
+tape("Link's transformedBy property only maintain id array in json string.", function(test){
+    var myGraph = g3.graph(null, {ifRender: false})
+        .nodes([{id: 1}, {id: 2}, {id: 3}])
+        .links([{id:1, src: 1, dst: 2}, {id: 2, src: 1, dst: 3}]);
+    
+    myGraph.nodes()[0].NtoL();
+    
+    test.equal(myGraph.links()[2].getJSON(), '{"id":"transformed:(1)1(2)","label":"()()","width":3,"color":"#123456","src":2,"dst":3,"direction":1,"transformedBy":{"node":1,"links":[1,2]}}');
+    
+    test.end();
+});
