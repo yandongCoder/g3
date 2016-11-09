@@ -15,7 +15,7 @@ import getJSON from "./getJSON";
 
 //data: data obj, graph: graphInstance
 export default function Node(data, graph) {
-    Object.defineProperty(this, 'graph', { value: graph, enumerable: false, configurable: true, writable: true });
+    this.graph = graph;
     this.id = data.id;
     this._label = data.label;
     this.x = data.x || 0;

@@ -21,7 +21,7 @@ export default function GroupedBy(newNode, nodes, links, attachedLinks) {
 GroupedBy.prototype = {
     constructor: GroupedBy,
     ungroup: ungroup,
-    getOnlyId: getOnlyId,
+    pickIds: pickIds,
     remove: remove
 };
 
@@ -37,7 +37,7 @@ function ungroup(){
         else attachedLink.link.target = attachedLink.originalTarget;
     });
 }
-function getOnlyId(){
+function pickIds(){
     var onlyId = {nodes: [], links: [], attachedLinks: []};
     this.nodes.forEach(function(Node){onlyId.nodes.push(Node.id);});
     this.links.forEach(function(Link){onlyId.links.push(Link.id);});

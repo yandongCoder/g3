@@ -664,6 +664,22 @@ function grouped (grouped) {
     return this;
 }
 
+function getJSON () {
+    var exceptArr = ['_element', '_needMerged', '_needTransformed', 'graph', 'source', 'target'];
+    var json = {};
+    for (var prop in this) {
+        if (prop === 'mergedBy') {
+            json[prop] = this[prop].map(function(Link){return Link.id;});
+            
+        } else if (this.hasOwnProperty(prop) && (exceptArr.indexOf(prop) === -1)) {
+            var jsonProp = prop.replace(/_/, "");
+            json[jsonProp] = this[prop];
+        }
+    }
+    
+    return JSON.stringify(json);
+}
+
 function Link(data, graph) {
     this.graph = graph;
     this.id = data.id;
@@ -697,6 +713,7 @@ Link.prototype = {
     getEndArrow: getEndArrow,
     getTextOffset: getTextOffset,
     getLinkLabelTransform: getLinkLabelTransform,
+    getJSON: getJSON,
     label: label$1,
     width: width,
     remove: remove,
@@ -811,13 +828,14 @@ function ungroup () {
     return this;
 }
 
-function getJSON () {
+function getJSON$1 () {
+    var exceptArr = ['_element', '_needTransformed', 'graph'];
     var json = {};
     for (var prop in this) {
         if (prop === 'groupedBy') {
-            json[prop] = this[prop].getOnlyId();
-            
-        } else if (this.hasOwnProperty(prop) && (prop !== "_element") && (prop !== "_needTransformed")) {
+            json[prop] = this[prop].pickIds();
+    
+        } else if (this.hasOwnProperty(prop) && (exceptArr.indexOf(prop) === -1)) {
             var jsonProp = prop.replace(/_/, "");
             json[jsonProp] = this[prop];
         }
@@ -828,7 +846,7 @@ function getJSON () {
 
 //data: data obj, graph: graphInstance
 function Node(data, graph) {
-    Object.defineProperty(this, 'graph', { value: graph, enumerable: false, configurable: true, writable: true });
+    this.graph = graph;
     this.id = data.id;
     this._label = data.label;
     this.x = data.x || 0;
@@ -863,7 +881,7 @@ Node.prototype = {
     getConnectedLinks: getConnectedLinks,
     grouped: grouped$1,
     ungroup: ungroup,
-    getJSON: getJSON
+    getJSON: getJSON$1
 };
 
 function addNode (obj) {
@@ -1428,7 +1446,7 @@ function GroupedBy(newNode, nodes, links, attachedLinks) {
 GroupedBy.prototype = {
     constructor: GroupedBy,
     ungroup: ungroup$1,
-    getOnlyId: getOnlyId,
+    pickIds: pickIds,
     remove: remove$2
 };
 
@@ -1444,12 +1462,15 @@ function ungroup$1(){
         else attachedLink.link.target = attachedLink.originalTarget;
     });
 }
-function getOnlyId(){
+function pickIds(){
     var onlyId = {nodes: [], links: [], attachedLinks: []};
     this.nodes.forEach(function(Node){onlyId.nodes.push(Node.id);});
     this.links.forEach(function(Link){onlyId.links.push(Link.id);});
     this.attachedLinks.forEach(function(obj){
-        onlyId.attachedLinks.push({link: obj.link.id, originalSource: obj.originalSource.id});
+        var attachedLink = {link: obj.link.id};
+        if(obj.originalSource) attachedLink.originalSource = obj.originalSource.id;
+        if(obj.originalTarget) attachedLink.originalTarget = obj.originalTarget.id;
+        onlyId.attachedLinks.push(attachedLink);
     });
     return onlyId;
 }

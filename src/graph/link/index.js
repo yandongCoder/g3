@@ -19,6 +19,7 @@ import getHomoLinks from "./getHomoLinks";
 import LtoN from "./LtoN";
 import NtoL from "./NtoL";
 import grouped from "./grouped";
+import getJSON from "./getJSON";
 
 export default function Link(data, graph) {
     this.graph = graph;
@@ -53,6 +54,7 @@ Link.prototype = {
     getEndArrow: getEndArrow,
     getTextOffset: getTextOffset,
     getLinkLabelTransform: getLinkLabelTransform,
+    getJSON: getJSON,
     label: label,
     width: width,
     remove: remove,
