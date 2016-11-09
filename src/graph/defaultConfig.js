@@ -3,6 +3,7 @@ const DEFAULT_CONFIG = {
     linkWidth: 3,
     movable: true,
     zoomable: true,
+    dragable: true,
     ifRender: true,
     color: "#123456"
 };

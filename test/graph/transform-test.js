@@ -8,8 +8,6 @@ tape("transform graph to specified k, x, y", function(test){
     var svg = document.querySelector("#graph");
     global.window = document.defaultView;
 
-    global.SVGElement = function SVGElement() {};//TODO Jsdom not has SVGElement implement yet, this sentence just void test error
-
     var myGraph = g3.graph(svg).render();
 
     test.deepEqual(d3.zoomTransform(svg), {k:1, x: 0, y: 0});

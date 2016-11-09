@@ -4,6 +4,7 @@ var tape = require("tape"),
 
 global.d3 = require("d3");
 global._ = require('underscore');
+global.SVGElement = function SVGElement() {};//TODO Jsdom not has SVGElement implement yet, this sentence just void test error
 
 tape("Push new link to graph's links", function(test){
     var document = jsdom.jsdom('<svg id="graph"></svg>');

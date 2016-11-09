@@ -134,7 +134,7 @@ function transformed (transformed) {
 }
 
 function nudge (nudgeX, nudgeY) {
-    if(!this.graph.config.movable) return;
+    if(!this.graph.config.dragable) return;
     
     this.x += nudgeX;
     this.y += nudgeY;
@@ -1592,6 +1592,7 @@ const DEFAULT_CONFIG = {
     linkWidth: 3,
     movable: true,
     zoomable: true,
+    dragable: true,
     ifRender: true,
     color: "#123456"
 };
@@ -2162,7 +2163,19 @@ function hierarchyLayout (selectedNodes, relatedLinks, width, height) {
 };
 
 function getJSON$2 () {
-    
+    var json = {
+        translate: this._getCurrentTranslate(),
+        scale: this._getCurrentScale(),
+        nodes: [],
+        links: []
+    };
+    this.getNodes().forEach(function(Node){
+       json.nodes.push(Node.getJSON());
+    });
+    this.getLinks().forEach(function (Link) {
+        json.links.push(Link.getJSON());
+    });
+    return json;
 }
 
 function Graph(selector, config) {

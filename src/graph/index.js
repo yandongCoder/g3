@@ -42,6 +42,7 @@ import findShortestPath from "./findShortestPath";
 import gridLayout from "./gridLayout";
 import forceLayout from "./forceLayout";
 import hierarchyLayout from "./hierarchyLayout";
+import getJSON from "./getJSON";
 
 function Graph(selector, config) {
 
@@ -80,6 +81,7 @@ Graph.prototype = {
     getRenderedLinks: getRenderedLinks,
     getContainLinks: getContainLinks,
     getAttachedLinks: getAttachedLinks,
+    getJSON: getJSON,
     _addLink: addLink,
     hasLink: hasLink,
     removeLinks: removeLinks,
