@@ -9,7 +9,7 @@ import label from "./label";
 import width from "./width";
 import color from "./color";
 import direction from "./direction";
-import {DIRECTION} from "./CONSTANT";
+import {DIRECTION} from "../CONSTANT";
 import remove from "./remove";
 import merged from "./merged";
 import merge from "./merge";
@@ -35,6 +35,7 @@ export default function Link(data, graph) {
     this.target = graph && this.graph._nodesHash[this.dst];
     
     if(data.grouped) this._grouped = data.grouped;
+    if(data.merged) this._merged = data.merged;
     //this._needMerged = data.merged || false;
 
     if(data.mergedBy) this.mergedBy = data.mergedBy;

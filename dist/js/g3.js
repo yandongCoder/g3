@@ -32,6 +32,26 @@ function toArray (maybeArr) {
     return maybeArr;
 }
 
+const DIRECTION = {
+    NONE: 0,
+    S2D: 1,
+    D2S: 2,
+    DOUBLE: 3
+};
+
+const LINK_REMOVE_TYPE = {
+    UNMERGE: 1,
+    L2N: 2
+};
+const REMOVE_TYPE = {
+    UNGROUP: 1
+};
+
+const BUILD_REF_TYPE = {
+    NODE: 1,
+    LINK: 2
+}
+
 function nodes (nodes, cover) {
     nodes = toArray(nodes);
 
@@ -47,6 +67,7 @@ function nodes (nodes, cover) {
         this._addNode(v);
     },this);
 
+    this.buildReference(BUILD_REF_TYPE.NODE);
     //this._preTransfer();
 
     this.render();
@@ -241,18 +262,6 @@ function getCoordination (forText) {
     };
 }
 
-const DIRECTION = {
-    NONE: 0,
-    S2D: 1,
-    D2S: 2,
-    DOUBLE: 3
-};
-
-const LINK_REMOVE_TYPE = {
-    UNMERGE: 1,
-    L2N: 2
-};
-
 function getStartArrow () {
     if(this.direction() === DIRECTION.D2S || this.direction() === DIRECTION.DOUBLE)
         return "url(" + window.location.href.split('#')[0] + "#start-arrow)";
@@ -352,11 +361,8 @@ function remove (type) {
 
     this.graph.render();
     
-    if(this.mergedBy && (type !== LINK_REMOVE_TYPE.UNMERGE) ) this.mergedBy.forEach(function(Link){Link.remove(); });
-    if(this.transformedBy && (type !== LINK_REMOVE_TYPE.L2N)){
-        this.transformedBy.node.remove();
-        this.transformedBy.links.forEach(function(Link){Link.remove();});
-    }
+    if(this.mergedBy && (type !== LINK_REMOVE_TYPE.UNMERGE) ) this.mergedBy.remove();
+    if(this.transformedBy && (type !== LINK_REMOVE_TYPE.L2N)) this.transformedBy.remove();
 
     return this;
 }
@@ -590,18 +596,39 @@ function deriveLinkFromLinks (Links) {
     return obj;
 }
 
+function MergedBy(Links) {
+    Links.forEach(function(Link){
+        Link.merged(true);
+    });
+    
+    this.links = Links;
+}
+
+MergedBy.prototype = {
+    constructor: MergedBy,
+    remove: remove$1,
+    unmerge: unmerge
+};
+
+function remove$1 (){
+    this.links.forEach(function(Link){Link.remove();});
+}
+
+function unmerge (){
+    this.links.forEach(function(Link){
+        Link.merged(false);
+        Link.NtoL();
+    });
+}
+
 function merge () {
     //每个Link本身只能被合并一次，也意味着只能存在于唯一一个Link的mergedBy属性中，for idempotent, 幂等性
     var toMergedLinks = this.getHomoLinks().filter(function(Link){ return !Link.merged() && !Link.grouped()});
 
     if(toMergedLinks.length <= 1) return;
-
-    toMergedLinks.forEach(function(Link){
-        Link.merged(true);
-    });
-
+    
     var linkObj = deriveLinkFromLinks(toMergedLinks);
-    linkObj.mergedBy = toMergedLinks;
+    linkObj.mergedBy = new MergedBy(toMergedLinks);
 
     var Link = this.graph._addLink(linkObj);
 
@@ -620,15 +647,12 @@ function flattenMerge () {
     this.merge();
 }
 
-function unmerge () {
+function unmerge$1 () {
     if(!this.mergedBy) return;
 
     this.remove(LINK_REMOVE_TYPE.UNMERGE);
 
-    this.mergedBy.forEach(function(Link){
-        Link.merged(false);
-        Link.NtoL();
-    });
+    this.mergedBy.unmerge();
     
     return this;
 }
@@ -642,11 +666,8 @@ function getHomoLinks () {
 
 function LtoN () {
     if(!this.transformedBy) return;
-    this.transformedBy.node.transformed(false);
-
-    this.transformedBy.links.forEach(function(Link){
-        Link.transformed(false);
-    });
+    
+    this.transformedBy.untransform();
 
     this.remove(LINK_REMOVE_TYPE.L2N);
 
@@ -671,7 +692,8 @@ function getJSON () {
     var json = {};
     for (var prop in this) {
         if (prop === 'mergedBy') {
-            json[prop] = this[prop].map(function(Link){return Link.id;});
+            json[prop] = {links: []};
+            this[prop].links.map(function(Link){ json[prop].links.push(Link.id);});
             
         } else if(prop === 'transformedBy'){
             json[prop] = {node: this[prop].node.id, links: []};
@@ -700,6 +722,7 @@ function Link(data, graph) {
     this.target = graph && this.graph._nodesHash[this.dst];
     
     if(data.grouped) this._grouped = data.grouped;
+    if(data.merged) this._merged = data.merged;
     //this._needMerged = data.merged || false;
 
     if(data.mergedBy) this.mergedBy = data.mergedBy;
@@ -727,7 +750,7 @@ Link.prototype = {
     merged: merged,
     merge: merge,
     flattenMerge: flattenMerge,
-    unmerge: unmerge,
+    unmerge: unmerge$1,
     grouped: grouped,
     LtoN: LtoN,
     NtoL: NtoL$1,
@@ -758,6 +781,30 @@ function deriveLinkFromLNL (srcLinks, Node, dstLinks) {
     return obj;
 }
 
+function TransformedBy (Node, Links){
+    this.node = Node;
+    this.links = Links;
+    
+    Node.transformed(true);
+    Links.forEach(function(Link){Link.transformed(true);});
+}
+
+TransformedBy.prototype = {
+    constructor: TransformedBy,
+    untransform: untransform,
+    remove: remove$2
+};
+
+function remove$2 (){
+    this.node.remove();
+    this.links.forEach(function(Link){Link.remove();});
+}
+
+function untransform (){
+    this.node.transformed(false);
+    this.links.forEach(function(Link){ Link.transformed(false);});
+}
+
 function NtoL () {
     if(this.transformedTo) this.transformedTo.LtoN();//transform a Node that has been transformed before, transform back first.
 
@@ -765,17 +812,9 @@ function NtoL () {
 
     if(contractedLinks.length !== 2) return;
     
-    this.transformed(true);
-    contractedLinks.forEach(function(group){
-        group.forEach(function(Link){Link.transformed(true);});
-    });
-
     var newLink = deriveLinkFromLNL(contractedLinks[0], this, contractedLinks[1]);
 
-    newLink.transformedBy = {
-        node: this,
-        links: contractedLinks[0].concat(contractedLinks[1])
-    };
+    newLink.transformedBy = new TransformedBy(this, contractedLinks[0].concat(contractedLinks[1]));
 
    this.transformedTo = this.graph._addLink(newLink);
 
@@ -805,11 +844,7 @@ function getConnectedLinks (grouped) {
     return connectedLinks;
 }
 
-const REMOVE_TYPE = {
-    UNGROUP: 1
-};
-
-function remove$1 (removeType) {
+function remove$3 (removeType) {
     delete this.graph._nodesHash[this.id];
     this.graph._nodes.splice(this.graph._nodes.indexOf(this), 1);
     
@@ -824,74 +859,8 @@ function grouped$1 (grouped) {
     return this;
 }
 
-function GroupedBy(newNode, Nodes, Links, attachedLinks) {
-    this.nodes = Nodes;
-    this.links = Links;
-    this.attachedLinks = [];
-    
-    attachedLinks.forEach(function(Link){
-        var attachedLink = {"link": Link};
-        if(Nodes.indexOf(Link.source) !== -1) {
-            attachedLink.originalSource = Link.source;
-            Link.source = newNode;
-        }
-        if(Nodes.indexOf(Link.target) !== -1) {
-            attachedLink.originalTarget = Link.target;
-            Link.target = newNode;
-        }
-        this.attachedLinks.push(attachedLink);
-    }, this);
-    
-}
-
-GroupedBy.prototype = {
-    constructor: GroupedBy,
-    ungroup: ungroup$1,
-    pickIds: pickIds,
-    remove: remove$2
-};
-
-function ungroup$1(){
-    this.nodes.forEach(function(Node){
-        Node.grouped(false);
-    });
-    this.links.forEach(function(Link){
-        Link.grouped(false);
-    });
-    this.attachedLinks.forEach(function(attachedLink){
-        if(attachedLink.originalSource) attachedLink.link.source = attachedLink.originalSource;
-        else attachedLink.link.target = attachedLink.originalTarget;
-    });
-}
-function pickIds(){
-    var onlyId = {nodes: [], links: [], attachedLinks: []};
-    this.nodes.forEach(function(Node){onlyId.nodes.push(Node.id);});
-    this.links.forEach(function(Link){onlyId.links.push(Link.id);});
-    this.attachedLinks.forEach(function(obj){
-        var attachedLink = {link: obj.link.id};
-        if(obj.originalSource) attachedLink.originalSource = obj.originalSource.id;
-        if(obj.originalTarget) attachedLink.originalTarget = obj.originalTarget.id;
-        onlyId.attachedLinks.push(attachedLink);
-    });
-    return onlyId;
-}
-
-function remove$2(){
-    this.nodes.forEach(function(Node){Node.remove();});
-    this.links.forEach(function(Node){Node.remove();});
-    this.attachedLinks.forEach(function(obj){obj.link.remove();});
-}
-
 function ungroup () {
     if(!this.groupedBy || this.grouped()) return;
-    if(! (this.groupedBy instanceof GroupedBy)){
-        var by = this.groupedBy;
-        var Nodes = this.graph.getNodes(by.nodes);
-        var Links = this.graph.getLinks(by.links);
-        var attachedLinks = this.graph.getLinks(by.attachedLinks);
-        
-        this.groupedBy = new GroupedBy(this, Nodes, Links, attachedLinks);
-    }
     
     this.groupedBy.ungroup();
 
@@ -950,7 +919,7 @@ Node.prototype = {
     },
     color: color,
     radius: radius,
-    remove: remove$1,
+    remove: remove$3,
     NtoL: NtoL,
     getConnectedLinks: getConnectedLinks,
     grouped: grouped$1,
@@ -1065,6 +1034,91 @@ function getLinkedNodes (filter, type) {
     return relatedNodes;
 }
 
+function GroupedBy(newNode, Nodes, Links, attachedLinks) {
+    this.nodes = Nodes;
+    this.links = Links;
+    this.attachedLinks = [];
+    
+    Nodes.forEach(function(Node){ Node.grouped(true); });
+    Links.forEach(function(Link){ Link.grouped(true); });
+    
+    attachedLinks.forEach(function(Link){
+        var attachedLink = {"link": Link};
+        if(Nodes.indexOf(Link.source) !== -1) {
+            attachedLink.originalSource = Link.source;
+            Link.source = newNode;
+        }
+        if(Nodes.indexOf(Link.target) !== -1) {
+            attachedLink.originalTarget = Link.target;
+            Link.target = newNode;
+        }
+        this.attachedLinks.push(attachedLink);
+    }, this);
+    
+}
+
+GroupedBy.prototype = {
+    constructor: GroupedBy,
+    ungroup: ungroup$1,
+    pickIds: pickIds,
+    remove: remove$4
+};
+
+function ungroup$1(){
+    this.nodes.forEach(function(Node){
+        Node.grouped(false);
+    });
+    this.links.forEach(function(Link){
+        Link.grouped(false);
+    });
+    this.attachedLinks.forEach(function(attachedLink){
+        if(attachedLink.originalSource) attachedLink.link.source = attachedLink.originalSource;
+        else attachedLink.link.target = attachedLink.originalTarget;
+    });
+}
+function pickIds(){
+    var onlyId = {nodes: [], links: [], attachedLinks: []};
+    this.nodes.forEach(function(Node){onlyId.nodes.push(Node.id);});
+    this.links.forEach(function(Link){onlyId.links.push(Link.id);});
+    this.attachedLinks.forEach(function(obj){
+        var attachedLink = {link: obj.link.id};
+        if(obj.originalSource) attachedLink.originalSource = obj.originalSource.id;
+        if(obj.originalTarget) attachedLink.originalTarget = obj.originalTarget.id;
+        onlyId.attachedLinks.push(attachedLink);
+    });
+    return onlyId;
+}
+
+function remove$4(){
+    this.nodes.forEach(function(Node){Node.remove();});
+    this.links.forEach(function(Node){Node.remove();});
+    this.attachedLinks.forEach(function(obj){obj.link.remove();});
+}
+
+function buildReference (type) {
+    this._links.forEach(function (Link) {
+        if(Link.mergedBy && !(Link.mergedBy instanceof MergedBy) ){
+            var Links = this.getLinks(Link.mergedBy.links);
+            
+            if(Links.length === Link.mergedBy.links.length) Link.mergedBy = new MergedBy(Links);
+        }
+    }, this);
+    
+    this._nodes.forEach(function (Node) {
+        if(Node.groupedBy && (!(this.groupedBy instanceof GroupedBy)) ){
+            var by = Node.groupedBy;
+            var Nodes = this.getNodes(by.nodes);
+            var Links = this.getLinks(by.links);
+            var attachedLinks = this.getLinks(by.attachedLinks);
+            
+            if(Nodes.length === by.nodes.length && Links.length === by.links.length && attachedLinks.length === by.attachedLinks.length)
+                Node.groupedBy = new GroupedBy(Node, Nodes, Links, attachedLinks);
+            
+        }
+            
+    }, this);
+}
+
 function links (links, cover) {
     links = toArray(links);
 
@@ -1080,6 +1134,7 @@ function links (links, cover) {
         this._addLink(v);
     },this);
 
+    this.buildReference(BUILD_REF_TYPE.LINK);
     //this._preTransfer();
     
     this.render();
@@ -1502,18 +1557,11 @@ function group (filter) {
     
     if(Nodes.length <= 1) return;
 
-    Nodes.forEach(function(Node){
-        Node.grouped(true);
-    });
-
     var containLinks = this.getContainLinks(Nodes);
-    containLinks.forEach(function(Link){
-        Link.grouped(true);
-    });
-
+    var attachedLinks = this.getAttachedLinks(Nodes);
     var newNode = this._addNode(deriveNodeFromNodes(Nodes));
     
-    var attachedLinks = this.getAttachedLinks(Nodes);
+    
     
     newNode.groupedBy = new GroupedBy(newNode, Nodes, containLinks, attachedLinks);
     
@@ -2208,6 +2256,7 @@ Graph.prototype = {
     getLinkedNodes: getLinkedNodes,
     hasNode: hasNode,
     //_preTransfer: preTransfer,
+    buildReference: buildReference,
     links: links,
     getLinks: getLinks,
     getRenderedLinks: getRenderedLinks,

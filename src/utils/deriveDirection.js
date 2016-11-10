@@ -1,4 +1,4 @@
-import {DIRECTION} from "../graph/link/CONSTANT";
+import {DIRECTION} from "../graph/CONSTANT";
 
 export default function direction(Links){
     return Links.reduce(function(p, Link){
