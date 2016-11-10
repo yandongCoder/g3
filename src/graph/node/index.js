@@ -24,7 +24,7 @@ export default function Node(data, graph) {
     this._color = data.color || graph.config.color;
     this._selected = data.selected || false; //indicate whether node is select
     
-    this._needTransformed = data.transformed || false;
+    //this._needTransformed = data.transformed || false;
     
     for (var prop in data) {
         if (data.hasOwnProperty(prop) && this[prop] === undefined) this[prop] = data[prop];

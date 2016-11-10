@@ -34,7 +34,7 @@ export default function Link(data, graph) {
     this.source = graph && this.graph._nodesHash[this.src];
     this.target = graph && this.graph._nodesHash[this.dst];
 
-    this._needMerged = data.merged || false;
+    //this._needMerged = data.merged || false;
 
     if(data.mergedBy) this.mergedBy = data.mergedBy;
     if(data.transformedBy) this.transformedBy = data.transformedBy;
