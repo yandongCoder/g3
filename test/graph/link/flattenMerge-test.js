@@ -17,7 +17,7 @@ tape("If merge Links and one of them merged before (meaning has mergedBy), flatt
     myGraph.links({id: 5, src: 1, dst: 2});
     myGraph.getRenderedLinks()[1].flattenMerge();
 
-    test.deepEqual(myGraph.links()[5].mergedBy, myGraph.getLinks([1,2,3,4,5]));
+    test.deepEqual(myGraph.links()[5].mergedBy.links, myGraph.getLinks([1,2,3,4,5]));
     test.end();
 
 });

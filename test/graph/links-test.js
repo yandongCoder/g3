@@ -1,7 +1,7 @@
 var tape = require("tape"),
 g3 = require("../../dist/js/g3");
 
-tape("add link to graph", function(test){
+tape("Add link to graph", function(test){
     var myGraph = g3.graph(null, {ifRender: false});
 
     //could not add link which not has source or target in nodes
@@ -28,3 +28,18 @@ tape("add link to graph", function(test){
 
     test.end();
 });
+
+// tape('Add merged Link to graph', function(test){
+//     var myGraph = g3.graph(null, {ifRender: false})
+//         .nodes([{id: 1}, {id: 2}])
+//         .links([{id:1, src: 1, dst: 2, merged: true}, {id:2, src: 1, dst: 2, merged: true}, {id: 3, src: 1, dst: 2, mergedBy: [1,2]}]);
+//
+//     test.deepEqual(myGraph.getRenderedLinks(), myGraph.getLinks([3]));
+//
+//     myGraph.getLinks(3).unmerge();
+//
+//     test.deepEqual(myGraph.getRenderedLinks(), myGraph.getLinks([1,2]));
+//
+//
+//     test.end();
+// });

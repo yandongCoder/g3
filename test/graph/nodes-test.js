@@ -45,7 +45,6 @@ tape("Push new nodes and cover graph's current nodes", function(test){
 });
 
 tape("Add a grouped Node to graph", function(test){
-    console.time('acb');
     var myGraph = g3.graph(null, {ifRender: false})
         .nodes([{id: 1, grouped: true}, {id: 2, grouped: true},{id: 3}, {id: 4, groupedBy:{nodes: [1, 2], links:[1], attachedLinks: [2]}}])
         .links([{id:1, src: 1, dst: 2, grouped: true}, {id:2, src: 2, dst: 3}]);
@@ -58,5 +57,4 @@ tape("Add a grouped Node to graph", function(test){
     test.deepEqual(myGraph.getRenderedLinks(), myGraph.getLinks([1, 2]));
     
     test.end();
-    console.timeEnd('acb');
 });

@@ -1,4 +1,4 @@
-import {REMOVE_TYPE} from "./CONSTANT";
+import {REMOVE_TYPE} from "../CONSTANT";
 
 export default function (removeType) {
     delete this.graph._nodesHash[this.id];

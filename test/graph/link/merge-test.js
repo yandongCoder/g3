@@ -13,7 +13,7 @@ tape("Merge all Links between a couple Nodes", function(test){
 
     test.equal(myGraph.links().length, 5);
     test.equal(myGraph.getRenderedLinks().length, 2);
-    test.deepEqual(myGraph.links()[4].mergedBy, [myGraph.links()[0], myGraph.links()[1], myGraph.links()[2]]);
+    test.deepEqual(myGraph.links()[4].mergedBy.links, [myGraph.links()[0], myGraph.links()[1], myGraph.links()[2]]);
     test.end();
 
 });
@@ -73,8 +73,8 @@ tape("Merge Links, add new Link between this couple Nodes, merge again.", functi
     
     test.equal(myGraph.links().length, 7);
     test.equal(myGraph.getRenderedLinks().length, 2);
-    test.deepEqual(myGraph.links()[6].mergedBy, [myGraph.links()[4], myGraph.links()[5]]);
-    test.deepEqual(myGraph.links()[6].mergedBy[0], myGraph.links()[4]);
+    test.deepEqual(myGraph.links()[6].mergedBy.links, [myGraph.links()[4], myGraph.links()[5]]);
+    test.deepEqual(myGraph.links()[6].mergedBy.links[0], myGraph.links()[4]);
     test.end(); 
 
 });

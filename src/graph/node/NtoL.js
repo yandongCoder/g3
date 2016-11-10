@@ -1,4 +1,5 @@
 import deriveLinkFromLNL from "../../utils/deriveLinkFromLNL";
+import TransformedBy from "../helper/transformedBy";
 
 export default function () {
     if(this.transformedTo) this.transformedTo.LtoN();//transform a Node that has been transformed before, transform back first.
@@ -7,17 +8,9 @@ export default function () {
 
     if(contractedLinks.length !== 2) return;
     
-    this.transformed(true);
-    contractedLinks.forEach(function(group){
-        group.forEach(function(Link){Link.transformed(true);});
-    });
-
     var newLink = deriveLinkFromLNL(contractedLinks[0], this, contractedLinks[1]);
 
-    newLink.transformedBy = {
-        node: this,
-        links: contractedLinks[0].concat(contractedLinks[1])
-    };
+    newLink.transformedBy = new TransformedBy(this, contractedLinks[0].concat(contractedLinks[1]));
 
    this.transformedTo = this.graph._addLink(newLink);
 

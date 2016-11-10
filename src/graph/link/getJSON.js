@@ -3,7 +3,8 @@ export default function () {
     var json = {};
     for (var prop in this) {
         if (prop === 'mergedBy') {
-            json[prop] = this[prop].map(function(Link){return Link.id;});
+            json[prop] = {links: []};
+            this[prop].links.map(function(Link){ json[prop].links.push(Link.id);});
             
         } else if(prop === 'transformedBy'){
             json[prop] = {node: this[prop].node.id, links: []};

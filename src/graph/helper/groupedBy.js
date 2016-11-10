@@ -3,6 +3,9 @@ export default function GroupedBy(newNode, Nodes, Links, attachedLinks) {
     this.links = Links;
     this.attachedLinks = [];
     
+    Nodes.forEach(function(Node){ Node.grouped(true); });
+    Links.forEach(function(Link){ Link.grouped(true); });
+    
     attachedLinks.forEach(function(Link){
         var attachedLink = {"link": Link};
         if(Nodes.indexOf(Link.source) !== -1) {

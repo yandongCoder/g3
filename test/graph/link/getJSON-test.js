@@ -18,7 +18,7 @@ tape("Link's mergedBy property only maintain id array in json.", function(test){
     
     myGraph.links()[0].merge();
     
-    test.deepEqual(myGraph.links()[3].getJSON(), {"id":"merged:1&2&3","label":"&&","width":3,"color":"#ffffff","src":1,"dst":2,"direction":1,"mergedBy":[1,2,3]});
+    test.deepEqual(myGraph.links()[3].getJSON(), {id:"merged:1&2&3",label:"&&",width:3,color:"#ffffff",src:1,dst:2,direction:1,mergedBy:{links: [1,2,3]}});
     
     test.end();
 });

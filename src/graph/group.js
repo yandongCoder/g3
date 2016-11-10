@@ -1,4 +1,4 @@
-import GroupedBy from "./node/GroupedBy";
+import GroupedBy from "./helper/groupedBy";
 
 import deriveNodeFromNodes from "../utils/deriveNodeFromNodes";
 
@@ -7,18 +7,11 @@ export default function (filter) {
     
     if(Nodes.length <= 1) return;
 
-    Nodes.forEach(function(Node){
-        Node.grouped(true);
-    });
-
     var containLinks = this.getContainLinks(Nodes);
-    containLinks.forEach(function(Link){
-        Link.grouped(true);
-    });
-
+    var attachedLinks = this.getAttachedLinks(Nodes);
     var newNode = this._addNode(deriveNodeFromNodes(Nodes));
     
-    var attachedLinks = this.getAttachedLinks(Nodes);
+    
     
     newNode.groupedBy = new GroupedBy(newNode, Nodes, containLinks, attachedLinks);
     
