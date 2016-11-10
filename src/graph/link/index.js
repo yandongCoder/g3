@@ -33,7 +33,8 @@ export default function Link(data, graph) {
 
     this.source = graph && this.graph._nodesHash[this.src];
     this.target = graph && this.graph._nodesHash[this.dst];
-
+    
+    if(data.grouped) this._grouped = data.grouped;
     //this._needMerged = data.merged || false;
 
     if(data.mergedBy) this.mergedBy = data.mergedBy;

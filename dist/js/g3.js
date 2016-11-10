@@ -698,8 +698,9 @@ function Link(data, graph) {
 
     this.source = graph && this.graph._nodesHash[this.src];
     this.target = graph && this.graph._nodesHash[this.dst];
-
-    this._needMerged = data.merged || false;
+    
+    if(data.grouped) this._grouped = data.grouped;
+    //this._needMerged = data.merged || false;
 
     if(data.mergedBy) this.mergedBy = data.mergedBy;
     if(data.transformedBy) this.transformedBy = data.transformedBy;
@@ -823,9 +824,75 @@ function grouped$1 (grouped) {
     return this;
 }
 
+function GroupedBy(newNode, Nodes, Links, attachedLinks) {
+    this.nodes = Nodes;
+    this.links = Links;
+    this.attachedLinks = [];
+    
+    attachedLinks.forEach(function(Link){
+        var attachedLink = {"link": Link};
+        if(Nodes.indexOf(Link.source) !== -1) {
+            attachedLink.originalSource = Link.source;
+            Link.source = newNode;
+        }
+        if(Nodes.indexOf(Link.target) !== -1) {
+            attachedLink.originalTarget = Link.target;
+            Link.target = newNode;
+        }
+        this.attachedLinks.push(attachedLink);
+    }, this);
+    
+}
+
+GroupedBy.prototype = {
+    constructor: GroupedBy,
+    ungroup: ungroup$1,
+    pickIds: pickIds,
+    remove: remove$2
+};
+
+function ungroup$1(){
+    this.nodes.forEach(function(Node){
+        Node.grouped(false);
+    });
+    this.links.forEach(function(Link){
+        Link.grouped(false);
+    });
+    this.attachedLinks.forEach(function(attachedLink){
+        if(attachedLink.originalSource) attachedLink.link.source = attachedLink.originalSource;
+        else attachedLink.link.target = attachedLink.originalTarget;
+    });
+}
+function pickIds(){
+    var onlyId = {nodes: [], links: [], attachedLinks: []};
+    this.nodes.forEach(function(Node){onlyId.nodes.push(Node.id);});
+    this.links.forEach(function(Link){onlyId.links.push(Link.id);});
+    this.attachedLinks.forEach(function(obj){
+        var attachedLink = {link: obj.link.id};
+        if(obj.originalSource) attachedLink.originalSource = obj.originalSource.id;
+        if(obj.originalTarget) attachedLink.originalTarget = obj.originalTarget.id;
+        onlyId.attachedLinks.push(attachedLink);
+    });
+    return onlyId;
+}
+
+function remove$2(){
+    this.nodes.forEach(function(Node){Node.remove();});
+    this.links.forEach(function(Node){Node.remove();});
+    this.attachedLinks.forEach(function(obj){obj.link.remove();});
+}
+
 function ungroup () {
     if(!this.groupedBy || this.grouped()) return;
-
+    if(! (this.groupedBy instanceof GroupedBy)){
+        var by = this.groupedBy;
+        var Nodes = this.graph.getNodes(by.nodes);
+        var Links = this.graph.getLinks(by.links);
+        var attachedLinks = this.graph.getLinks(by.attachedLinks);
+        
+        this.groupedBy = new GroupedBy(this, Nodes, Links, attachedLinks);
+    }
+    
     this.groupedBy.ungroup();
 
     this.remove(REMOVE_TYPE.UNGROUP);
@@ -860,8 +927,9 @@ function Node(data, graph) {
     this._radius = data.radius || graph.config.radius;
     this._color = data.color || graph.config.color;
     this._selected = data.selected || false; //indicate whether node is select
+    if(data.grouped) this._grouped = data.grouped;
     
-    this._needTransformed = data.transformed || false;
+    //this._needTransformed = data.transformed || false;
     
     for (var prop in data) {
         if (data.hasOwnProperty(prop) && this[prop] === undefined) this[prop] = data[prop];
@@ -997,19 +1065,6 @@ function getLinkedNodes (filter, type) {
     return relatedNodes;
 }
 
-function preTransfer () {
-    this._links.forEach(function(Link){
-        if(Link._needMerged) Link.flattenMerge();
-        delete Link._needMerged;
-        Link.NtoL();
-    });
-
-    this._nodes.forEach(function(Node){
-        if(Node._needTransformed) Node.NtoL();
-        delete Node._needTransformed;
-    });
-}
-
 function links (links, cover) {
     links = toArray(links);
 
@@ -1025,7 +1080,7 @@ function links (links, cover) {
         this._addLink(v);
     },this);
 
-    this._preTransfer();
+    //this._preTransfer();
     
     this.render();
     
@@ -1427,64 +1482,6 @@ function keyupped () {
                 break;
         }
     }
-}
-
-function GroupedBy(newNode, nodes, links, attachedLinks) {
-    this.nodes = nodes;
-    this.links = links;
-    this.attachedLinks = [];
-    
-    attachedLinks.forEach(function(Link){
-        var attachedLink = {"link": Link};
-        if(nodes.indexOf(Link.source) !== -1) {
-            attachedLink.originalSource = Link.source;
-            Link.source = newNode;
-        }
-        if(nodes.indexOf(Link.target) !== -1) {
-            attachedLink.originalTarget = Link.target;
-            Link.target = newNode;
-        }
-        this.attachedLinks.push(attachedLink);
-    }, this);
-    
-}
-
-GroupedBy.prototype = {
-    constructor: GroupedBy,
-    ungroup: ungroup$1,
-    pickIds: pickIds,
-    remove: remove$2
-};
-
-function ungroup$1(){
-    this.nodes.forEach(function(Node){
-        Node.grouped(false);
-    });
-    this.links.forEach(function(Link){
-        Link.grouped(false);
-    });
-    this.attachedLinks.forEach(function(attachedLink){
-        if(attachedLink.originalSource) attachedLink.link.source = attachedLink.originalSource;
-        else attachedLink.link.target = attachedLink.originalTarget;
-    });
-}
-function pickIds(){
-    var onlyId = {nodes: [], links: [], attachedLinks: []};
-    this.nodes.forEach(function(Node){onlyId.nodes.push(Node.id);});
-    this.links.forEach(function(Link){onlyId.links.push(Link.id);});
-    this.attachedLinks.forEach(function(obj){
-        var attachedLink = {link: obj.link.id};
-        if(obj.originalSource) attachedLink.originalSource = obj.originalSource.id;
-        if(obj.originalTarget) attachedLink.originalTarget = obj.originalTarget.id;
-        onlyId.attachedLinks.push(attachedLink);
-    });
-    return onlyId;
-}
-
-function remove$2(){
-    this.nodes.forEach(function(Node){Node.remove();});
-    this.links.forEach(function(Node){Node.remove();});
-    this.attachedLinks.forEach(function(obj){obj.link.remove();});
 }
 
 function deriveNodeFromNodes (Nodes) {
@@ -2178,6 +2175,7 @@ function getJSON$2 () {
     return json;
 }
 
+//import preTransfer from "./preTransfer";
 function Graph(selector, config) {
 
     this.config = Object.assign({}, DEFAULT_CONFIG, config || {});
@@ -2209,7 +2207,7 @@ Graph.prototype = {
     getRelatedNodes: getRelatedNodes,
     getLinkedNodes: getLinkedNodes,
     hasNode: hasNode,
-    _preTransfer: preTransfer,
+    //_preTransfer: preTransfer,
     links: links,
     getLinks: getLinks,
     getRenderedLinks: getRenderedLinks,

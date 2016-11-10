@@ -1,15 +1,15 @@
-export default function GroupedBy(newNode, nodes, links, attachedLinks) {
-    this.nodes = nodes;
-    this.links = links;
+export default function GroupedBy(newNode, Nodes, Links, attachedLinks) {
+    this.nodes = Nodes;
+    this.links = Links;
     this.attachedLinks = [];
     
     attachedLinks.forEach(function(Link){
         var attachedLink = {"link": Link};
-        if(nodes.indexOf(Link.source) !== -1) {
+        if(Nodes.indexOf(Link.source) !== -1) {
             attachedLink.originalSource = Link.source;
             Link.source = newNode;
         }
-        if(nodes.indexOf(Link.target) !== -1) {
+        if(Nodes.indexOf(Link.target) !== -1) {
             attachedLink.originalTarget = Link.target;
             Link.target = newNode;
         }
