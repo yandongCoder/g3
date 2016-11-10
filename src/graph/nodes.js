@@ -1,4 +1,5 @@
 import toArray from "../utils/toArray";
+import {BUILD_REF_TYPE} from "./CONSTANT";
 
 export default function (nodes, cover) {
     nodes = toArray(nodes);
@@ -15,6 +16,7 @@ export default function (nodes, cover) {
         this._addNode(v);
     },this);
 
+    this.buildReference(BUILD_REF_TYPE.NODE);
     //this._preTransfer();
 
     this.render();

@@ -29,17 +29,32 @@ tape("Add link to graph", function(test){
     test.end();
 });
 
-// tape('Add merged Link to graph', function(test){
-//     var myGraph = g3.graph(null, {ifRender: false})
-//         .nodes([{id: 1}, {id: 2}])
-//         .links([{id:1, src: 1, dst: 2, merged: true}, {id:2, src: 1, dst: 2, merged: true}, {id: 3, src: 1, dst: 2, mergedBy: [1,2]}]);
-//
-//     test.deepEqual(myGraph.getRenderedLinks(), myGraph.getLinks([3]));
-//
-//     myGraph.getLinks(3).unmerge();
-//
-//     test.deepEqual(myGraph.getRenderedLinks(), myGraph.getLinks([1,2]));
-//
-//
-//     test.end();
-// });
+tape('Add merged Link to graph', function(test){
+    var myGraph = g3.graph(null, {ifRender: false})
+        .nodes([{id: 1}, {id: 2}])
+        .links([{id:1, src: 1, dst: 2, merged: true}, {id:2, src: 1, dst: 2, merged: true}, {id: 3, src: 1, dst: 2, mergedBy: {links: [1,2]}}]);
+    
+    test.deepEqual(myGraph.getRenderedLinks(), myGraph.getLinks([3]));
+    
+    myGraph.getLinks(3)[0].unmerge();
+    
+    test.deepEqual(myGraph.getRenderedLinks(), myGraph.getLinks([1,2]));
+    
+    
+    test.end();
+});
+
+tape('Add transformed Link to graph', function(test){
+    var myGraph = g3.graph(null, {ifRender: false})
+        .nodes([{id: 1, transformed: true}, {id: 2}, {id: 3}])
+        .links([{id:1, src: 1, dst: 2, transformed: true}, {id: 2, src: 1, dst: 3, transformed: true}, {id: 3, src: 2, dst: 3, transformedBy: {node: 1, links: [1, 2]}}]);
+    
+    test.deepEqual(myGraph.getRenderedLinks(), myGraph.getLinks(3));
+    
+    myGraph.getLinks(3)[0].LtoN();
+    
+    test.deepEqual(myGraph.getRenderedLinks(), myGraph.getLinks([1,2]));
+    
+    
+    test.end();
+});
