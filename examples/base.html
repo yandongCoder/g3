@@ -38,7 +38,7 @@
 
     var groupedByNodeProperty = {
         nodes: [{id: 1, type: 1, label: 1, x: 200, y: 100}, {id: 2, type: 2, label: 2, x: 100, y: 200}, {id: 3, type: 3, label: 3, x: 300, y: 200}, {id: 4, type: 1, label: 4, x: 150, y: 300}, {id: 5, type: 2, label: 5, x: 250, y: 300}],
-        links: [{id:1, src: 1, dst: 4}, {id:2, src: 1, dst: 5}, {id:3, src: 2, dst: 3}, {id:4, src: 2, dst: 5}, {id:5, src: 3, dst: 4}]
+        links: [{id:1, label: 'AAA', src: 1, dst: 4}, {id:2, label: 'BBB', src: 1, dst: 5}, {id:3, label: 'CCC', src: 2, dst: 3}, {id:4, label: 'DDD', src: 2, dst: 5}, {id:5, label: 'EEEEEEEEEEEEEEEEE', src: 3, dst: 4}]
     };
 
     var groupedByRelatedNodes = {
@@ -83,6 +83,11 @@
 //    myGrid(myGraph.nodes());
     setTimeout(
             function getRemoteData() {
+//                myGraph._getSvgSelection().call(myGraph.zoom.scaleTo, 0.4);
+//                myGraph._getSvgSelection().call(myGraph.zoom.translateBy, 800, 800);
+                myGraph.transform(0.3, 0, 0);
+
+                console.log(d3.zoomTransform(myGraph._canvas));
                 //myGraph.transform(2, 200, -200, 1000);
                 //myGraph.nodes()[6].ungroup();
 //                var forceLayout = myGraph

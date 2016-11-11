@@ -1,8 +1,8 @@
 import getAbsUrl from "../../utils/getAbsUrl";
-import DRAWTYPE from "./DRAWTYPE";
+import {RENDER_TYPE} from "../CONSTANT";
 
 export default function (drawType) {
-    if(drawType === DRAWTYPE.NUDGE){
+    if(drawType === RENDER_TYPE.NUDGE){
         var selectedNodes = this._getSelectedNodesSelection();
 
         selectedNodes.attr("transform", function (Node) { return "translate(" + Node.getX() + "," + Node.getY() + ")";});

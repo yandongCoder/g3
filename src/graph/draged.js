@@ -1,4 +1,4 @@
-import DRAWTYPE from "./draw/DRAWTYPE";
+import {RENDER_TYPE} from "./CONSTANT";
 
 export default function (currentNode) {
     this.getNodes(function(Node){ return Node.selected() || (Node === currentNode)})
@@ -6,5 +6,5 @@ export default function (currentNode) {
         Node.nudge(d3.event.dx, d3.event.dy, true);
     });
 
-    this.render(true, DRAWTYPE.NUDGE);
+    this.render(true, RENDER_TYPE.NUDGE);
 }

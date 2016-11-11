@@ -1,5 +1,5 @@
 import getAbsUrl from "../../utils/getAbsUrl";
-import DRAWTYPE from "./DRAWTYPE";
+import {RENDER_TYPE} from "../CONSTANT";
 
 export default function (drawType) {
     var self = this;

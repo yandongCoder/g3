@@ -9,29 +9,6 @@ function select (selector) {
     return typeof selector === "string"? document.querySelector(selector): selector;
 }
 
-function render (callback, drawType) {
-    if(!this.config.ifRender) return this;
-
-    var canvasType = this._canvas.nodeName;
-
-    if(canvasType === 'svg'){
-        this._init();
-    }
-
-    var self = this;
-    clearTimeout(this._renderDelay);
-    this._renderDelay = setTimeout(function(){
-        self._draw(drawType, canvasType);
-        if(callback instanceof Function) callback();
-    }, 0);
-    return this;
-}
-
-function toArray (maybeArr) {
-    if(!Array.isArray(maybeArr)) maybeArr = [maybeArr];
-    return maybeArr;
-}
-
 const DIRECTION = {
     NONE: 0,
     S2D: 1,
@@ -50,6 +27,41 @@ const REMOVE_TYPE = {
 const BUILD_REF_TYPE = {
     NODE: 1,
     LINK: 2
+};
+
+const RENDER_TYPE = {
+    FORCEDRAW: "forceDraw",
+    TRANSFORM: 1,
+    NUDGE: 2,
+    ZOOM: 3
+};
+
+function render (callback, renderType) {
+    if(!this.config.ifRender) return this;
+
+    var canvasType = this._canvas.nodeName;
+
+    if(canvasType === 'svg'){
+        this._init();
+    }
+
+    var self = this;
+    clearTimeout(this._renderDelay);
+    
+    if(renderType === RENDER_TYPE.ZOOM) draw();
+    else this._renderDelay = setTimeout(draw, 0);
+    
+    return this;
+    
+    function draw(){
+        self._draw(renderType, canvasType);
+        if(callback instanceof Function) callback();
+    }
+}
+
+function toArray (maybeArr) {
+    if(!Array.isArray(maybeArr)) maybeArr = [maybeArr];
+    return maybeArr;
 }
 
 function nodes (nodes, cover) {
@@ -1332,14 +1344,8 @@ function getAbsUrl (url) {
     return (url || window.location.href).split('#')[0];
 }
 
-const DRAWTYPE = {
-    FORCEDRAW: "forceDraw",
-    TRANSFORM: 1,
-    NUDGE: 2
-};
-
 function drawNodesSvg (drawType) {
-    if(drawType === DRAWTYPE.NUDGE){
+    if(drawType === RENDER_TYPE.NUDGE){
         var selectedNodes = this._getSelectedNodesSelection();
 
         selectedNodes.attr("transform", function (Node) { return "translate(" + Node.getX() + "," + Node.getY() + ")";});
@@ -1487,7 +1493,6 @@ function draw (drawType, canvasType) {
 }
 
 function zoomed () {
-    var self = this;
     //不可移动
     if (!this.movable) {
         //将变换前的translate值赋给变换后的translate值,保持位置不变
@@ -1498,16 +1503,15 @@ function zoomed () {
         //this.zoom.scale(scope.config.status.scale);
     }
     //Graph._ifShowLabels();
-
-
+    
+    var previousScale = this._getForceGroup()._pScale;
+    var currentScale = this._getCurrentScale().toFixed(4);
     //缩放网络图
-    this._getForceGroup().attr("transform", "translate(" + d3.event.transform.x + ", "+ d3.event.transform.y + ") scale(" + self._getCurrentScale() + ")");
-
-    self.render();
-
-    //将状态记录在config中
-    // scope.config.status.translate = Graph.zoom.translate();
-    // scope.config.status.scale = Graph.zoom.scale();
+    this._getForceGroup().attr("transform", "translate(" + d3.event.transform.x + ", "+ d3.event.transform.y + ") scale(" + currentScale + ")");
+    this._getForceGroup()._pScale = currentScale;
+    
+    //panning don't need re-render, render only after zooming
+    if(previousScale !== currentScale) this.render(null, RENDER_TYPE.ZOOM);
 }
 
 function transform (k, x, y, duration) {
@@ -1519,10 +1523,12 @@ function transform (k, x, y, duration) {
 
 function scaleTo (k, duration) {
     this.transform(k, null, null, duration);
+    return this;
 }
 
 function translateBy (x, y, duration) {
     this.transform(null, x, y , duration);
+    return this;
 }
 
 function keydowned () {
@@ -1636,7 +1642,7 @@ function draged (currentNode) {
         Node.nudge(d3.event.dx, d3.event.dy, true);
     });
 
-    this.render(true, DRAWTYPE.NUDGE);
+    this.render(true, RENDER_TYPE.NUDGE);
 }
 
 const DEFAULT_CONFIG = {
@@ -2375,3 +2381,4 @@ exports.utils = utils;
 Object.defineProperty(exports, '__esModule', { value: true });
 
 })));
+//# sourceMappingURL=g3.js.map
