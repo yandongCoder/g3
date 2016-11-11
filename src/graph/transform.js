@@ -3,4 +3,5 @@ export default function (k, x, y, duration) {
     if(typeof k === "number") transformed = transformed.scale(k);
     if(typeof x === "number" && typeof y === "number") transformed = transformed.translate(x, y);
     this._getSvgSelection(duration).call(this.zoom.transform, transformed);
+    return this;
 }
