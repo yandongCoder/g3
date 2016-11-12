@@ -29,9 +29,9 @@ tape("Link's DOM should correspond Link's property", function(test) {
 
     var myGraph = g3.graph(svg)
         .nodes([{id: 1, x: 0, y: 0}, {id: 2, x: 100, y: 0}])
-        .links([{id: 1, src: 1, dst: 2, label: "a", color: "#342234"}, {id: 2, src: 1, dst: 2}, {id: 3, src: 1, dst: 2}]);
+        .links([{id: 1, src: 1, dst: 2, label: "a", color: "#342234", selected: true}, {id: 2, src: 1, dst: 2}, {id: 3, src: 1, dst: 2}]);
 
-    test.plan(14);
+    test.plan(15);
 
     myGraph.render(function(){
         //width Attribute
@@ -52,6 +52,7 @@ tape("Link's DOM should correspond Link's property", function(test) {
         myGraph.links()[2].direction(0);
 
         myGraph.render(function(){
+            test.equal(document.querySelector(".paths").querySelectorAll(".link-path")[0].className, 'link-path selected');
             test.equal(document.querySelector(".paths").querySelectorAll(".link-path")[0].style.strokeWidth, '7');
             test.equal(document.querySelector(".link-labels").querySelectorAll(".link-label")[0].textContent, "abc");
             test.equal(document.querySelector(".paths").querySelectorAll(".link-path")[0].style.stroke, "#666888");

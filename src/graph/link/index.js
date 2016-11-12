@@ -20,6 +20,7 @@ import LtoN from "./LtoN";
 import NtoL from "./NtoL";
 import grouped from "./grouped";
 import getJSON from "./getJSON";
+import selected from "./selected";
 
 export default function Link(data, graph) {
     this.graph = graph;
@@ -27,6 +28,7 @@ export default function Link(data, graph) {
     this._label = data.label || "";
     this._width = data.width || (graph && graph.config.linkWidth);
     this._color = data.color || "#a1a1a1";
+    this._selected = data.selected || false;
     this.src = data.src;
     this.dst = data.dst;
     this._direction = data.direction === undefined? 1: data.direction;//0: none, 1: from, 2: to, 3 double
@@ -59,6 +61,7 @@ Link.prototype = {
     getJSON: getJSON,
     label: label,
     width: width,
+    selected: selected,
     remove: remove,
     merged: merged,
     merge: merge,

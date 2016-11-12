@@ -86,7 +86,10 @@
 //                myGraph._getSvgSelection().call(myGraph.zoom.scaleTo, 0.4);
 //                myGraph._getSvgSelection().call(myGraph.zoom.translateBy, 800, 800);
                 //myGraph.transform(0.3, 0, 0);
-
+                var relatedNodes = myGraph.getRelatedNodes(myGraph.nodes()[0]);
+                var containLinks = myGraph.getContainLinks(relatedNodes);
+                myGraph.selectNodes(relatedNodes);
+                console.log(containLinks);
                 //myGraph.transform(2, 200, -200, 1000);
                 //myGraph.nodes()[6].ungroup();
 //                var forceLayout = myGraph

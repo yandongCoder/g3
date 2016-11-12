@@ -19,6 +19,7 @@ export default function (drawType) {
 
     all
         .attr('d', function (Link) { var c = Link.getCoordination();  return 'M ' + c.Sx + ' ' + c.Sy + ' L ' + c.Tx + ' ' + c.Ty; })
+        .classed("selected", function(Link){return Link.selected()})
         .style('marker-start', function (Link) { return Link.getStartArrow(); })
         .style('marker-end', function (Link) { return Link.getEndArrow(); })
         .style('stroke-width', function(Link){ return Link.width(); })
@@ -26,8 +27,7 @@ export default function (drawType) {
 
 
     links.exit().remove();
-
-
+    
 
     //绑定linkData数据到linkLabels
     var linkLabels = this._getLinksLabelSelection().data(this._links, function (Link) { return Link.id; });

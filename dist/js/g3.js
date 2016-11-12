@@ -720,12 +720,22 @@ function getJSON () {
     return json;
 }
 
+function selected$1 (selected) {
+    if(!arguments.length) return this._selected;
+    this._selected = selected;
+    
+    this.graph.render();
+    
+    return this;
+}
+
 function Link(data, graph) {
     this.graph = graph;
     this.id = data.id;
     this._label = data.label || "";
     this._width = data.width || (graph && graph.config.linkWidth);
     this._color = data.color || "#a1a1a1";
+    this._selected = data.selected || false;
     this.src = data.src;
     this.dst = data.dst;
     this._direction = data.direction === undefined? 1: data.direction;//0: none, 1: from, 2: to, 3 double
@@ -758,6 +768,7 @@ Link.prototype = {
     getJSON: getJSON,
     label: label$1,
     width: width,
+    selected: selected$1,
     remove: remove,
     merged: merged,
     merge: merge,
@@ -1423,6 +1434,7 @@ function drawLinksSvg (drawType) {
 
     all
         .attr('d', function (Link) { var c = Link.getCoordination();  return 'M ' + c.Sx + ' ' + c.Sy + ' L ' + c.Tx + ' ' + c.Ty; })
+        .classed("selected", function(Link){return Link.selected()})
         .style('marker-start', function (Link) { return Link.getStartArrow(); })
         .style('marker-end', function (Link) { return Link.getEndArrow(); })
         .style('stroke-width', function(Link){ return Link.width(); })
@@ -1430,8 +1442,7 @@ function drawLinksSvg (drawType) {
 
 
     links.exit().remove();
-
-
+    
 
     //绑定linkData数据到linkLabels
     var linkLabels = this._getLinksLabelSelection().data(this._links, function (Link) { return Link.id; });
