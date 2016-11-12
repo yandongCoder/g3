@@ -8,9 +8,7 @@ import {getLinks, getContainLinks, getAttachedLinks, getRenderedLinks} from "./g
 import init from "./init/init";
 import draw from "./draw/index";
 import zoomed from "./zoomed";
-import transform from "./transform";
-import scaleTo from "./scaleTo";
-import translateBy from "./translateBy";
+import {transform, scaleTo, translateBy} from "./transform";
 import keydowned from "./keydowned";
 import keyupped from "./keyupped";
 import group from "./group";
