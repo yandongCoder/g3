@@ -5,8 +5,7 @@ import {DIRECTION} from "../CONSTANT";
 import remove from "./remove";
 import {merge, flattenMerge, unmerge} from "./merge";
 import getHomoLinks from "./getHomoLinks";
-import LtoN from "./LtoN";
-import NtoL from "./NtoL";
+import {LtoN, NtoL} from "./L2N_N2L";
 import getJSON from "./getJSON";
 
 export default function Link(data, graph) {
