@@ -15,7 +15,7 @@ tape("A graph call init only once in first render", function(test){
     test.end();
 });
 
-tape("Unselect all Nodes when click canvas itself.", function(test){
+tape("Deselect all Nodes when click canvas itself.", function(test){
     var document = jsdom.jsdom('<svg id="graph"></svg>');
     var svg = document.querySelector("#graph");
 

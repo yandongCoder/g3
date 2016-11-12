@@ -16,7 +16,7 @@ tape("Select Nodes", function(test){
     test.end();
 });
 
-tape("Don't unselect other Nodes, if second argument of selectNodes method is true", function(test){
+tape("Don't deselect other Nodes, if second argument of selectNodes method is true", function(test){
     var myGraph = g3.graph(null, {ifRender: false})
         .nodes([{id: 1, x: 0, y: 0}, {id: 2, x: 100, y: 0}]);
 

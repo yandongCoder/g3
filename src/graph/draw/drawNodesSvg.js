@@ -17,9 +17,9 @@ export default function (drawType) {
         .on('mousedown', function(Node){
             if(!d3.event.ctrlKey){
                 if(Node.selected()) return;
-                self.unselectNodes();
+                self.deselectNodes();
             }
-            self.unselectLinks();
+            self.deselectLinks();
             Node.selected(!Node.selected());
         })
         .call(this.dragNode);

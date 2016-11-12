@@ -2,7 +2,7 @@
 //     jsdom = require("jsdom"),
 //     g3 = require("../../dist/js/g3");
 //TODO
-// tape("Unselect all Nodes when click canvas itself.", function(test){
+// tape("Deselect all Nodes when click canvas itself.", function(test){
 //     var document = jsdom.jsdom('<svg id="graph"></svg>');
 //     var svg = document.querySelector("#graph");
 //

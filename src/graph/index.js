@@ -10,8 +10,8 @@ import hasNode from "./hasNode";
 import removeNodes from "./removeNodes";
 import clearNodes from "./clearNodes";
 import selectNodes from "./selectNodes";
-import unselectNodes from "./unselectNodes";
-import unselectLinks from "./unselectLinks";
+import deselectNodes from "./deselectNodes";
+import deselectLinks from "./deselectLinks";
 import getInvertedNodes from "./getInvertedNodes";
 import getRelatedNodes from "./getRelatedNodes";
 import getLinkedNodes from "./getLinkedNodes";
@@ -72,8 +72,8 @@ Graph.prototype = {
     removeNodes: removeNodes,
     clearNodes: clearNodes,
     selectNodes: selectNodes,
-    unselectNodes: unselectNodes,
-    unselectLinks: unselectLinks,
+    deselectNodes: deselectNodes,
+    deselectLinks: deselectLinks,
     getInvertedNodes: getInvertedNodes,
     getRelatedNodes: getRelatedNodes,
     getLinkedNodes: getLinkedNodes,
