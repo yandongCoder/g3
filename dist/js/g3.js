@@ -1073,7 +1073,7 @@ function getRelatedNodes(filter) {
     }
 }
 
-function selectNodes (filter, retainOther) {
+function selectNodes(filter, retainOther) {
     if(!retainOther) this.deselectNodes();
     this.getNodes(filter).forEach(function(Node){
         Node.selected(true);
@@ -1082,7 +1082,7 @@ function selectNodes (filter, retainOther) {
     this.render();
 }
 
-function deselectNodes (filter) {
+function deselectNodes(filter) {
     this.getNodes(filter).forEach(function(Node){
         Node.selected(false);
         this.render();
@@ -1090,7 +1090,7 @@ function deselectNodes (filter) {
     return this;
 }
 
-function deselectLinks (filter) {
+function deselectLinks(filter) {
     this.getLinks(filter).forEach(function(Link){
         Link.selected(false);
         this.render();
