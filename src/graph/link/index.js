@@ -1,7 +1,6 @@
 import hasST from "./hasST";
 import getCoordination from "./getCoordination";
-import getStartArrow from "./getStartArrow";
-import getEndArrow from "./getEndArrow";
+import {getStartArrow, getEndArrow} from "./getArrow";
 import getTextOffset from "./getTextOffset";
 import getLinkLabelTransform from "./getLinkLabelTransform";
 import transformed from "./transformed";
