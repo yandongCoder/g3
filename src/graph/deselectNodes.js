@@ -3,4 +3,5 @@ export default function (filter) {
         Node.selected(false);
         this.render();
     }, this);
+    return this;
 }

@@ -21,7 +21,8 @@ export default function () {
             if (d3.event.target.nodeName !== 'svg') return;
 
             //scope.cMenu.hide();
-            self.deselectNodes();
+            self.deselectNodes()
+                .deselectLinks();
         });
 
     //bind listener to page for keyboard shortCuts and mouse events

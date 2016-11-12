@@ -147,7 +147,7 @@ function getStrLen (str) {
         }
     }
     return len;
-};
+}
 
 function selected (selected) {
     if(!arguments.length) return this._selected;
@@ -980,7 +980,7 @@ function clearNodes () {
 }
 
 function selectNodes (filter, retainOther) {
-    if(!retainOther) this.unselectNodes();
+    if(!retainOther) this.deselectNodes();
     this.getNodes(filter).forEach(function(Node){
         Node.selected(true);
     }, this);
@@ -988,18 +988,20 @@ function selectNodes (filter, retainOther) {
     this.render();
 }
 
-function unselectNodes (filter) {
+function deselectNodes (filter) {
     this.getNodes(filter).forEach(function(Node){
         Node.selected(false);
         this.render();
     }, this);
+    return this;
 }
 
-function unselectLinks (filter) {
+function deselectLinks (filter) {
     this.getLinks(filter).forEach(function(Link){
         Link.selected(false);
         this.render();
     }, this);
+    return this;
 }
 
 function getInvertedNodes (filter) {
@@ -1333,7 +1335,8 @@ function init () {
             if (d3.event.target.nodeName !== 'svg') return;
 
             //scope.cMenu.hide();
-            self.unselectNodes();
+            self.deselectNodes()
+                .deselectLinks();
         });
 
     //bind listener to page for keyboard shortCuts and mouse events
@@ -1378,9 +1381,9 @@ function drawNodesSvg (drawType) {
         .on('mousedown', function(Node){
             if(!d3.event.ctrlKey){
                 if(Node.selected()) return;
-                self.unselectNodes();
+                self.deselectNodes();
             }
-            self.unselectLinks();
+            self.deselectLinks();
             Node.selected(!Node.selected());
         })
         .call(this.dragNode);
@@ -1439,7 +1442,7 @@ function drawLinksSvg (drawType) {
         .each(function(Link){ Link._pathEle = this })
         .attr('id', function(Link){ return "link-path" + Link.id})
         .on('mousedown', function(Link){
-            self.unselectLinks();
+            self.deselectLinks();
             Link.selected(!Link.selected());
         });
 
@@ -2297,8 +2300,8 @@ Graph.prototype = {
     removeNodes: removeNodes,
     clearNodes: clearNodes,
     selectNodes: selectNodes,
-    unselectNodes: unselectNodes,
-    unselectLinks: unselectLinks,
+    deselectNodes: deselectNodes,
+    deselectLinks: deselectLinks,
     getInvertedNodes: getInvertedNodes,
     getRelatedNodes: getRelatedNodes,
     getLinkedNodes: getLinkedNodes,

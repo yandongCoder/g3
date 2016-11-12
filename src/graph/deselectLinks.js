@@ -3,4 +3,5 @@ export default function (filter) {
         Link.selected(false);
         this.render();
     }, this);
+    return this;
 }

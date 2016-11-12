@@ -15,22 +15,20 @@ tape("A graph call init only once in first render", function(test){
     test.end();
 });
 
-tape("Deselect all Nodes when click canvas itself.", function(test){
+tape("Deselect all Nodes and Links when click canvas itself.", function(test){
     var document = jsdom.jsdom('<svg id="graph"></svg>');
     var svg = document.querySelector("#graph");
 
-    var myGraph = g3.graph(svg);
-
-    var nodes = [{id: 1, selected: true}, {id: 2},{id: 3},{id: 4}, {id: 5},{id: 6}];
-    myGraph.nodes(nodes);
+    var myGraph = g3.graph(svg)
+        .nodes([{id: 1, selected: true}, {id: 2}])
+        .links([{id: 1, src: 1, dst: 2, selected: true}]);
 
     myGraph.render(function(){
-        test.equal(myGraph.nodes()[0].selected(), true);
-
         var event = new window.MouseEvent("click");
         document.querySelector('svg').dispatchEvent(event);
 
         test.equal(myGraph.nodes()[0].selected(), false);
+        test.equal(myGraph.links()[0].selected(), false);
 
         test.end();
     });
