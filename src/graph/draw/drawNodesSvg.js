@@ -19,6 +19,7 @@ export default function (drawType) {
                 if(Node.selected()) return;
                 self.unselectNodes();
             }
+            self.unselectLinks();
             Node.selected(!Node.selected());
         })
         .call(this.dragNode);

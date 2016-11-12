@@ -66,14 +66,15 @@ tape("select Node event", function(test){
 
     var myGraph = g3.graph(svg);
 
-    var nodes = [{id: 1}, {id: 2},{id: 3},{id: 4}, {id: 5},{id: 6}];
-    myGraph.nodes(nodes);
+    myGraph.nodes([{id: 1}, {id: 2}])
+        .links({id: 1, src: 1, dst: 2, selected: true});
 
     myGraph.render(function(){
         var firstNode = myGraph.nodes()[0],
             firstEle = document.querySelectorAll('.node')[0],
             secondNode = myGraph.nodes()[1],
-            secondEle = document.querySelectorAll('.node')[1];
+            secondEle = document.querySelectorAll('.node')[1],
+            firstLink = myGraph.links()[0];
         
         //Select a Node when mousedown, and unselect others
         var event = new window.MouseEvent("mousedown");
@@ -82,7 +83,7 @@ tape("select Node event", function(test){
 
         test.equal(firstNode.selected(), false);
         test.equal(secondNode.selected(), true);
-
+        test.equal(firstLink.selected(), false);
         
         //Don't unselect others when press Ctrl key
         myGraph.unselectNodes();

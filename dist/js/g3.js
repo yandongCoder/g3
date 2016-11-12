@@ -1380,6 +1380,7 @@ function drawNodesSvg (drawType) {
                 if(Node.selected()) return;
                 self.unselectNodes();
             }
+            self.unselectLinks();
             Node.selected(!Node.selected());
         })
         .call(this.dragNode);
