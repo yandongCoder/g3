@@ -149,21 +149,64 @@ function getStrLen (str) {
     return len;
 };
 
-function selected (selected) {
-    if(!arguments.length) return this._selected;
-    this._selected = selected;
+function color(color) {
+    if(!arguments.length) return this._color || "#123456";
 
+    this._color = color;
     this.graph.render();
 
     return this;
 }
 
-function transformed (transformed) {
-    if(!arguments.length) return this._transformed || false;
+function grouped(grouped) {
+    if(!arguments.length) return this._grouped === undefined? false : this._grouped;
+    
+    this._grouped = grouped;
+    
+    return this;
+}
 
+function label(label) {
+    if(!arguments.length) return this._label || "";
+    
+    this._label = label;
+    this.graph.render();
+    
+    return this;
+}
+
+function selected(selected) {
+    if(!arguments.length) return this._selected;
+    this._selected = selected;
+    
+    this.graph.render();
+    
+    return this;
+}
+
+function radius(radius) {
+    if(!arguments.length) return this._radius;
+    
+    this._radius = radius;
+    this.graph.render();
+    
+    return this;
+}
+
+function transformed(transformed) {
+    if(!arguments.length) return this._transformed || false;
+    
     this._transformed = transformed;
     
     return this;
+}
+
+function getX() {
+    return this.x;
+}
+
+function getY() {
+    return this.y;
 }
 
 function nudge (nudgeX, nudgeY) {
@@ -175,41 +218,6 @@ function nudge (nudgeX, nudgeY) {
     this.graph.render();
 
     return this;
-}
-
-function color (color) {
-    if(!arguments.length) return this._color || "#123456";
-
-    this._color = color;
-    this.graph.render();
-
-    return this;
-}
-
-function radius (radius) {
-    if(!arguments.length) return this._radius;
-
-    this._radius = radius;
-    this.graph.render();
-
-    return this;
-}
-
-function label (label) {
-    if(!arguments.length) return this._label || "";
-
-    this._label = label;
-    this.graph.render();
-
-    return this;
-}
-
-function getX() {
-    return this.x;
-}
-
-function getY() {
-    return this.y;
 }
 
 //Link has source and target Node in _nodes
@@ -384,7 +392,7 @@ function width(width) {
     return this;
 }
 
-function grouped(grouped) {
+function grouped$1(grouped) {
     if(!arguments.length) return this._grouped === undefined? false : this._grouped;
     
     this._grouped = grouped;
@@ -774,7 +782,7 @@ Link.prototype = {
     merge: merge,
     flattenMerge: flattenMerge,
     unmerge: unmerge$1,
-    grouped: grouped,
+    grouped: grouped$1,
     LtoN: LtoN,
     NtoL: NtoL$1,
     color: color$1,
@@ -874,14 +882,6 @@ function remove$3 (removeType) {
     if(this.groupedBy && (removeType !== REMOVE_TYPE.UNGROUP) ) this.groupedBy.remove();
 }
 
-function grouped$1 (grouped) {
-    if(!arguments.length) return this._grouped === undefined? false : this._grouped;
-
-    this._grouped = grouped;
-
-    return this;
-}
-
 function ungroup () {
     if(!this.groupedBy || this.grouped()) return;
     
@@ -928,7 +928,6 @@ function Node(data, graph) {
     }
 }
 
-
 Node.prototype = {
     constructor: Node,
     selected: selected,
@@ -945,7 +944,7 @@ Node.prototype = {
     remove: remove$3,
     NtoL: NtoL,
     getConnectedLinks: getConnectedLinks,
-    grouped: grouped$1,
+    grouped: grouped,
     ungroup: ungroup,
     getJSON: getJSON$1
 };

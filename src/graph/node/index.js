@@ -1,15 +1,9 @@
 import getStrLen from "../../utils/getStrLen";
-import selected from "./selected";
-import transformed from "./transformed";
+import {color, grouped, label, selected, radius, transformed, getX, getY} from "./attributes";
 import nudge from "./nudge";
-import color from "./color";
-import radius from "./radius";
-import label from "./label";
-import {getX, getY} from "./getXY";
 import NtoL from "./NtoL";
 import getConnectedLinks from "./getConnectedLinks";
 import remove from "./remove";
-import grouped from "./grouped";
 import ungroup from "./ungroup";
 import getJSON from "./getJSON";
 
@@ -31,7 +25,6 @@ export default function Node(data, graph) {
         if (data.hasOwnProperty(prop) && this[prop] === undefined) this[prop] = data[prop];
     }
 }
-
 
 Node.prototype = {
     constructor: Node,
