@@ -264,14 +264,6 @@ function getCoordination(forText) {
     };
 }
 
-function transformed$1 (transformed) {
-    if(!arguments.length) return this._transformed || false;
-
-    this._transformed = transformed;
-
-    return this;
-}
-
 function color$1(color) {
     if(!arguments.length) return this._color;
 
@@ -329,6 +321,14 @@ function grouped$1(grouped) {
     if(!arguments.length) return this._grouped === undefined? false : this._grouped;
     
     this._grouped = grouped;
+    
+    return this;
+}
+
+function transformed$1(transformed) {
+    if(!arguments.length) return this._transformed || false;
+    
+    this._transformed = transformed;
     
     return this;
 }
@@ -577,21 +577,21 @@ function MergedBy(Links) {
 MergedBy.prototype = {
     constructor: MergedBy,
     remove: remove$1,
-    unmerge: unmerge
+    unmerge: unmerge$1
 };
 
 function remove$1 (){
     this.links.forEach(function(Link){Link.remove();});
 }
 
-function unmerge (){
+function unmerge$1 (){
     this.links.forEach(function(Link){
         Link.merged(false);
         Link.NtoL();
     });
 }
 
-function merge () {
+function merge() {
     //每个Link本身只能被合并一次，也意味着只能存在于唯一一个Link的mergedBy属性中，for idempotent, 幂等性
     var toMergedLinks = this.getHomoLinks().filter(function(Link){ return !Link.merged() && !Link.grouped()});
 
@@ -609,19 +609,19 @@ function merge () {
     return this;
 }
 
-function flattenMerge () {
+function flattenMerge() {
     this.getHomoLinks().forEach(function(Link){
-       Link.unmerge();
+        Link.unmerge();
     });
-
+    
     this.merge();
 }
 
-function unmerge$1 () {
+function unmerge() {
     if(!this.mergedBy) return;
-
+    
     this.remove(LINK_REMOVE_TYPE.UNMERGE);
-
+    
     this.mergedBy.unmerge();
     
     return this;
@@ -714,7 +714,7 @@ Link.prototype = {
     merged: merged,
     merge: merge,
     flattenMerge: flattenMerge,
-    unmerge: unmerge$1,
+    unmerge: unmerge,
     grouped: grouped$1,
     LtoN: LtoN,
     NtoL: NtoL$1,

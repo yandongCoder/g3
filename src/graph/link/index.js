@@ -3,9 +3,7 @@ import {getStartArrow, getEndArrow, getTextOffset, getLinkLabelTransform, getCoo
 import {color, direction, label, merged, selected, width, grouped, transformed} from "./attributes";
 import {DIRECTION} from "../CONSTANT";
 import remove from "./remove";
-import merge from "./merge";
-import flattenMerge from "./flattenMerge";
-import unmerge from "./unmerge";
+import {merge, flattenMerge, unmerge} from "./merge";
 import getHomoLinks from "./getHomoLinks";
 import LtoN from "./LtoN";
 import NtoL from "./NtoL";
