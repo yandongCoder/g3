@@ -17,9 +17,7 @@ import flattenGroup from "./flattenGroup";
 import draged from "./draged";
 import defaultConfig from "./defaultConfig";
 import findShortestPath from "./findShortestPath";
-import gridLayout from "./gridLayout";
-import forceLayout from "./forceLayout";
-import hierarchyLayout from "./hierarchyLayout";
+import {forceLayout, gridLayout, hierarchyLayout} from "./layout";
 import getJSON from "./getJSON";
 
 function Graph(selector, config) {
