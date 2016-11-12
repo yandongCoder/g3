@@ -31,7 +31,7 @@ tape("Link's DOM should correspond Link's property", function(test) {
         .nodes([{id: 1, x: 0, y: 0}, {id: 2, x: 100, y: 0}])
         .links([{id: 1, src: 1, dst: 2, label: "a", color: "#342234", selected: true}, {id: 2, src: 1, dst: 2}, {id: 3, src: 1, dst: 2}]);
 
-    test.plan(15);
+    test.plan(17);
 
     myGraph.render(function(){
         //width Attribute
@@ -50,7 +50,7 @@ tape("Link's DOM should correspond Link's property", function(test) {
         myGraph.links()[0].direction(2);
         myGraph.links()[1].direction(3);
         myGraph.links()[2].direction(0);
-
+        
         myGraph.render(function(){
             test.equal(document.querySelector(".paths").querySelectorAll(".link-path")[0].className, 'link-path selected');
             test.equal(document.querySelector(".paths").querySelectorAll(".link-path")[0].style.strokeWidth, '7');
@@ -66,7 +66,14 @@ tape("Link's DOM should correspond Link's property", function(test) {
 
             test.equal(document.querySelector(".paths").querySelectorAll(".link-path")[2].style.markerStart, "");
             test.equal(document.querySelector(".paths").querySelectorAll(".link-path")[2].style.markerEnd, "");
-            test.end();
+    
+            myGraph.links()[1]._pathEle.dispatchEvent(new window.MouseEvent("mousedown"));
+            myGraph.render(function(){
+                test.equal(document.querySelector(".paths").querySelectorAll(".link-path")[0].className, 'link-path');
+                test.equal(document.querySelector(".paths").querySelectorAll(".link-path")[1].className, 'link-path selected');
+                test.end();
+            });
+            
         });
     });
 });

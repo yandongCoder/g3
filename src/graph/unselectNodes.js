@@ -1,6 +1,6 @@
 export default function (filter) {
     this.getNodes(filter).forEach(function(Node){
-        Node.selected(false, true);
+        Node.selected(false);
         this.render();
     }, this);
 }

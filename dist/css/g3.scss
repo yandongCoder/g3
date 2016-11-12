@@ -104,7 +104,7 @@ svg.graph{
       }
       &.selected{
         fill: none;//#f65565;
-        stroke: #f65565;
+        stroke: #f65565 !important;
         fill-opacity: 1;
         stroke-opacity: 1;
         //marker-end: url("/#end-arrow-selected");

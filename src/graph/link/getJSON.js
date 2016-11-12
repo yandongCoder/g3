@@ -1,5 +1,5 @@
 export default function () {
-    var exceptArr = ['_element', '_needMerged', '_needTransformed', 'graph', 'source', 'target'];
+    var exceptArr = ['_element', '_pathEle', '_labelEle', '_needMerged', '_needTransformed', 'graph', 'source', 'target'];
     var json = {};
     for (var prop in this) {
         if (prop === 'mergedBy') {

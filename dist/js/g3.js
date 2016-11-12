@@ -700,7 +700,7 @@ function grouped (grouped) {
 }
 
 function getJSON () {
-    var exceptArr = ['_element', '_needMerged', '_needTransformed', 'graph', 'source', 'target'];
+    var exceptArr = ['_element', '_pathEle', '_labelEle', '_needMerged', '_needTransformed', 'graph', 'source', 'target'];
     var json = {};
     for (var prop in this) {
         if (prop === 'mergedBy') {
@@ -990,7 +990,14 @@ function selectNodes (filter, retainOther) {
 
 function unselectNodes (filter) {
     this.getNodes(filter).forEach(function(Node){
-        Node.selected(false, true);
+        Node.selected(false);
+        this.render();
+    }, this);
+}
+
+function unselectLinks (filter) {
+    this.getLinks(filter).forEach(function(Link){
+        Link.selected(false);
         this.render();
     }, this);
 }
@@ -1428,7 +1435,12 @@ function drawLinksSvg (drawType) {
     links.enter()
         .append('path')
         .classed('link-path', true)
-        .attr('id', function(Link){ return "link-path" + Link.id});
+        .each(function(Link){ Link._pathEle = this })
+        .attr('id', function(Link){ return "link-path" + Link.id})
+        .on('mousedown', function(Link){
+            self.unselectLinks();
+            Link.selected(!Link.selected());
+        });
 
     var all  = this._getLinksSelection();
 
@@ -1449,6 +1461,7 @@ function drawLinksSvg (drawType) {
 
     //按需增加新的LinkLabels(当linksData data > linkPaths element)
     linkLabels.enter().append('text')
+        .each(function(Link){ Link._labelEle = this })
         .style("pointer-events", "none")
         .classed('link-label', true)
         .attr('id', function (Link) { return 'link-label' + Link.id; })
@@ -2284,6 +2297,7 @@ Graph.prototype = {
     clearNodes: clearNodes,
     selectNodes: selectNodes,
     unselectNodes: unselectNodes,
+    unselectLinks: unselectLinks,
     getInvertedNodes: getInvertedNodes,
     getRelatedNodes: getRelatedNodes,
     getLinkedNodes: getLinkedNodes,
