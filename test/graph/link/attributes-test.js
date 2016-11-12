@@ -88,3 +88,15 @@ tape("Get and set _grouped property of a Link", function(test){
     
     test.end();
 });
+
+tape("Transform Link should mark this Link's _transform true.", function(test){
+    var myGraph = g3.graph(null, {ifRender: false})
+        .nodes([{id: 1}, {id: 2}, {id: 3}])
+        .links([{id:1, src: 1, dst: 2}]);
+    
+    test.equal(myGraph.links()[0].transformed(), false);
+    myGraph.links()[0].transformed(true);
+    test.equal(myGraph.links()[0]._transformed, true);
+    
+    test.end();
+});

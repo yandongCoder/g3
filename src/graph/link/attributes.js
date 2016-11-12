@@ -59,4 +59,11 @@ function grouped(grouped) {
     return this;
 }
 
-export {color, direction, label, merged, selected, width, grouped};
+function transformed(transformed) {
+    if(!arguments.length) return this._transformed || false;
+    
+    this._transformed = transformed;
+    
+    return this;
+}
+export {color, direction, label, merged, selected, width, grouped, transformed};

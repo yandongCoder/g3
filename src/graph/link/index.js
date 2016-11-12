@@ -1,7 +1,6 @@
 import hasST from "./hasST";
 import {getStartArrow, getEndArrow, getTextOffset, getLinkLabelTransform, getCoordination} from "./display";
-import transformed from "./transformed";
-import {color, direction, label, merged, selected, width, grouped} from "./attributes";
+import {color, direction, label, merged, selected, width, grouped, transformed} from "./attributes";
 import {DIRECTION} from "../CONSTANT";
 import remove from "./remove";
 import merge from "./merge";
