@@ -147,7 +147,7 @@ function getStrLen (str) {
         }
     }
     return len;
-}
+};
 
 function selected (selected) {
     if(!arguments.length) return this._selected;
@@ -274,7 +274,7 @@ function getCoordination (forText) {
     };
 }
 
-function getStartArrow () {
+function getStartArrow() {
     if(this.direction() === DIRECTION.D2S || this.direction() === DIRECTION.DOUBLE)
         return "url(" + window.location.href.split('#')[0] + "#start-arrow)";
     else
@@ -331,25 +331,7 @@ function transformed$1 (transformed) {
     return this;
 }
 
-function label$1 (label) {
-    if(!arguments.length) return this._label;
-
-    this._label = label;
-    this.graph.render();
-
-    return this;
-}
-
-function width (width) {
-    if(!arguments.length) return this._width;
-
-    this._width = width;
-    this.graph.render();
-
-    return this;
-}
-
-function color$1 (color) {
+function color$1(color) {
     if(!arguments.length) return this._color;
 
     this._color = color;
@@ -358,12 +340,55 @@ function color$1 (color) {
     return this;
 }
 
-function direction (direction) {
+function direction(direction) {
     if(!arguments.length) return this._direction;
-
+    
     this._direction = direction;
     this.graph.render();
+    
+    return this;
+}
 
+function label$1(label) {
+    if(!arguments.length) return this._label;
+    
+    this._label = label;
+    this.graph.render();
+    
+    return this;
+}
+
+function merged(merged) {
+    if(!arguments.length) return this._merged === undefined? false : this._merged;
+    
+    this._merged = merged;
+    
+    return this;
+}
+
+function selected$1(selected) {
+    if(!arguments.length) return this._selected;
+    this._selected = selected;
+    
+    this.graph.render();
+    
+    return this;
+}
+
+function width(width) {
+    if(!arguments.length) return this._width;
+    
+    this._width = width;
+    this.graph.render();
+    
+    return this;
+}
+
+function grouped(grouped) {
+    if(!arguments.length) return this._grouped === undefined? false : this._grouped;
+    
+    this._grouped = grouped;
+    
     return this;
 }
 
@@ -376,14 +401,6 @@ function remove (type) {
     if(this.mergedBy && (type !== LINK_REMOVE_TYPE.UNMERGE) ) this.mergedBy.remove();
     if(this.transformedBy && (type !== LINK_REMOVE_TYPE.L2N)) this.transformedBy.remove();
 
-    return this;
-}
-
-function merged (merged) {
-    if(!arguments.length) return this._merged === undefined? false : this._merged;
-
-    this._merged = merged;
-    
     return this;
 }
 
@@ -691,14 +708,6 @@ function NtoL$1 () {
     if(!this.transformed() && this.target.transformed()) this.target.NtoL();
 }
 
-function grouped (grouped) {
-    if(!arguments.length) return this._grouped === undefined? false : this._grouped;
-
-    this._grouped = grouped;
-
-    return this;
-}
-
 function getJSON () {
     var exceptArr = ['_element', '_pathEle', '_labelEle', '_needMerged', '_needTransformed', 'graph', 'source', 'target'];
     var json = {};
@@ -718,15 +727,6 @@ function getJSON () {
     }
     
     return json;
-}
-
-function selected$1 (selected) {
-    if(!arguments.length) return this._selected;
-    this._selected = selected;
-    
-    this.graph.render();
-    
-    return this;
 }
 
 function Link(data, graph) {

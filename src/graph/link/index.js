@@ -4,22 +4,16 @@ import {getStartArrow, getEndArrow} from "./getArrow";
 import getTextOffset from "./getTextOffset";
 import getLinkLabelTransform from "./getLinkLabelTransform";
 import transformed from "./transformed";
-import label from "./label";
-import width from "./width";
-import color from "./color";
-import direction from "./direction";
+import {color, direction, label, merged, selected, width, grouped} from "./attributes";
 import {DIRECTION} from "../CONSTANT";
 import remove from "./remove";
-import merged from "./merged";
 import merge from "./merge";
 import flattenMerge from "./flattenMerge";
 import unmerge from "./unmerge";
 import getHomoLinks from "./getHomoLinks";
 import LtoN from "./LtoN";
 import NtoL from "./NtoL";
-import grouped from "./grouped";
 import getJSON from "./getJSON";
-import selected from "./selected";
 
 export default function Link(data, graph) {
     this.graph = graph;
