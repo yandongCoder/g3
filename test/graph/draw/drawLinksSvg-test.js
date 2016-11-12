@@ -34,43 +34,49 @@ tape("Link's DOM should correspond Link's property", function(test) {
     test.plan(17);
 
     myGraph.render(function(){
+        var pathsEle = document.querySelector(".paths").querySelectorAll(".link-path"),
+            labelsEle = document.querySelector(".link-labels").querySelectorAll(".link-label");
+        var firstPath = pathsEle[0], secondPath = pathsEle[1], thirdPath = pathsEle[2],
+            firstLabel = labelsEle[0],
+            firstLink = myGraph.links()[0], secondLink = myGraph.links()[1], thirdLink = myGraph.links()[2];
+            
         //width Attribute
-        test.equal(document.querySelector(".paths").querySelectorAll(".link-path")[0].style.strokeWidth, '3');
+        test.equal(firstPath.style.strokeWidth, '3');
         //label DOM
         test.equal(document.querySelector(".link-labels").querySelectorAll(".link-label")[0].textContent, "a");
         //color Attribute
-        test.equal(document.querySelector(".paths").querySelectorAll(".link-path")[0].style.stroke, "#342234");
+        test.equal(firstPath.style.stroke, "#342234");
         //direction Attribute
-        test.equal(document.querySelector(".paths").querySelectorAll(".link-path")[0].style.markerStart, "");
-        test.notEqual(document.querySelector(".paths").querySelectorAll(".link-path")[0].style.markerEnd, "");
-
-        myGraph.links()[0].width(7);
-        myGraph.links()[0].label('abc');
-        myGraph.links()[0].color('#666888');
-        myGraph.links()[0].direction(2);
-        myGraph.links()[1].direction(3);
-        myGraph.links()[2].direction(0);
+        test.equal(firstPath.style.markerStart, "");
+        test.notEqual(firstPath.style.markerEnd, "");
+    
+        firstLink.width(7);
+        firstLink.label('abc');
+        firstLink.color('#666888');
+        firstLink.direction(2);
+        secondLink.direction(3);
+        thirdLink.direction(0);
         
         myGraph.render(function(){
-            test.equal(document.querySelector(".paths").querySelectorAll(".link-path")[0].className, 'link-path selected');
-            test.equal(document.querySelector(".paths").querySelectorAll(".link-path")[0].style.strokeWidth, '7');
-            test.equal(document.querySelector(".link-labels").querySelectorAll(".link-label")[0].textContent, "abc");
-            test.equal(document.querySelector(".paths").querySelectorAll(".link-path")[0].style.stroke, "#666888");
+            test.equal(firstPath.className, 'link-path selected');
+            test.equal(firstPath.style.strokeWidth, '7');
+            test.equal(firstLabel.textContent, "abc");
+            test.equal(firstPath.style.stroke, "#666888");
 
-            test.notEqual(document.querySelector(".paths").querySelectorAll(".link-path")[0].style.markerStart, "");
-            test.equal(document.querySelector(".paths").querySelectorAll(".link-path")[0].style.markerEnd, "");
+            test.notEqual(firstPath.style.markerStart, "");
+            test.equal(firstPath.style.markerEnd, "");
 
 
-            test.notEqual(document.querySelector(".paths").querySelectorAll(".link-path")[1].style.markerStart, "");
-            test.notEqual(document.querySelector(".paths").querySelectorAll(".link-path")[1].style.markerEnd, "");
+            test.notEqual(secondPath.style.markerStart, "");
+            test.notEqual(secondPath.style.markerEnd, "");
 
-            test.equal(document.querySelector(".paths").querySelectorAll(".link-path")[2].style.markerStart, "");
-            test.equal(document.querySelector(".paths").querySelectorAll(".link-path")[2].style.markerEnd, "");
+            test.equal(thirdPath.style.markerStart, "");
+            test.equal(thirdPath.style.markerEnd, "");
     
-            myGraph.links()[1]._pathEle.dispatchEvent(new window.MouseEvent("mousedown"));
+            secondLink._pathEle.dispatchEvent(new window.MouseEvent("mousedown"));
             myGraph.render(function(){
-                test.equal(document.querySelector(".paths").querySelectorAll(".link-path")[0].className, 'link-path');
-                test.equal(document.querySelector(".paths").querySelectorAll(".link-path")[1].className, 'link-path selected');
+                test.equal(firstPath.className, 'link-path');
+                test.equal(secondPath.className, 'link-path selected');
                 test.end();
             });
             

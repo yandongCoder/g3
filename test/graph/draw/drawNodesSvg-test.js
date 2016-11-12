@@ -2,7 +2,7 @@ var tape = require("tape"),
     jsdom = require("jsdom"),
     g3 = require("../../../dist/js/g3");
 
-tape("nodes DOM should correspond _nodes always", function(test){
+tape("Nodes DOM should correspond _nodes always", function(test){
     var document = jsdom.jsdom('<svg id="graph"></svg>');
     var svg = document.querySelector("#graph");
 
@@ -28,29 +28,32 @@ tape("Node's DOM should correspond Node's property", function(test){
 
     test.plan(10);
     myGraph.render(function(){
+        var firstNode = myGraph.nodes()[0];
+        var firstEle = document.querySelector(".nodes").querySelectorAll(".node")[0];
         //label DOM
-        test.equal(document.querySelector(".nodes").querySelectorAll(".node")[0].querySelector(".text-group").querySelector('span').textContent, "a");
+        test.equal(firstEle.querySelector(".text-group").querySelector('span').textContent, "a");
         //selected class DOM
-        test.equal(document.querySelector(".nodes").querySelectorAll(".node")[0].className, "node selected");
+        test.equal(firstEle.className, "node selected");
         //radius Attribute
-        test.equal(document.querySelector(".nodes").querySelectorAll(".node")[0].querySelector("circle").getAttribute('r'), '30');
+        test.equal(firstEle.querySelector("circle").getAttribute('r'), '30');
         //X, Y DOM
-        test.equal(document.querySelector(".nodes").querySelectorAll(".node")[0].getAttribute('transform'), 'translate(5,0)');
+        test.equal(firstEle.getAttribute('transform'), 'translate(5,0)');
         //color Attribute
-        test.equal(document.querySelector(".nodes").querySelectorAll(".node")[0].querySelector("circle").style.fill, "#123444");
-
-        myGraph.nodes()[0].label('abc');
-        myGraph.nodes()[0].selected(false);
-        myGraph.nodes()[0].radius(40);
-        myGraph.nodes()[0].nudge(10, 10);
-        myGraph.nodes()[0].color('#666888');
+        test.equal(firstEle.querySelector("circle").style.fill, "#123444");
+    
+    
+        firstNode.label('abc');
+        firstNode.selected(false);
+        firstNode.radius(40);
+        firstNode.nudge(10, 10);
+        firstNode.color('#666888');
 
         myGraph.render(function(){
-            test.equal(document.querySelector(".nodes").querySelectorAll(".node")[0].querySelector(".text-group").querySelector('span').textContent, "abc");
-            test.equal(document.querySelector(".nodes").querySelectorAll(".node")[0].className, "node");
-            test.equal(document.querySelector(".nodes").querySelectorAll(".node")[0].querySelector("circle").getAttribute('r'), '40');
-            test.equal(document.querySelector(".nodes").querySelectorAll(".node")[0].getAttribute("transform"), 'translate(15,10)');
-            test.equal(document.querySelector(".nodes").querySelectorAll(".node")[0].querySelector("circle").style.fill, "#666888");
+            test.equal(firstEle.querySelector(".text-group").querySelector('span').textContent, "abc");
+            test.equal(firstEle.className, "node");
+            test.equal(firstEle.querySelector("circle").getAttribute('r'), '40');
+            test.equal(firstEle.getAttribute("transform"), 'translate(15,10)');
+            test.equal(firstEle.querySelector("circle").style.fill, "#666888");
 
             test.end();
         });
@@ -67,32 +70,36 @@ tape("select Node event", function(test){
     myGraph.nodes(nodes);
 
     myGraph.render(function(){
-
+        var firstNode = myGraph.nodes()[0],
+            firstEle = document.querySelectorAll('.node')[0],
+            secondNode = myGraph.nodes()[1],
+            secondEle = document.querySelectorAll('.node')[1];
+        
         //Select a Node when mousedown, and unselect others
         var event = new window.MouseEvent("mousedown");
-        document.querySelectorAll('.node')[0].dispatchEvent(event);
-        document.querySelectorAll('.node')[1].dispatchEvent(event);
+        firstEle.dispatchEvent(event);
+        secondEle.dispatchEvent(event);
 
-        test.equal(myGraph.nodes()[0].selected(), false);
-        test.equal(myGraph.nodes()[1].selected(), true);
+        test.equal(firstNode.selected(), false);
+        test.equal(secondNode.selected(), true);
 
         
         //Don't unselect others when press Ctrl key
         myGraph.unselectNodes();
         var eventCtrl = new window.MouseEvent("mousedown", {ctrlKey: true});
-        document.querySelectorAll('.node')[0].dispatchEvent(eventCtrl);
-        document.querySelectorAll('.node')[1].dispatchEvent(eventCtrl);
+        firstEle.dispatchEvent(eventCtrl);
+        secondEle.dispatchEvent(eventCtrl);
 
-        test.equal(myGraph.nodes()[0].selected(), true);
-        test.equal(myGraph.nodes()[1].selected(), true);
+        test.equal(firstNode.selected(), true);
+        test.equal(secondNode.selected(), true);
 
 
         //toggle Node selected status when press Ctrl key
         myGraph.unselectNodes();
-        document.querySelectorAll('.node')[0].dispatchEvent(eventCtrl);
-        test.equal(myGraph.nodes()[0].selected(), true);
-        document.querySelectorAll('.node')[0].dispatchEvent(eventCtrl);
-        test.equal(myGraph.nodes()[0].selected(), false);
+        firstEle.dispatchEvent(eventCtrl);
+        test.equal(firstNode.selected(), true);
+        firstEle.dispatchEvent(eventCtrl);
+        test.equal(firstNode.selected(), false);
 
         test.end();
     });
