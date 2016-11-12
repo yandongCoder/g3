@@ -41,12 +41,17 @@ export default function (drawType) {
         .attr("r", function(Node){ return Node.radius()})
         .style("fill", function(Node){ return Node.color() });
     
-
+    
+    var scale = self._getCurrentScale();
+        
     all.select('.text-group')
+        .attr('display', function(Node){
+            return (scale < 0.8 && !Node.selected())? 'none': 'block';
+        })
         .attr('width', function (Node) { return Node.getLabelWidth(); })
-        .attr("height", function(Node){ return Node.radius() * self._getCurrentScale(); })
-        .style("line-height", function(Node){ return Node.radius() * self._getCurrentScale() + "px"; })
-        .attr("transform", function(Node){ return "translate(" + (1 + Node.radius()) + ", 0) scale(" + 1 / self._getCurrentScale()+ ")"; })
+        .attr("height", function(Node){ return Node.radius() * scale; })
+        .style("line-height", function(Node){ return Node.radius() * scale + "px"; })
+        .attr("transform", function(Node){ return "translate(" + (1 + Node.radius()) + ", 0) scale(" + 1 / scale + ")"; })
 
         .select('div')
         .attr('title', function (Node) { return Node.label(); })

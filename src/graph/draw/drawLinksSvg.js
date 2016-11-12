@@ -44,14 +44,18 @@ export default function (drawType) {
         .style("pointer-events", "none");
 
 
-    var allLabels = this._getLinksLabelSelection();
+    var allLabels = this._getLinksLabelSelection(),
+        scale = self._getCurrentScale();
 
     allLabels
+        .attr('display', function(Link){
+            return (scale < 0.8 )? 'none': 'block';
+        })
         .attr('dx', function(Link){return Link.getTextOffset(); })
         .attr('dy', 1)
         .attr('font-size', 13)
         //反转字体，使字体总是朝上，该句放于该函数最后执行，提前会导致问题
-        .attr('transform', function(Link){ return Link.getLinkLabelTransform(self._getCurrentScale()); });
+        .attr('transform', function(Link){ return Link.getLinkLabelTransform(scale); });
 
     allLabels.select('textPath')
         .text(function (Link) {
