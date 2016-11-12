@@ -64,136 +64,6 @@ function toArray (maybeArr) {
     return maybeArr;
 }
 
-function nodes (nodes, cover) {
-    nodes = toArray(nodes);
-
-    if(!arguments.length){
-        return this._nodes;
-    }
-
-    if(cover){
-        this.clearNodes();
-    }
-
-    nodes.forEach(function(v){
-        this._addNode(v);
-    },this);
-
-    this.buildReference(BUILD_REF_TYPE.NODE);
-    //this._preTransfer();
-
-    this.render();
-    
-    return this;
-}
-
-function getIds (array) {
-    return array.map(function(item){
-        if(typeof item  ===  'object') return item.id;
-        else return item;
-    });
-}
-
-//filter array of object which has id; filtered by id, or id array, or object that has id, or object array
-//this function is convenient to Nodes or Links data.
-function filterBy (filter, objArray) {
-    if(typeof filter === "function"){
-        var filtered = filter;
-    }else if(filter === undefined || filter === null){
-        filtered = function(){return true};
-    }else{
-        var ids = getIds(toArray(filter));
-
-        filtered = function(v){
-            return ids.indexOf(v.id) !== -1;
-        };
-    }
-    return objArray.filter(filtered);
-}
-
-function getNodes(filter) {
-    return filterBy(filter, this._nodes);
-}
-
-function getRenderedNodes() {
-    return this.getNodes(function(Node){
-        return !Node.transformed() && !Node.grouped();
-    });
-}
-
-function getSelectedNodes() {
-    return this.getNodes(function(Node){
-        return Node.selected();
-    });
-}
-
-function getInvertedNodes(filter) {
-    var Nodes = this.getNodes(filter);
-    return this.getRenderedNodes().filter(function(Node){
-        return Nodes.indexOf(Node) === -1;
-    });
-}
-
-function getUngroupedNodes(filter) {
-    return this.getNodes(filter)
-        .filter(function(Node){ return !Node.grouped() });
-}
-
-function getLinkedNodes(filter, type) {
-    var Nodes = this.getNodes(filter);
-    
-    var relatedNodes = [];
-    
-    this.getRenderedLinks().forEach(function (Link) {
-        if(type === 'none' && Link.direction() !== DIRECTION.NONE) return;
-        if(type === 'double' && Link.direction() !== DIRECTION.DOUBLE) return;
-        if (Nodes.indexOf(Link.source) !== -1) {
-            if(type === 'in' && Link.direction() !== DIRECTION.D2S) return;
-            if(type === 'out' && Link.direction() !== DIRECTION.S2D) return;
-            relatedNodes.push(Link.target);
-        }
-        if (Nodes.indexOf(Link.target) !== -1) {
-            if(type === 'in' && Link.direction() !== DIRECTION.S2D) return;
-            if(type === 'out' && Link.direction() !== DIRECTION.D2S) return;
-            relatedNodes.push(Link.source);
-        }
-    });
-    
-    return relatedNodes;
-}
-
-function getRelatedNodes(filter) {
-    var Nodes = this.getNodes(filter);
-    var argLength = Nodes.length;
-    
-    for (var i = 0; i < Nodes.length; i++) {
-        var adjList = getAdjNode(Nodes[i], this);
-        adjList.forEach(function (Node) {
-            if (Nodes.indexOf(Node) === -1) {
-                Nodes.push(Node);
-            }
-        });
-    }
-    
-    //minus original Nodes
-    Nodes = Nodes.filter(function(Node, i){
-        return i >= argLength;
-    });
-    return Nodes;
-    
-    function getAdjNode(Node, self) {
-        var Nodes = [];
-        self.getRenderedLinks().forEach(function (Link) {
-            if (Link.source === Node && (Nodes.indexOf(Link.target) === -1)) {
-                Nodes.push(Link.target);
-            } else if (Link.target === Node && (Nodes.indexOf(Link.source) === -1)) {
-                Nodes.push(Link.source);
-            }
-        });
-        return Nodes;
-    }
-}
-
 //中文为2长度，非中文为1
 
 function getStrLen (str) {
@@ -1011,7 +881,23 @@ Node.prototype = {
     getJSON: getJSON$1
 };
 
-function addNode (obj) {
+function clearNodes() {
+    this._nodes = [];
+}
+
+function clearLinks() {
+    this._links = [];
+}
+
+function hasNode(obj) {
+    return this._nodesHash[obj.id]? true: false;
+}
+
+function hasLink(obj) {
+    return this._linksHash[obj.id]? true: false;
+}
+
+function addNode(obj) {
     var node = new Node(obj, this);
     if(!this.hasNode(node)){
         this._nodesHash[node.id] = node;
@@ -1020,24 +906,171 @@ function addNode (obj) {
     return node;
 }
 
-function hasNode (obj) {
-    return this._nodesHash[obj.id]? true: false;
+function addLink(obj) {
+    var link = new Link(obj, this);
+    if(!this.hasLink(link) && link.hasST()){
+        this._linksHash[link.id] = link;
+        this._links.push(link);
+    }
+    
+    return link;
 }
 
-//nodes could be: Node, [Node], Node id string, Node id array of string
-function removeNodes (nodes) {
-    this.getNodes(nodes).forEach(function(Node){
+function removeNodes(filter) {
+    this.getNodes(filter).forEach(function(Node){
         //remove links first
         this._removeLinksOfNode(Node);
         Node.remove();
     }, this);
-
+    
     this.render();
-
 }
 
-function clearNodes () {
-    this._nodes = [];
+function removeLinks(filter) {
+    this.getLinks(filter).forEach(function(Link){
+        Link.remove();
+    }, this);
+    
+    this.render();
+}
+
+function removeLinksOfNode(Node) {
+    Node.getConnectedLinks().map(function (Link) {
+        Link.remove();
+    }, this);
+}
+
+function nodes(nodes, cover) {
+    nodes = toArray(nodes);
+    
+    if(!arguments.length) return this._nodes;
+    if(cover) this.clearNodes();
+    
+    nodes.forEach(function(v){ this._addNode(v);},this);
+    this.buildReference(BUILD_REF_TYPE.NODE);
+    
+    this.render();
+    return this;
+}
+
+function links(links, cover) {
+    links = toArray(links);
+    
+    if(!arguments.length) return this._links;
+    if(cover) this.clearLinks();
+    
+    links.forEach(function(v){ this._addLink(v); },this);
+    this.buildReference(BUILD_REF_TYPE.LINK);
+    
+    this.render();
+    return this;
+}
+
+function getIds (array) {
+    return array.map(function(item){
+        if(typeof item  ===  'object') return item.id;
+        else return item;
+    });
+}
+
+//filter array of object which has id; filtered by id, or id array, or object that has id, or object array
+//this function is convenient to Nodes or Links data.
+function filterBy (filter, objArray) {
+    if(typeof filter === "function"){
+        var filtered = filter;
+    }else if(filter === undefined || filter === null){
+        filtered = function(){return true};
+    }else{
+        var ids = getIds(toArray(filter));
+
+        filtered = function(v){
+            return ids.indexOf(v.id) !== -1;
+        };
+    }
+    return objArray.filter(filtered);
+}
+
+function getNodes(filter) {
+    return filterBy(filter, this._nodes);
+}
+
+function getRenderedNodes() {
+    return this.getNodes(function(Node){
+        return !Node.transformed() && !Node.grouped();
+    });
+}
+
+function getSelectedNodes() {
+    return this.getNodes(function(Node){
+        return Node.selected();
+    });
+}
+
+function getInvertedNodes(filter) {
+    var Nodes = this.getNodes(filter);
+    return this.getRenderedNodes().filter(function(Node){
+        return Nodes.indexOf(Node) === -1;
+    });
+}
+
+function getUngroupedNodes(filter) {
+    return this.getNodes(filter)
+        .filter(function(Node){ return !Node.grouped() });
+}
+
+function getLinkedNodes(filter, type) {
+    var Nodes = this.getNodes(filter);
+    
+    var relatedNodes = [];
+    
+    this.getRenderedLinks().forEach(function (Link) {
+        if(type === 'none' && Link.direction() !== DIRECTION.NONE) return;
+        if(type === 'double' && Link.direction() !== DIRECTION.DOUBLE) return;
+        if (Nodes.indexOf(Link.source) !== -1) {
+            if(type === 'in' && Link.direction() !== DIRECTION.D2S) return;
+            if(type === 'out' && Link.direction() !== DIRECTION.S2D) return;
+            relatedNodes.push(Link.target);
+        }
+        if (Nodes.indexOf(Link.target) !== -1) {
+            if(type === 'in' && Link.direction() !== DIRECTION.S2D) return;
+            if(type === 'out' && Link.direction() !== DIRECTION.D2S) return;
+            relatedNodes.push(Link.source);
+        }
+    });
+    
+    return relatedNodes;
+}
+
+function getRelatedNodes(filter) {
+    var Nodes = this.getNodes(filter);
+    var argLength = Nodes.length;
+    
+    for (var i = 0; i < Nodes.length; i++) {
+        var adjList = getAdjNode(Nodes[i], this);
+        adjList.forEach(function (Node) {
+            if (Nodes.indexOf(Node) === -1) {
+                Nodes.push(Node);
+            }
+        });
+    }
+    
+    //minus original Nodes
+    Nodes = Nodes.filter(function(Node, i){
+        return i >= argLength;
+    });
+    return Nodes;
+    
+    function getAdjNode(Node, self) {
+        var Nodes = [];
+        self.getRenderedLinks().forEach(function (Link) {
+            if (Link.source === Node && (Nodes.indexOf(Link.target) === -1)) {
+                Nodes.push(Link.target);
+            } else if (Link.target === Node && (Nodes.indexOf(Link.source) === -1)) {
+                Nodes.push(Link.source);
+            }
+        });
+        return Nodes;
+    }
 }
 
 function selectNodes (filter, retainOther) {
@@ -1157,29 +1190,6 @@ function buildReference (type) {
     }, this);
 }
 
-function links (links, cover) {
-    links = toArray(links);
-
-    if(!arguments.length){
-        return this._links;
-    }
-
-    if(cover){
-        this.clearLinks();
-    }
-
-    links.forEach(function(v){
-        this._addLink(v);
-    },this);
-
-    this.buildReference(BUILD_REF_TYPE.LINK);
-    //this._preTransfer();
-    
-    this.render();
-    
-    return this;
-}
-
 function getLinks(filter) {
     return filterBy(filter, this._links);
 }
@@ -1203,39 +1213,6 @@ function getRenderedLinks() {
     return this.getLinks(function(Link){
         return !Link.transformed() && !Link.merged() && !Link.grouped();
     });
-}
-
-function addLink (obj) {
-    var link = new Link(obj, this);
-    if(!this.hasLink(link) && link.hasST()){
-        this._linksHash[link.id] = link;
-        this._links.push(link);
-    }
-
-    return link;
-}
-
-function hasLink (obj) {
-    return this._linksHash[obj.id]? true: false;
-}
-
-//links could be: Link, [Link], Link id string, Link id array of string
-function removeLinks (links) {
-    this.getLinks(links).forEach(function(Link){
-        Link.remove();
-    }, this);
-
-    this.render();
-}
-
-function removeLinksOfNode (Node) {
-    Node.getConnectedLinks().map(function (Link) {
-        Link.remove();
-    }, this);
-}
-
-function clearLinks () {
-    this._links = [];
 }
 
 function appendPreDefs () {
