@@ -20,7 +20,7 @@ export default function Link(data, graph) {
     this.id = data.id;
     this._label = data.label || "";
     this._width = data.width || (graph && graph.config.linkWidth);
-    this._color = data.color || "#a1a1a1";
+    this._color = data.color || (graph && graph.config.linkColor);
     this._selected = data.selected || false;
     this.src = data.src;
     this.dst = data.dst;
