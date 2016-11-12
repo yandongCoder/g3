@@ -1180,13 +1180,28 @@ function links (links, cover) {
     return this;
 }
 
-function getLinks (filter) {
+function getLinks(filter) {
     return filterBy(filter, this._links);
 }
 
-function getRenderedLinks () {
+function getContainLinks(Nodes) {
+    var ids = getIds(Nodes);
+    return this._links.filter(function(Link){
+        return (ids.indexOf(Link.source.id) !== -1) && (ids.indexOf(Link.target.id) !== -1) && !Link.merged();
+    });
+}
+
+function getAttachedLinks(Nodes) {
+    var ids = getIds(Nodes);
+    return this._links.filter(function (Link) {
+        return ( (ids.indexOf(Link.source.id) === -1 && ids.indexOf(Link.target.id) !== -1) || (ids.indexOf(Link.source.id) !== -1 && ids.indexOf(Link.target.id) === -1) )
+            && !Link.merged();
+    });
+}
+
+function getRenderedLinks() {
     return this.getLinks(function(Link){
-       return !Link.transformed() && !Link.merged() && !Link.grouped();
+        return !Link.transformed() && !Link.merged() && !Link.grouped();
     });
 }
 
@@ -1655,21 +1670,6 @@ function flattenGroup (filter) {
             ungroupedNodes.push(Node);
         }
     }
-}
-
-function getContainLinks (Nodes) {
-    var ids = getIds(Nodes);
-    return this._links.filter(function(Link){
-        return (ids.indexOf(Link.source.id) !== -1) && (ids.indexOf(Link.target.id) !== -1) && !Link.merged();
-    });
-}
-
-function getAttachedLinks (Nodes) {
-    var ids = getIds(Nodes);
-    return this._links.filter(function(Link){
-        return ( (ids.indexOf(Link.source.id) === -1 && ids.indexOf(Link.target.id) !== -1) || (ids.indexOf(Link.source.id) !== -1 && ids.indexOf(Link.target.id) === -1) )
-            && !Link.merged();
-    });
 }
 
 function draged (currentNode) {
@@ -2273,7 +2273,6 @@ function getJSON$2 () {
     return json;
 }
 
-//import preTransfer from "./preTransfer";
 function Graph(selector, config) {
 
     this.config = Object.assign({}, DEFAULT_CONFIG, config || {});
