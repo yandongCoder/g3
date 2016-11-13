@@ -4,9 +4,15 @@ import {RENDER_TYPE} from "../CONSTANT";
 export default function (drawType) {
     var self = this;
 
-    // if(drawType === DRAWTYPE.NUDGE){
-    //     return;
-    // }
+    if(drawType === RENDER_TYPE.NUDGE){
+        var selectedNodes = this.getSelectedNodes();
+        var attachedLinks = this.getAttachedLinks(selectedNodes);
+        var attachedLinksEle = attachedLinks.map(function(Link){return Link._pathEle});
+        
+        d3.selectAll(attachedLinksEle)
+            .attr('d', function (Link) { var c = Link.getCoordination();  return 'M ' + c.Sx + ' ' + c.Sy + ' L ' + c.Tx + ' ' + c.Ty; });
+        return;
+    }
     
     var links = this._getLinksSelection().data(this.getRenderedLinks(), function (Link) { return Link.id });
 

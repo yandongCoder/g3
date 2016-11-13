@@ -18,7 +18,6 @@ export default function (renderType, callback) {
     return this;
     
     function draw(){
-        console.log('render');
         self._draw(renderType, canvasType);
         if(callback instanceof Function) callback();
     }
