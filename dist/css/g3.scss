@@ -19,10 +19,9 @@ svg.graph{
     .node{
       .fa{
         color: #fff;
-        font-size:21px;
+        font-size:20px;
         position: static;
         display: block;
-        line-height: 30px;
         text-align: center;
       }
       .img-circle{
@@ -34,6 +33,9 @@ svg.graph{
       }
       rect.circle{
         rx: 9999;
+      }
+      .icon{
+        border-radius: 50%;
       }
       .text-group{
         >div{

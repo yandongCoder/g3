@@ -14,10 +14,9 @@ svg.graph {
     display: none; }
   .graph .nodes .node .fa {
     color: #fff;
-    font-size: 21px;
+    font-size: 20px;
     position: static;
     display: block;
-    line-height: 30px;
     text-align: center; }
   .graph .nodes .node .img-circle {
     width: 30px;
@@ -26,6 +25,8 @@ svg.graph {
     border-radius: 0; }
   .graph .nodes .node rect.circle {
     rx: 9999; }
+  .graph .nodes .node .icon {
+    border-radius: 50%; }
   .graph .nodes .node .text-group > div {
     height: 100%;
     display: flex;

@@ -1400,16 +1400,14 @@ function drawNodesSvg (drawType) {
         .call(this.dragNode);
 
     //添加矩形
-    g.append("circle")
-        .attr("filter", "url(" + getAbsUrl() + "#shadow)");
+    g.append("circle");
+        //.attr("filter", "url(" + getAbsUrl() + "#shadow)");
     g.append('svg:foreignObject')
         .attr('class', 'text-group')
         .append("xhtml:div")
         .append('xhtml:span');
     g.append('svg:foreignObject')
         .attr('class', 'icon')
-        .attr("width", function(Node){Node.radius()})
-        .attr("height", function(Node){Node.radius()})
         .append('xhtml:span');
 
     //Enter and Update
@@ -1420,12 +1418,16 @@ function drawNodesSvg (drawType) {
         .classed("selected", function(Node){return Node.selected()});
 
     all.select('circle')
-        .attr("r", function(Node){ return Node.radius()})
-        .style("fill", function(Node){ return Node.color() });
+        .attr("r", function(Node){ return Node.radius();})
+        .style("fill", function(Node){ return Node.color(); });
     
     all.select('.icon')
+        .attr("transform", function(Node){ return "translate(" + -Node.radius() + ", "+ -Node.radius() +")"; })
+        .attr("width", function(Node){return Node.radius()*2;})
+        .attr("height", function(Node){return Node.radius()*2;})
         .select('span')
-        .attr('class', function(Node){ return self.config.iconPrefix + Node.icon();});
+        .attr('class', function(Node){ return self.config.iconPrefix + Node.icon();})
+        .style("line-height", function(Node){return Node.radius()*2 + "px";});
         
     all.select('.text-group')
         .style('display', function(Node){
