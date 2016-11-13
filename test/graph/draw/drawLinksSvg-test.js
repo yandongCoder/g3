@@ -27,17 +27,18 @@ tape("Link's DOM should correspond Link's property", function(test) {
     var svg = document.querySelector("#graph");
 
     var myGraph = g3.graph(svg)
-        .nodes([{id: 1, x: 0, y: 0}, {id: 2, x: 100, y: 0}])
+        .nodes([{id: 1, x: 0, y: 0, selected: true}, {id: 2, x: 100, y: 0}])
         .links([{id: 1, src: 1, dst: 2, label: "a", color: "#342234", selected: true}, {id: 2, src: 1, dst: 2}, {id: 3, src: 1, dst: 2}]);
 
-    test.plan(17);
+    test.plan(18);
 
     myGraph.render(function(){
         var pathsEle = document.querySelector(".paths").querySelectorAll(".link-path"),
             labelsEle = document.querySelector(".link-labels").querySelectorAll(".link-label");
         var firstPath = pathsEle[0], secondPath = pathsEle[1], thirdPath = pathsEle[2],
             firstLabel = labelsEle[0],
-            firstLink = myGraph.links()[0], secondLink = myGraph.links()[1], thirdLink = myGraph.links()[2];
+            firstLink = myGraph.links()[0], secondLink = myGraph.links()[1], thirdLink = myGraph.links()[2],
+            firstCircle = document.querySelectorAll('.node')[0];
             
         //width Attribute
         test.equal(firstPath.style.strokeWidth, '3');
@@ -76,7 +77,7 @@ tape("Link's DOM should correspond Link's property", function(test) {
             myGraph.render(function(){
                 test.equal(firstPath.className, 'link-path');
                 test.equal(secondPath.className, 'link-path selected');
-                test.end();
+                test.equal(firstCircle.className, 'node');
             });
             
         });
