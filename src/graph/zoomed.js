@@ -12,11 +12,15 @@ export default function () {
     //Graph._ifShowLabels();
     
     var previousScale = this._getForceGroup()._pScale;
-    var currentScale = this._getCurrentScale().toFixed(4);
+    var currentScale = this._getCurrentScale().toFixed(4) / 1;
     //缩放网络图
     this._getForceGroup().attr("transform", "translate(" + d3.event.transform.x + ", "+ d3.event.transform.y + ") scale(" + currentScale + ")");
     this._getForceGroup()._pScale = currentScale;
     
+    var hideScale = this.config.scaleOfHideLabel;
+    
+    //render while should hide label
+    if(previousScale > hideScale && currentScale < hideScale) this.render(RENDER_TYPE.IMMEDIATELY);
     //panning don't need re-render, render only after zooming
-    if(previousScale !== currentScale) this.render(RENDER_TYPE.IMMEDIATELY);
+    if(currentScale !== previousScale && currentScale > hideScale) this.render(RENDER_TYPE.IMMEDIATELY);
 }

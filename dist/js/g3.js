@@ -1413,7 +1413,7 @@ function drawNodesSvg (drawType) {
         
     all.select('.text-group')
         .attr('display', function(Node){
-            return (scale < self.config.scaleOfHideNodeLabel && !Node.selected())? 'none': 'block';
+            return (scale < self.config.scaleOfHideLabel)? 'none': 'block';
         })
         .attr('width', function (Node) { return Node.getLabelWidth(); })
         .attr("height", function(Node){ return Node.radius() * scale; })
@@ -1484,7 +1484,7 @@ function drawLinksSvg (drawType) {
 
     allLabels
         .attr('display', function(Link){
-            return (scale < self.config.scaleOfHideLinkLabel && !Link.selected())? 'none': 'block';
+            return (scale < self.config.scaleOfHideLabel)? 'none': 'block';
         })
         .attr('dx', function(Link){return Link.getTextOffset(); })
         .attr('dy', 1)
@@ -1545,13 +1545,17 @@ function zoomed () {
     //Graph._ifShowLabels();
     
     var previousScale = this._getForceGroup()._pScale;
-    var currentScale = this._getCurrentScale().toFixed(4);
+    var currentScale = this._getCurrentScale().toFixed(4) / 1;
     //缩放网络图
     this._getForceGroup().attr("transform", "translate(" + d3.event.transform.x + ", "+ d3.event.transform.y + ") scale(" + currentScale + ")");
     this._getForceGroup()._pScale = currentScale;
     
+    var hideScale = this.config.scaleOfHideLabel;
+    
+    //render while should hide label
+    if(previousScale > hideScale && currentScale < hideScale) this.render(RENDER_TYPE.IMMEDIATELY);
     //panning don't need re-render, render only after zooming
-    if(previousScale !== currentScale) this.render(RENDER_TYPE.IMMEDIATELY);
+    if(currentScale !== previousScale && currentScale > hideScale) this.render(RENDER_TYPE.IMMEDIATELY);
 }
 
 function transform(k, x, y, duration) {
@@ -1681,8 +1685,7 @@ const DEFAULT_CONFIG = {
     linkColor: "#a1a1a1",
     minScale: 0.1,
     maxScale: 3.0,
-    scaleOfHideNodeLabel: 0.8,
-    scaleOfHideLinkLabel: 0.8
+    scaleOfHideLabel: 0.8
 };
 
 function findShortestPath$1 (fromNode, toNode, Nodes, Links) {

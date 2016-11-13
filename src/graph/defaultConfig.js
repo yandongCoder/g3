@@ -9,8 +9,7 @@ const DEFAULT_CONFIG = {
     linkColor: "#a1a1a1",
     minScale: 0.1,
     maxScale: 3.0,
-    scaleOfHideNodeLabel: 0.8,
-    scaleOfHideLinkLabel: 0.8
+    scaleOfHideLabel: 0.8
 };
 
 export default DEFAULT_CONFIG;
