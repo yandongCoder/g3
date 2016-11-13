@@ -1,5 +1,16 @@
 var tape = require("tape"),
-    g3 = require("../../dist/js/g3");
+    jsdom = require("jsdom");
+
+//g3 rely on those variable, add to global in first test.
+var document = jsdom.jsdom('');
+global.window = document.defaultView;
+global.document = document;
+global.d3 = require("d3");
+global._ = require('underscore');
+global.SVGElement = function SVGElement() {};//TODO Jsdom not has SVGElement implement yet, this sentence just void test error
+
+var g3 = require("../../dist/js/g3");
+
 
 tape("Add a grouped Node to graph, should build groupedBy node and link Id array to Node and Link reference array", function(test){
     var myGraph = g3.graph(null, {ifRender: false})

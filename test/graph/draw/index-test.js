@@ -6,7 +6,6 @@ var tape = require("tape"),
 // tape("Canvas type should not has any children", function(test){
 //     var document = jsdom.jsdom('<canvas id="graph"></canvas>');
 //     var canvas = document.querySelector("#graph");
-//     global.window = document.defaultView;
 //
 //     var myGraph = g3.graph(canvas);
 //

@@ -6,7 +6,6 @@ var tape = require("tape"),
 tape("Transform graph to specified k, x, y", function(test){
     var document = jsdom.jsdom('<svg id="graph"></svg>');
     var svg = document.querySelector("#graph");
-    global.window = document.defaultView;
 
     var myGraph = g3.graph(svg).render();
 
@@ -28,9 +27,6 @@ tape("Transform graph to specified k, x, y", function(test){
 tape("Translate graph to specified x, y", function(test){
     var document = jsdom.jsdom('<svg id="graph"></svg>');
     var svg = document.querySelector("#graph");
-    global.window = document.defaultView;
-    
-    global.SVGElement = function SVGElement() {};//TODO Jsdom not has SVGElement implement yet, this sentence just void test error
     
     var myGraph = g3.graph(svg).render();
     
@@ -52,9 +48,6 @@ tape("Translate graph to specified x, y", function(test){
 tape("Scale graph to specified k", function(test){
     var document = jsdom.jsdom('<svg id="graph"></svg>');
     var svg = document.querySelector("#graph");
-    global.window = document.defaultView;
-    
-    global.SVGElement = function SVGElement() {};//TODO Jsdom not has SVGElement implement yet, this sentence just void test error
     
     var myGraph = g3.graph(svg).render();
     

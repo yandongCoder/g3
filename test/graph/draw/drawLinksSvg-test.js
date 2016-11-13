@@ -6,8 +6,6 @@ var tape = require("tape"),
 tape("links DOM should correspond _links always", function(test){
     var document = jsdom.jsdom('<svg id="graph"></svg>');
     var svg = document.querySelector("#graph");
-    global.window = document.defaultView;
-    global.document = document;
 
     var myGraph = g3.graph(svg);
 
