@@ -15,8 +15,8 @@ tape("links DOM should correspond _links always", function(test){
     myGraph.removeLinks(1);
 
     myGraph.render(function(){
-        test.equal(myGraph.links().length, document.querySelector('.paths').querySelectorAll('.link-path').length);
-        test.equal(myGraph.links().length, document.querySelector('.link-labels').querySelectorAll('.link-label').length);
+        test.equal(myGraph.links().length, document.querySelectorAll('.link-path').length);
+        test.equal(myGraph.links().length, document.querySelectorAll('.link-label').length);
 
         test.end();
     });
@@ -33,8 +33,8 @@ tape("Link's DOM should correspond Link's property", function(test) {
     test.plan(18);
 
     myGraph.render(function(){
-        var pathsEle = document.querySelector(".paths").querySelectorAll(".link-path"),
-            labelsEle = document.querySelector(".link-labels").querySelectorAll(".link-label");
+        var pathsEle = document.querySelectorAll(".link-path"),
+            labelsEle = document.querySelectorAll(".link-label");
         var firstPath = pathsEle[0], secondPath = pathsEle[1], thirdPath = pathsEle[2],
             firstLabel = labelsEle[0],
             firstLink = myGraph.links()[0], secondLink = myGraph.links()[1], thirdLink = myGraph.links()[2],
@@ -43,7 +43,7 @@ tape("Link's DOM should correspond Link's property", function(test) {
         //width Attribute
         test.equal(firstPath.style.strokeWidth, '3');
         //label DOM
-        test.equal(document.querySelector(".link-labels").querySelectorAll(".link-label")[0].textContent, "a");
+        test.equal(document.querySelectorAll(".link-label")[0].textContent, "a");
         //color Attribute
         test.equal(firstPath.style.stroke, "#342234");
         //direction Attribute

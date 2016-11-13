@@ -1444,7 +1444,8 @@ function drawLinksSvg (drawType) {
         .each(function(Link){ Link._pathEle = this })
         .attr('id', function(Link){ return "link-path" + Link.id})
         .on('mousedown', function(Link){
-            self.deselectLinks();
+            self.deselectLinks()
+                .deselectNodes();
             Link.selected(!Link.selected());
         });
 

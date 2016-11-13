@@ -13,7 +13,7 @@ tape("Nodes DOM should correspond _nodes always", function(test){
     myGraph.removeNodes(1);
 
     myGraph.render(function(){
-        test.equal(myGraph.nodes().length, document.querySelector('.nodes').querySelectorAll('.node').length);
+        test.equal(myGraph.nodes().length, document.querySelectorAll('.node').length);
         test.end();
     });
 });
@@ -29,7 +29,7 @@ tape("Node's DOM should correspond Node's property", function(test){
     test.plan(10);
     myGraph.render(function(){
         var firstNode = myGraph.nodes()[0];
-        var firstEle = document.querySelector(".nodes").querySelectorAll(".node")[0];
+        var firstEle = document.querySelectorAll(".node")[0];
         //label DOM
         test.equal(firstEle.querySelector(".text-group").querySelector('span').textContent, "a");
         //selected class DOM
