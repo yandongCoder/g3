@@ -1412,7 +1412,7 @@ function drawNodesSvg (drawType) {
     var scale = self._getCurrentScale();
         
     all.select('.text-group')
-        .attr('display', function(Node){
+        .style('display', function(Node){
             return (scale < self.config.scaleOfHideLabel)? 'none': 'block';
         })
         .attr('width', function (Node) { return Node.getLabelWidth(); })
@@ -1483,7 +1483,7 @@ function drawLinksSvg (drawType) {
         scale = self._getCurrentScale();
 
     allLabels
-        .attr('display', function(Link){
+        .style('display', function(Link){
             return (scale < self.config.scaleOfHideLabel)? 'none': 'block';
         })
         .attr('dx', function(Link){return Link.getTextOffset(); })

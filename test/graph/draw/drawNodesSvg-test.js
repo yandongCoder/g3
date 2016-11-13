@@ -28,17 +28,17 @@ tape("Node's DOM should correspond Node's property", function(test){
     myGraph.render('IMMEDIATELY');
     
     var firstNode = myGraph.nodes()[0];
-    var firstEle = document.querySelectorAll(".node")[0];
+    var firstCircle = document.querySelectorAll(".node")[0];
     //label DOM
-    test.equal(firstEle.querySelector(".text-group").querySelector('span').textContent, "a");
+    test.equal(firstCircle.querySelector(".text-group").querySelector('span').textContent, "a");
     //selected class DOM
-    test.equal(firstEle.className, "node selected");
+    test.equal(firstCircle.className, "node selected");
     //radius Attribute
-    test.equal(firstEle.querySelector("circle").getAttribute('r'), '30');
+    test.equal(firstCircle.querySelector("circle").getAttribute('r'), '30');
     //X, Y DOM
-    test.equal(firstEle.getAttribute('transform'), 'translate(5,0)');
+    test.equal(firstCircle.getAttribute('transform'), 'translate(5,0)');
     //color Attribute
-    test.equal(firstEle.querySelector("circle").style.fill, "#123444");
+    test.equal(firstCircle.querySelector("circle").style.fill, "#123444");
     
     
     firstNode.label('abc');
@@ -48,11 +48,11 @@ tape("Node's DOM should correspond Node's property", function(test){
     firstNode.color('#666888');
     
     myGraph.render('IMMEDIATELY');
-    test.equal(firstEle.querySelector(".text-group").querySelector('span').textContent, "abc");
-    test.equal(firstEle.className, "node");
-    test.equal(firstEle.querySelector("circle").getAttribute('r'), '40');
-    test.equal(firstEle.getAttribute("transform"), 'translate(15,10)');
-    test.equal(firstEle.querySelector("circle").style.fill, "#666888");
+    test.equal(firstCircle.querySelector(".text-group").querySelector('span').textContent, "abc");
+    test.equal(firstCircle.className, "node");
+    test.equal(firstCircle.querySelector("circle").getAttribute('r'), '40');
+    test.equal(firstCircle.getAttribute("transform"), 'translate(15,10)');
+    test.equal(firstCircle.querySelector("circle").style.fill, "#666888");
     
     test.end();
 });
@@ -68,15 +68,15 @@ tape("select Node event", function(test){
     
     myGraph.render('IMMEDIATELY');
     var firstNode = myGraph.nodes()[0],
-        firstEle = document.querySelectorAll('.node')[0],
+        firstCircle = document.querySelectorAll('.node')[0],
         secondNode = myGraph.nodes()[1],
-        secondEle = document.querySelectorAll('.node')[1],
+        secondCircle = document.querySelectorAll('.node')[1],
         firstLink = myGraph.links()[0];
     
     //Select a Node when mousedown, and deselect others
     var event = new window.MouseEvent("mousedown");
-    firstEle.dispatchEvent(event);
-    secondEle.dispatchEvent(event);
+    firstCircle.dispatchEvent(event);
+    secondCircle.dispatchEvent(event);
     
     test.equal(firstNode.selected(), false);
     test.equal(secondNode.selected(), true);
@@ -85,8 +85,8 @@ tape("select Node event", function(test){
     //Don't deselect others when press Ctrl key
     myGraph.deselectNodes();
     var eventCtrl = new window.MouseEvent("mousedown", {ctrlKey: true});
-    firstEle.dispatchEvent(eventCtrl);
-    secondEle.dispatchEvent(eventCtrl);
+    firstCircle.dispatchEvent(eventCtrl);
+    secondCircle.dispatchEvent(eventCtrl);
     
     test.equal(firstNode.selected(), true);
     test.equal(secondNode.selected(), true);
@@ -94,19 +94,26 @@ tape("select Node event", function(test){
     
     //toggle Node selected status when press Ctrl key
     myGraph.deselectNodes();
-    firstEle.dispatchEvent(eventCtrl);
+    firstCircle.dispatchEvent(eventCtrl);
     test.equal(firstNode.selected(), true);
-    firstEle.dispatchEvent(eventCtrl);
+    firstCircle.dispatchEvent(eventCtrl);
     test.equal(firstNode.selected(), false);
     
     test.end();
 });
 
-tape("Hide Node's label while currentScale < scaleOfNodeLabelHide", function(test){
+tape("Hide label while currentScale < scaleOfNodeLabelHide", function(test){
     var document = jsdom.jsdom('<svg id="graph"></svg>');
     var svg = document.querySelector("#graph");
     var myGraph = g3.graph(svg);
-    myGraph.nodes([{id: 1}, {id: 2, selected: true}]);
+    myGraph.nodes([{id: 1}, {id: 2}])
+        .links([{id: 1, src: 1, dst: 2}]);
+    
+    myGraph.scaleTo(myGraph.config.scaleOfHideLabel - 0.1);
     myGraph.render('IMMEDIATELY');
+    
+    test.equal(document.querySelectorAll(".node")[0].querySelector(".text-group").style.display, "none");
+    test.equal(document.querySelectorAll(".link-label")[0].style.display, "none");
+    
     test.end();
 });

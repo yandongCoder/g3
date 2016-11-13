@@ -46,7 +46,7 @@ export default function (drawType) {
     var scale = self._getCurrentScale();
         
     all.select('.text-group')
-        .attr('display', function(Node){
+        .style('display', function(Node){
             return (scale < self.config.scaleOfHideLabel)? 'none': 'block';
         })
         .attr('width', function (Node) { return Node.getLabelWidth(); })
