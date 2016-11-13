@@ -172,16 +172,24 @@ function getOffsetCoordinate (Sx, Sy, Tx, Ty, offsetS, offsetT) {
     }
 }
 
-function getStartArrow() {
+var absUrl = window.location.href.split('#')[0];
+
+function getStartArrow(status) {
+    status = status? ("-" + status): "";
+    if(this.selected()) status = "-selected";
+    
     if(this.direction() === DIRECTION.D2S || this.direction() === DIRECTION.DOUBLE)
-        return "url(" + window.location.href.split('#')[0] + "#start-arrow)";
+        return "url(" + absUrl + "#start-arrow"+ status +")";
     else
         return "";
 }
 
-function getEndArrow () {
+function getEndArrow (status) {
+    status = status? ("-" + status): "";
+    if(this.selected()) status = "-selected";
+    
     if(this.direction() === DIRECTION.S2D || this.direction() === DIRECTION.DOUBLE)
-        return "url(" + window.location.href.split('#')[0] + "#end-arrow)";
+        return "url(" + absUrl + "#end-arrow"+ status +")";
     else
         return "";
 }
@@ -634,7 +642,7 @@ function getHomoLinks () {
     }, this) || [];
 }
 
-function LtoN () {
+function LtoN() {
     if(!this.transformedBy) return;
     
     this.transformedBy.untransform();
@@ -644,7 +652,7 @@ function LtoN () {
     return this;
 }
 
-function NtoL$1 () {
+function NtoL$1() {
     if(!this.transformed() && this.source.transformed()) this.source.NtoL();
     if(!this.transformed() && this.target.transformed()) this.target.NtoL();
 }
@@ -1225,6 +1233,8 @@ function appendPreDefs () {
                             '<feBlend in="SourceGraphic" in2="blurOut" mode="normal"></feBlend>' +
                         '</filter>' +
                         '<marker id="start-arrow" viewBox="0 -5 10 10" refX="10" markerWidth="3" markerHeight="3" orient="auto"><path d="M10,-5L0,0L10,5"></path></marker>' +
+                        '<marker id="start-arrow-hover" viewBox="0 -5 10 10" refX="10" markerWidth="3" markerHeight="3" orient="auto"><path d="M10,-5L0,0L10,5"></path></marker>' +
+                        '<marker id="start-arrow-selected" viewBox="0 -5 10 10" refX="10" markerWidth="3" markerHeight="3" orient="auto"><path d="M10,-5L0,0L10,5"></path></marker>' +
                         '<marker id="end-arrow" viewBox="0 -5 10 10" refX="0" markerWidth="3" markerHeight="3" orient="auto"><path d="M0,-5L10,0L0,5"></path></marker>' +
                         '<marker id="end-arrow-hover" viewBox="0 -5 10 10" refX="0" markerWidth="3" markerHeight="3" orient="auto"><path d="M0,-5L10,0L0,5"></path></marker>' +
                         '<marker id="end-arrow-selected" viewBox="0 -5 10 10" refX="0" markerWidth="3" markerHeight="3" orient="auto"><path d="M0,-5L10,0L0,5"></path></marker>' +

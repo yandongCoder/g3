@@ -65,9 +65,6 @@ svg.graph {
     fill: none;
     stroke: #a1a1a1;
     stroke-width: 4px; }
-    .graph .paths path:hover {
-      fill-opacity: 1;
-      stroke-opacity: 1; }
     .graph .paths path.selected {
       fill: none;
       stroke: #f65565 !important;

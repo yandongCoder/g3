@@ -2,16 +2,24 @@ import {DIRECTION} from "../CONSTANT";
 import getStrLen from "../../utils/getStrLen";
 import getOffsetCoordinate from "../../utils/getOffsetCoordinate";
 
-function getStartArrow() {
+var absUrl = window.location.href.split('#')[0];
+
+function getStartArrow(status) {
+    status = status? ("-" + status): "";
+    if(this.selected()) status = "-selected";
+    
     if(this.direction() === DIRECTION.D2S || this.direction() === DIRECTION.DOUBLE)
-        return "url(" + window.location.href.split('#')[0] + "#start-arrow)";
+        return "url(" + absUrl + "#start-arrow"+ status +")";
     else
         return "";
 }
 
-function getEndArrow () {
+function getEndArrow (status) {
+    status = status? ("-" + status): "";
+    if(this.selected()) status = "-selected";
+    
     if(this.direction() === DIRECTION.S2D || this.direction() === DIRECTION.DOUBLE)
-        return "url(" + window.location.href.split('#')[0] + "#end-arrow)";
+        return "url(" + absUrl + "#end-arrow"+ status +")";
     else
         return "";
 }
