@@ -2,13 +2,7 @@ import getAbsUrl from "../../utils/getAbsUrl";
 import {RENDER_TYPE} from "../CONSTANT";
 
 export default function (drawType) {
-    if(drawType === RENDER_TYPE.NUDGE){
-        var selectedNodes = this._getSelectedNodesSelection();
-
-        selectedNodes.attr("transform", function (Node) { return "translate(" + Node.getX() + "," + Node.getY() + ")";});
-        return;
-    }
-    
+ 
     var self = this;
     var nodes = this._getNodesSelection().data(this.getRenderedNodes(), function (Node) { return Node.id;});
 
@@ -37,8 +31,14 @@ export default function (drawType) {
         .append('xhtml:span');
 
     //Enter and Update
-    var all = this._getNodesSelection(),
-        scale = self._getCurrentScale();
+    if(drawType === RENDER_TYPE.NUDGE){
+        var selectedNodeEle = this.getSelectedNodes().map(function(Node){return Node._element;});
+        var all = d3.selectAll(selectedNodeEle);
+    }else{
+        all = this._getNodesSelection();
+    }
+    
+    var scale = self._getCurrentScale();
 
     all.attr("transform", function (Node) { return "translate(" + Node.getX() + "," + Node.getY() + ")";})
         .classed("selected", function(Node){return Node.selected()});

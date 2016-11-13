@@ -4,7 +4,7 @@ import {clearNodes, clearLinks, hasNode, hasLink, addNode, addLink, removeNodes,
 import {getNodes, getRenderedNodes, getSelectedNodes, getInvertedNodes, getUngroupedNodes, getLinkedNodes, getRelatedNodes} from "./getNodes";
 import {selectNodes, deselectNodes, deselectLinks} from "./select_deselect";
 import buildReference from "./buildReference";
-import {getLinks, getContainLinks, getAttachedLinks, getRenderedLinks} from "./getLinks";
+import {getLinks, getContainLinks, getAttachedLinks, getRelatedLinks, getRenderedLinks} from "./getLinks";
 import init from "./init/init";
 import draw from "./draw/index";
 import zoomed from "./zoomed";
@@ -56,6 +56,7 @@ Graph.prototype = {
     getRenderedLinks: getRenderedLinks,
     getContainLinks: getContainLinks,
     getAttachedLinks: getAttachedLinks,
+    getRelatedLinks: getRelatedLinks,
     getJSON: getJSON,
     _addLink: addLink,
     hasLink: hasLink,

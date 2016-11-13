@@ -20,10 +20,14 @@ function getAttachedLinks(Nodes) {
     });
 }
 
+function getRelatedLinks(Nodes) {
+    return this.getContainLinks(Nodes).concat(this.getAttachedLinks(Nodes));
+}
+
 function getRenderedLinks() {
     return this.getLinks(function(Link){
         return !Link.transformed() && !Link.merged() && !Link.grouped();
     });
 }
 
-export {getLinks, getContainLinks, getAttachedLinks, getRenderedLinks};
+export {getLinks, getContainLinks, getAttachedLinks, getRelatedLinks, getRenderedLinks};

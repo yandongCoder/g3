@@ -121,3 +121,5 @@ tape("Get contained Links of Nodes should exclude transformed Links", function(t
     
     test.end();
 });
+
+//TODO test getRelatedLinks

@@ -32,6 +32,7 @@ const BUILD_REF_TYPE = {
 const RENDER_TYPE = {
     FORCEDRAW: "FORCEDRAW",
     TRANSFORM: "TRANSFORM",
+    SELECT: "SELECT",
     NUDGE: "NUDGE",
     IMMEDIATELY: "IMMEDIATELY"
 };
@@ -1095,22 +1096,22 @@ function selectNodes(filter, retainOther) {
         Node.selected(true);
     }, this);
 
-    this.render();
+    this.render(RENDER_TYPE.SELECT);
 }
 
 function deselectNodes(filter) {
     this.getNodes(filter).forEach(function(Node){
         Node.selected(false);
-        this.render();
     }, this);
+    this.render(RENDER_TYPE.SELECT);
     return this;
 }
 
 function deselectLinks(filter) {
     this.getLinks(filter).forEach(function(Link){
         Link.selected(false);
-        this.render();
     }, this);
+    this.render(RENDER_TYPE.SELECT);
     return this;
 }
 
@@ -1223,6 +1224,10 @@ function getAttachedLinks(Nodes) {
         return ( (ids.indexOf(Link.source.id) === -1 && ids.indexOf(Link.target.id) !== -1) || (ids.indexOf(Link.source.id) !== -1 && ids.indexOf(Link.target.id) === -1) )
             && !Link.merged();
     });
+}
+
+function getRelatedLinks(Nodes) {
+    return this.getContainLinks(Nodes).concat(this.getAttachedLinks(Nodes));
 }
 
 function getRenderedLinks() {
@@ -1375,13 +1380,7 @@ function getAbsUrl (url) {
 }
 
 function drawNodesSvg (drawType) {
-    if(drawType === RENDER_TYPE.NUDGE){
-        var selectedNodes = this._getSelectedNodesSelection();
-
-        selectedNodes.attr("transform", function (Node) { return "translate(" + Node.getX() + "," + Node.getY() + ")";});
-        return;
-    }
-    
+ 
     var self = this;
     var nodes = this._getNodesSelection().data(this.getRenderedNodes(), function (Node) { return Node.id;});
 
@@ -1410,8 +1409,14 @@ function drawNodesSvg (drawType) {
         .append('xhtml:span');
 
     //Enter and Update
-    var all = this._getNodesSelection(),
-        scale = self._getCurrentScale();
+    if(drawType === RENDER_TYPE.NUDGE){
+        var selectedNodeEle = this.getSelectedNodes().map(function(Node){return Node._element;});
+        var all = d3.selectAll(selectedNodeEle);
+    }else{
+        all = this._getNodesSelection();
+    }
+    
+    var scale = self._getCurrentScale();
 
     all.attr("transform", function (Node) { return "translate(" + Node.getX() + "," + Node.getY() + ")";})
         .classed("selected", function(Node){return Node.selected()});
@@ -1447,16 +1452,6 @@ function drawNodesSvg (drawType) {
 
 function drawLinksSvg (drawType) {
     var self = this;
-
-    if(drawType === RENDER_TYPE.NUDGE){
-        var selectedNodes = this.getSelectedNodes();
-        var attachedLinks = this.getAttachedLinks(selectedNodes);
-        var attachedLinksEle = attachedLinks.map(function(Link){return Link._pathEle});
-        
-        d3.selectAll(attachedLinksEle)
-            .attr('d', function (Link) { var c = Link.getCoordination();  return 'M ' + c.Sx + ' ' + c.Sy + ' L ' + c.Tx + ' ' + c.Ty; });
-        return;
-    }
     
     var links = this._getLinksSelection().data(this.getRenderedLinks(), function (Link) { return Link.id });
 
@@ -1470,10 +1465,18 @@ function drawLinksSvg (drawType) {
                 .deselectNodes();
             Link.selected(!Link.selected());
         });
+    
+    if(drawType === RENDER_TYPE.NUDGE){
+        var selectedNodes = this.getSelectedNodes();
+        var attachedLinks = this.getRelatedLinks(selectedNodes);
+        var attachedLinksEle = attachedLinks.map(function(Link){return Link._pathEle});
+    
+        var changedLinks = d3.selectAll(attachedLinksEle);
+    }else{
+        changedLinks  = this._getLinksSelection();
+    }
 
-    var all  = this._getLinksSelection();
-
-    all
+    changedLinks
         .attr('d', function (Link) { var c = Link.getCoordination();  return 'M ' + c.Sx + ' ' + c.Sy + ' L ' + c.Tx + ' ' + c.Ty; })
         .classed("selected", function(Link){return Link.selected()})
         .style('marker-start', function (Link) { return Link.getStartArrow(); })
@@ -1499,11 +1502,18 @@ function drawLinksSvg (drawType) {
         .attr('xlink:href', function (Link) {  return getAbsUrl() + '#link-path' + Link.id; })
         //.attr('startOffset', '50%')
         .style("pointer-events", "none");
-
-
-    var allLabels = this._getLinksLabelSelection(),
-        scale = self._getCurrentScale();
-
+    
+    
+    if(drawType === RENDER_TYPE.NUDGE){
+        var attachedLinkLabels = attachedLinks.map(function(Link){return Link._labelEle});
+        
+        var allLabels = d3.selectAll(attachedLinkLabels);
+        
+    }else{
+        allLabels = this._getLinksLabelSelection();
+    }
+    
+    var scale = self._getCurrentScale();
     allLabels
         .style('display', function(Link){
             return (scale < self.config.scaleOfHideLabel)? 'none': 'block';
@@ -2328,6 +2338,7 @@ Graph.prototype = {
     getRenderedLinks: getRenderedLinks,
     getContainLinks: getContainLinks,
     getAttachedLinks: getAttachedLinks,
+    getRelatedLinks: getRelatedLinks,
     getJSON: getJSON$2,
     _addLink: addLink,
     hasLink: hasLink,
