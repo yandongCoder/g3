@@ -8,6 +8,7 @@ export default function (drawType) {
         selectedNodes.attr("transform", function (Node) { return "translate(" + Node.getX() + "," + Node.getY() + ")";});
         return;
     }
+    
     var self = this;
     var nodes = this._getNodesSelection().data(this.getRenderedNodes(), function (Node) { return Node.id;});
 
@@ -25,8 +26,8 @@ export default function (drawType) {
         .call(this.dragNode);
 
     //添加矩形
-    g.append("circle");
-        //.attr("filter", "url(" + getAbsUrl() + "#shadow)");
+    g.append("circle")
+        .attr("filter", "url(" + getAbsUrl() + "#shadow)");
     g.append('svg:foreignObject')
         .attr('class', 'text-group')
         .append("xhtml:div")

@@ -46,7 +46,7 @@ tape("Node's DOM should correspond Node's property", function(test){
     firstNode.label('abc');
     firstNode.selected(false);
     firstNode.radius(40);
-    firstNode.nudge(10, 10);
+    firstNode._nudge(10, 10);
     firstNode.color('#666888');
     firstNode.icon('female');
     

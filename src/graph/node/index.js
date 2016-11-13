@@ -29,7 +29,7 @@ Node.prototype = {
     constructor: Node,
     selected: selected,
     transformed: transformed,
-    nudge: nudge,
+    _nudge: nudge,
     getX: getX,
     getY: getY,
     label: label,

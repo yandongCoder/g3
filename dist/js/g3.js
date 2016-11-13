@@ -54,6 +54,7 @@ function render (renderType, callback) {
     return this;
     
     function draw(){
+        console.log('render');
         self._draw(renderType, canvasType);
         if(callback instanceof Function) callback();
     }
@@ -155,8 +156,6 @@ function nudge (nudgeX, nudgeY) {
     
     this.x += nudgeX;
     this.y += nudgeY;
-
-    this.graph.render();
 
     return this;
 }
@@ -881,7 +880,7 @@ Node.prototype = {
     constructor: Node,
     selected: selected,
     transformed: transformed,
-    nudge: nudge,
+    _nudge: nudge,
     getX: getX,
     getY: getY,
     label: label,
@@ -1383,6 +1382,7 @@ function drawNodesSvg (drawType) {
         selectedNodes.attr("transform", function (Node) { return "translate(" + Node.getX() + "," + Node.getY() + ")";});
         return;
     }
+    
     var self = this;
     var nodes = this._getNodesSelection().data(this.getRenderedNodes(), function (Node) { return Node.id;});
 
@@ -1400,8 +1400,8 @@ function drawNodesSvg (drawType) {
         .call(this.dragNode);
 
     //添加矩形
-    g.append("circle");
-        //.attr("filter", "url(" + getAbsUrl() + "#shadow)");
+    g.append("circle")
+        .attr("filter", "url(" + getAbsUrl() + "#shadow)");
     g.append('svg:foreignObject')
         .attr('class', 'text-group')
         .append("xhtml:div")
@@ -1685,10 +1685,10 @@ function flattenGroup(filter) {
 function draged (currentNode) {
     this.getNodes(function(Node){ return Node.selected() || (Node === currentNode)})
     .forEach(function(Node){
-        Node.nudge(d3.event.dx, d3.event.dy, true);
+        Node._nudge(d3.event.dx, d3.event.dy, true);
     });
-
-    this.render(true, RENDER_TYPE.NUDGE);
+    
+    this.render(RENDER_TYPE.NUDGE);
 }
 
 const DEFAULT_CONFIG = {
