@@ -10,10 +10,10 @@ tape("If multiple render is short enough, only render once", function(test){
     var myGraph = g3.graph(svg);
 
     var count = 0;
-    myGraph.render(function(){
+    myGraph.render(null, function(){
        count++;
     });
-    myGraph.render(function(){
+    myGraph.render(null, function(){
         count++;
         test.equal(count, 1);
         test.end();

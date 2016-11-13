@@ -1,6 +1,6 @@
 import {RENDER_TYPE} from "./CONSTANT";
 
-export default function (callback, renderType) {
+export default function (renderType, callback) {
     if(!this.config.ifRender) return this;
 
     var canvasType = this._canvas.nodeName;
@@ -12,7 +12,7 @@ export default function (callback, renderType) {
     var self = this;
     clearTimeout(this._renderDelay);
     
-    if(renderType === RENDER_TYPE.ZOOM) draw();
+    if(renderType === RENDER_TYPE.IMMEDIATELY) draw();
     else this._renderDelay = setTimeout(draw, 0);
     
     return this;

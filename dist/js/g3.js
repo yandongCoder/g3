@@ -30,13 +30,13 @@ const BUILD_REF_TYPE = {
 };
 
 const RENDER_TYPE = {
-    FORCEDRAW: "forceDraw",
-    TRANSFORM: 1,
-    NUDGE: 2,
-    ZOOM: 3
+    FORCEDRAW: "FORCEDRAW",
+    TRANSFORM: "TRANSFORM",
+    NUDGE: "NUDGE",
+    IMMEDIATELY: "IMMEDIATELY"
 };
 
-function render (callback, renderType) {
+function render (renderType, callback) {
     if(!this.config.ifRender) return this;
 
     var canvasType = this._canvas.nodeName;
@@ -48,7 +48,7 @@ function render (callback, renderType) {
     var self = this;
     clearTimeout(this._renderDelay);
     
-    if(renderType === RENDER_TYPE.ZOOM) draw();
+    if(renderType === RENDER_TYPE.IMMEDIATELY) draw();
     else this._renderDelay = setTimeout(draw, 0);
     
     return this;
@@ -1261,7 +1261,7 @@ function appendPreElement () {
 }
 
 function Zoom() {
-    return d3.zoom().scaleExtent([0.1, 2.2])
+    return d3.zoom().scaleExtent([this.config.minScale, this.config.maxScale])
         .on('start', function () {
         })
         .on("zoom", this._zoomed.bind(this))
@@ -1413,7 +1413,7 @@ function drawNodesSvg (drawType) {
         
     all.select('.text-group')
         .attr('display', function(Node){
-            return (scale < 0.8 && !Node.selected())? 'none': 'block';
+            return (scale < self.config.scaleOfHideNodeLabel && !Node.selected())? 'none': 'block';
         })
         .attr('width', function (Node) { return Node.getLabelWidth(); })
         .attr("height", function(Node){ return Node.radius() * scale; })
@@ -1484,7 +1484,7 @@ function drawLinksSvg (drawType) {
 
     allLabels
         .attr('display', function(Link){
-            return (scale < 0.8 )? 'none': 'block';
+            return (scale < self.config.scaleOfHideLinkLabel && !Link.selected())? 'none': 'block';
         })
         .attr('dx', function(Link){return Link.getTextOffset(); })
         .attr('dy', 1)
@@ -1551,7 +1551,7 @@ function zoomed () {
     this._getForceGroup()._pScale = currentScale;
     
     //panning don't need re-render, render only after zooming
-    if(previousScale !== currentScale) this.render(null, RENDER_TYPE.ZOOM);
+    if(previousScale !== currentScale) this.render(RENDER_TYPE.IMMEDIATELY);
 }
 
 function transform(k, x, y, duration) {
@@ -1678,7 +1678,11 @@ const DEFAULT_CONFIG = {
     dragable: true,
     ifRender: true,
     color: "#123456",
-    linkColor: "#a1a1a1"
+    linkColor: "#a1a1a1",
+    minScale: 0.1,
+    maxScale: 3.0,
+    scaleOfHideNodeLabel: 0.8,
+    scaleOfHideLinkLabel: 0.8
 };
 
 function findShortestPath$1 (fromNode, toNode, Nodes, Links) {

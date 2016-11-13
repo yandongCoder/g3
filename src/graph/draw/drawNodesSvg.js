@@ -47,7 +47,7 @@ export default function (drawType) {
         
     all.select('.text-group')
         .attr('display', function(Node){
-            return (scale < 0.8 && !Node.selected())? 'none': 'block';
+            return (scale < self.config.scaleOfHideNodeLabel && !Node.selected())? 'none': 'block';
         })
         .attr('width', function (Node) { return Node.getLabelWidth(); })
         .attr("height", function(Node){ return Node.radius() * scale; })

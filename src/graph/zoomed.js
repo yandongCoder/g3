@@ -18,5 +18,5 @@ export default function () {
     this._getForceGroup()._pScale = currentScale;
     
     //panning don't need re-render, render only after zooming
-    if(previousScale !== currentScale) this.render(null, RENDER_TYPE.ZOOM);
+    if(previousScale !== currentScale) this.render(RENDER_TYPE.IMMEDIATELY);
 }

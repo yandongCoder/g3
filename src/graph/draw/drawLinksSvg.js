@@ -56,7 +56,7 @@ export default function (drawType) {
 
     allLabels
         .attr('display', function(Link){
-            return (scale < 0.8 )? 'none': 'block';
+            return (scale < self.config.scaleOfHideLinkLabel && !Link.selected())? 'none': 'block';
         })
         .attr('dx', function(Link){return Link.getTextOffset(); })
         .attr('dy', 1)
