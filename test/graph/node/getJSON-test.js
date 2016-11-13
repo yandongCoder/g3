@@ -6,7 +6,7 @@ tape("Get json string of a Node.", function(test){
         .nodes([{id: 1, x: 10, y: 10, radius: 10}]);
     
     console.log(JSON.stringify(myGraph.nodes()[0].getJSON()));
-    test.deepEqual(myGraph.nodes()[0].getJSON(), {"color": myGraph.config.color,"id":1,"label": "","x":10,"y":10,"radius":10,"selected":false});
+    test.deepEqual(myGraph.nodes()[0].getJSON(), {color: myGraph.config.color, icon:"", id:1, label: "", x:10, y:10, radius:10, selected:false});
     
     test.end();
 });
@@ -19,7 +19,7 @@ tape("Node's groupedBy property only maintain id array in json string.", functio
     myGraph.group([myGraph.nodes()[0], myGraph.nodes()[1]]);
     
     test.equal(myGraph.nodes()[0].getJSON().grouped, true);
-    test.deepEqual(myGraph.nodes()[3].getJSON(), {"id":"grouped:1&2","label":"&","x":0,"y":0,"radius":15,"color":"#359aff","selected":false,"groupedBy":{"nodes":[1,2],"links":[1],"attachedLinks":[{"link":2,"originalSource":2},{"link":3,"originalTarget":2}]}});
+    test.deepEqual(myGraph.nodes()[3].getJSON(), {id:"grouped:1&2", icon: "", label:"&", x:0, y:0, radius:15, color:"#359aff", selected:false, groupedBy:{nodes:[1,2], links:[1], attachedLinks: [{link:2, originalSource:2},{link:3, originalTarget:2}]}});
     
     test.end();
 });

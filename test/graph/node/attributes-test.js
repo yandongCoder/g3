@@ -14,6 +14,18 @@ tape("Get and set color of a Node", function(test){
     test.end();
 });
 
+tape("Get and set icon of a Node", function(test){
+    var myGraph = g3.graph(null, {ifRender: false})
+        .nodes([{id: 1, icon: "fa fa-male"}, {id: 2}]);
+    
+    test.equal(myGraph.nodes()[0].icon(), "fa fa-male");
+    test.equal(myGraph.nodes()[1].icon(), "");
+    myGraph.nodes()[0].icon('fa fa-female');
+    test.equal(myGraph.nodes()[0].icon(), "fa fa-female");
+    
+    test.end();
+});
+
 tape("Get and set _grouped property of a Node", function(test){
     var myGraph = g3.graph(null, {ifRender: false})
         .nodes([{id: 1}, {id: 2}]);

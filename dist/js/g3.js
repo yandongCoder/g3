@@ -90,6 +90,15 @@ function color(color) {
     return this;
 }
 
+function icon(icon) {
+    if(!arguments.length) return this._icon;
+    
+    this._icon = icon;
+    this.graph.render();
+    
+    return this;
+}
+
 function grouped(grouped) {
     if(!arguments.length) return this._grouped === undefined? false : this._grouped;
     
@@ -859,10 +868,9 @@ function Node(data, graph) {
     this.y = data.y || 0;
     this._radius = data.radius || graph.config.radius;
     this._color = data.color || graph.config.color;
+    this._icon = data.icon  || graph.config.icon;
     this._selected = data.selected || false; //indicate whether node is select
     if(data.grouped) this._grouped = data.grouped;
-    
-    //this._needTransformed = data.transformed || false;
     
     for (var prop in data) {
         if (data.hasOwnProperty(prop) && this[prop] === undefined) this[prop] = data[prop];
@@ -881,6 +889,7 @@ Node.prototype = {
         return getStrLen(this.label()) * 9;
     },
     color: color,
+    icon: icon,
     radius: radius,
     remove: remove$3,
     NtoL: NtoL,
@@ -1397,9 +1406,15 @@ function drawNodesSvg (drawType) {
         .attr('class', 'text-group')
         .append("xhtml:div")
         .append('xhtml:span');
+    g.append('svg:foreignObject')
+        .attr('class', 'icon')
+        .attr("width", function(Node){Node.radius()})
+        .attr("height", function(Node){Node.radius()})
+        .append('xhtml:span');
 
     //Enter and Update
-    var all = this._getNodesSelection();
+    var all = this._getNodesSelection(),
+        scale = self._getCurrentScale();
 
     all.attr("transform", function (Node) { return "translate(" + Node.getX() + "," + Node.getY() + ")";})
         .classed("selected", function(Node){return Node.selected()});
@@ -1408,8 +1423,9 @@ function drawNodesSvg (drawType) {
         .attr("r", function(Node){ return Node.radius()})
         .style("fill", function(Node){ return Node.color() });
     
-    
-    var scale = self._getCurrentScale();
+    all.select('.icon')
+        .select('span')
+        .attr('class', function(Node){ return self.config.iconPrefix + Node.icon();});
         
     all.select('.text-group')
         .style('display', function(Node){
@@ -1426,7 +1442,6 @@ function drawNodesSvg (drawType) {
         .text(function (Node) { return Node.label(); });
 
     nodes.exit().remove();
-
 }
 
 function drawLinksSvg (drawType) {
@@ -1685,7 +1700,9 @@ const DEFAULT_CONFIG = {
     linkColor: "#a1a1a1",
     minScale: 0.1,
     maxScale: 3.0,
-    scaleOfHideLabel: 0.8
+    scaleOfHideLabel: 0.8,
+    icon: "",
+    iconPrefix: ""
 };
 
 function findShortestPath$1 (fromNode, toNode, Nodes, Links) {

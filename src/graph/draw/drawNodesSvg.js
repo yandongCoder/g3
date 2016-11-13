@@ -31,9 +31,15 @@ export default function (drawType) {
         .attr('class', 'text-group')
         .append("xhtml:div")
         .append('xhtml:span');
+    g.append('svg:foreignObject')
+        .attr('class', 'icon')
+        .attr("width", function(Node){Node.radius()})
+        .attr("height", function(Node){Node.radius()})
+        .append('xhtml:span');
 
     //Enter and Update
-    var all = this._getNodesSelection();
+    var all = this._getNodesSelection(),
+        scale = self._getCurrentScale();
 
     all.attr("transform", function (Node) { return "translate(" + Node.getX() + "," + Node.getY() + ")";})
         .classed("selected", function(Node){return Node.selected()});
@@ -42,8 +48,9 @@ export default function (drawType) {
         .attr("r", function(Node){ return Node.radius()})
         .style("fill", function(Node){ return Node.color() });
     
-    
-    var scale = self._getCurrentScale();
+    all.select('.icon')
+        .select('span')
+        .attr('class', function(Node){ return self.config.iconPrefix + Node.icon();});
         
     all.select('.text-group')
         .style('display', function(Node){
@@ -60,5 +67,4 @@ export default function (drawType) {
         .text(function (Node) { return Node.label(); });
 
     nodes.exit().remove();
-
 }

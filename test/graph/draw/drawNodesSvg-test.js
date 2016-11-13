@@ -22,23 +22,25 @@ tape("Node's DOM should correspond Node's property", function(test){
     var svg = document.querySelector("#graph");
 
 
-    var myGraph = g3.graph(svg)
-        .nodes({id: 1, x: 5, y: 0, label: "a", selected: true, radius: 30, color: "#123444"});
+    var myGraph = g3.graph(svg, {iconPrefix: 'fa fa-'})
+        .nodes({id: 1, x: 5, y: 0, icon: "male", label: "a", selected: true, radius: 30, color: "#123444"});
     
     myGraph.render('IMMEDIATELY');
     
     var firstNode = myGraph.nodes()[0];
-    var firstCircle = document.querySelectorAll(".node")[0];
+    var firstNodeEle = document.querySelectorAll(".node")[0];
     //label DOM
-    test.equal(firstCircle.querySelector(".text-group").querySelector('span').textContent, "a");
+    test.equal(firstNodeEle.querySelector(".text-group").querySelector('span').textContent, "a");
     //selected class DOM
-    test.equal(firstCircle.className, "node selected");
+    test.equal(firstNodeEle.className, "node selected");
     //radius Attribute
-    test.equal(firstCircle.querySelector("circle").getAttribute('r'), '30');
+    test.equal(firstNodeEle.querySelector("circle").getAttribute('r'), '30');
     //X, Y DOM
-    test.equal(firstCircle.getAttribute('transform'), 'translate(5,0)');
+    test.equal(firstNodeEle.getAttribute('transform'), 'translate(5,0)');
     //color Attribute
-    test.equal(firstCircle.querySelector("circle").style.fill, "#123444");
+    test.equal(firstNodeEle.querySelector("circle").style.fill, "#123444");
+    //icon
+    test.equal(firstNodeEle.querySelector(".icon").querySelector('span').className, "fa fa-male");
     
     
     firstNode.label('abc');
@@ -46,13 +48,15 @@ tape("Node's DOM should correspond Node's property", function(test){
     firstNode.radius(40);
     firstNode.nudge(10, 10);
     firstNode.color('#666888');
+    firstNode.icon('female');
     
     myGraph.render('IMMEDIATELY');
-    test.equal(firstCircle.querySelector(".text-group").querySelector('span').textContent, "abc");
-    test.equal(firstCircle.className, "node");
-    test.equal(firstCircle.querySelector("circle").getAttribute('r'), '40');
-    test.equal(firstCircle.getAttribute("transform"), 'translate(15,10)');
-    test.equal(firstCircle.querySelector("circle").style.fill, "#666888");
+    test.equal(firstNodeEle.querySelector(".text-group").querySelector('span').textContent, "abc");
+    test.equal(firstNodeEle.className, "node");
+    test.equal(firstNodeEle.querySelector("circle").getAttribute('r'), '40');
+    test.equal(firstNodeEle.getAttribute("transform"), 'translate(15,10)');
+    test.equal(firstNodeEle.querySelector("circle").style.fill, "#666888");
+    test.equal(firstNodeEle.querySelector(".icon").querySelector('span').className, "fa fa-female");
     
     test.end();
 });

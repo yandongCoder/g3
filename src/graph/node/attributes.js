@@ -7,6 +7,15 @@ function color(color) {
     return this;
 }
 
+function icon(icon) {
+    if(!arguments.length) return this._icon;
+    
+    this._icon = icon;
+    this.graph.render();
+    
+    return this;
+}
+
 function grouped(grouped) {
     if(!arguments.length) return this._grouped === undefined? false : this._grouped;
     
@@ -58,4 +67,4 @@ function getY() {
     return this.y;
 }
 
-export {color, grouped, label, selected, radius, transformed, getX, getY};
+export {color, icon, grouped, label, selected, radius, transformed, getX, getY};
