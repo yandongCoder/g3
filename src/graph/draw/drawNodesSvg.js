@@ -37,7 +37,11 @@ export default function (drawType) {
     if(drawType === RENDER_TYPE.NUDGE){
         var selectedNodeEle = this.getSelectedNodes().map(function(Node){return Node._element;});
         var all = d3.selectAll(selectedNodeEle);
-    }else{
+    }
+    // else if(drawType === RENDER_TYPE.SELECT){
+    //
+    // }
+    else{
         all = this._getNodesSelection();
     }
     
@@ -59,7 +63,7 @@ export default function (drawType) {
         .attr('class', function(Node){ return self.config.iconPrefix + Node.icon();})
         .style("line-height", function(Node){return Node.radius()*2 + "px";});
     all.select('.mugshot').select('img')
-        .attr('src', function(Node){return self.config.mugshotPrefix + Node.mugshot();})
+        .attr('src', function(Node){return Node.mugshot()? self.config.mugshotPrefix + Node.mugshot(): "";})
         .style('display', function(Node){return Node.mugshot()? "block": "none";});
         
     all.select('.text-group')
