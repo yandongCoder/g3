@@ -1101,6 +1101,35 @@ function getRelatedNodes(filter) {
     }
 }
 
+function getLinks(filter) {
+    return filterBy(filter, this._links);
+}
+
+function getContainLinks(Nodes) {
+    var ids = getIds(Nodes);
+    return this._links.filter(function(Link){
+        return (ids.indexOf(Link.source.id) !== -1) && (ids.indexOf(Link.target.id) !== -1) && !Link.merged();
+    });
+}
+
+function getAttachedLinks(Nodes) {
+    var ids = getIds(Nodes);
+    return this._links.filter(function (Link) {
+        return ( (ids.indexOf(Link.source.id) === -1 && ids.indexOf(Link.target.id) !== -1) || (ids.indexOf(Link.source.id) !== -1 && ids.indexOf(Link.target.id) === -1) )
+            && !Link.merged();
+    });
+}
+
+function getRelatedLinks(Nodes) {
+    return this.getContainLinks(Nodes).concat(this.getAttachedLinks(Nodes));
+}
+
+function getRenderedLinks() {
+    return this.getLinks(function(Link){
+        return !Link.transformed() && !Link.merged() && !Link.grouped();
+    });
+}
+
 function selectNodes(filter, retainOther) {
     if(!retainOther) this.deselectNodes();
     this.getNodes(filter).forEach(function(Node){
@@ -1153,6 +1182,8 @@ GroupedBy.prototype = {
     constructor: GroupedBy,
     ungroup: ungroup$1,
     pickIds: pickIds,
+    getOriginalNodes: getOriginalNodes,
+    getContainLinks: getContainLinks$1,
     remove: remove$4
 };
 
@@ -1187,6 +1218,45 @@ function remove$4(){
     this.attachedLinks.forEach(function(obj){obj.link.remove();});
 }
 
+function getOriginalNodes() {
+    var originalNodes = [];
+    
+    this.nodes.forEach(function(Node){
+        addOriginal(Node);
+    });
+    
+    return originalNodes;
+    
+    function addOriginal(Node){
+        if(Node.groupedBy){
+            Node.groupedBy.nodes.forEach(function(Node){
+                addOriginal(Node);
+            });
+        }else{
+            originalNodes.push(Node);
+        }
+    }
+}
+
+function getContainLinks$1() {
+    var originalLinks = this.links;
+    
+    this.nodes.forEach(function(Node){
+        addOriginal(Node);
+    });
+    
+    return originalLinks;
+    
+    function addOriginal(Node){
+        if(Node.groupedBy){
+            Node.groupedBy.nodes.forEach(function(Node){
+                addOriginal(Node);
+            });
+            originalLinks = originalLinks.concat(Node.groupedBy.links);
+        }
+    }
+}
+
 function buildReference (type) {
     this._links.forEach(function (Link) {
         if(Link.mergedBy && !(Link.mergedBy instanceof MergedBy) ){
@@ -1216,35 +1286,6 @@ function buildReference (type) {
         }
             
     }, this);
-}
-
-function getLinks(filter) {
-    return filterBy(filter, this._links);
-}
-
-function getContainLinks(Nodes) {
-    var ids = getIds(Nodes);
-    return this._links.filter(function(Link){
-        return (ids.indexOf(Link.source.id) !== -1) && (ids.indexOf(Link.target.id) !== -1) && !Link.merged();
-    });
-}
-
-function getAttachedLinks(Nodes) {
-    var ids = getIds(Nodes);
-    return this._links.filter(function (Link) {
-        return ( (ids.indexOf(Link.source.id) === -1 && ids.indexOf(Link.target.id) !== -1) || (ids.indexOf(Link.source.id) !== -1 && ids.indexOf(Link.target.id) === -1) )
-            && !Link.merged();
-    });
-}
-
-function getRelatedLinks(Nodes) {
-    return this.getContainLinks(Nodes).concat(this.getAttachedLinks(Nodes));
-}
-
-function getRenderedLinks() {
-    return this.getLinks(function(Link){
-        return !Link.transformed() && !Link.merged() && !Link.grouped();
-    });
 }
 
 function appendPreDefs () {
@@ -2320,17 +2361,17 @@ function hierarchyLayout(selectedNodes, relatedLinks, width, height) {
     
 }
 
-function getJSON$2 () {
+function getJSON$2 (nodeFilter, linkFilter) {
     var json = {
         translate: this._getCurrentTranslate(),
         scale: this._getCurrentScale(),
         nodes: [],
         links: []
     };
-    this.getNodes().forEach(function(Node){
+    this.getNodes(nodeFilter).forEach(function(Node){
        json.nodes.push(Node.getJSON());
     });
-    this.getLinks().forEach(function (Link) {
+    this.getLinks(linkFilter).forEach(function (Link) {
         json.links.push(Link.getJSON());
     });
     return json;
@@ -2368,7 +2409,6 @@ Graph.prototype = {
     getRelatedNodes: getRelatedNodes,
     getLinkedNodes: getLinkedNodes,
     hasNode: hasNode,
-    //_preTransfer: preTransfer,
     buildReference: buildReference,
     links: links,
     getLinks: getLinks,

@@ -13,7 +13,6 @@ import concat from "./deriveConcat";
 import average from "./deriveAverage";
 import direction from "./deriveDirection";
 import safeExecute from "./safeExecute";
-import pickIds from "./pickIds";
 
 var utils = {
     filterBy: filterBy,
@@ -30,8 +29,7 @@ var utils = {
     concat: concat,
     average: average,
     direction: direction,
-    safeExecute: safeExecute,
-    pickIds: pickIds
+    safeExecute: safeExecute
 };
 
 export default utils;

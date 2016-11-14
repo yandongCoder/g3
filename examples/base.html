@@ -47,30 +47,39 @@
         links: [{id:1, src: 1, dst: 2}, {id:2, src: 3, dst: 1}, {id:3, src: 2, dst: 4}, {id:4, src: 4, dst: 3}, {id:5, src: 4, dst: 5}, {id:6, src: 6, dst: 4}]
     };
 
+    var groupedData = {
+        nodes: [{id: 1}, {id: 2}, {id: 3}],
+        links: [{id:1, src: 1, dst: 2}, {id:2, src: 2, dst: 3}]
+    };
+
     var myGraph = g3.graph("#my-graph",{
         zoomable: false,
         iconPrefix: "fa fa-",
         onNodeMouseDown: function(Node){}
     })
-    .nodes(groupedByNodeProperty.nodes)
-    .links(groupedByNodeProperty.links);
+    .nodes(groupedData.nodes)
+    .links(groupedData.links);
 
+    myGraph.group([myGraph.nodes()[0], myGraph.nodes()[1]]);
+    myGraph.group([myGraph.nodes()[2], myGraph.nodes()[3]]);
 
-    myGraph.groupBy(null, function(Node){
-        var groupIds = [];
-        Node.getConnectedLinks().forEach(function(Link){
-            if(Link.source === Node) groupIds.push(Link.target.id);
-            else groupIds.push(Link.source.id);
-        });
-        groupIds = _.sortBy(groupIds, function (val) {return val;});
+    console.log(myGraph.nodes()[4].groupedBy.getOriginalLinks());
 
-        return groupIds;
-    });
-
-    var colorArr = d3.scaleOrdinal(d3.schemeCategory20);
-    myGraph.getRenderedNodes().forEach(function(Node){
-        Node.color(colorArr(Node.type));
-    });
+//    myGraph.groupBy(null, function(Node){
+//        var groupIds = [];
+//        Node.getConnectedLinks().forEach(function(Link){
+//            if(Link.source === Node) groupIds.push(Link.target.id);
+//            else groupIds.push(Link.source.id);
+//        });
+//        groupIds = _.sortBy(groupIds, function (val) {return val;});
+//
+//        return groupIds;
+//    });
+//
+//    var colorArr = d3.scaleOrdinal(d3.schemeCategory20);
+//    myGraph.getRenderedNodes().forEach(function(Node){
+//        Node.color(colorArr(Node.type));
+//    });
 
 
 

@@ -25,6 +25,8 @@ GroupedBy.prototype = {
     constructor: GroupedBy,
     ungroup: ungroup,
     pickIds: pickIds,
+    getOriginalNodes: getOriginalNodes,
+    getContainLinks: getContainLinks,
     remove: remove
 };
 
@@ -57,4 +59,43 @@ function remove(){
     this.nodes.forEach(function(Node){Node.remove();});
     this.links.forEach(function(Node){Node.remove();});
     this.attachedLinks.forEach(function(obj){obj.link.remove();});
+}
+
+function getOriginalNodes() {
+    var originalNodes = [];
+    
+    this.nodes.forEach(function(Node){
+        addOriginal(Node);
+    });
+    
+    return originalNodes;
+    
+    function addOriginal(Node){
+        if(Node.groupedBy){
+            Node.groupedBy.nodes.forEach(function(Node){
+                addOriginal(Node);
+            });
+        }else{
+            originalNodes.push(Node);
+        }
+    }
+}
+
+function getContainLinks() {
+    var originalLinks = this.links;
+    
+    this.nodes.forEach(function(Node){
+        addOriginal(Node);
+    });
+    
+    return originalLinks;
+    
+    function addOriginal(Node){
+        if(Node.groupedBy){
+            Node.groupedBy.nodes.forEach(function(Node){
+                addOriginal(Node);
+            });
+            originalLinks = originalLinks.concat(Node.groupedBy.links);
+        }
+    }
 }
