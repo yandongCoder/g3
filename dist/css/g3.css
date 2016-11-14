@@ -18,13 +18,10 @@ svg.graph {
     position: static;
     display: block;
     text-align: center; }
-  .graph .nodes .node .img-circle {
-    width: 30px;
-    height: 30px; }
-  .graph .nodes .node .img-rect {
-    border-radius: 0; }
-  .graph .nodes .node rect.circle {
-    rx: 9999; }
+  .graph .nodes .node .mugshot img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%; }
   .graph .nodes .node .icon {
     border-radius: 50%; }
   .graph .nodes .node .text-group > div {

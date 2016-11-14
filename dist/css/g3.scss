@@ -24,15 +24,10 @@ svg.graph{
         display: block;
         text-align: center;
       }
-      .img-circle{
-        width: 30px;
-        height:30px;
-      }
-      .img-rect{
-        border-radius: 0;
-      }
-      rect.circle{
-        rx: 9999;
+      .mugshot img{
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
       }
       .icon{
         border-radius: 50%;

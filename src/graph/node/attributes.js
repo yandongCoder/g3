@@ -16,6 +16,15 @@ function icon(icon) {
     return this;
 }
 
+function mugshot(mugshot) {
+    if(!arguments.length) return this._mugshot;
+    
+    this._mugshot = mugshot;
+    this.graph.render();
+    
+    return this;
+}
+
 function grouped(grouped) {
     if(!arguments.length) return this._grouped === undefined? false : this._grouped;
     
@@ -67,4 +76,4 @@ function getY() {
     return this.y;
 }
 
-export {color, icon, grouped, label, selected, radius, transformed, getX, getY};
+export {color, icon, mugshot, grouped, label, selected, radius, transformed, getX, getY};

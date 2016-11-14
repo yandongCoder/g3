@@ -11,7 +11,9 @@ const DEFAULT_CONFIG = {
     maxScale: 3.0,
     scaleOfHideLabel: 0.8,
     icon: "",
-    iconPrefix: ""
+    iconPrefix: "",
+    mugshot: "",
+    mugshotPrefix: ""
 };
 
 export default DEFAULT_CONFIG;

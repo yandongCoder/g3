@@ -38,7 +38,7 @@
 <script>
 
     var groupedByNodeProperty = {
-        nodes: [{id: 1, type: 1, label: 1, icon: 'male', x: 200, y: 100}, {id: 2, type: 2, radius: 50, icon: 'bath', label: 2, x: 100, y: 200}, {id: 3, type: 3, label: 3, x: 300, y: 200}, {id: 4, type: 1,radius: 10, label: 4, icon: 'circle', x: 150, y: 300}, {id: 5, type: 2, label: 5, x: 250, y: 300}],
+        nodes: [{id: 1, type: 1, label: 1, icon: 'male', x: 200, y: 100, mugshot: 'mugshot.jpg'}, {id: 2, type: 2, radius: 50, mugshot: 'mugshot.jpg',icon: 'bath', label: 2, x: 100, y: 200}, {id: 3, type: 3, label: 3, x: 300, y: 200}, {id: 4, type: 1,radius: 10, label: 4, icon: 'circle', x: 150, y: 300}, {id: 5, type: 2, label: 5, x: 250, y: 300}],
         links: [{id:1, label: 'AAA', src: 1, dst: 4, selected: true, direction: 3}, {id:2, label: 'BBB', src: 1, dst: 5}, {id:3, label: 'CCC', src: 2, dst: 3}, {id:4, label: 'DDD', src: 2, dst: 5}, {id:5, label: 'EEEEEEEEEEEEEEEEE', src: 3, dst: 4}]
     };
 
@@ -84,7 +84,7 @@
 //    myGrid(myGraph.nodes());
     setTimeout(
             function getRemoteData() {
-                console.log(myGraph.nodes()[0]._element);
+                myGraph.nodes()[0].icon('female');
 //                myGraph._getSvgSelection().call(myGraph.zoom.scaleTo, 0.4);
 //                myGraph._getSvgSelection().call(myGraph.zoom.translateBy, 800, 800);
                 //myGraph.transform(0.3, 0, 0);

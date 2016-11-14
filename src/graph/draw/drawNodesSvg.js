@@ -29,6 +29,9 @@ export default function (drawType) {
     g.append('svg:foreignObject')
         .attr('class', 'icon')
         .append('xhtml:span');
+    g.append('svg:foreignObject')
+        .attr('class', 'mugshot')
+        .append('xhtml:img');
 
     //Enter and Update
     if(drawType === RENDER_TYPE.NUDGE){
@@ -46,14 +49,17 @@ export default function (drawType) {
     all.select('circle')
         .attr("r", function(Node){ return Node.radius();})
         .style("fill", function(Node){ return Node.color(); });
-    
-    all.select('.icon')
+
+    all.selectAll('.icon, .mugshot')
         .attr("transform", function(Node){ return "translate(" + -Node.radius() + ", "+ -Node.radius() +")"; })
         .attr("width", function(Node){return Node.radius()*2;})
-        .attr("height", function(Node){return Node.radius()*2;})
-        .select('span')
+        .attr("height", function(Node){return Node.radius()*2;});
+    
+    all.select('.icon').select('span')
         .attr('class', function(Node){ return self.config.iconPrefix + Node.icon();})
         .style("line-height", function(Node){return Node.radius()*2 + "px";});
+    all.select('.mugshot').select('img')
+        .attr('src', function(Node){return self.config.mugshotPrefix + Node.mugshot();});
         
     all.select('.text-group')
         .style('display', function(Node){

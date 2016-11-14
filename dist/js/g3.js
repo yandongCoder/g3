@@ -100,6 +100,15 @@ function icon(icon) {
     return this;
 }
 
+function mugshot(mugshot) {
+    if(!arguments.length) return this._mugshot;
+    
+    this._mugshot = mugshot;
+    this.graph.render();
+    
+    return this;
+}
+
 function grouped(grouped) {
     if(!arguments.length) return this._grouped === undefined? false : this._grouped;
     
@@ -868,6 +877,7 @@ function Node(data, graph) {
     this._radius = data.radius || graph.config.radius;
     this._color = data.color || graph.config.color;
     this._icon = data.icon  || graph.config.icon;
+    this._mugshot = data.mugshot || graph.config.mugshot;
     this._selected = data.selected || false; //indicate whether node is select
     if(data.grouped) this._grouped = data.grouped;
     
@@ -889,6 +899,7 @@ Node.prototype = {
     },
     color: color,
     icon: icon,
+    mugshot: mugshot,
     radius: radius,
     remove: remove$3,
     NtoL: NtoL,
@@ -1407,6 +1418,9 @@ function drawNodesSvg (drawType) {
     g.append('svg:foreignObject')
         .attr('class', 'icon')
         .append('xhtml:span');
+    g.append('svg:foreignObject')
+        .attr('class', 'mugshot')
+        .append('xhtml:img');
 
     //Enter and Update
     if(drawType === RENDER_TYPE.NUDGE){
@@ -1424,14 +1438,17 @@ function drawNodesSvg (drawType) {
     all.select('circle')
         .attr("r", function(Node){ return Node.radius();})
         .style("fill", function(Node){ return Node.color(); });
-    
-    all.select('.icon')
+
+    all.selectAll('.icon, .mugshot')
         .attr("transform", function(Node){ return "translate(" + -Node.radius() + ", "+ -Node.radius() +")"; })
         .attr("width", function(Node){return Node.radius()*2;})
-        .attr("height", function(Node){return Node.radius()*2;})
-        .select('span')
+        .attr("height", function(Node){return Node.radius()*2;});
+    
+    all.select('.icon').select('span')
         .attr('class', function(Node){ return self.config.iconPrefix + Node.icon();})
         .style("line-height", function(Node){return Node.radius()*2 + "px";});
+    all.select('.mugshot').select('img')
+        .attr('src', function(Node){return self.config.mugshotPrefix + Node.mugshot();});
         
     all.select('.text-group')
         .style('display', function(Node){
@@ -1719,7 +1736,9 @@ const DEFAULT_CONFIG = {
     maxScale: 3.0,
     scaleOfHideLabel: 0.8,
     icon: "",
-    iconPrefix: ""
+    iconPrefix: "",
+    mugshot: "",
+    mugshotPrefix: ""
 };
 
 function findShortestPath$1 (fromNode, toNode, Nodes, Links) {

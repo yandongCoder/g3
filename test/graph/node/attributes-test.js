@@ -26,6 +26,18 @@ tape("Get and set icon of a Node", function(test){
     test.end();
 });
 
+tape("Get and set mugshot of a Node", function(test){
+    var myGraph = g3.graph(null, {ifRender: false})
+        .nodes([{id: 1, mugshot: "foo.png"}, {id: 2}]);
+    
+    test.equal(myGraph.nodes()[0].mugshot(), "foo.png");
+    test.equal(myGraph.nodes()[1].mugshot(), "");
+    myGraph.nodes()[0].mugshot('bar.png');
+    test.equal(myGraph.nodes()[0].mugshot(), "bar.png");
+    
+    test.end();
+});
+
 tape("Get and set _grouped property of a Node", function(test){
     var myGraph = g3.graph(null, {ifRender: false})
         .nodes([{id: 1}, {id: 2}]);

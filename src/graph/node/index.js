@@ -1,5 +1,5 @@
 import getStrLen from "../../utils/getStrLen";
-import {color, icon, grouped, label, selected, radius, transformed, getX, getY} from "./attributes";
+import {color, icon, mugshot, grouped, label, selected, radius, transformed, getX, getY} from "./attributes";
 import nudge from "./nudge";
 import NtoL from "./NtoL";
 import getConnectedLinks from "./getConnectedLinks";
@@ -17,6 +17,7 @@ export default function Node(data, graph) {
     this._radius = data.radius || graph.config.radius;
     this._color = data.color || graph.config.color;
     this._icon = data.icon  || graph.config.icon;
+    this._mugshot = data.mugshot || graph.config.mugshot;
     this._selected = data.selected || false; //indicate whether node is select
     if(data.grouped) this._grouped = data.grouped;
     
@@ -38,6 +39,7 @@ Node.prototype = {
     },
     color: color,
     icon: icon,
+    mugshot: mugshot,
     radius: radius,
     remove: remove,
     NtoL: NtoL,
