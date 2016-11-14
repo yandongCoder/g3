@@ -22,8 +22,8 @@ tape("Node's DOM should correspond Node's property", function(test){
     var svg = document.querySelector("#graph");
 
 
-    var myGraph = g3.graph(svg, {iconPrefix: 'fa fa-', mugshotPrefix: "./someUrl/"})
-        .nodes({id: 1, x: 5, y: 0, icon: "male", mugshot: "foo.png", label: "a", selected: true, radius: 30, color: "#123444"});
+    var myGraph = g3.graph(svg, {iconPrefix: 'fa fa-', mugshotPrefix: "./someUrl/", mugshot: "foo.png"})
+        .nodes({id: 1, x: 5, y: 0, icon: "male", label: "a", selected: true, radius: 30, color: "#123444"});
     
     myGraph.render('IMMEDIATELY');
     

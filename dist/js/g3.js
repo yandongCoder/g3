@@ -1448,7 +1448,8 @@ function drawNodesSvg (drawType) {
         .attr('class', function(Node){ return self.config.iconPrefix + Node.icon();})
         .style("line-height", function(Node){return Node.radius()*2 + "px";});
     all.select('.mugshot').select('img')
-        .attr('src', function(Node){return self.config.mugshotPrefix + Node.mugshot();});
+        .attr('src', function(Node){return self.config.mugshotPrefix + Node.mugshot();})
+        .style('display', function(Node){return Node.mugshot()? "block": "none";});
         
     all.select('.text-group')
         .style('display', function(Node){
