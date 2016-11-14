@@ -13,7 +13,13 @@ const DEFAULT_CONFIG = {
     icon: "",
     iconPrefix: "",
     mugshot: "",
-    mugshotPrefix: ""
+    mugshotPrefix: "",
+    onGraphClick: function(){},
+    onGraphContextmenu: function(){},
+    onNodeMouseDown: function(){},
+    onNodeContextmenu: function(){},
+    onLinkMouseDown: function(){},
+    onLinkContextmenu: function(){}
 };
 
 export default DEFAULT_CONFIG;

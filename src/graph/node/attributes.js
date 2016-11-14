@@ -1,3 +1,5 @@
+import {RENDER_TYPE} from "../CONSTANT";
+
 function color(color) {
     if(!arguments.length) return this._color || "#123456";
 
@@ -46,7 +48,7 @@ function selected(selected) {
     if(!arguments.length) return this._selected;
     this._selected = selected;
     
-    this.graph.render();
+    this.graph.render(RENDER_TYPE.SELECT);
     
     return this;
 }

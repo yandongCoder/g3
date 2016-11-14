@@ -11,11 +11,14 @@ export default function (drawType) {
         .classed('link-path', true)
         .each(function(Link){ Link._pathEle = this })
         .attr('id', function(Link){ return "link-path" + Link.id})
-        .on('mousedown', function(Link){
+        .on('mousedown', function(Link, i){
             self.deselectLinks()
                 .deselectNodes();
             Link.selected(!Link.selected());
-        });
+            
+            self.config.onLinkMouseDown.call(this, Link, i);
+        })
+        .on('contextmenu', this.config.onLinkContextmenu);
     
     if(drawType === RENDER_TYPE.NUDGE){
         var selectedNodes = this.getSelectedNodes();

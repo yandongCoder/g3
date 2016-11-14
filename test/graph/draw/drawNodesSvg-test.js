@@ -81,14 +81,14 @@ tape("select Node event", function(test){
     
     myGraph.render('IMMEDIATELY');
     var firstNode = myGraph.nodes()[0],
-        firstCircle = document.querySelectorAll('.node')[0],
+        firstNodeEle = document.querySelectorAll('.node')[0],
         secondNode = myGraph.nodes()[1],
         secondCircle = document.querySelectorAll('.node')[1],
         firstLink = myGraph.links()[0];
     
     //Select a Node when mousedown, and deselect others
     var event = new window.MouseEvent("mousedown");
-    firstCircle.dispatchEvent(event);
+    firstNodeEle.dispatchEvent(event);
     secondCircle.dispatchEvent(event);
     
     test.equal(firstNode.selected(), false);
@@ -98,7 +98,7 @@ tape("select Node event", function(test){
     //Don't deselect others when press Ctrl key
     myGraph.deselectNodes();
     var eventCtrl = new window.MouseEvent("mousedown", {ctrlKey: true});
-    firstCircle.dispatchEvent(eventCtrl);
+    firstNodeEle.dispatchEvent(eventCtrl);
     secondCircle.dispatchEvent(eventCtrl);
     
     test.equal(firstNode.selected(), true);
@@ -107,9 +107,9 @@ tape("select Node event", function(test){
     
     //toggle Node selected status when press Ctrl key
     myGraph.deselectNodes();
-    firstCircle.dispatchEvent(eventCtrl);
+    firstNodeEle.dispatchEvent(eventCtrl);
     test.equal(firstNode.selected(), true);
-    firstCircle.dispatchEvent(eventCtrl);
+    firstNodeEle.dispatchEvent(eventCtrl);
     test.equal(firstNode.selected(), false);
     
     test.end();

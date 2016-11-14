@@ -20,3 +20,84 @@ var tape = require("tape"),
 //         test.end();
 //     });
 // });
+
+
+tape("Custom event callback test.", function(test){
+    var triggerOnGraphClick = false,
+        triggerOnGraphContextmenu = false,
+        triggerOnNodeMouseDown = false,
+        triggerOnNodeContextmenu = false,
+        triggerOnLinkMouseDown = false,
+        triggerOnLinkContextmenu = false;
+    
+    var document = jsdom.jsdom('<svg id="graph"></svg>');
+    
+    var svg = document.querySelector("#graph");
+    var myGraph = g3.graph(svg, {
+        onGraphClick: function () {
+            triggerOnGraphClick = true;
+            test.deepEqual(this, svg);
+        },
+        onGraphContextmenu: function(){
+            triggerOnGraphContextmenu = true;
+            test.deepEqual(this, svg);
+        },
+        onNodeMouseDown: function(Node, i){
+            triggerOnNodeMouseDown = true;
+            test.equal(i, 0);
+            test.deepEqual(Node, firstNode);
+            test.deepEqual(this, firstNodeEle);
+        },
+        onNodeContextmenu: function(Node, i){
+            triggerOnNodeContextmenu = true;
+            test.equal(i, 0);
+            test.deepEqual(Node, firstNode);
+            test.deepEqual(this, firstNodeEle);
+        },
+        onLinkMouseDown: function(Link, i){
+            triggerOnLinkMouseDown = true;
+            test.equal(i, 0);
+            test.deepEqual(Link, firstLink);
+            test.deepEqual(this, firstLinkPath);
+        },
+        onLinkContextmenu: function(Link, i){
+            triggerOnLinkContextmenu = true;
+            test.equal(i, 0);
+            test.deepEqual(Link, firstLink);
+            test.deepEqual(this, firstLinkPath);
+        }
+        
+    });
+    myGraph.nodes([{id: 1}, {id: 2}])
+        .links([{id: 1, src: 1, dst: 2}]);
+    myGraph.render('IMMEDIATELY');
+    
+    var firstNode = myGraph.nodes()[0],
+        firstNodeEle = document.querySelector('.node'),
+        firstLink = myGraph.links()[0],
+        firstLinkPath = document.querySelector('.link-path');
+    
+    var mouseDownEvent = new window.MouseEvent("mousedown"),
+        clickEvent = new window.MouseEvent("click"),
+        contextMenuEvent = new window.MouseEvent('contextmenu');
+    
+    svg.dispatchEvent(clickEvent);
+    test.equal(triggerOnGraphClick, true);
+    
+    svg.dispatchEvent(contextMenuEvent);
+    test.equal(triggerOnGraphContextmenu, true);
+    
+    firstNodeEle.dispatchEvent(mouseDownEvent);
+    test.equal(triggerOnNodeMouseDown, true);
+    
+    firstNodeEle.dispatchEvent(contextMenuEvent);
+    test.equal(triggerOnNodeContextmenu, true);
+    
+    firstLinkPath.dispatchEvent(mouseDownEvent);
+    test.equal(triggerOnLinkMouseDown, true);
+    
+    firstLinkPath.dispatchEvent(contextMenuEvent);
+    test.equal(triggerOnLinkContextmenu, true);
+    
+    test.end();
+});

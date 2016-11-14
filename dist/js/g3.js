@@ -130,7 +130,7 @@ function selected(selected) {
     if(!arguments.length) return this._selected;
     this._selected = selected;
     
-    this.graph.render();
+    this.graph.render(RENDER_TYPE.SELECT);
     
     return this;
 }
@@ -1358,10 +1358,14 @@ function init () {
         .classed("graph", true)
         .on('click', function(){
             if (d3.event.target.nodeName !== 'svg') return;
-
-            //scope.cMenu.hide();
+            
             self.deselectNodes()
                 .deselectLinks();
+    
+            self.config.onGraphClick.call(this);
+        })
+        .on('contextmenu', function(){
+            self.config.onGraphContextmenu.call(this);
         });
 
     //bind listener to page for keyboard shortCuts and mouse events
@@ -1398,14 +1402,17 @@ function drawNodesSvg (drawType) {
     var g = nodes.enter().append('g')
         .each(function(Node){ Node._element = this })//reference element to Node
         .classed('node', true)
-        .on('mousedown', function(Node){
+        .on('mousedown', function(Node, i){
             if(!d3.event.ctrlKey){
                 if(Node.selected()) return;
                 self.deselectNodes();
             }
             self.deselectLinks();
             Node.selected(!Node.selected());
+            
+            self.config.onNodeMouseDown.call(this, Node, i);
         })
+        .on('contextmenu', this.config.onNodeContextmenu)
         .call(this.dragNode);
 
     //添加矩形
@@ -1427,9 +1434,6 @@ function drawNodesSvg (drawType) {
         var selectedNodeEle = this.getSelectedNodes().map(function(Node){return Node._element;});
         var all = d3.selectAll(selectedNodeEle);
     }
-    // else if(drawType === RENDER_TYPE.SELECT){
-    //
-    // }
     else{
         all = this._getNodesSelection();
     }
@@ -1482,11 +1486,14 @@ function drawLinksSvg (drawType) {
         .classed('link-path', true)
         .each(function(Link){ Link._pathEle = this })
         .attr('id', function(Link){ return "link-path" + Link.id})
-        .on('mousedown', function(Link){
+        .on('mousedown', function(Link, i){
             self.deselectLinks()
                 .deselectNodes();
             Link.selected(!Link.selected());
-        });
+            
+            self.config.onLinkMouseDown.call(this, Link, i);
+        })
+        .on('contextmenu', this.config.onLinkContextmenu);
     
     if(drawType === RENDER_TYPE.NUDGE){
         var selectedNodes = this.getSelectedNodes();
@@ -1743,7 +1750,13 @@ const DEFAULT_CONFIG = {
     icon: "",
     iconPrefix: "",
     mugshot: "",
-    mugshotPrefix: ""
+    mugshotPrefix: "",
+    onGraphClick: function(){},
+    onGraphContextmenu: function(){},
+    onNodeMouseDown: function(){},
+    onNodeContextmenu: function(){},
+    onLinkMouseDown: function(){},
+    onLinkContextmenu: function(){}
 };
 
 function findShortestPath$1 (fromNode, toNode, Nodes, Links) {

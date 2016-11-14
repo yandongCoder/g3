@@ -9,14 +9,17 @@ export default function (drawType) {
     var g = nodes.enter().append('g')
         .each(function(Node){ Node._element = this })//reference element to Node
         .classed('node', true)
-        .on('mousedown', function(Node){
+        .on('mousedown', function(Node, i){
             if(!d3.event.ctrlKey){
                 if(Node.selected()) return;
                 self.deselectNodes();
             }
             self.deselectLinks();
             Node.selected(!Node.selected());
+            
+            self.config.onNodeMouseDown.call(this, Node, i);
         })
+        .on('contextmenu', this.config.onNodeContextmenu)
         .call(this.dragNode);
 
     //添加矩形
@@ -38,9 +41,6 @@ export default function (drawType) {
         var selectedNodeEle = this.getSelectedNodes().map(function(Node){return Node._element;});
         var all = d3.selectAll(selectedNodeEle);
     }
-    // else if(drawType === RENDER_TYPE.SELECT){
-    //
-    // }
     else{
         all = this._getNodesSelection();
     }
