@@ -1,14 +1,14 @@
-export default function () {
+export default function (nodeFilter, linkFilter) {
     var json = {
         translate: this._getCurrentTranslate(),
         scale: this._getCurrentScale(),
         nodes: [],
         links: []
     };
-    this.getNodes().forEach(function(Node){
+    this.getNodes(nodeFilter).forEach(function(Node){
        json.nodes.push(Node.getJSON());
     });
-    this.getLinks().forEach(function (Link) {
+    this.getLinks(linkFilter).forEach(function (Link) {
         json.links.push(Link.getJSON());
     });
     return json;
