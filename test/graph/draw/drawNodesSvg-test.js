@@ -22,13 +22,15 @@ tape("Node's DOM should correspond Node's property", function(test){
     var svg = document.querySelector("#graph");
 
 
-    var myGraph = g3.graph(svg, {iconPrefix: 'fa fa-', mugshotPrefix: "./someUrl/", mugshot: "foo.png"})
-        .nodes({id: 1, x: 5, y: 0, icon: "male", label: "a", selected: true, radius: 30, color: "#123444"});
+    var myGraph = g3.graph(svg, {iconPrefix: 'fa fa-',icon: 'default', mugshotPrefix: "./someUrl/", mugshot: "default.png"})
+        .nodes([{id: 1, x: 5, y: 0, icon: "male", mugshot: "foo.png", label: "a", selected: true, radius: 30, color: "#123444"},{id: 2}]);
     
     myGraph.render('IMMEDIATELY');
     
-    var firstNode = myGraph.nodes()[0];
-    var firstNodeEle = document.querySelectorAll(".node")[0];
+    var firstNode = myGraph.nodes()[0],
+        firstNodeEle = document.querySelectorAll(".node")[0],
+        secondNode = myGraph.nodes()[1],
+        secondNodeEle = document.querySelectorAll(".node")[1];
     //label DOM
     test.equal(firstNodeEle.querySelector(".text-group").querySelector('span').textContent, "a");
     //selected class DOM
@@ -41,8 +43,11 @@ tape("Node's DOM should correspond Node's property", function(test){
     test.equal(firstNodeEle.querySelector("circle").style.fill, "#123444");
     //icon
     test.equal(firstNodeEle.querySelector(".icon").querySelector('span').className, "fa fa-male");
+    test.equal(secondNodeEle.querySelector(".icon").querySelector('span').className, "fa fa-default");
+    
     //mugshot
     test.equal(firstNodeEle.querySelector(".mugshot").querySelector('img').src, "./someUrl/foo.png");
+    test.equal(secondNodeEle.querySelector(".mugshot").querySelector('img').src, "./someUrl/default.png");
     
     
     firstNode.label('abc');
