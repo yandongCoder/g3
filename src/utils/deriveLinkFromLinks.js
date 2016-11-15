@@ -9,8 +9,8 @@ export default function (Links) {
     obj.id = "merged:" + concat("id", Links);
     obj.label = concat("label", Links);
     obj.width = average('width', Links);
-    obj.src = Links[0].source.id;
-    obj.dst = Links[0].target.id;
+    obj.src = Links[0].getSourceId();
+    obj.dst = Links[0].getTargetId();
     obj.color = "#"+  colorMixer.mix(Links.map(function(Link){return Link.color()}));
     obj.direction = direction(Links);
 

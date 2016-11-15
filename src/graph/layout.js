@@ -137,8 +137,8 @@ function hierarchyLayout(selectedNodes, relatedLinks, width, height) {
             children: []
         };
         relatedLinks.forEach(function (Link) {
-            if (Link.source.id === node.id) {
-                ret.children.push({id: Link.target.id});
+            if (Link.getSourceId() === node.id) {
+                ret.children.push({id: Link.getTargetId()});
             }
         });
         return ret;
@@ -172,7 +172,7 @@ function hierarchyLayout(selectedNodes, relatedLinks, width, height) {
     
     relatedLinks.forEach(function (Link) {
         for (var i = 0; i < tmpNodesList.length; i++) {
-            if (Link.target.id === tmpNodesList[i].id) {
+            if (Link.getTargetId() === tmpNodesList[i].id) {
                 tmpNodesList[i].indegree++;
                 break;
             }

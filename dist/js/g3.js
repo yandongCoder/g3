@@ -357,6 +357,14 @@ function changeTarget(target){
     return this;
 }
 
+function getSourceId(){
+    return this.source.id;
+}
+
+function getTargetId(){
+    return this.target.id;
+}
+
 function merged(merged) {
     if(!arguments.length) return this._merged === undefined? false : this._merged;
     
@@ -607,8 +615,8 @@ function deriveLinkFromLinks (Links) {
     obj.id = "merged:" + concat("id", Links);
     obj.label = concat("label", Links);
     obj.width = average('width', Links);
-    obj.src = Links[0].src;
-    obj.dst = Links[0].dst;
+    obj.src = Links[0].getSourceId();
+    obj.dst = Links[0].getTargetId();
     obj.color = "#"+  colorMixer.mix(Links.map(function(Link){return Link.color()}));
     obj.direction = direction$1(Links);
 
@@ -701,22 +709,22 @@ function NtoL$1() {
 }
 
 function getJSON () {
-    var exceptArr = ['_element', '_pathEle', '_labelEle', '_needMerged', '_needTransformed', 'graph', 'source', 'target'];
+    var exceptKey = ['_element', '_pathEle', '_labelEle', '_needMerged', '_needTransformed', 'graph'];
     var json = {};
     for (var prop in this) {
         if (prop === 'mergedBy') {
             json[prop] = {links: []};
             this[prop].links.map(function(Link){ json[prop].links.push(Link.id);});
             
-        } else if(prop === 'src'){
-            json[prop] = this.source.id || this[prop];
-        } else if(prop === 'dst'){
-            json[prop] = this.target.id || this[prop];
+        } else if(prop === 'source'){
+            json['src'] = this.getSourceId();
+        } else if(prop === 'target'){
+            json['dst'] = this.getTargetId();
         } else if(prop === 'transformedBy'){
             json[prop] = {node: this[prop].node.id, links: []};
             this[prop].links.map(function(Link){ json[prop].links.push(Link.id);});
             
-        } else if (this.hasOwnProperty(prop) && (exceptArr.indexOf(prop) === -1)) {
+        } else if (this.hasOwnProperty(prop) && (exceptKey.indexOf(prop) === -1)) {
             var jsonProp = prop.replace(/_/, "");
             json[jsonProp] = this[prop];
         }
@@ -732,8 +740,6 @@ function Link(data, graph) {
     this._width = data.width || (graph && graph.config.linkWidth);
     this._color = data.color || (graph && graph.config.linkColor);
     this._selected = data.selected || false;
-    this.src = data.src;
-    this.dst = data.dst;
     this._direction = data.direction === undefined? 1: data.direction;//0: none, 1: from, 2: to, 3 double
 
     this.source = graph && this.graph._nodesHash[data.src];
@@ -746,8 +752,9 @@ function Link(data, graph) {
     if(data.mergedBy) this.mergedBy = data.mergedBy;
     if(data.transformedBy) this.transformedBy = data.transformedBy;
     
+    var exceptKey = ['src', 'dst'];
     for (var prop in data) {
-        if (data.hasOwnProperty(prop) && this[prop] === undefined) this[prop] = data[prop];
+        if (data.hasOwnProperty(prop) && this[prop] === undefined && exceptKey.indexOf(prop) === -1) this[prop] = data[prop];
     }
 }
 
@@ -766,6 +773,8 @@ Link.prototype = {
     width: width,
     selected: selected$1,
     remove: remove,
+    getSourceId: getSourceId,
+    getTargetId: getTargetId,
     changeSource: changeSource,
     changeTarget: changeTarget,
     merged: merged,
@@ -787,16 +796,14 @@ Link.prototype = {
 };
 
 function deriveLinkFromLNL (srcLinks, Node, dstLinks, graph) {
-    console.log(graph);
     srcLinks = srcLinks.length > 1? new Link(deriveLinkFromLinks(srcLinks), graph): srcLinks[0];
     dstLinks = dstLinks.length > 1? new Link(deriveLinkFromLinks(dstLinks), graph): dstLinks[0];
 
     var obj = {};
     obj.id = "transformed:(" + srcLinks.id + ")" + Node.id + "(" + dstLinks.id + ")";
     obj.label = "(" + srcLinks.label() + ")" + Node.label() + "(" + dstLinks.label() + ")";
-    console.log(dstLinks);
-    obj.src = srcLinks.source.id === Node.id? srcLinks.dst: srcLinks.src;
-    obj.dst = dstLinks.source.id === Node.id? dstLinks.dst: dstLinks.src;
+    obj.src = srcLinks.getSourceId() === Node.id? srcLinks.getTargetId(): srcLinks.getSourceId();
+    obj.dst = dstLinks.getSourceId() === Node.id? dstLinks.getTargetId(): dstLinks.getSourceId();
     obj.width = (srcLinks.width() + dstLinks.width()) / 2;
     obj.color = Node.color();
     obj.direction = direction$1([srcLinks, dstLinks]);
@@ -853,7 +860,7 @@ function getConnectedLinks (grouped) {
         var separated = {};
 
         connectedLinks.forEach(function(Link){
-            var separatedId = Link.src === this.id? Link.dst: Link.src;
+            var separatedId = Link.getSourceId() === this.id? Link.getTargetId(): Link.getSourceId();
             if(separated[separatedId] === undefined) separated[separatedId] = [];
             separated[separatedId].push(Link);
         },this);
@@ -886,13 +893,13 @@ function ungroup () {
 }
 
 function getJSON$1 () {
-    var exceptArr = ['_element', '_needTransformed', 'graph'];
+    var exceptKey = ['_element', '_needTransformed', 'graph'];
     var json = {};
     for (var prop in this) {
         if (prop === 'groupedBy') {
             json[prop] = this[prop].pickIds();
     
-        } else if (this.hasOwnProperty(prop) && (exceptArr.indexOf(prop) === -1)) {
+        } else if (this.hasOwnProperty(prop) && (exceptKey.indexOf(prop) === -1)) {
             var jsonProp = prop.replace(/_/, "");
             json[jsonProp] = this[prop];
         }
@@ -1142,14 +1149,14 @@ function getLinks(filter) {
 function getContainLinks(Nodes) {
     var ids = getIds(Nodes);
     return this._links.filter(function(Link){
-        return (ids.indexOf(Link.source.id) !== -1) && (ids.indexOf(Link.target.id) !== -1) && !Link.merged();
+        return (ids.indexOf(Link.getSourceId()) !== -1) && (ids.indexOf(Link.getTargetId()) !== -1) && !Link.merged();
     });
 }
 
 function getAttachedLinks(Nodes) {
     var ids = getIds(Nodes);
     return this._links.filter(function (Link) {
-        return ( (ids.indexOf(Link.source.id) === -1 && ids.indexOf(Link.target.id) !== -1) || (ids.indexOf(Link.source.id) !== -1 && ids.indexOf(Link.target.id) === -1) )
+        return ( (ids.indexOf(Link.getSourceId()) === -1 && ids.indexOf(Link.getTargetId()) !== -1) || (ids.indexOf(Link.getSourceId()) !== -1 && ids.indexOf(Link.getTargetId()) === -1) )
             && !Link.merged();
     });
 }
@@ -1969,10 +1976,10 @@ function _getMinDistanceNode (arrayList) {
 function _getLinkWithSrcAndDst (src, dst, Links) {
     var ret = {_weight: 0};
     Links.forEach(function (Link) {
-        if ((Link.src === src && Link.dst === dst) || (Link.dst === src && Link.src === dst )) {
+        if ((Link.getSourceId() === src && Link.getTargetId() === dst) || (Link.getTargetId() === src && Link.getSourceId() === dst )) {
             ret._id = Link.id;
-            ret._src = Link.src;
-            ret._dst = Link.dst;
+            ret._src = Link.getSourceId();
+            ret._dst = Link.getTargetId();
             ret._weight = 1;
             //break;
         }
@@ -2020,12 +2027,12 @@ function _getAdjacentNodes (id, Links) {
 
 function _getAdjacentLinkList (id, Links) {
     var ret = [];
-    Links.forEach(function (d) {
-        if (d.src === id || d.dst === id) {
+    Links.forEach(function (Link) {
+        if (Link.getSourceId() === id || Link.getTargetId() === id) {
             ret.push({
-                         _id: d.id,
-                         _src: d.src,
-                         _dst: d.dst,
+                         _id: Link.id,
+                         _src: Link.getSourceId(),
+                         _dst: Link.getTargetId(),
                          _weight: 1
                      });
         }
@@ -2181,9 +2188,9 @@ function hierarchyLayout(selectedNodes, relatedLinks, width, height) {
             id: node.id,
             children: []
         };
-        relatedLinks.forEach(function (w) {
-            if (w.src === node.id) {
-                ret.children.push({id: w.dst});
+        relatedLinks.forEach(function (Link) {
+            if (Link.getSourceId() === node.id) {
+                ret.children.push({id: Link.getTargetId()});
             }
         });
         return ret;
@@ -2215,9 +2222,9 @@ function hierarchyLayout(selectedNodes, relatedLinks, width, height) {
         tmpNodesList.push(tmp_D3_treeNode);
     }
     
-    relatedLinks.forEach(function (d) {
+    relatedLinks.forEach(function (Link) {
         for (var i = 0; i < tmpNodesList.length; i++) {
-            if (d.dst === tmpNodesList[i].id) {
+            if (Link.getTargetId() === tmpNodesList[i].id) {
                 tmpNodesList[i].indegree++;
                 break;
             }

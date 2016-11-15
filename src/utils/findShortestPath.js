@@ -142,10 +142,10 @@ function _getMinDistanceNode (arrayList) {
 function _getLinkWithSrcAndDst (src, dst, Links) {
     var ret = {_weight: 0};
     Links.forEach(function (Link) {
-        if ((Link.source.id === src && Link.target.id === dst) || (Link.target.id === src && Link.source.id === dst )) {
+        if ((Link.getSourceId() === src && Link.getTargetId() === dst) || (Link.getTargetId() === src && Link.getSourceId() === dst )) {
             ret._id = Link.id;
-            ret._src = Link.source.id;
-            ret._dst = Link.target.id;
+            ret._src = Link.getSourceId();
+            ret._dst = Link.getTargetId();
             ret._weight = 1;
             //break;
         }
@@ -194,11 +194,11 @@ function _getAdjacentNodes (id, Links) {
 function _getAdjacentLinkList (id, Links) {
     var ret = [];
     Links.forEach(function (Link) {
-        if (Link.source.id === id || Link.target.id === id) {
+        if (Link.getSourceId() === id || Link.getTargetId() === id) {
             ret.push({
                          _id: Link.id,
-                         _src: Link.source.id,
-                         _dst: Link.target.id,
+                         _src: Link.getSourceId(),
+                         _dst: Link.getTargetId(),
                          _weight: 1
                      });
         }

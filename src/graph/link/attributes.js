@@ -61,6 +61,14 @@ function changeTarget(target){
     return this;
 }
 
+function getSourceId(){
+    return this.source.id;
+}
+
+function getTargetId(){
+    return this.target.id;
+}
+
 function merged(merged) {
     if(!arguments.length) return this._merged === undefined? false : this._merged;
     
@@ -87,4 +95,4 @@ function transformed(transformed) {
     
     return this;
 }
-export {color, direction, label, selected, width, changeSource, changeTarget, merged, grouped, transformed};
+export {color, direction, label, selected, width, getSourceId, getTargetId, changeSource, changeTarget, merged, grouped, transformed};

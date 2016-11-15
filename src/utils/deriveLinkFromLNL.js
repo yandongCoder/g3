@@ -9,8 +9,8 @@ export default function (srcLinks, Node, dstLinks, graph) {
     var obj = {};
     obj.id = "transformed:(" + srcLinks.id + ")" + Node.id + "(" + dstLinks.id + ")";
     obj.label = "(" + srcLinks.label() + ")" + Node.label() + "(" + dstLinks.label() + ")";
-    obj.src = srcLinks.source.id === Node.id? srcLinks.target.id: srcLinks.source.id;
-    obj.dst = dstLinks.source.id === Node.id? dstLinks.target.id: dstLinks.source.id;
+    obj.src = srcLinks.getSourceId() === Node.id? srcLinks.getTargetId(): srcLinks.getSourceId();
+    obj.dst = dstLinks.getSourceId() === Node.id? dstLinks.getTargetId(): dstLinks.getSourceId();
     obj.width = (srcLinks.width() + dstLinks.width()) / 2;
     obj.color = Node.color();
     obj.direction = direction([srcLinks, dstLinks]);

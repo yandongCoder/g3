@@ -8,14 +8,14 @@ function getLinks(filter) {
 function getContainLinks(Nodes) {
     var ids = getIds(Nodes);
     return this._links.filter(function(Link){
-        return (ids.indexOf(Link.source.id) !== -1) && (ids.indexOf(Link.target.id) !== -1) && !Link.merged();
+        return (ids.indexOf(Link.getSourceId()) !== -1) && (ids.indexOf(Link.getTargetId()) !== -1) && !Link.merged();
     });
 }
 
 function getAttachedLinks(Nodes) {
     var ids = getIds(Nodes);
     return this._links.filter(function (Link) {
-        return ( (ids.indexOf(Link.source.id) === -1 && ids.indexOf(Link.target.id) !== -1) || (ids.indexOf(Link.source.id) !== -1 && ids.indexOf(Link.target.id) === -1) )
+        return ( (ids.indexOf(Link.getSourceId()) === -1 && ids.indexOf(Link.getTargetId()) !== -1) || (ids.indexOf(Link.getSourceId()) !== -1 && ids.indexOf(Link.getTargetId()) === -1) )
             && !Link.merged();
     });
 }

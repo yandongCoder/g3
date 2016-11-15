@@ -7,7 +7,7 @@ export default function (grouped) {
         var separated = {};
 
         connectedLinks.forEach(function(Link){
-            var separatedId = Link.source.id === this.id? Link.target.id: Link.source.id;
+            var separatedId = Link.getSourceId() === this.id? Link.getTargetId(): Link.getSourceId();
             if(separated[separatedId] === undefined) separated[separatedId] = [];
             separated[separatedId].push(Link);
         },this);

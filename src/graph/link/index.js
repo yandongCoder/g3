@@ -1,6 +1,6 @@
 import hasST from "./hasST";
 import {getStartArrow, getEndArrow, getTextOffset, getLinkLabelTransform, getCoordination} from "./display";
-import {color, direction, label, selected, width, changeSource, changeTarget, merged, grouped, transformed} from "./attributes";
+import {color, direction, label, selected, width, getSourceId, getTargetId, changeSource, changeTarget, merged, grouped, transformed} from "./attributes";
 import {DIRECTION} from "../CONSTANT";
 import remove from "./remove";
 import {merge, flattenMerge, unmerge} from "./merge";
@@ -48,6 +48,8 @@ Link.prototype = {
     width: width,
     selected: selected,
     remove: remove,
+    getSourceId: getSourceId,
+    getTargetId: getTargetId,
     changeSource: changeSource,
     changeTarget: changeTarget,
     merged: merged,
