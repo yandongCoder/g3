@@ -8,7 +8,7 @@ export default function () {
 
     if(contractedLinks.length !== 2) return;
     
-    var newLink = deriveLinkFromLNL(contractedLinks[0], this, contractedLinks[1]);
+    var newLink = deriveLinkFromLNL(contractedLinks[0], this, contractedLinks[1], this.graph);
 
     newLink.transformedBy = new TransformedBy(this, contractedLinks[0].concat(contractedLinks[1]));
 
