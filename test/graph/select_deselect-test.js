@@ -6,8 +6,6 @@ tape("deselect Nodes", function(test){
     var myGraph = g3.graph(null, {ifRender: false})
         .nodes([{id: 1, x: 0, y: 0, selected: true}, {id: 2, x: 100, y: 0, selected: true}]);
     
-    myGraph.deselectNodes(1);
-    test.equal(myGraph.nodes()[0].selected(), false);
     myGraph.deselectNodes();
     test.equal(myGraph.nodes()[1].selected(), false);
     
@@ -20,8 +18,7 @@ tape("deselect Links", function(test){
         .nodes([{id: 1}, {id: 2}])
         .links([{id: 1, src: 1, dst: 2, selected: true}, {id: 2, src: 1, dst: 2, selected: true}]);
     
-    myGraph.deselectLinks(1);
-    test.equal(myGraph.links()[0].selected(), false);
+    
     myGraph.deselectLinks();
     test.equal(myGraph.links()[1].selected(), false);
     

@@ -1,6 +1,6 @@
 import hasST from "./hasST";
 import {getStartArrow, getEndArrow, getTextOffset, getLinkLabelTransform, getCoordination} from "./display";
-import {color, direction, label, merged, selected, width, grouped, transformed} from "./attributes";
+import {color, direction, label, selected, width, changeSource, changeTarget, merged, grouped, transformed} from "./attributes";
 import {DIRECTION} from "../CONSTANT";
 import remove from "./remove";
 import {merge, flattenMerge, unmerge} from "./merge";
@@ -19,8 +19,8 @@ export default function Link(data, graph) {
     this.dst = data.dst;
     this._direction = data.direction === undefined? 1: data.direction;//0: none, 1: from, 2: to, 3 double
 
-    this.source = graph && this.graph._nodesHash[this.src];
-    this.target = graph && this.graph._nodesHash[this.dst];
+    this.source = graph && this.graph._nodesHash[data.src];
+    this.target = graph && this.graph._nodesHash[data.dst];
     
     if(data.grouped) this._grouped = data.grouped;
     if(data.merged) this._merged = data.merged;
@@ -49,6 +49,8 @@ Link.prototype = {
     width: width,
     selected: selected,
     remove: remove,
+    changeSource: changeSource,
+    changeTarget: changeTarget,
     merged: merged,
     merge: merge,
     flattenMerge: flattenMerge,

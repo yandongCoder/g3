@@ -30,33 +30,39 @@ const BUILD_REF_TYPE = {
 };
 
 const RENDER_TYPE = {
-    FORCEDRAW: "FORCEDRAW",
-    TRANSFORM: "TRANSFORM",
     SELECT: "SELECT",
     NUDGE: "NUDGE",
     IMMEDIATELY: "IMMEDIATELY"
 };
 
-function render (renderType, callback) {
-    if(!this.config.ifRender) return this;
+function delayRender(Obj, renderType){
+    this.updateDOM.addObj(Obj, renderType);
+    this.render();
+}
 
-    var canvasType = this._canvas.nodeName;
+function renderImmediately(){
+    this.render(RENDER_TYPE.IMMEDIATELY);
+}
 
-    if(canvasType === 'svg'){
-        this._init();
-    }
-
+function render(renderType) {
     var self = this;
-    clearTimeout(this._renderDelay);
     
-    if(renderType === RENDER_TYPE.IMMEDIATELY) draw();
-    else this._renderDelay = setTimeout(draw, 0);
+    if(!this.config.ifRender) return this;
+    var canvasType = this._canvas.nodeName;
+    if(canvasType === 'svg'){ this._init();}
+    
+    if(renderType === RENDER_TYPE.IMMEDIATELY){
+        draw(renderType);
+    }
+    else{
+        clearTimeout(this._renderDelay);
+        this._renderDelay = setTimeout(draw, 0);
+    }
     
     return this;
     
-    function draw(){
+    function draw(renderType){
         self._draw(renderType, canvasType);
-        if(callback instanceof Function) callback();
     }
 }
 
@@ -86,7 +92,7 @@ function color(color) {
     if(!arguments.length) return this._color || "#123456";
 
     this._color = color;
-    this.graph.render();
+    this.graph.delayRender(this);
 
     return this;
 }
@@ -95,7 +101,7 @@ function icon(icon) {
     if(!arguments.length) return this._icon;
     
     this._icon = icon;
-    this.graph.render();
+    this.graph.delayRender(this);
     
     return this;
 }
@@ -104,7 +110,7 @@ function mugshot(mugshot) {
     if(!arguments.length) return this._mugshot;
     
     this._mugshot = mugshot;
-    this.graph.render();
+    this.graph.delayRender(this);
     
     return this;
 }
@@ -121,7 +127,7 @@ function label(label) {
     if(!arguments.length) return this._label || "";
     
     this._label = label;
-    this.graph.render();
+    this.graph.delayRender(this);
     
     return this;
 }
@@ -130,7 +136,7 @@ function selected(selected) {
     if(!arguments.length) return this._selected;
     this._selected = selected;
     
-    this.graph.render(RENDER_TYPE.SELECT);
+    this.graph.delayRender(this);
     
     return this;
 }
@@ -139,7 +145,7 @@ function radius(radius) {
     if(!arguments.length) return this._radius;
     
     this._radius = radius;
-    this.graph.render();
+    this.graph.delayRender(this);
     
     return this;
 }
@@ -165,7 +171,8 @@ function nudge (nudgeX, nudgeY) {
     
     this.x += nudgeX;
     this.y += nudgeY;
-
+    
+    this.graph.delayRender(this, RENDER_TYPE.NUDGE);
     return this;
 }
 
@@ -293,7 +300,7 @@ function color$1(color) {
     if(!arguments.length) return this._color;
 
     this._color = color;
-    this.graph.render();
+    this.graph.delayRender(this);
 
     return this;
 }
@@ -302,7 +309,7 @@ function direction(direction) {
     if(!arguments.length) return this._direction;
     
     this._direction = direction;
-    this.graph.render();
+    this.graph.delayRender(this);
     
     return this;
 }
@@ -311,15 +318,7 @@ function label$1(label) {
     if(!arguments.length) return this._label;
     
     this._label = label;
-    this.graph.render();
-    
-    return this;
-}
-
-function merged(merged) {
-    if(!arguments.length) return this._merged === undefined? false : this._merged;
-    
-    this._merged = merged;
+    this.graph.delayRender(this);
     
     return this;
 }
@@ -328,7 +327,7 @@ function selected$1(selected) {
     if(!arguments.length) return this._selected;
     this._selected = selected;
     
-    this.graph.render();
+    this.graph.delayRender(this);
     
     return this;
 }
@@ -337,7 +336,32 @@ function width(width) {
     if(!arguments.length) return this._width;
     
     this._width = width;
-    this.graph.render();
+    this.graph.delayRender(this);
+    
+    return this;
+}
+
+function changeSource(source){
+    if(source instanceof Node) this.source = source;
+    
+    this.graph.delayRender(this);
+    
+    return this;
+}
+
+function changeTarget(target){
+    if(target instanceof Node) this.target = target;
+    
+    this.graph.delayRender(this);
+    
+    return this;
+}
+
+function merged(merged) {
+    if(!arguments.length) return this._merged === undefined? false : this._merged;
+    
+    this._merged = merged;
+    this.graph.delayRender(this);
     
     return this;
 }
@@ -346,6 +370,7 @@ function grouped$1(grouped) {
     if(!arguments.length) return this._grouped === undefined? false : this._grouped;
     
     this._grouped = grouped;
+    this.graph.delayRender(this);
     
     return this;
 }
@@ -354,6 +379,7 @@ function transformed$1(transformed) {
     if(!arguments.length) return this._transformed || false;
     
     this._transformed = transformed;
+    this.graph.delayRender(this);
     
     return this;
 }
@@ -682,6 +708,10 @@ function getJSON () {
             json[prop] = {links: []};
             this[prop].links.map(function(Link){ json[prop].links.push(Link.id);});
             
+        } else if(prop === 'src'){
+            json[prop] = this.source.id || this[prop];
+        } else if(prop === 'dst'){
+            json[prop] = this.target.id || this[prop];
         } else if(prop === 'transformedBy'){
             json[prop] = {node: this[prop].node.id, links: []};
             this[prop].links.map(function(Link){ json[prop].links.push(Link.id);});
@@ -706,8 +736,8 @@ function Link(data, graph) {
     this.dst = data.dst;
     this._direction = data.direction === undefined? 1: data.direction;//0: none, 1: from, 2: to, 3 double
 
-    this.source = graph && this.graph._nodesHash[this.src];
-    this.target = graph && this.graph._nodesHash[this.dst];
+    this.source = graph && this.graph._nodesHash[data.src];
+    this.target = graph && this.graph._nodesHash[data.dst];
     
     if(data.grouped) this._grouped = data.grouped;
     if(data.merged) this._merged = data.merged;
@@ -736,6 +766,8 @@ Link.prototype = {
     width: width,
     selected: selected$1,
     remove: remove,
+    changeSource: changeSource,
+    changeTarget: changeTarget,
     merged: merged,
     merge: merge,
     flattenMerge: flattenMerge,
@@ -1135,15 +1167,12 @@ function selectNodes(filter, retainOther) {
     this.getNodes(filter).forEach(function(Node){
         Node.selected(true);
     }, this);
-
-    this.render(RENDER_TYPE.SELECT);
 }
 
-function deselectNodes(filter) {
-    this.getNodes(filter).forEach(function(Node){
+function deselectNodes() {
+    this.getSelectedNodes().forEach(function(Node){
         Node.selected(false);
     }, this);
-    this.render(RENDER_TYPE.SELECT);
     return this;
 }
 
@@ -1151,7 +1180,6 @@ function deselectLinks(filter) {
     this.getLinks(filter).forEach(function(Link){
         Link.selected(false);
     }, this);
-    this.render(RENDER_TYPE.SELECT);
     return this;
 }
 
@@ -1167,11 +1195,11 @@ function GroupedBy(newNode, Nodes, Links, attachedLinks) {
         var attachedLink = {"link": Link};
         if(Nodes.indexOf(Link.source) !== -1) {
             attachedLink.originalSource = Link.source;
-            Link.source = newNode;
+            Link.changeSource(newNode);
         }
         if(Nodes.indexOf(Link.target) !== -1) {
             attachedLink.originalTarget = Link.target;
-            Link.target = newNode;
+            Link.changeTarget(newNode);
         }
         this.attachedLinks.push(attachedLink);
     }, this);
@@ -1435,7 +1463,7 @@ function getAbsUrl (url) {
     return (url || window.location.href).split('#')[0];
 }
 
-function drawNodesSvg (drawType) {
+function drawNodesSvg (renderType) {
  
     var self = this;
     var nodes = this._getNodesSelection().data(this.getRenderedNodes(), function (Node) { return Node.id;});
@@ -1469,60 +1497,67 @@ function drawNodesSvg (drawType) {
     g.append('svg:foreignObject')
         .attr('class', 'mugshot')
         .append('xhtml:img');
-
-    //Enter and Update
-    if(drawType === RENDER_TYPE.NUDGE){
-        var selectedNodeEle = this.getSelectedNodes().map(function(Node){return Node._element;});
-        var all = d3.selectAll(selectedNodeEle);
-    }
-    else{
-        all = this._getNodesSelection();
-    }
+    g.call(updateAttr);
     
-    var scale = self._getCurrentScale();
-
-    all.attr("transform", function (Node) { return "translate(" + Node.getX() + "," + Node.getY() + ")";})
-        .classed("selected", function(Node){return Node.selected()});
-
-    all.select('circle')
-        .attr("r", function(Node){ return Node.radius();})
-        .style("fill", function(Node){ return Node.color(); });
-
-    all.selectAll('.icon, .mugshot')
-        .attr("transform", function(Node){ return "translate(" + -Node.radius() + ", "+ -Node.radius() +")"; })
-        .attr("width", function(Node){return Node.radius()*2;})
-        .attr("height", function(Node){return Node.radius()*2;});
+    //need update Nodes Element
+    if(renderType === RENDER_TYPE.IMMEDIATELY){
+        var updateNodes = this._getNodesSelection();
+    }else{
+        updateNodes = d3.selectAll(this.updateDOM.getNodesEle());
+    }
+    updateNodes.call(updateAttr);
     
-    all.select('.icon').select('span')
-        .attr('class', function(Node){ return self.config.iconPrefix + Node.icon();})
-        .style("line-height", function(Node){return Node.radius()*2 + "px";});
-    all.select('.mugshot').select('img')
-        .attr('src', function(Node){return Node.mugshot()? self.config.mugshotPrefix + Node.mugshot(): "";})
-        .style('display', function(Node){return Node.mugshot()? "block": "none";});
-        
-    all.select('.text-group')
-        .style('display', function(Node){
-            return (scale < self.config.scaleOfHideLabel)? 'none': 'block';
-        })
-        .attr('width', function (Node) { return Node.getLabelWidth(); })
-        .attr("height", function(Node){ return Node.radius() * scale; })
-        .style("line-height", function(Node){ return Node.radius() * scale + "px"; })
-        .attr("transform", function(Node){ return "translate(" + (1 + Node.radius()) + ", 0) scale(" + 1 / scale + ")"; })
-
-        .select('div')
-        .attr('title', function (Node) { return Node.label(); })
-        .select('span')
-        .text(function (Node) { return Node.label(); });
-
+    this.updateDOM.clearUpdateNodes();
+    
     nodes.exit().remove();
+    
+    
+    function updateAttr(selection){
+        var scale = self._getCurrentScale();
+        
+        selection.attr("transform", function (Node) { return "translate(" + Node.getX() + "," + Node.getY() + ")";})
+            .classed("selected", function(Node){return Node.selected()});
+        
+        selection.select('circle')
+            .attr("r", function(Node){ return Node.radius();})
+            .style("fill", function(Node){ return Node.color(); });
+        
+        selection.selectAll('.icon, .mugshot')
+            .attr("transform", function(Node){ return "translate(" + -Node.radius() + ", "+ -Node.radius() +")"; })
+            .attr("width", function(Node){return Node.radius()*2;})
+            .attr("height", function(Node){return Node.radius()*2;});
+        
+        selection.select('.icon').select('span')
+            .attr('class', function(Node){ return self.config.iconPrefix + Node.icon();})
+            .style("line-height", function(Node){return Node.radius()*2 + "px";});
+        selection.select('.mugshot').select('img')
+            .attr('src', function(Node){return Node.mugshot()? self.config.mugshotPrefix + Node.mugshot(): "";})
+            .style('display', function(Node){return Node.mugshot()? "block": "none";});
+        
+        selection.select('.text-group')
+            .style('display', function(Node){
+                return (scale < self.config.scaleOfHideLabel)? 'none': 'block';
+            })
+            .attr('width', function (Node) { return Node.getLabelWidth(); })
+            .attr("height", function(Node){ return Node.radius() * scale; })
+            .style("line-height", function(Node){ return Node.radius() * scale + "px"; })
+            .attr("transform", function(Node){ return "translate(" + (1 + Node.radius()) + ", 0) scale(" + 1 / scale + ")"; })
+            
+            .select('div')
+            .attr('title', function (Node) { return Node.label(); })
+            .select('span')
+            .text(function (Node) { return Node.label(); });
+    }
 }
 
-function drawLinksSvg (drawType) {
+function drawLinksSvg (renderType) {
     var self = this;
+    var scale = self._getCurrentScale();
     
-    var links = this._getLinksSelection().data(this.getRenderedLinks(), function (Link) { return Link.id });
+    var linkPaths = this._getLinksSelection().data(this.getRenderedLinks(), function (Link) { return Link.id }),
+        linkLabels = this._getLinksLabelSelection().data(this._links, function (Link) { return Link.id; });
 
-    links.enter()
+    linkPaths.enter()
         .append('path')
         .classed('link-path', true)
         .each(function(Link){ Link._pathEle = this })
@@ -1534,73 +1569,61 @@ function drawLinksSvg (drawType) {
             
             self.config.onLinkMouseDown.call(this, Link, i);
         })
-        .on('contextmenu', this.config.onLinkContextmenu);
+        .on('contextmenu', this.config.onLinkContextmenu)
+        .call(updatePathAttr);
     
-    if(drawType === RENDER_TYPE.NUDGE){
-        var selectedNodes = this.getSelectedNodes();
-        var attachedLinks = this.getRelatedLinks(selectedNodes);
-        var attachedLinksEle = attachedLinks.map(function(Link){return Link._pathEle});
-    
-        var changedLinks = d3.selectAll(attachedLinksEle);
-    }else{
-        changedLinks  = this._getLinksSelection();
-    }
-
-    changedLinks
-        .attr('d', function (Link) { var c = Link.getCoordination();  return 'M ' + c.Sx + ' ' + c.Sy + ' L ' + c.Tx + ' ' + c.Ty; })
-        .classed("selected", function(Link){return Link.selected()})
-        .style('marker-start', function (Link) { return Link.getStartArrow(); })
-        .style('marker-end', function (Link) { return Link.getEndArrow(); })
-        .style('stroke-width', function(Link){ return Link.width(); })
-        .style('stroke', function(Link){ return Link.color(); });
-
-
-    links.exit().remove();
-    
-
-    //绑定linkData数据到linkLabels
-    var linkLabels = this._getLinksLabelSelection().data(this._links, function (Link) { return Link.id; });
-
-    //按需增加新的LinkLabels(当linksData data > linkPaths element)
     linkLabels.enter().append('text')
         .each(function(Link){ Link._labelEle = this })
         .style("pointer-events", "none")
         .classed('link-label', true)
         .attr('id', function (Link) { return 'link-label' + Link.id; })
-        //.attr('text-anchor', 'middle')
         .append('textPath')
         .attr('xlink:href', function (Link) {  return getAbsUrl() + '#link-path' + Link.id; })
-        //.attr('startOffset', '50%')
-        .style("pointer-events", "none");
+        .style("pointer-events", "none")
+        .call(updateLabelAttr);
     
-    
-    if(drawType === RENDER_TYPE.NUDGE){
-        var attachedLinkLabels = attachedLinks.map(function(Link){return Link._labelEle});
-        
-        var allLabels = d3.selectAll(attachedLinkLabels);
-        
+    if(renderType === RENDER_TYPE.IMMEDIATELY){
+        var updateLinks  = this._getLinksSelection(),
+            updateLabels = this._getLinksLabelSelection();
     }else{
-        allLabels = this._getLinksLabelSelection();
+        updateLinks = d3.selectAll(this.updateDOM.getLinksPath());
+        updateLabels = d3.selectAll(this.updateDOM.getLinksLabel());
+    }
+
+    updateLinks.call(updatePathAttr);
+    updateLabels.call(updateLabelAttr);
+    
+    this.updateDOM.clearUpdateLinks();
+    
+    linkPaths.exit().remove();
+    linkLabels.exit().remove();
+    
+    function updatePathAttr(selection){
+        selection
+            .attr('d', function (Link) { var c = Link.getCoordination();  return 'M ' + c.Sx + ' ' + c.Sy + ' L ' + c.Tx + ' ' + c.Ty; })
+            .classed("selected", function(Link){return Link.selected()})
+            .style('marker-start', function (Link) { return Link.getStartArrow(); })
+            .style('marker-end', function (Link) { return Link.getEndArrow(); })
+            .style('stroke-width', function(Link){ return Link.width(); })
+            .style('stroke', function(Link){ return Link.color(); });
     }
     
-    var scale = self._getCurrentScale();
-    allLabels
-        .style('display', function(Link){
-            return (scale < self.config.scaleOfHideLabel)? 'none': 'block';
-        })
-        .attr('dx', function(Link){return Link.getTextOffset(); })
-        .attr('dy', 1)
-        .attr('font-size', 13)
-        //反转字体，使字体总是朝上，该句放于该函数最后执行，提前会导致问题
-        .attr('transform', function(Link){ return Link.getLinkLabelTransform(scale); });
-
-    allLabels.select('textPath')
-        .text(function (Link) {
-            return Link.label();
-        });
-
-
-    linkLabels.exit().remove();
+    function updateLabelAttr(selection){
+        selection
+            .style('display', function(Link){
+                return (scale < self.config.scaleOfHideLabel)? 'none': 'block';
+            })
+            .attr('dx', function(Link){return Link.getTextOffset(); })
+            .attr('dy', 1)
+            .attr('font-size', 13)
+            //反转字体，使字体总是朝上，该句放于该函数最后执行，提前会导致问题
+            .attr('transform', function(Link){ return Link.getLinkLabelTransform(scale); });
+    
+        selection.select('textPath')
+            .text(function (Link) {
+                return Link.label();
+            });
+    }
 }
 
 function drawCanvas () {
@@ -1625,10 +1648,10 @@ function drawCanvas () {
     context.fill();
 }
 
-function draw (drawType, canvasType) {
+function draw (renderType, canvasType) {
     if(canvasType === 'svg'){
-        drawNodesSvg.call(this, drawType);
-        drawLinksSvg.call(this, drawType);
+        drawNodesSvg.call(this, renderType);
+        drawLinksSvg.call(this, renderType);
     }else if(canvasType === 'CANVAS'){
         drawCanvas.call(this);
     }
@@ -1655,9 +1678,9 @@ function zoomed () {
     var hideScale = this.config.scaleOfHideLabel;
     
     //render while should hide label
-    if(previousScale > hideScale && currentScale < hideScale) this.render(RENDER_TYPE.IMMEDIATELY);
+    if(previousScale > hideScale && currentScale < hideScale) this.renderImmediately();
     //panning don't need re-render, render only after zooming
-    if(currentScale !== previousScale && currentScale > hideScale) this.render(RENDER_TYPE.IMMEDIATELY);
+    if(currentScale !== previousScale && currentScale > hideScale) this.renderImmediately();
 }
 
 function transform(k, x, y, duration) {
@@ -1773,7 +1796,7 @@ function draged (currentNode) {
         Node._nudge(d3.event.dx, d3.event.dy, true);
     });
     
-    this.render(RENDER_TYPE.NUDGE);
+    //this.render();
 }
 
 const DEFAULT_CONFIG = {
@@ -2377,6 +2400,68 @@ function getJSON$2 (nodeFilter, linkFilter) {
     return json;
 }
 
+function UpdateDOM(graph){
+    this.graph = graph;
+    this._updateNodes = [];
+    this._updateLinks = [];
+};
+
+UpdateDOM.prototype = {
+    constructor: UpdateDOM,
+    addObj: addObj,
+    _addNode: addNode$1,
+    _addLink: addLink$1,
+    getNodesEle: getNodesEle,
+    getLinksPath: getLinksPath,
+    getLinksLabel: getLinksLabel,
+    clearUpdateNodes: clearUpdateNodes,
+    clearUpdateLinks: clearUpdateLinks
+    
+};
+
+function addObj(Obj, renderType){
+    if(Obj instanceof Node){
+        this._addNode(Obj);
+        if(renderType === RENDER_TYPE.NUDGE){
+            var selectedNodes = this.graph.getSelectedNodes();
+            var relatedLinks = this.graph.getRelatedLinks(selectedNodes);
+            relatedLinks.forEach(function(Link){
+                this._addLink(Link);
+            }, this);
+            
+        }
+    }
+    if(Obj instanceof Link) this._addLink(Obj);
+}
+
+function addNode$1(Node){
+    if(this._updateNodes.indexOf(Node) === -1) this._updateNodes.push(Node);
+}
+
+function addLink$1(Link){
+    if(this._updateLinks.indexOf(Link) === -1) this._updateLinks.push(Link);
+}
+
+function getNodesEle(){
+    return this._updateNodes.map(function(Node){return Node._element;});
+}
+
+function getLinksPath(){
+    return this._updateLinks.map(function(Node){return Node._pathEle;});
+}
+
+function getLinksLabel(){
+    return this._updateLinks.map(function(Node){return Node._labelEle;});
+}
+
+function clearUpdateNodes(){
+    this._updateNodes = [];
+}
+
+function clearUpdateLinks(){
+    this._updateLinks = [];
+}
+
 function Graph(selector, config) {
 
     this.config = Object.assign({}, DEFAULT_CONFIG, config || {});
@@ -2389,11 +2474,15 @@ function Graph(selector, config) {
     this._nodesHash = {};
     this._links = [];
     this._linksHash = {};
+    
+    this.updateDOM = new UpdateDOM(this);
 }
 
 Graph.prototype = {
     constructor: Graph,
     render: render,
+    delayRender: delayRender,
+    renderImmediately: renderImmediately,
     nodes: nodes,
     getNodes: getNodes,
     getSelectedNodes: getSelectedNodes,

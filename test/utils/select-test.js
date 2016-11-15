@@ -7,7 +7,7 @@ tape("g3 select svg correctly whether selector is id or DOM", function(test){
     var document = global.document = jsdom.jsdom('<svg id="graph"></svg>');
     var svg = document.querySelector("#graph");
     
-    test.deepEqual(g3.graph("#graph"), g3.graph(svg));
+    test.equal(g3.graph("#graph")._canvas.nodeName, g3.graph(svg)._canvas.nodeName);
 
     test.end();
 });

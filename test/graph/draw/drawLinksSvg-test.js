@@ -13,7 +13,7 @@ tape("links DOM should correspond _links always", function(test){
     myGraph.links(links);
     myGraph.removeLinks(1);
 
-    myGraph.render('IMMEDIATELY');
+    myGraph.renderImmediately();
     
     test.equal(myGraph.links().length, document.querySelectorAll('.link-path').length);
     test.equal(myGraph.links().length, document.querySelectorAll('.link-label').length);
@@ -30,7 +30,7 @@ tape("Link's DOM should correspond Link's property", function(test) {
         .links([{id: 1, src: 1, dst: 2, label: "a", color: "#342234", selected: true}, {id: 2, src: 1, dst: 2}, {id: 3, src: 1, dst: 2}]);
     
     
-    myGraph.render('IMMEDIATELY');
+    myGraph.renderImmediately();
     
     var pathsEle = document.querySelectorAll(".link-path"),
         labelsEle = document.querySelectorAll(".link-label");
@@ -56,7 +56,7 @@ tape("Link's DOM should correspond Link's property", function(test) {
     firstLink.direction(2);
     secondLink.direction(3);
     thirdLink.direction(0);
-    myGraph.render('IMMEDIATELY');
+    myGraph.renderImmediately();
     test.equal(firstPath.className, 'link-path selected');
     test.equal(firstPath.style.strokeWidth, '7');
     test.equal(firstLabel.textContent, "abc");
@@ -70,7 +70,7 @@ tape("Link's DOM should correspond Link's property", function(test) {
     
     
     secondLink._pathEle.dispatchEvent(new window.MouseEvent("mousedown"));
-    myGraph.render('IMMEDIATELY');
+    myGraph.renderImmediately();
     test.equal(firstPath.className, 'link-path');
     test.equal(secondPath.className, 'link-path selected');
     test.equal(firstCircle.className, 'node');

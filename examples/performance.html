@@ -1,0 +1,47 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="../dist/css/g3.css">
+    <link rel="stylesheet" href="../node_modules/font-awesome/css/font-awesome.css">
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        .svg1 {
+            width: 1500px;
+            height: 500px;
+            background: beige;
+        }
+
+        .tools {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+        }
+    </style>
+</head>
+<body>
+<svg id="my-graph"></svg>
+<div class="tools">
+    <button id="showBrush">showBrush</button>
+</div>
+</body>
+</html>
+<script src="../node_modules/underscore/underscore-min.js"></script>
+<script src="../node_modules/d3/build/d3.js"></script>
+<script src="../node_modules/jquery/dist/jquery.min.js"></script>
+<script src="../dist/js/g3.js"></script>
+<script>
+
+    var myGraph = g3.graph("#my-graph");
+
+    $.getJSON('http://localhost/magneto_api/g3.php/nodes')
+            .then(function(data){
+                myGraph.nodes(data.nodes)
+                        .links(data.links);
+            });
+</script>

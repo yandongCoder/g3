@@ -10,11 +10,11 @@ export default function GroupedBy(newNode, Nodes, Links, attachedLinks) {
         var attachedLink = {"link": Link};
         if(Nodes.indexOf(Link.source) !== -1) {
             attachedLink.originalSource = Link.source;
-            Link.source = newNode;
+            Link.changeSource(newNode);
         }
         if(Nodes.indexOf(Link.target) !== -1) {
             attachedLink.originalTarget = Link.target;
-            Link.target = newNode;
+            Link.changeTarget(newNode);
         }
         this.attachedLinks.push(attachedLink);
     }, this);

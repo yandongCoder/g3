@@ -1,4 +1,3 @@
-import {RENDER_TYPE} from "./CONSTANT";
 export default function () {
     //不可移动
     if (!this.movable) {
@@ -20,7 +19,7 @@ export default function () {
     var hideScale = this.config.scaleOfHideLabel;
     
     //render while should hide label
-    if(previousScale > hideScale && currentScale < hideScale) this.render(RENDER_TYPE.IMMEDIATELY);
+    if(previousScale > hideScale && currentScale < hideScale) this.renderImmediately();
     //panning don't need re-render, render only after zooming
-    if(currentScale !== previousScale && currentScale > hideScale) this.render(RENDER_TYPE.IMMEDIATELY);
+    if(currentScale !== previousScale && currentScale > hideScale) this.renderImmediately();
 }

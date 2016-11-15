@@ -1,10 +1,8 @@
-import {RENDER_TYPE} from "../CONSTANT";
-
 function color(color) {
     if(!arguments.length) return this._color || "#123456";
 
     this._color = color;
-    this.graph.render();
+    this.graph.delayRender(this);
 
     return this;
 }
@@ -13,7 +11,7 @@ function icon(icon) {
     if(!arguments.length) return this._icon;
     
     this._icon = icon;
-    this.graph.render();
+    this.graph.delayRender(this);
     
     return this;
 }
@@ -22,7 +20,7 @@ function mugshot(mugshot) {
     if(!arguments.length) return this._mugshot;
     
     this._mugshot = mugshot;
-    this.graph.render();
+    this.graph.delayRender(this);
     
     return this;
 }
@@ -39,7 +37,7 @@ function label(label) {
     if(!arguments.length) return this._label || "";
     
     this._label = label;
-    this.graph.render();
+    this.graph.delayRender(this);
     
     return this;
 }
@@ -48,7 +46,7 @@ function selected(selected) {
     if(!arguments.length) return this._selected;
     this._selected = selected;
     
-    this.graph.render(RENDER_TYPE.SELECT);
+    this.graph.delayRender(this);
     
     return this;
 }
@@ -57,7 +55,7 @@ function radius(radius) {
     if(!arguments.length) return this._radius;
     
     this._radius = radius;
-    this.graph.render();
+    this.graph.delayRender(this);
     
     return this;
 }

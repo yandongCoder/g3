@@ -1,5 +1,5 @@
 import select from "../utils/select";
-import render from "./render";
+import {render, delayRender, renderImmediately} from "./render";
 import {clearNodes, clearLinks, hasNode, hasLink, addNode, addLink, removeNodes, removeLinks, removeLinksOfNode, nodes, links} from "./data";
 import {getNodes, getRenderedNodes, getSelectedNodes, getInvertedNodes, getUngroupedNodes, getLinkedNodes, getRelatedNodes} from "./getNodes";
 import {getLinks, getContainLinks, getAttachedLinks, getRelatedLinks, getRenderedLinks} from "./getLinks";
@@ -16,6 +16,7 @@ import defaultConfig from "./defaultConfig";
 import findShortestPath from "./findShortestPath";
 import {forceLayout, gridLayout, hierarchyLayout} from "./layout";
 import getJSON from "./getJSON";
+import updateDOM from "./draw/updateDOM";
 
 function Graph(selector, config) {
 
@@ -29,11 +30,15 @@ function Graph(selector, config) {
     this._nodesHash = {};
     this._links = [];
     this._linksHash = {};
+    
+    this.updateDOM = new updateDOM(this);
 }
 
 Graph.prototype = {
     constructor: Graph,
     render: render,
+    delayRender: delayRender,
+    renderImmediately: renderImmediately,
     nodes: nodes,
     getNodes: getNodes,
     getSelectedNodes: getSelectedNodes,

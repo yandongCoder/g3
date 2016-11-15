@@ -1,24 +1,34 @@
 import {RENDER_TYPE} from "./CONSTANT";
 
-export default function (renderType, callback) {
-    if(!this.config.ifRender) return this;
+function delayRender(Obj, renderType){
+    this.updateDOM.addObj(Obj, renderType);
+    this.render();
+}
 
-    var canvasType = this._canvas.nodeName;
+function renderImmediately(){
+    this.render(RENDER_TYPE.IMMEDIATELY);
+}
 
-    if(canvasType === 'svg'){
-        this._init();
-    }
-
+function render(renderType) {
     var self = this;
-    clearTimeout(this._renderDelay);
     
-    if(renderType === RENDER_TYPE.IMMEDIATELY) draw();
-    else this._renderDelay = setTimeout(draw, 0);
+    if(!this.config.ifRender) return this;
+    var canvasType = this._canvas.nodeName;
+    if(canvasType === 'svg'){ this._init();}
+    
+    if(renderType === RENDER_TYPE.IMMEDIATELY){
+        draw(renderType);
+    }
+    else{
+        clearTimeout(this._renderDelay);
+        this._renderDelay = setTimeout(draw, 0);
+    }
     
     return this;
     
-    function draw(){
+    function draw(renderType){
         self._draw(renderType, canvasType);
-        if(callback instanceof Function) callback();
     }
 }
+
+export {render, delayRender, renderImmediately};

@@ -57,13 +57,10 @@
         iconPrefix: "fa fa-",
         onNodeMouseDown: function(Node){}
     })
-    .nodes(groupedData.nodes)
-    .links(groupedData.links);
+    .nodes(groupedByNodeProperty.nodes)
+    .links(groupedByNodeProperty.links);
 
-    myGraph.group([myGraph.nodes()[0], myGraph.nodes()[1]]);
-    myGraph.group([myGraph.nodes()[2], myGraph.nodes()[3]]);
 
-    console.log(myGraph.nodes()[4].groupedBy.getOriginalLinks());
 
 //    myGraph.groupBy(null, function(Node){
 //        var groupIds = [];
@@ -86,8 +83,6 @@
     d3.select("#showBrush").on('click', myGraph.brush.show);
     d3.select("#hideBrush").on('click', myGraph.brush.hide);
 
-
-    myGraph.group([myGraph.nodes()[2], myGraph.nodes()[4]]);
     //    myGraph.group([myGraph.nodes()[3], myGraph.nodes()[5]]);
 
 
@@ -97,7 +92,9 @@
 //    myGrid(myGraph.nodes());
     setTimeout(
             function getRemoteData() {
-                myGraph._getSelectedNodesSelection();
+
+                myGraph.group([myGraph.nodes()[2], myGraph.nodes()[4]]);
+                //myGraph.links()[2].merge();
 //                myGraph._getSvgSelection().call(myGraph.zoom.scaleTo, 0.4);
 //                myGraph._getSvgSelection().call(myGraph.zoom.translateBy, 800, 800);
                 //myGraph.transform(0.3, 0, 0);

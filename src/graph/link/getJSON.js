@@ -6,6 +6,10 @@ export default function () {
             json[prop] = {links: []};
             this[prop].links.map(function(Link){ json[prop].links.push(Link.id);});
             
+        } else if(prop === 'src'){
+            json[prop] = this.source.id || this[prop];
+        } else if(prop === 'dst'){
+            json[prop] = this.target.id || this[prop];
         } else if(prop === 'transformedBy'){
             json[prop] = {node: this[prop].node.id, links: []};
             this[prop].links.map(function(Link){ json[prop].links.push(Link.id);});
