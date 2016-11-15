@@ -1581,15 +1581,16 @@ function drawLinksSvg (renderType) {
         .on('contextmenu', this.config.onLinkContextmenu)
         .call(updatePathAttr);
     
-    linkLabels.enter().append('text')
+    var text = linkLabels.enter().append('text')
         .each(function(Link){ Link._labelEle = this })
         .style("pointer-events", "none")
         .classed('link-label', true)
-        .attr('id', function (Link) { return 'link-label' + Link.id; })
-        .append('textPath')
+        .attr('id', function (Link) { return 'link-label' + Link.id; });
+    text.append('textPath')
         .attr('xlink:href', function (Link) {  return getAbsUrl() + '#link-path' + Link.id; })
-        .style("pointer-events", "none")
-        .call(updateLabelAttr);
+        .style("pointer-events", "none");
+    
+    text.call(updateLabelAttr);
     
     if(renderType === RENDER_TYPE.IMMEDIATELY){
         var updateLinks  = this._getLinksSelection(),
