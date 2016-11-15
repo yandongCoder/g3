@@ -136,9 +136,9 @@ function hierarchyLayout(selectedNodes, relatedLinks, width, height) {
             id: node.id,
             children: []
         };
-        relatedLinks.forEach(function (w) {
-            if (w.src === node.id) {
-                ret.children.push({id: w.dst});
+        relatedLinks.forEach(function (Link) {
+            if (Link.source.id === node.id) {
+                ret.children.push({id: Link.target.id});
             }
         });
         return ret;
@@ -170,9 +170,9 @@ function hierarchyLayout(selectedNodes, relatedLinks, width, height) {
         tmpNodesList.push(tmp_D3_treeNode);
     }
     
-    relatedLinks.forEach(function (d) {
+    relatedLinks.forEach(function (Link) {
         for (var i = 0; i < tmpNodesList.length; i++) {
-            if (d.dst === tmpNodesList[i].id) {
+            if (Link.target.id === tmpNodesList[i].id) {
                 tmpNodesList[i].indegree++;
                 break;
             }

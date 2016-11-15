@@ -15,8 +15,6 @@ export default function Link(data, graph) {
     this._width = data.width || (graph && graph.config.linkWidth);
     this._color = data.color || (graph && graph.config.linkColor);
     this._selected = data.selected || false;
-    this.src = data.src;
-    this.dst = data.dst;
     this._direction = data.direction === undefined? 1: data.direction;//0: none, 1: from, 2: to, 3 double
 
     this.source = graph && this.graph._nodesHash[data.src];
@@ -29,8 +27,9 @@ export default function Link(data, graph) {
     if(data.mergedBy) this.mergedBy = data.mergedBy;
     if(data.transformedBy) this.transformedBy = data.transformedBy;
     
+    var exceptKey = ['src', 'dst'];
     for (var prop in data) {
-        if (data.hasOwnProperty(prop) && this[prop] === undefined) this[prop] = data[prop];
+        if (data.hasOwnProperty(prop) && this[prop] === undefined && exceptKey.indexOf(prop) === -1) this[prop] = data[prop];
     }
 }
 

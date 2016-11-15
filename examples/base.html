@@ -52,14 +52,17 @@
         links: [{id:1, src: 1, dst: 2}, {id:2, src: 2, dst: 3}]
     };
 
-    var myGraph = g3.graph("#my-graph",{
-        zoomable: false,
-        iconPrefix: "fa fa-",
-        onNodeMouseDown: function(Node){}
-    })
-    .nodes(groupedByNodeProperty.nodes)
-    .links(groupedByNodeProperty.links);
+//    var myGraph = g3.graph("#my-graph",{
+//        zoomable: false,
+//        iconPrefix: "fa fa-",
+//        onNodeMouseDown: function(Node){}
+//    })
+//    .nodes(groupedByNodeProperty.nodes)
+//    .links(groupedByNodeProperty.links);
 
+    var myGraph = g3.graph(null, {ifRender: false})
+            .nodes([{id: 1, label: "a", size: 50}, {id: 2, label: "b", color: "#445987"}, {id:3, label: "c"}])
+            .links([{id: 1, src: 1, dst: 2, label: "L1", color: "#ff0000", width: 5, direction: 1}, {id: 2, src: 2, dst: 1, label: "L2", color: "#00ff00", direction: 2},  {id: 3, src: 2, dst: 3, label: "L3", color: "#00ff00", direction: 2}]);
 
 
 //    myGraph.groupBy(null, function(Node){
@@ -80,8 +83,8 @@
 
 
 
-    d3.select("#showBrush").on('click', myGraph.brush.show);
-    d3.select("#hideBrush").on('click', myGraph.brush.hide);
+    //d3.select("#showBrush").on('click', myGraph.brush.show);
+    //d3.select("#hideBrush").on('click', myGraph.brush.hide);
 
     //    myGraph.group([myGraph.nodes()[3], myGraph.nodes()[5]]);
 
@@ -92,8 +95,8 @@
 //    myGrid(myGraph.nodes());
     setTimeout(
             function getRemoteData() {
-
-                myGraph.group([myGraph.nodes()[2], myGraph.nodes()[4]]);
+                var linkObj = g3.utils.deriveLinkFromLNL([myGraph.links()[0], myGraph.links()[1]], myGraph.nodes()[1], [myGraph.links()[2]]);
+                //myGraph.group([myGraph.nodes()[2], myGraph.nodes()[4]]);
                 //myGraph.links()[2].merge();
 //                myGraph._getSvgSelection().call(myGraph.zoom.scaleTo, 0.4);
 //                myGraph._getSvgSelection().call(myGraph.zoom.translateBy, 800, 800);
