@@ -17,6 +17,12 @@ function getSelectedNodes() {
     });
 }
 
+function getDisabledNodes() {
+    return this.getNodes(function(Node){
+        return Node.disabled();
+    });
+}
+
 function getInvertedNodes(filter) {
     var Nodes = this.getNodes(filter);
     return this.getRenderedNodes().filter(function(Node){
@@ -84,4 +90,4 @@ function getRelatedNodes(filter) {
     }
 }
 
-export {getNodes, getRenderedNodes, getSelectedNodes, getInvertedNodes, getUngroupedNodes, getLinkedNodes, getRelatedNodes};
+export {getNodes, getRenderedNodes, getSelectedNodes, getDisabledNodes, getInvertedNodes, getUngroupedNodes, getLinkedNodes, getRelatedNodes};

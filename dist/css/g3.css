@@ -8,11 +8,11 @@ svg.graph {
   overflow: hidden;
   cursor: move;
   background-color: #f1f1f1; }
-  .graph .disabled {
-    opacity: 0.1;
-    pointer-events: none; }
-  .graph .node, .graph line, .graph .link-path {
+  .graph .node, .graph .link-path, .graph .link-label {
     cursor: default; }
+    .graph .node.disabled, .graph .link-path.disabled, .graph .link-label.disabled {
+      opacity: 0.1;
+      pointer-events: none; }
   .graph .nodes .text-background {
     display: none; }
   .graph .nodes .node .fa {

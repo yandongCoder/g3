@@ -9,12 +9,12 @@ svg.graph{
   overflow: hidden;
   cursor: move;
   background-color: #f1f1f1;
-  .disabled{
-    opacity: 0.1;
-    pointer-events: none;
-  }
-  .node, line, .link-path{
+  .node, .link-path, .link-label{
     cursor: default;
+    &.disabled{
+      opacity: 0.1;
+      pointer-events: none;
+    }
   }
   .nodes{
     .text-background{

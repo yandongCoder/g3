@@ -1102,6 +1102,12 @@ function getSelectedNodes() {
     });
 }
 
+function getDisabledNodes() {
+    return this.getNodes(function(Node){
+        return Node.disabled();
+    });
+}
+
 function getInvertedNodes(filter) {
     var Nodes = this.getNodes(filter);
     return this.getRenderedNodes().filter(function(Node){
@@ -1179,6 +1185,11 @@ function getSelectedLinks() {
     });
 }
 
+function getDisabledLinks() {
+    return this.getLinks(function(Link){
+        return Link.disabled();
+    });
+}
 
 function getContainLinks(Nodes) {
     var ids = getIds(Nodes);
@@ -1247,6 +1258,41 @@ function deselectNodes() {
 function deselectLinks(filter) {
     this.getSelectedLinks(filter).forEach(function(Link){
         Link.selected(false);
+    }, this);
+    return this;
+}
+
+function disableNodes(filter, retainOther) {
+    if(!retainOther) this.enableAll();
+    this.getNodes(filter).forEach(function(Node){
+        Node.disabled(true);
+    }, this);
+    return this;
+}
+
+function disableLinks(filter, retainOther) {
+    if(!retainOther) this.enableAll();
+    this.getLinks(filter).forEach(function(Link){
+        Link.disabled(true);
+    }, this);
+    return this;
+}
+
+function enableAll(){
+    this.enableNodes();
+    this.enableLinks();
+}
+
+function enableNodes() {
+    this.getDisabledNodes().forEach(function(Node){
+        Node.disabled(false);
+    }, this);
+    return this;
+}
+
+function enableLinks(filter) {
+    this.getDisabledLinks(filter).forEach(function(Link){
+        Link.disabled(false);
     }, this);
     return this;
 }
@@ -2574,6 +2620,7 @@ Graph.prototype = {
     nodes: nodes,
     getNodes: getNodes,
     getSelectedNodes: getSelectedNodes,
+    getDisabledNodes: getDisabledNodes,
     getRenderedNodes: getRenderedNodes,
     getUngroupedNodes: getUngroupedNodes,
     _addNode: addNode,
@@ -2584,6 +2631,11 @@ Graph.prototype = {
     deselectNodes: deselectNodes,
     deselectLinks: deselectLinks,
     deselectAll: deselectAll,
+    disableNodes: disableNodes,
+    disableLinks: disableLinks,
+    enableAll: enableAll,
+    enableNodes: enableNodes,
+    enableLinks: enableLinks,
     getInvertedNodes: getInvertedNodes,
     getRelatedNodes: getRelatedNodes,
     getLinkedNodes: getLinkedNodes,
@@ -2592,6 +2644,7 @@ Graph.prototype = {
     links: links,
     getLinks: getLinks,
     getSelectedLinks: getSelectedLinks,
+    getDisabledLinks: getDisabledLinks,
     getRenderedLinks: getRenderedLinks,
     getContainLinks: getContainLinks,
     getAttachedLinks: getAttachedLinks,

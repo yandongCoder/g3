@@ -75,3 +75,5 @@ tape("If a grouped Node is grouped from Nodes is not all selected, grouped Node 
 
     test.end();
 });
+
+// TODO test disableXX and enableXX

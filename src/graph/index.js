@@ -1,9 +1,9 @@
 import select from "../utils/select";
 import {render, delayRender, renderImmediately} from "./render";
 import {clearNodes, clearLinks, hasNode, hasLink, addNode, addLink, removeNodes, removeLinks, removeLinksOfNode, nodes, links} from "./data";
-import {getNodes, getRenderedNodes, getSelectedNodes, getInvertedNodes, getUngroupedNodes, getLinkedNodes, getRelatedNodes} from "./getNodes";
-import {getLinks, getSelectedLinks, getContainLinks, getAttachedLinks, getRelatedLinks, getRenderedLinks} from "./getLinks";
-import {selectNodes, selectLinks, deselectNodes, deselectLinks, deselectAll} from "./select_deselect";
+import {getNodes, getRenderedNodes, getSelectedNodes, getDisabledNodes, getInvertedNodes, getUngroupedNodes, getLinkedNodes, getRelatedNodes} from "./getNodes";
+import {getLinks, getSelectedLinks, getDisabledLinks, getContainLinks, getAttachedLinks, getRelatedLinks, getRenderedLinks} from "./getLinks";
+import {selectNodes, selectLinks, deselectNodes, deselectLinks, deselectAll, disableNodes, disableLinks, enableAll, enableNodes, enableLinks} from "./multi";
 import buildReference from "./buildReference";
 import init from "./init/init";
 import draw from "./draw/index";
@@ -42,6 +42,7 @@ Graph.prototype = {
     nodes: nodes,
     getNodes: getNodes,
     getSelectedNodes: getSelectedNodes,
+    getDisabledNodes: getDisabledNodes,
     getRenderedNodes: getRenderedNodes,
     getUngroupedNodes: getUngroupedNodes,
     _addNode: addNode,
@@ -52,6 +53,11 @@ Graph.prototype = {
     deselectNodes: deselectNodes,
     deselectLinks: deselectLinks,
     deselectAll: deselectAll,
+    disableNodes: disableNodes,
+    disableLinks: disableLinks,
+    enableAll: enableAll,
+    enableNodes: enableNodes,
+    enableLinks: enableLinks,
     getInvertedNodes: getInvertedNodes,
     getRelatedNodes: getRelatedNodes,
     getLinkedNodes: getLinkedNodes,
@@ -60,6 +66,7 @@ Graph.prototype = {
     links: links,
     getLinks: getLinks,
     getSelectedLinks: getSelectedLinks,
+    getDisabledLinks: getDisabledLinks,
     getRenderedLinks: getRenderedLinks,
     getContainLinks: getContainLinks,
     getAttachedLinks: getAttachedLinks,

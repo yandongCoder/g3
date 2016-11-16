@@ -92,7 +92,8 @@
 //    myGrid(myGraph.nodes());
     setTimeout(
             function getRemoteData() {
-                myGraph.links()[0].disabled(true);
+                myGraph.disableNodes(myGraph.nodes());
+                myGraph.disableLinks(myGraph.links());
                 //myGraph.group([myGraph.nodes()[2], myGraph.nodes()[4]]);
                 //myGraph.links()[2].merge();
 //                myGraph._getSvgSelection().call(myGraph.zoom.scaleTo, 0.4);

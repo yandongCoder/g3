@@ -11,6 +11,11 @@ function getSelectedLinks() {
     });
 }
 
+function getDisabledLinks() {
+    return this.getLinks(function(Link){
+        return Link.disabled();
+    });
+}
 
 function getContainLinks(Nodes) {
     var ids = getIds(Nodes);
@@ -48,4 +53,4 @@ function getRenderedLinks() {
     });
 }
 
-export {getLinks, getSelectedLinks, getContainLinks, getAttachedLinks, getRelatedLinks, getRenderedLinks};
+export {getLinks, getSelectedLinks, getDisabledLinks, getContainLinks, getAttachedLinks, getRelatedLinks, getRenderedLinks};
