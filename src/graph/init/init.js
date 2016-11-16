@@ -20,8 +20,7 @@ export default function () {
         .on('click', function(){
             if (d3.event.target.nodeName !== 'svg') return;
             
-            self.deselectNodes()
-                .deselectLinks();
+            self.deselectAll();
     
             self.config.onGraphClick.call(this);
         })

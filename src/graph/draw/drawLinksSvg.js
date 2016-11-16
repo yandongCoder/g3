@@ -14,8 +14,7 @@ export default function (renderType) {
         .each(function(Link){ Link._pathEle = this })
         .attr('id', function(Link){ return "link-path" + Link.id})
         .on('mousedown', function(Link, i){
-            self.deselectLinks()
-                .deselectNodes();
+            self.deselectAll();
             Link.selected(!Link.selected());
             
             self.config.onLinkMouseDown.call(this, Link, i);

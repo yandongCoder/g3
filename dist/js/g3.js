@@ -1196,7 +1196,7 @@ function getRenderedLinks() {
 }
 
 function selectNodes(filter, retainOther) {
-    if(!retainOther) this.deselectNodes();
+    if(!retainOther) this.deselectAll();
     this.getNodes(filter).forEach(function(Node){
         Node.selected(true);
     }, this);
@@ -1204,11 +1204,16 @@ function selectNodes(filter, retainOther) {
 }
 
 function selectLinks(filter, retainOther) {
-    if(!retainOther) this.deselectLinks();
+    if(!retainOther) this.deselectAll();
     this.getLinks(filter).forEach(function(Link){
         Link.selected(true);
     }, this);
     return this;
+}
+
+function deselectAll(){
+    this.deselectNodes();
+    this.deselectLinks();
 }
 
 function deselectNodes() {
@@ -1472,8 +1477,7 @@ function init () {
         .on('click', function(){
             if (d3.event.target.nodeName !== 'svg') return;
             
-            self.deselectNodes()
-                .deselectLinks();
+            self.deselectAll();
     
             self.config.onGraphClick.call(this);
         })
@@ -1608,8 +1612,7 @@ function drawLinksSvg (renderType) {
         .each(function(Link){ Link._pathEle = this })
         .attr('id', function(Link){ return "link-path" + Link.id})
         .on('mousedown', function(Link, i){
-            self.deselectLinks()
-                .deselectNodes();
+            self.deselectAll();
             Link.selected(!Link.selected());
             
             self.config.onLinkMouseDown.call(this, Link, i);
@@ -2556,6 +2559,7 @@ Graph.prototype = {
     selectLinks: selectLinks,
     deselectNodes: deselectNodes,
     deselectLinks: deselectLinks,
+    deselectAll: deselectAll,
     getInvertedNodes: getInvertedNodes,
     getRelatedNodes: getRelatedNodes,
     getLinkedNodes: getLinkedNodes,
