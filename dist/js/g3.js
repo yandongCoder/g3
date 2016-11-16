@@ -1404,6 +1404,7 @@ function Brush () {
             self._getNodesSelection().each(function (Node) {
                 Node.pselected = d3.event.sourceEvent.ctrlKey && Node.selected();
             });
+            self.config.onBrushStart.call(this);
         })
         .on('brush', function () {
             if (!d3.event.selection) return; // Ignore empty selections.
@@ -1414,12 +1415,13 @@ function Brush () {
             self._getNodesSelection().each(function(Node){
                 Node.selected(Node.pselected ^ ( (extent[0][0] - t.x) / t.k  <= Node.getX() && Node.getX() < (extent[1][0] - t.x) / t.k  && (extent[0][1] - t.y) / t.k <= Node.getY() && Node.getY() < (extent[1][1] - t.y) / t.k ));
             });
-
+            self.config.onBrush.call(this);
         })
         .on('end', function () {
             if (!d3.event.selection) return; // Ignore empty selections.
             self._getBrushSelection()
                 .call(brush.move, null);
+            self.config.onBrushEnd.call(this);
         });
 
     brush.show = function(){
@@ -1732,6 +1734,8 @@ function transform(k, x, y, duration) {
     if(typeof k === "number") transformed = transformed.scale(k);
     if(typeof x === "number" && typeof y === "number") transformed = transformed.translate(x, y);
     this._getSvgSelection(duration).call(this.zoom.transform, transformed);
+    
+    return this;
 }
 
 function scaleTo(k, duration) {
@@ -1859,6 +1863,9 @@ const DEFAULT_CONFIG = {
     iconPrefix: "",
     mugshot: "",
     mugshotPrefix: "",
+    onBrushStart: function(){},
+    onBrush: function(){},
+    onBrushEnd: function(){},
     onGraphClick: function(){},
     onGraphContextmenu: function(){},
     onNodeMouseDown: function(){},
