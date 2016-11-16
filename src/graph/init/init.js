@@ -26,6 +26,7 @@ export default function () {
             self.config.onGraphClick.call(this);
         })
         .on('contextmenu', function(){
+            if (d3.event.target.nodeName !== 'svg') return;
             self.config.onGraphContextmenu.call(this);
         });
 

@@ -11,7 +11,7 @@ tape("deselect Nodes", function(test){
     
     test.end();
 });
-
+//TODO selectLinks test
 //deselectLinks method
 tape("deselect Links", function(test){
     var myGraph = g3.graph(null, {ifRender: false})

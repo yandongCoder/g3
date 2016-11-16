@@ -1200,6 +1200,15 @@ function selectNodes(filter, retainOther) {
     this.getNodes(filter).forEach(function(Node){
         Node.selected(true);
     }, this);
+    return this;
+}
+
+function selectLinks(filter, retainOther) {
+    if(!retainOther) this.deselectLinks();
+    this.getLinks(filter).forEach(function(Link){
+        Link.selected(true);
+    }, this);
+    return this;
 }
 
 function deselectNodes() {
@@ -1469,6 +1478,7 @@ function init () {
             self.config.onGraphClick.call(this);
         })
         .on('contextmenu', function(){
+            if (d3.event.target.nodeName !== 'svg') return;
             self.config.onGraphContextmenu.call(this);
         });
 
@@ -2543,6 +2553,7 @@ Graph.prototype = {
     removeNodes: removeNodes,
     clearNodes: clearNodes,
     selectNodes: selectNodes,
+    selectLinks: selectLinks,
     deselectNodes: deselectNodes,
     deselectLinks: deselectLinks,
     getInvertedNodes: getInvertedNodes,

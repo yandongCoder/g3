@@ -3,6 +3,15 @@ function selectNodes(filter, retainOther) {
     this.getNodes(filter).forEach(function(Node){
         Node.selected(true);
     }, this);
+    return this;
+}
+
+function selectLinks(filter, retainOther) {
+    if(!retainOther) this.deselectLinks();
+    this.getLinks(filter).forEach(function(Link){
+        Link.selected(true);
+    }, this);
+    return this;
 }
 
 function deselectNodes() {
@@ -19,4 +28,4 @@ function deselectLinks(filter) {
     return this;
 }
 
-export {selectNodes, deselectNodes, deselectLinks};
+export {selectNodes, selectLinks, deselectNodes, deselectLinks};
