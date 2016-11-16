@@ -14,6 +14,19 @@ tape("Get and set color of a Link", function(test){
     test.end();
 });
 
+tape("Disable and enable a Link", function(test){
+    var myGraph = g3.graph(null, {ifRender: false})
+        .nodes([{id: 1}, {id: 2}])
+        .links([{id: 1, src: 1, dst: 2, disabled: true}, {id: 2, src: 2, dst: 1}]);
+    
+    test.equal(myGraph.links()[0].disabled(), true);
+    test.equal(myGraph.links()[1].disabled(), false);
+    myGraph.links()[0].disabled(false);
+    test.equal(myGraph.links()[0].disabled(), false);
+    
+    test.end();
+});
+
 tape("Get and set direction of a Link", function(test){
     var myGraph = g3.graph(null, {ifRender: false})
         .nodes([{id: 1}, {id: 2}])

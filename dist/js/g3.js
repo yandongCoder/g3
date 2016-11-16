@@ -314,6 +314,15 @@ function color$1(color) {
     return this;
 }
 
+function disabled$1(disabled) {
+    if(!arguments.length) return this._disabled;
+    
+    this._disabled = disabled;
+    this.graph.delayRender(this);
+    
+    return this;
+}
+
 function direction(direction) {
     if(!arguments.length) return this._direction;
     
@@ -750,6 +759,7 @@ function Link(data, graph) {
     this._color = data.color || (graph && graph.config.linkColor);
     this._selected = data.selected || false;
     this._direction = data.direction === undefined? 1: data.direction;//0: none, 1: from, 2: to, 3 double
+    this._disabled = data.disabled || false;
 
     this.source = graph && this.graph._nodesHash[data.src];
     this.target = graph && this.graph._nodesHash[data.dst];
@@ -767,7 +777,6 @@ function Link(data, graph) {
     }
 }
 
-
 Link.prototype = {
     constructor: Link,
     hasST: hasST,
@@ -781,6 +790,7 @@ Link.prototype = {
     label: label$1,
     width: width,
     selected: selected$1,
+    disabled: disabled$1,
     remove: remove,
     getSourceId: getSourceId,
     getTargetId: getTargetId,
@@ -1667,6 +1677,7 @@ function drawLinksSvg (renderType) {
         selection
             .attr('d', function (Link) { var c = Link.getCoordination();  return 'M ' + c.Sx + ' ' + c.Sy + ' L ' + c.Tx + ' ' + c.Ty; })
             .classed("selected", function(Link){return Link.selected()})
+            .classed("disabled", function(Node){return Node.disabled()})
             .style('marker-start', function (Link) { return Link.getStartArrow(); })
             .style('marker-end', function (Link) { return Link.getEndArrow(); })
             .style('stroke-width', function(Link){ return Link.width(); })
@@ -1684,6 +1695,7 @@ function drawLinksSvg (renderType) {
             .style('display', function(Link){
                 return (scale < self.config.scaleOfHideLabel)? 'none': 'block';
             })
+            .classed("disabled", function(Node){return Node.disabled()})
             .attr('dx', function(Link){return Link.getTextOffset(); })
             .attr('dy', 1)
             .attr('font-size', 13)

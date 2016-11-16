@@ -9,6 +9,15 @@ function color(color) {
     return this;
 }
 
+function disabled(disabled) {
+    if(!arguments.length) return this._disabled;
+    
+    this._disabled = disabled;
+    this.graph.delayRender(this);
+    
+    return this;
+}
+
 function direction(direction) {
     if(!arguments.length) return this._direction;
     
@@ -95,4 +104,4 @@ function transformed(transformed) {
     
     return this;
 }
-export {color, direction, label, selected, width, getSourceId, getTargetId, changeSource, changeTarget, merged, grouped, transformed};
+export {color, disabled, direction, label, selected, width, getSourceId, getTargetId, changeSource, changeTarget, merged, grouped, transformed};

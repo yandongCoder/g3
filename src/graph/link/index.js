@@ -1,6 +1,6 @@
 import hasST from "./hasST";
 import {getStartArrow, getEndArrow, getTextOffset, getLinkLabelTransform, getCoordination} from "./display";
-import {color, direction, label, selected, width, getSourceId, getTargetId, changeSource, changeTarget, merged, grouped, transformed} from "./attributes";
+import {color, disabled, direction, label, selected, width, getSourceId, getTargetId, changeSource, changeTarget, merged, grouped, transformed} from "./attributes";
 import {DIRECTION} from "../CONSTANT";
 import remove from "./remove";
 import {merge, flattenMerge, unmerge} from "./merge";
@@ -16,6 +16,7 @@ export default function Link(data, graph) {
     this._color = data.color || (graph && graph.config.linkColor);
     this._selected = data.selected || false;
     this._direction = data.direction === undefined? 1: data.direction;//0: none, 1: from, 2: to, 3 double
+    this._disabled = data.disabled || false;
 
     this.source = graph && this.graph._nodesHash[data.src];
     this.target = graph && this.graph._nodesHash[data.dst];
@@ -33,7 +34,6 @@ export default function Link(data, graph) {
     }
 }
 
-
 Link.prototype = {
     constructor: Link,
     hasST: hasST,
@@ -47,6 +47,7 @@ Link.prototype = {
     label: label,
     width: width,
     selected: selected,
+    disabled: disabled,
     remove: remove,
     getSourceId: getSourceId,
     getTargetId: getTargetId,

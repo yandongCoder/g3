@@ -54,10 +54,11 @@ tape("Link's DOM should correspond Link's property", function(test) {
     firstLink.label('abc');
     firstLink.color('#666888');
     firstLink.direction(2);
+    firstLink.disabled(true);
     secondLink.direction(3);
     thirdLink.direction(0);
     myGraph.renderImmediately();
-    test.equal(firstPath.className, 'link-path selected');
+    test.equal(firstPath.className, 'link-path selected disabled');
     test.equal(firstPath.style.strokeWidth, '7');
     test.equal(firstLabel.textContent, "abc");
     test.equal(firstPath.style.stroke, "#666888");
@@ -71,7 +72,7 @@ tape("Link's DOM should correspond Link's property", function(test) {
     
     secondLink._pathEle.dispatchEvent(new window.MouseEvent("mousedown"));
     myGraph.renderImmediately();
-    test.equal(firstPath.className, 'link-path');
+    test.equal(firstPath.className, 'link-path disabled');
     test.equal(secondPath.className, 'link-path selected');
     test.equal(firstCircle.className, 'node');
     

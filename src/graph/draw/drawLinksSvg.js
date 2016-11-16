@@ -57,6 +57,7 @@ export default function (renderType) {
         selection
             .attr('d', function (Link) { var c = Link.getCoordination();  return 'M ' + c.Sx + ' ' + c.Sy + ' L ' + c.Tx + ' ' + c.Ty; })
             .classed("selected", function(Link){return Link.selected()})
+            .classed("disabled", function(Node){return Node.disabled()})
             .style('marker-start', function (Link) { return Link.getStartArrow(); })
             .style('marker-end', function (Link) { return Link.getEndArrow(); })
             .style('stroke-width', function(Link){ return Link.width(); })
@@ -74,6 +75,7 @@ export default function (renderType) {
             .style('display', function(Link){
                 return (scale < self.config.scaleOfHideLabel)? 'none': 'block';
             })
+            .classed("disabled", function(Node){return Node.disabled()})
             .attr('dx', function(Link){return Link.getTextOffset(); })
             .attr('dy', 1)
             .attr('font-size', 13)
