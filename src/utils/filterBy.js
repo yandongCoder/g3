@@ -15,5 +15,11 @@ export default function (filter, objArray) {
             return ids.indexOf(v.id) !== -1;
         };
     }
-    return objArray.filter(filtered);
+    
+    var filteredArr = [];
+    
+    for(var i = 0; i < objArray.length; i++){
+        if(filtered(objArray[i])) filteredArr.push(objArray[i]);
+    }
+    return filteredArr;
 }

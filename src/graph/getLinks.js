@@ -7,17 +7,28 @@ function getLinks(filter) {
 
 function getContainLinks(Nodes) {
     var ids = getIds(Nodes);
-    return this._links.filter(function(Link){
-        return (ids.indexOf(Link.getSourceId()) !== -1) && (ids.indexOf(Link.getTargetId()) !== -1) && !Link.merged();
-    });
+    var containedLinks = [];
+    
+    for(var i = this._links.length; i--;){
+        var Link = this._links[i];
+        if((ids.indexOf(Link.getSourceId()) !== -1) && (ids.indexOf(Link.getTargetId()) !== -1) && !Link.merged()){
+            containedLinks.push(Link);
+        }
+    }
+    return containedLinks;
 }
 
 function getAttachedLinks(Nodes) {
     var ids = getIds(Nodes);
-    return this._links.filter(function (Link) {
-        return ( (ids.indexOf(Link.getSourceId()) === -1 && ids.indexOf(Link.getTargetId()) !== -1) || (ids.indexOf(Link.getSourceId()) !== -1 && ids.indexOf(Link.getTargetId()) === -1) )
-            && !Link.merged();
-    });
+    var links = this.getRenderedLinks();
+    var attachedLinks = [];
+    for(var i = links.length; i--;){
+        var Link = links[i];
+        if( (ids.indexOf(Link.getSourceId()) === -1 && ids.indexOf(Link.getTargetId()) !== -1) || (ids.indexOf(Link.getSourceId()) !== -1 && ids.indexOf(Link.getTargetId()) === -1) ){
+            attachedLinks.push(Link);
+        }
+    }
+    return attachedLinks;
 }
 
 function getRelatedLinks(Nodes) {

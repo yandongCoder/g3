@@ -1056,7 +1056,13 @@ function filterBy (filter, objArray) {
             return ids.indexOf(v.id) !== -1;
         };
     }
-    return objArray.filter(filtered);
+    
+    var filteredArr = [];
+    
+    for(var i = 0; i < objArray.length; i++){
+        if(filtered(objArray[i])) filteredArr.push(objArray[i]);
+    }
+    return filteredArr;
 }
 
 function getNodes(filter) {
@@ -1148,17 +1154,28 @@ function getLinks(filter) {
 
 function getContainLinks(Nodes) {
     var ids = getIds(Nodes);
-    return this._links.filter(function(Link){
-        return (ids.indexOf(Link.getSourceId()) !== -1) && (ids.indexOf(Link.getTargetId()) !== -1) && !Link.merged();
-    });
+    var containedLinks = [];
+    
+    for(var i = this._links.length; i--;){
+        var Link = this._links[i];
+        if((ids.indexOf(Link.getSourceId()) !== -1) && (ids.indexOf(Link.getTargetId()) !== -1) && !Link.merged()){
+            containedLinks.push(Link);
+        }
+    }
+    return containedLinks;
 }
 
 function getAttachedLinks(Nodes) {
     var ids = getIds(Nodes);
-    return this._links.filter(function (Link) {
-        return ( (ids.indexOf(Link.getSourceId()) === -1 && ids.indexOf(Link.getTargetId()) !== -1) || (ids.indexOf(Link.getSourceId()) !== -1 && ids.indexOf(Link.getTargetId()) === -1) )
-            && !Link.merged();
-    });
+    var links = this.getRenderedLinks();
+    var attachedLinks = [];
+    for(var i = links.length; i--;){
+        var Link = links[i];
+        if( (ids.indexOf(Link.getSourceId()) === -1 && ids.indexOf(Link.getTargetId()) !== -1) || (ids.indexOf(Link.getSourceId()) !== -1 && ids.indexOf(Link.getTargetId()) === -1) ){
+            attachedLinks.push(Link);
+        }
+    }
+    return attachedLinks;
 }
 
 function getRelatedLinks(Nodes) {
@@ -1801,10 +1818,10 @@ function flattenGroup(filter) {
 }
 
 function draged (currentNode) {
-    this.getNodes(function(Node){ return Node.selected() || (Node === currentNode)})
-    .forEach(function(Node){
-        Node._nudge(d3.event.dx, d3.event.dy, true);
-    });
+    var nudgedNodes = this.getSelectedNodes();
+    for(var i = nudgedNodes.length; i--;){
+        nudgedNodes[i]._nudge(d3.event.dx, d3.event.dy, true);
+    }
     
     //this.render();
 }
