@@ -1,5 +1,5 @@
 import getStrLen from "../../utils/getStrLen";
-import {color, icon, mugshot, grouped, label, selected, radius, transformed, getX, getY} from "./attributes";
+import {color, disabled, icon, mugshot, grouped, label, selected, radius, transformed, getX, getY} from "./attributes";
 import nudge from "./nudge";
 import NtoL from "./NtoL";
 import getConnectedLinks from "./getConnectedLinks";
@@ -14,6 +14,7 @@ export default function Node(data, graph) {
     this._label = data.label || "";
     this.x = data.x || 0;
     this.y = data.y || 0;
+    this._disabled = data.disabled || false;
     this._radius = data.radius || graph.config.radius;
     this._color = data.color || graph.config.color;
     this._icon = data.icon  || graph.config.icon;
@@ -38,6 +39,7 @@ Node.prototype = {
         return getStrLen(this.label()) * 9;
     },
     color: color,
+    disabled: disabled,
     icon: icon,
     mugshot: mugshot,
     radius: radius,

@@ -52,6 +52,7 @@ tape("Node's DOM should correspond Node's property", function(test){
     
     firstNode.label('abc');
     firstNode.selected(false);
+    firstNode.disabled(true);
     firstNode.radius(40);
     firstNode._nudge(10, 10);
     firstNode.color('#666888');
@@ -60,7 +61,7 @@ tape("Node's DOM should correspond Node's property", function(test){
     
     myGraph.renderImmediately();
     test.equal(firstNodeEle.querySelector(".text-group").querySelector('span').textContent, "abc");
-    test.equal(firstNodeEle.className, "node");
+    test.equal(firstNodeEle.className, "node disabled");
     test.equal(firstNodeEle.querySelector("circle").getAttribute('r'), '40');
     test.equal(firstNodeEle.getAttribute("transform"), 'translate(15,10)');
     test.equal(firstNodeEle.querySelector("circle").style.fill, "#666888");

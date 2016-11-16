@@ -90,11 +90,20 @@ function getStrLen (str) {
 };
 
 function color(color) {
-    if(!arguments.length) return this._color || "#123456";
+    if(!arguments.length) return this._color;
 
     this._color = color;
     this.graph.delayRender(this);
 
+    return this;
+}
+
+function disabled(disabled) {
+    if(!arguments.length) return this._disabled;
+    
+    this._disabled = disabled;
+    this.graph.delayRender(this);
+    
     return this;
 }
 
@@ -915,6 +924,7 @@ function Node(data, graph) {
     this._label = data.label || "";
     this.x = data.x || 0;
     this.y = data.y || 0;
+    this._disabled = data.disabled || false;
     this._radius = data.radius || graph.config.radius;
     this._color = data.color || graph.config.color;
     this._icon = data.icon  || graph.config.icon;
@@ -939,6 +949,7 @@ Node.prototype = {
         return getStrLen(this.label()) * 9;
     },
     color: color,
+    disabled: disabled,
     icon: icon,
     mugshot: mugshot,
     radius: radius,
@@ -1565,7 +1576,8 @@ function drawNodesSvg (renderType) {
         var scale = self._getCurrentScale();
         
         selection.attr("transform", function (Node) { return "translate(" + Node.getX() + "," + Node.getY() + ")";})
-            .classed("selected", function(Node){return Node.selected()});
+            .classed("selected", function(Node){return Node.selected()})
+            .classed("disabled", function(Node){return Node.disabled()});
         
         selection.select('circle')
             .attr("r", function(Node){ return Node.radius();})

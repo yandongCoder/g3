@@ -1,9 +1,18 @@
 function color(color) {
-    if(!arguments.length) return this._color || "#123456";
+    if(!arguments.length) return this._color;
 
     this._color = color;
     this.graph.delayRender(this);
 
+    return this;
+}
+
+function disabled(disabled) {
+    if(!arguments.length) return this._disabled;
+    
+    this._disabled = disabled;
+    this.graph.delayRender(this);
+    
     return this;
 }
 
@@ -76,4 +85,4 @@ function getY() {
     return this.y;
 }
 
-export {color, icon, mugshot, grouped, label, selected, radius, transformed, getX, getY};
+export {color, disabled, icon, mugshot, grouped, label, selected, radius, transformed, getX, getY};

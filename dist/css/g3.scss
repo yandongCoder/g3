@@ -9,6 +9,10 @@ svg.graph{
   overflow: hidden;
   cursor: move;
   background-color: #f1f1f1;
+  .disabled{
+    opacity: 0.1;
+    pointer-events: none;
+  }
   .node, line, .link-path{
     cursor: default;
   }

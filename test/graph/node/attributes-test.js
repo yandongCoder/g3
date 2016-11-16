@@ -14,6 +14,19 @@ tape("Get and set color of a Node", function(test){
     test.end();
 });
 
+tape("Disable and enable a Node", function(test){
+    var myGraph = g3.graph(null, {ifRender: false})
+        .nodes([{id: 1, disabled: true}, {id: 2}]);
+    
+    test.equal(myGraph.nodes()[0].disabled(), true);
+    test.equal(myGraph.nodes()[1].disabled(), false);
+    myGraph.nodes()[0].disabled(false);
+    test.equal(myGraph.nodes()[0].disabled(), false);
+    
+    
+    test.end();
+});
+
 tape("Get and set icon of a Node", function(test){
     var myGraph = g3.graph(null, {ifRender: false})
         .nodes([{id: 1, icon: "fa fa-male"}, {id: 2}]);

@@ -54,7 +54,8 @@ export default function (renderType) {
         var scale = self._getCurrentScale();
         
         selection.attr("transform", function (Node) { return "translate(" + Node.getX() + "," + Node.getY() + ")";})
-            .classed("selected", function(Node){return Node.selected()});
+            .classed("selected", function(Node){return Node.selected()})
+            .classed("disabled", function(Node){return Node.disabled()});
         
         selection.select('circle')
             .attr("r", function(Node){ return Node.radius();})
