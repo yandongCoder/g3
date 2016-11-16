@@ -5,6 +5,13 @@ function getLinks(filter) {
     return filterBy(filter, this._links);
 }
 
+function getSelectedLinks() {
+    return this.getLinks(function(Link){
+        return Link.selected();
+    });
+}
+
+
 function getContainLinks(Nodes) {
     var ids = getIds(Nodes);
     var containedLinks = [];
@@ -41,4 +48,4 @@ function getRenderedLinks() {
     });
 }
 
-export {getLinks, getContainLinks, getAttachedLinks, getRelatedLinks, getRenderedLinks};
+export {getLinks, getSelectedLinks, getContainLinks, getAttachedLinks, getRelatedLinks, getRenderedLinks};

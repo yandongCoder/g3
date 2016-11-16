@@ -2,7 +2,7 @@ import {RENDER_TYPE} from "./CONSTANT";
 
 function delayRender(Obj, renderType){
     this.updateDOM.addObj(Obj, renderType);
-    this.render();
+    this.render(renderType);
 }
 
 function renderImmediately(){
@@ -21,12 +21,13 @@ function render(renderType) {
     }
     else{
         clearTimeout(this._renderDelay);
-        this._renderDelay = setTimeout(draw, 0);
+        this._renderDelay = setTimeout(function timeoutDraw(){draw(renderType)}, 0);
     }
     
     return this;
     
     function draw(renderType){
+        console.log('draw');
         self._draw(renderType, canvasType);
     }
 }

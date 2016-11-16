@@ -13,7 +13,7 @@ function deselectNodes() {
 }
 
 function deselectLinks(filter) {
-    this.getLinks(filter).forEach(function(Link){
+    this.getSelectedLinks(filter).forEach(function(Link){
         Link.selected(false);
     }, this);
     return this;

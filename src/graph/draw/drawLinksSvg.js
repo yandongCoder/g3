@@ -34,7 +34,7 @@ export default function (renderType) {
     
     text.call(updateLabelAttr);
     
-    if(renderType === RENDER_TYPE.IMMEDIATELY){
+    if(renderType === RENDER_TYPE.IMMEDIATELY || renderType === RENDER_TYPE.NUDGE){
         var updateLinks  = this._getLinksSelection(),
             updateLabels = this._getLinksLabelSelection();
     }else{
@@ -51,6 +51,10 @@ export default function (renderType) {
     linkLabels.exit().remove();
     
     function updatePathAttr(selection){
+        if(renderType === RENDER_TYPE.NUDGE){
+            selection.attr('d', function (Link) { var c = Link.getCoordination();  return 'M ' + c.Sx + ' ' + c.Sy + ' L ' + c.Tx + ' ' + c.Ty; });
+            return;
+        }
         selection
             .attr('d', function (Link) { var c = Link.getCoordination();  return 'M ' + c.Sx + ' ' + c.Sy + ' L ' + c.Tx + ' ' + c.Ty; })
             .classed("selected", function(Link){return Link.selected()})
@@ -61,6 +65,12 @@ export default function (renderType) {
     }
     
     function updateLabelAttr(selection){
+        if(renderType === RENDER_TYPE.NUDGE){
+            selection
+                .attr('dx', function(Link){return Link.getTextOffset(); })
+                .attr('transform', function(Link){ return Link.getLinkLabelTransform(scale); });
+            return;
+        }
         selection
             .style('display', function(Link){
                 return (scale < self.config.scaleOfHideLabel)? 'none': 'block';

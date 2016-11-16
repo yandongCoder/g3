@@ -2,7 +2,7 @@ import select from "../utils/select";
 import {render, delayRender, renderImmediately} from "./render";
 import {clearNodes, clearLinks, hasNode, hasLink, addNode, addLink, removeNodes, removeLinks, removeLinksOfNode, nodes, links} from "./data";
 import {getNodes, getRenderedNodes, getSelectedNodes, getInvertedNodes, getUngroupedNodes, getLinkedNodes, getRelatedNodes} from "./getNodes";
-import {getLinks, getContainLinks, getAttachedLinks, getRelatedLinks, getRenderedLinks} from "./getLinks";
+import {getLinks, getSelectedLinks, getContainLinks, getAttachedLinks, getRelatedLinks, getRenderedLinks} from "./getLinks";
 import {selectNodes, deselectNodes, deselectLinks} from "./select_deselect";
 import buildReference from "./buildReference";
 import init from "./init/init";
@@ -57,6 +57,7 @@ Graph.prototype = {
     buildReference: buildReference,
     links: links,
     getLinks: getLinks,
+    getSelectedLinks: getSelectedLinks,
     getRenderedLinks: getRenderedLinks,
     getContainLinks: getContainLinks,
     getAttachedLinks: getAttachedLinks,

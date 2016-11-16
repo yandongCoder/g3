@@ -37,7 +37,7 @@ const RENDER_TYPE = {
 
 function delayRender(Obj, renderType){
     this.updateDOM.addObj(Obj, renderType);
-    this.render();
+    this.render(renderType);
 }
 
 function renderImmediately(){
@@ -56,12 +56,13 @@ function render(renderType) {
     }
     else{
         clearTimeout(this._renderDelay);
-        this._renderDelay = setTimeout(draw, 0);
+        this._renderDelay = setTimeout(function timeoutDraw(){draw(renderType)}, 0);
     }
     
     return this;
     
     function draw(renderType){
+        console.log('draw');
         self._draw(renderType, canvasType);
     }
 }
@@ -172,7 +173,6 @@ function nudge (nudgeX, nudgeY) {
     this.x += nudgeX;
     this.y += nudgeY;
     
-    this.graph.delayRender(this, RENDER_TYPE.NUDGE);
     return this;
 }
 
@@ -1152,6 +1152,13 @@ function getLinks(filter) {
     return filterBy(filter, this._links);
 }
 
+function getSelectedLinks() {
+    return this.getLinks(function(Link){
+        return Link.selected();
+    });
+}
+
+
 function getContainLinks(Nodes) {
     var ids = getIds(Nodes);
     var containedLinks = [];
@@ -1203,7 +1210,7 @@ function deselectNodes() {
 }
 
 function deselectLinks(filter) {
-    this.getLinks(filter).forEach(function(Link){
+    this.getSelectedLinks(filter).forEach(function(Link){
         Link.selected(false);
     }, this);
     return this;
@@ -1609,7 +1616,7 @@ function drawLinksSvg (renderType) {
     
     text.call(updateLabelAttr);
     
-    if(renderType === RENDER_TYPE.IMMEDIATELY){
+    if(renderType === RENDER_TYPE.IMMEDIATELY || renderType === RENDER_TYPE.NUDGE){
         var updateLinks  = this._getLinksSelection(),
             updateLabels = this._getLinksLabelSelection();
     }else{
@@ -1626,6 +1633,10 @@ function drawLinksSvg (renderType) {
     linkLabels.exit().remove();
     
     function updatePathAttr(selection){
+        if(renderType === RENDER_TYPE.NUDGE){
+            selection.attr('d', function (Link) { var c = Link.getCoordination();  return 'M ' + c.Sx + ' ' + c.Sy + ' L ' + c.Tx + ' ' + c.Ty; });
+            return;
+        }
         selection
             .attr('d', function (Link) { var c = Link.getCoordination();  return 'M ' + c.Sx + ' ' + c.Sy + ' L ' + c.Tx + ' ' + c.Ty; })
             .classed("selected", function(Link){return Link.selected()})
@@ -1636,6 +1647,12 @@ function drawLinksSvg (renderType) {
     }
     
     function updateLabelAttr(selection){
+        if(renderType === RENDER_TYPE.NUDGE){
+            selection
+                .attr('dx', function(Link){return Link.getTextOffset(); })
+                .attr('transform', function(Link){ return Link.getLinkLabelTransform(scale); });
+            return;
+        }
         selection
             .style('display', function(Link){
                 return (scale < self.config.scaleOfHideLabel)? 'none': 'block';
@@ -1821,9 +1838,9 @@ function draged (currentNode) {
     var nudgedNodes = this.getSelectedNodes();
     for(var i = nudgedNodes.length; i--;){
         nudgedNodes[i]._nudge(d3.event.dx, d3.event.dy, true);
+        this.updateDOM.addObj(nudgedNodes[i]);
     }
-    
-    //this.render();
+    this.delayRender(null, RENDER_TYPE.NUDGE);
 }
 
 const DEFAULT_CONFIG = {
@@ -2528,6 +2545,7 @@ Graph.prototype = {
     buildReference: buildReference,
     links: links,
     getLinks: getLinks,
+    getSelectedLinks: getSelectedLinks,
     getRenderedLinks: getRenderedLinks,
     getContainLinks: getContainLinks,
     getAttachedLinks: getAttachedLinks,
