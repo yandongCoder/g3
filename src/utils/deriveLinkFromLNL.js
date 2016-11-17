@@ -3,8 +3,8 @@ import deriveLinkFromLinks from "./deriveLinkFromLinks";
 import direction from "../utils/deriveDirection";
 
 export default function (srcLinks, Node, dstLinks, graph) {
-    srcLinks = srcLinks.length > 1? new Link(deriveLinkFromLinks(srcLinks), graph): srcLinks[0];
-    dstLinks = dstLinks.length > 1? new Link(deriveLinkFromLinks(dstLinks), graph): dstLinks[0];
+    srcLinks = srcLinks.length > 1? new Link(deriveLinkFromLinks(srcLinks, graph), graph): srcLinks[0];
+    dstLinks = dstLinks.length > 1? new Link(deriveLinkFromLinks(dstLinks, graph), graph): dstLinks[0];
 
     var obj = {};
     obj.id = "transformed:(" + srcLinks.id + ")" + Node.id + "(" + dstLinks.id + ")";

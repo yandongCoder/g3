@@ -3,7 +3,7 @@ import concat from "../utils/deriveConcat";
 import average from "../utils/deriveAverage";
 import direction from "../utils/deriveDirection";
 
-export default function (Links) {
+export default function (Links, graph) {
 
     var obj = {};
     obj.id = "merged:" + concat("id", Links);
@@ -11,7 +11,7 @@ export default function (Links) {
     obj.width = average('width', Links);
     obj.src = Links[0].getSourceId();
     obj.dst = Links[0].getTargetId();
-    obj.color = "#"+  colorMixer.mix(Links.map(function(Link){return Link.color()}));
+    obj.color = graph.config.linkColor;
     obj.direction = direction(Links);
 
 
