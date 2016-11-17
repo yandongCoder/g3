@@ -38,8 +38,8 @@ function ungroup(){
         Link.grouped(false);
     });
     this.attachedLinks.forEach(function(attachedLink){
-        if(attachedLink.originalSource) attachedLink.link.source = attachedLink.originalSource;
-        else attachedLink.link.target = attachedLink.originalTarget;
+        if(attachedLink.originalSource) attachedLink.link.changeSource(attachedLink.originalSource);
+        else attachedLink.link.changeTarget(attachedLink.originalTarget);
     });
 }
 function pickIds(){
