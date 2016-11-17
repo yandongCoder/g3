@@ -2176,8 +2176,14 @@ function findShortestPath (fromNode, toNode) {
 }
 
 // TODO not complete
-function forceLayout() {
-    return d3.forceSimulation();
+function forceLayout(nodes, links, x, y) {
+    console.log(nodes);
+    return d3.forceSimulation(nodes)
+        .force("charge", d3.forceManyBody().strength(-3000))
+        .force("link", d3.forceLink(links).distance(200).strength(1))
+        .force("x", d3.forceX())
+        .force("y", d3.forceY())
+        .force("center", d3.forceCenter(x, y));
 }
 
 function gridLayout() {
@@ -2194,11 +2200,13 @@ function gridLayout() {
         padding = [0, 0],
         cols, rows;
     
-    function grid(nodes) {
-        return layout(nodes);
+    function grid(nodes, centerX, centerY) {
+        centerX = centerX || 0;
+        centerY = centerY || 0;
+        return layout(nodes, centerX, centerY);
     }
     
-    function _distributeEqually(nodes) {
+    function _distributeEqually(nodes, centerX, centerY) {
         var i = -1,
             n = nodes.length,
             _cols = cols ? cols : 0,
@@ -2240,11 +2248,9 @@ function gridLayout() {
             
             if (DEBUG) console.log(i, col, row);
             
-            nodes[i].x = x(col);
-            nodes[i].y = y(row);
+            nodes[i].x = x(col) + centerX;
+            nodes[i].y = y(row) + centerY;
         }
-        
-        self.render();
         
         return nodes;
     }

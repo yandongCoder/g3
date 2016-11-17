@@ -48,7 +48,7 @@
     };
 
     var groupedData = {
-        nodes: [{id: 1}, {id: 2}, {id: 3}],
+        nodes: [{id: 1, x: 150, y: 150, fx: 59, fy: 59}, {id: 2}, {id: 3}],
         links: [{id:1, src: 1, dst: 2}, {id:2, src: 2, dst: 3}]
     };
 
@@ -57,8 +57,8 @@
         iconPrefix: "fa fa-",
         onNodeMouseDown: function(Node){}
     })
-    .nodes(groupedByNodeProperty.nodes)
-    .links(groupedByNodeProperty.links);
+    .nodes(groupedData.nodes)
+    .links(groupedData.links);
 
 
 
@@ -92,8 +92,15 @@
 //    myGrid(myGraph.nodes());
     setTimeout(
             function getRemoteData() {
-                myGraph.disableNodes(myGraph.nodes());
-                myGraph.disableLinks(myGraph.links());
+                var force = myGraph.forceLayout(myGraph.nodes(), myGraph.links(), 1000, 200);
+                for (var i = 100; i--;) {
+                    force.tick();
+                }
+                force.stop();
+//                var myGrid = myGraph.gridLayout().nodeSize([100, 100]).padding([70, 70]);
+//                myGrid(myGraph.nodes(), 1000, 200);
+                myGraph.renderImmediately();
+
                 //myGraph.group([myGraph.nodes()[2], myGraph.nodes()[4]]);
                 //myGraph.links()[2].merge();
 //                myGraph._getSvgSelection().call(myGraph.zoom.scaleTo, 0.4);
@@ -108,7 +115,7 @@
 //                        .force("charge", d3.forceManyBody());
 //
 //                for (var i = 300; i--;) {
-//                    forceLayout.tick();
+//                    forceLayout.tick();forceSimulation
 //                }
 //                myGraph.hierarchyLayout(myGraph.nodes(), myGraph.links(), 1500, 500);
 //                myGraph.render();
