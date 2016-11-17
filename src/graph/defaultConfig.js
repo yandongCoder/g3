@@ -21,6 +21,10 @@ const DEFAULT_CONFIG = {
     onGraphContextmenu: function(){},
     onNodeMouseDown: function(){},
     onNodeContextmenu: function(){},
+    onNodeMouseover: function(){},
+    onNodeMouseout: function(){},
+    onLinkMouseover: function(){},
+    onLinkMouseout: function(){},
     onLinkMouseDown: function(){},
     onLinkContextmenu: function(){}
 };

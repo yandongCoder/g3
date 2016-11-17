@@ -20,6 +20,8 @@ export default function (renderType) {
             self.config.onNodeMouseDown.call(this, Node, i);
         })
         .on('contextmenu', this.config.onNodeContextmenu)
+        .on('mouseover', this.config.onNodeMouseover)
+        .on('mouseout', this.config.onNodeMouseout)
         .call(this.dragNode);
 
     //添加矩形

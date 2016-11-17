@@ -1337,8 +1337,8 @@ function ungroup$1(){
         Link.grouped(false);
     });
     this.attachedLinks.forEach(function(attachedLink){
-        if(attachedLink.originalSource) attachedLink.link.source = attachedLink.originalSource;
-        else attachedLink.link.target = attachedLink.originalTarget;
+        if(attachedLink.originalSource) attachedLink.link.changeSource(attachedLink.originalSource);
+        else attachedLink.link.changeTarget(attachedLink.originalTarget);
     });
 }
 function pickIds(){
@@ -1598,6 +1598,8 @@ function drawNodesSvg (renderType) {
             self.config.onNodeMouseDown.call(this, Node, i);
         })
         .on('contextmenu', this.config.onNodeContextmenu)
+        .on('mouseover', this.config.onNodeMouseover)
+        .on('mouseout', this.config.onNodeMouseout)
         .call(this.dragNode);
 
     //添加矩形
@@ -1686,6 +1688,8 @@ function drawLinksSvg (renderType) {
             self.config.onLinkMouseDown.call(this, Link, i);
         })
         .on('contextmenu', this.config.onLinkContextmenu)
+        .on('mouseover', this.config.onLinkMouseover)
+        .on('mouseout', this.config.onLinkMouseout)
         .call(updatePathAttr);
     
     var text = linkLabels.enter().append('text')
@@ -1953,6 +1957,10 @@ const DEFAULT_CONFIG = {
     onGraphContextmenu: function(){},
     onNodeMouseDown: function(){},
     onNodeContextmenu: function(){},
+    onNodeMouseover: function(){},
+    onNodeMouseout: function(){},
+    onLinkMouseover: function(){},
+    onLinkMouseout: function(){},
     onLinkMouseDown: function(){},
     onLinkContextmenu: function(){}
 };
@@ -2177,7 +2185,6 @@ function findShortestPath (fromNode, toNode) {
 
 // TODO not complete
 function forceLayout(nodes, links, x, y) {
-    console.log(nodes);
     return d3.forceSimulation(nodes)
         .force("charge", d3.forceManyBody().strength(-3000))
         .force("link", d3.forceLink(links).distance(200).strength(1))

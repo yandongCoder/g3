@@ -57,8 +57,8 @@
         iconPrefix: "fa fa-",
         onNodeMouseDown: function(Node){}
     })
-    .nodes(groupedData.nodes)
-    .links(groupedData.links);
+    .nodes(groupedByRelatedNodes.nodes)
+    .links(groupedByRelatedNodes.links);
 
 
 
@@ -83,7 +83,7 @@
     d3.select("#showBrush").on('click', myGraph.brush.show);
     d3.select("#hideBrush").on('click', myGraph.brush.hide);
 
-    //    myGraph.group([myGraph.nodes()[3], myGraph.nodes()[5]]);
+    myGraph.group([myGraph.nodes()[0], myGraph.nodes()[1]]);
 
 
     //myGraph.links()[0].merge();
@@ -92,14 +92,15 @@
 //    myGrid(myGraph.nodes());
     setTimeout(
             function getRemoteData() {
-                var force = myGraph.forceLayout(myGraph.nodes(), myGraph.links(), 1000, 200);
-                for (var i = 100; i--;) {
-                    force.tick();
-                }
-                force.stop();
+                myGraph.nodes()[6].ungroup();
+//                var force = myGraph.forceLayout(myGraph.nodes(), myGraph.links(), 1000, 200);
+//                for (var i = 100; i--;) {
+//                    force.tick();
+//                }
+//                force.stop();
 //                var myGrid = myGraph.gridLayout().nodeSize([100, 100]).padding([70, 70]);
 //                myGrid(myGraph.nodes(), 1000, 200);
-                myGraph.renderImmediately();
+                //myGraph.renderImmediately();
 
                 //myGraph.group([myGraph.nodes()[2], myGraph.nodes()[4]]);
                 //myGraph.links()[2].merge();
@@ -125,7 +126,7 @@
 //                    myGraph.nodes(data.nodes)
 //                            .links(data.links);
 //                });
-            }, 1500);
+            }, 500);
     //
     //    setTimeout(function () {
     //        myGraph.links()[7].unmerge();

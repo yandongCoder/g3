@@ -20,6 +20,8 @@ export default function (renderType) {
             self.config.onLinkMouseDown.call(this, Link, i);
         })
         .on('contextmenu', this.config.onLinkContextmenu)
+        .on('mouseover', this.config.onLinkMouseover)
+        .on('mouseout', this.config.onLinkMouseout)
         .call(updatePathAttr);
     
     var text = linkLabels.enter().append('text')
