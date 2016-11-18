@@ -15,6 +15,8 @@ function group(filter) {
     newNode.groupedBy = new GroupedBy(newNode, Nodes, containLinks, attachedLinks);
     
     this.render();
+    
+    return newNode;
 }
 
 function groupBy(filter, iteratee) {
@@ -26,9 +28,12 @@ function groupBy(filter, iteratee) {
         .toArray()
         .value();
     
+    var newNodes = [];
     groupedNodes.forEach(function(item){
-        this.group(item);
+        var newNode = this.group(item);
+        if(newNode) newNodes.push(newNode);
     }, this);
+    return newNodes;
 }
 
 function flattenGroup(filter) {
