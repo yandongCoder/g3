@@ -78,8 +78,11 @@ function getTargetId(){
     return this.target.id;
 }
 
-function merged(merged) {
+function merged(merged, mergedToLink) {
     if(!arguments.length) return this._merged === undefined? false : this._merged;
+    
+    if(merged && mergedToLink) this.mergedTo = mergedToLink;
+    else delete this.mergedTo;
     
     this._merged = merged;
     this.graph.delayRender(this);

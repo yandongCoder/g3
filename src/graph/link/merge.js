@@ -9,10 +9,11 @@ function merge() {
     if(toMergedLinks.length <= 1) return;
     
     var linkObj = deriveLinkFromLinks(toMergedLinks, this.graph);
-    linkObj.mergedBy = new MergedBy(toMergedLinks);
 
     var Link = this.graph._addLink(linkObj);
-
+    
+    Link.mergedBy = new MergedBy(toMergedLinks, Link);
+    
     Link.NtoL();
 
     this.graph.render();

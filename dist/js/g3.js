@@ -383,8 +383,11 @@ function getTargetId(){
     return this.target.id;
 }
 
-function merged(merged) {
+function merged(merged, mergedToLink) {
     if(!arguments.length) return this._merged === undefined? false : this._merged;
+    
+    if(merged && mergedToLink) this.mergedTo = mergedToLink;
+    else delete this.mergedTo;
     
     this._merged = merged;
     this.graph.delayRender(this);
@@ -627,7 +630,7 @@ function direction$1(Links){
     }, DIRECTION.NONE);
 }
 
-function deriveLinkFromLinks (Links) {
+function deriveLinkFromLinks (Links, graph) {
 
     var obj = {};
     obj.id = "merged:" + concat("id", Links);
@@ -635,7 +638,7 @@ function deriveLinkFromLinks (Links) {
     obj.width = average('width', Links);
     obj.src = Links[0].getSourceId();
     obj.dst = Links[0].getTargetId();
-    obj.color = "#"+  colorMixer.mix(Links.map(function(Link){return Link.color()}));
+    obj.color = graph.config.linkColor;
     obj.direction = direction$1(Links);
 
 
@@ -643,9 +646,9 @@ function deriveLinkFromLinks (Links) {
     return obj;
 }
 
-function MergedBy(Links) {
+function MergedBy(Links, mergedToLink) {
     Links.forEach(function(Link){
-        Link.merged(true);
+        Link.merged(true, mergedToLink);
     });
     
     this.links = Links;
@@ -674,11 +677,12 @@ function merge() {
 
     if(toMergedLinks.length <= 1) return;
     
-    var linkObj = deriveLinkFromLinks(toMergedLinks);
-    linkObj.mergedBy = new MergedBy(toMergedLinks);
+    var linkObj = deriveLinkFromLinks(toMergedLinks, this.graph);
 
     var Link = this.graph._addLink(linkObj);
-
+    
+    Link.mergedBy = new MergedBy(toMergedLinks, Link);
+    
     Link.NtoL();
 
     this.graph.render();
@@ -815,8 +819,8 @@ Link.prototype = {
 };
 
 function deriveLinkFromLNL (srcLinks, Node, dstLinks, graph) {
-    srcLinks = srcLinks.length > 1? new Link(deriveLinkFromLinks(srcLinks), graph): srcLinks[0];
-    dstLinks = dstLinks.length > 1? new Link(deriveLinkFromLinks(dstLinks), graph): dstLinks[0];
+    srcLinks = srcLinks.length > 1? new Link(deriveLinkFromLinks(srcLinks, graph), graph): srcLinks[0];
+    dstLinks = dstLinks.length > 1? new Link(deriveLinkFromLinks(dstLinks, graph), graph): dstLinks[0];
 
     var obj = {};
     obj.id = "transformed:(" + srcLinks.id + ")" + Node.id + "(" + dstLinks.id + ")";
@@ -1836,6 +1840,7 @@ function translateBy(x, y, duration) {
 }
 
 function keydowned() {
+    
     if (!d3.event.metaKey) {
         switch (d3.event.keyCode) {
             //shift alt and space is used by d3 brush
@@ -1883,6 +1888,8 @@ function group(filter) {
     newNode.groupedBy = new GroupedBy(newNode, Nodes, containLinks, attachedLinks);
     
     this.render();
+    
+    return newNode;
 }
 
 function groupBy(filter, iteratee) {
@@ -1894,9 +1901,12 @@ function groupBy(filter, iteratee) {
         .toArray()
         .value();
     
+    var newNodes = [];
     groupedNodes.forEach(function(item){
-        this.group(item);
+        var newNode = this.group(item);
+        if(newNode) newNodes.push(newNode);
     }, this);
+    return newNodes;
 }
 
 function flattenGroup(filter) {

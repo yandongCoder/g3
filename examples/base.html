@@ -83,7 +83,7 @@
     d3.select("#showBrush").on('click', myGraph.brush.show);
     d3.select("#hideBrush").on('click', myGraph.brush.hide);
 
-    myGraph.group([myGraph.nodes()[0], myGraph.nodes()[1]]);
+    myGraph.group([myGraph.nodes()[4], myGraph.nodes()[5]]);
 
 
     //myGraph.links()[0].merge();
@@ -92,6 +92,7 @@
 //    myGrid(myGraph.nodes());
     setTimeout(
             function getRemoteData() {
+                myGraph.links()[4].merge();
                 myGraph.nodes()[6].ungroup();
 //                var force = myGraph.forceLayout(myGraph.nodes(), myGraph.links(), 1000, 200);
 //                for (var i = 100; i--;) {

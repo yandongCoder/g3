@@ -1,6 +1,6 @@
-export default function MergedBy(Links) {
+export default function MergedBy(Links, mergedToLink) {
     Links.forEach(function(Link){
-        Link.merged(true);
+        Link.merged(true, mergedToLink);
     });
     
     this.links = Links;
