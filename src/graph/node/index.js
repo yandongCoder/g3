@@ -15,10 +15,10 @@ export default function Node(data, graph) {
     this.x = data.x || 0;
     this.y = data.y || 0;
     this._disabled = data.disabled || false;
-    this._radius = data.radius || graph.config.radius;
-    this._color = data.color || graph.config.color;
-    this._icon = data.icon  || graph.config.icon;
-    this._mugshot = data.mugshot || graph.config.mugshot;
+    this._radius = data.radius || graph._config.radius;
+    this._color = data.color || graph._config.color;
+    this._icon = data.icon  || graph._config.icon;
+    this._mugshot = data.mugshot || graph._config.mugshot;
     this._selected = data.selected || false; //indicate whether node is select
     if(data.grouped) this._grouped = data.grouped;
     

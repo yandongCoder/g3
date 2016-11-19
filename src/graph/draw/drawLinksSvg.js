@@ -17,11 +17,11 @@ export default function (renderType) {
             self.deselectAll();
             Link.selected(!Link.selected());
             
-            self.config.onLinkMouseDown.call(this, Link, i);
+            self._config.onLinkMouseDown.call(this, Link, i);
         })
-        .on('contextmenu', this.config.onLinkContextmenu)
-        .on('mouseover', this.config.onLinkMouseover)
-        .on('mouseout', this.config.onLinkMouseout)
+        .on('contextmenu', this._config.onLinkContextmenu)
+        .on('mouseover', this._config.onLinkMouseover)
+        .on('mouseout', this._config.onLinkMouseout)
         .call(updatePathAttr);
     
     var text = linkLabels.enter().append('text')
@@ -75,7 +75,7 @@ export default function (renderType) {
         }
         selection
             .style('display', function(Link){
-                return (scale < self.config.scaleOfHideLabel)? 'none': 'block';
+                return (scale < self._config.scaleOfHideLabel)? 'none': 'block';
             })
             .classed("disabled", function(Node){return Node.disabled()})
             .attr('dx', function(Link){return Link.getTextOffset(); })

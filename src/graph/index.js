@@ -1,4 +1,3 @@
-import select from "../utils/select";
 import {render, delayRender, renderImmediately} from "./render";
 import {clearNodes, clearLinks, hasNode, hasLink, addNode, addLink, removeNodes, removeLinks, removeLinksOfNode, nodes, links} from "./data";
 import {getNodes, getRenderedNodes, getSelectedNodes, getDisabledNodes, getInvertedNodes, getUngroupedNodes, getLinkedNodes, getRelatedNodes} from "./getNodes";
@@ -12,18 +11,17 @@ import {transform, scaleTo, translateBy} from "./transform";
 import {keyupped, keydowned} from "./keyboard";
 import {group, groupBy, flattenGroup} from "./group";
 import draged from "./draged";
-import defaultConfig from "./defaultConfig";
+import {selector, config} from "./config";
 import findShortestPath from "./findShortestPath";
 import {forceLayout, gridLayout, hierarchyLayout} from "./layout";
 import getJSON from "./getJSON";
 import updateDOM from "./draw/updateDOM";
 
 function Graph(selector, config) {
-
-    this.config = Object.assign({}, defaultConfig, config || {});
-
-    this._canvas = select(selector);
-
+    
+    this.selector(selector);
+    this.config(config);
+    
     this._hasInit = false; //init only once
     
     this._nodes = [];
@@ -36,6 +34,8 @@ function Graph(selector, config) {
 
 Graph.prototype = {
     constructor: Graph,
+    selector: selector,
+    config: config,
     render: render,
     delayRender: delayRender,
     renderImmediately: renderImmediately,
@@ -94,13 +94,17 @@ Graph.prototype = {
     _draw: draw,
     _zoomed: zoomed,
     _getCurrentTransform: function(){
+        if(!this._canvas) return;
         return d3.zoomTransform(this._canvas);
     },
     _getCurrentScale: function(){
-        return this._getCurrentTransform().k;
+        var transform = this._getCurrentTransform();
+        if(!transform) return;
+        return transform.k;
     },
     _getCurrentTranslate: function(){
         var transform = this._getCurrentTransform();
+        if(!transform) return;
         return [transform.x, transform.y];
     },
     _getBrushSelection: function () {

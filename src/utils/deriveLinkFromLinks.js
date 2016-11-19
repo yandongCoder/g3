@@ -11,7 +11,7 @@ export default function (Links, graph) {
     obj.width = average('width', Links);
     obj.src = Links[0].getSourceId();
     obj.dst = Links[0].getTargetId();
-    obj.color = graph.config.linkColor;
+    obj.color = graph._config.linkColor;
     obj.direction = direction(Links);
 
 

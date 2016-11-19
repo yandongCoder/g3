@@ -12,7 +12,7 @@ tape("derive new Link from received Links", function(test){
     test.equal(linkObj.src, myGraph.links()[0].source.id);
     test.equal(linkObj.dst, myGraph.links()[0].target.id);
     test.equal(linkObj.width, 4);
-    test.equal(linkObj.color, myGraph.config.linkColor);
+    test.equal(linkObj.color, myGraph._config.linkColor);
     test.equal(linkObj.direction, 3);
     
     test.end();

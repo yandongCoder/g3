@@ -22,11 +22,11 @@ export default function () {
             
             self.deselectAll();
     
-            self.config.onGraphClick.call(this);
+            self._config.onGraphClick.call(this);
         })
         .on('contextmenu', function(){
             if (d3.event.target.nodeName !== 'svg') return;
-            self.config.onGraphContextmenu.call(this);
+            self._config.onGraphContextmenu.call(this);
         });
 
     //bind listener to page for keyboard shortCuts and mouse events

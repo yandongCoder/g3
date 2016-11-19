@@ -123,7 +123,7 @@ tape("Hide label while currentScale < scaleOfNodeLabelHide", function(test){
     myGraph.nodes([{id: 1}, {id: 2}])
         .links([{id: 1, src: 1, dst: 2}]);
     
-    myGraph.scaleTo(myGraph.config.scaleOfHideLabel - 0.1);
+    myGraph.scaleTo(myGraph._config.scaleOfHideLabel - 0.1);
     myGraph.renderImmediately();
     
     test.equal(document.querySelectorAll(".node")[0].querySelector(".text-group").style.display, "none");

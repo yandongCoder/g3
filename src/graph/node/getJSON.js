@@ -1,5 +1,5 @@
 export default function () {
-    var exceptKey = ['_element', '_needTransformed', 'graph'];
+    var exceptKey = ['_element', '_needTransformed', 'graph', 'objectData'];
     var json = {};
     for (var prop in this) {
         if (prop === 'groupedBy') {

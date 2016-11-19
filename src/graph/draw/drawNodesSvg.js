@@ -17,11 +17,11 @@ export default function (renderType) {
             self.deselectLinks();
             Node.selected(!Node.selected());
             
-            self.config.onNodeMouseDown.call(this, Node, i);
+            self._config.onNodeMouseDown.call(this, Node, i);
         })
-        .on('contextmenu', this.config.onNodeContextmenu)
-        .on('mouseover', this.config.onNodeMouseover)
-        .on('mouseout', this.config.onNodeMouseout)
+        .on('contextmenu', this._config.onNodeContextmenu)
+        .on('mouseover', this._config.onNodeMouseover)
+        .on('mouseout', this._config.onNodeMouseout)
         .call(this.dragNode);
 
     //添加矩形
@@ -69,15 +69,15 @@ export default function (renderType) {
             .attr("height", function(Node){return Node.radius()*2;});
         
         selection.select('.icon').select('span')
-            .attr('class', function(Node){ return self.config.iconPrefix + Node.icon();})
+            .attr('class', function(Node){ return self._config.iconPrefix + Node.icon();})
             .style("line-height", function(Node){return Node.radius()*2 + "px";});
         selection.select('.mugshot').select('img')
-            .attr('src', function(Node){return Node.mugshot()? self.config.mugshotPrefix + Node.mugshot(): "";})
+            .attr('src', function(Node){return Node.mugshot()? self._config.mugshotPrefix + Node.mugshot(): "";})
             .style('display', function(Node){return Node.mugshot()? "block": "none";});
         
         selection.select('.text-group')
             .style('display', function(Node){
-                return (scale < self.config.scaleOfHideLabel)? 'none': 'block';
+                return (scale < self._config.scaleOfHideLabel)? 'none': 'block';
             })
             .attr('width', function (Node) { return Node.getLabelWidth(); })
             .attr("height", function(Node){ return Node.radius() * scale; })

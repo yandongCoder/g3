@@ -16,7 +16,7 @@ export default function () {
     this._getForceGroup().attr("transform", "translate(" + d3.event.transform.x + ", "+ d3.event.transform.y + ") scale(" + currentScale + ")");
     this._getForceGroup()._pScale = currentScale;
     
-    var hideScale = this.config.scaleOfHideLabel;
+    var hideScale = this._config.scaleOfHideLabel;
     
     //render while should hide label
     if(previousScale > hideScale && currentScale < hideScale) this.renderImmediately();

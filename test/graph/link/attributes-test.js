@@ -7,7 +7,7 @@ tape("Get and set color of a Link", function(test){
         .links([{id: 1, src: 1, dst: 2, color: "red"}, {id: 2, src: 2, dst: 1}]);
 
     test.equal(myGraph.links()[0].color(), "red");
-    test.equal(myGraph.links()[1].color(), myGraph.config.linkColor);
+    test.equal(myGraph.links()[1].color(), myGraph._config.linkColor);
     myGraph.links()[0].color('#666888');
     test.equal(myGraph.links()[0].color(), "#666888");
 

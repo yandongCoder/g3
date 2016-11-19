@@ -6,7 +6,7 @@ tape("Get and set color of a Node", function(test){
         .nodes([{id: 1, color: "red"}, {id: 2}]);
 
     test.equal(myGraph.nodes()[0].color(), "red");
-    test.equal(myGraph.nodes()[1].color(), myGraph.config.color);
+    test.equal(myGraph.nodes()[1].color(), myGraph._config.color);
     myGraph.nodes()[0].color('#666888');
     test.equal(myGraph.nodes()[0].color(), "#666888");
 
@@ -78,7 +78,7 @@ tape("Get and set radius of a Node", function(test){
         .nodes([{id: 1, radius: 30}, {id: 2}]);
     
     test.equal(myGraph.nodes()[0].radius(), 30);
-    test.equal(myGraph.nodes()[1].radius(), myGraph.config.radius);
+    test.equal(myGraph.nodes()[1].radius(), myGraph._config.radius);
     myGraph.nodes()[0].radius(40);
     test.equal(myGraph.nodes()[0].radius(), 40);
     

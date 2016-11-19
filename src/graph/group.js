@@ -10,8 +10,6 @@ function group(filter) {
     var attachedLinks = this.getAttachedLinks(Nodes);
     var newNode = this._addNode(deriveNodeFromNodes(Nodes));
     
-    
-    
     newNode.groupedBy = new GroupedBy(newNode, Nodes, containLinks, attachedLinks);
     
     this.render();

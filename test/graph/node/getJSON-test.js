@@ -6,7 +6,7 @@ tape("Get json string of a Node.", function(test){
         .nodes([{id: 1, x: 10, y: 10, radius: 10}]);
     
     console.log(JSON.stringify(myGraph.nodes()[0].getJSON()));
-    test.deepEqual(myGraph.nodes()[0].getJSON(), {color: myGraph.config.color, disabled: false, icon:"", id:1, label: "", mugshot: '', x:10, y:10, radius:10, selected:false});
+    test.deepEqual(myGraph.nodes()[0].getJSON(), {color: myGraph._config.color, disabled: false, icon:"", id:1, label: "", mugshot: '', x:10, y:10, radius:10, selected:false});
     
     test.end();
 });

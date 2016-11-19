@@ -1,18 +1,24 @@
 import {RENDER_TYPE} from "./CONSTANT";
+import select from "../utils/select";
 
 function delayRender(Obj, renderType){
     this.updateDOM.addObj(Obj, renderType);
     this.render(renderType);
+    return this;
 }
 
 function renderImmediately(){
     this.render(RENDER_TYPE.IMMEDIATELY);
+    return this;
 }
 
 function render(renderType) {
     var self = this;
     
-    if(!this.config.ifRender) return this;
+    this._canvas = select(this._selector);
+    
+    if(!this._canvas) return this;
+    if(!this._config.ifRender) return this;
     var canvasType = this._canvas.nodeName;
     if(canvasType === 'svg'){ this._init();}
     

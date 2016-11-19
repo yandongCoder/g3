@@ -17,6 +17,9 @@ const DEFAULT_CONFIG = {
     onBrushStart: function(){},
     onBrush: function(){},
     onBrushEnd: function(){},
+    onZoomStart: function(){},
+    onZoom: function(){},
+    onZoomEnd: function(){},
     onGraphClick: function(){},
     onGraphContextmenu: function(){},
     onNodeMouseDown: function(){},
@@ -29,4 +32,19 @@ const DEFAULT_CONFIG = {
     onLinkContextmenu: function(){}
 };
 
-export default DEFAULT_CONFIG;
+
+function config(config) {
+    if(!arguments.length) return this._config;
+    
+    this._config = Object.assign({}, DEFAULT_CONFIG, config || {});
+    return this;
+}
+
+function selector(selector){
+    if(!arguments.length) return this._selector;
+    
+    this._selector = selector;
+    return this;
+}
+
+export {selector, config}

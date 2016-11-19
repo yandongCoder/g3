@@ -5,10 +5,6 @@
    (factory((global.g3 = global.g3 || {})));
 }(this, (function (exports) { 'use strict';
 
-function select (selector) {
-    return typeof selector === "string"? document.querySelector(selector): selector;
-}
-
 const DIRECTION = {
     NONE: 0,
     S2D: 1,
@@ -35,19 +31,28 @@ const RENDER_TYPE = {
     IMMEDIATELY: "IMMEDIATELY"
 };
 
+function select (selector) {
+    return typeof selector === "string"? document.querySelector(selector): selector;
+}
+
 function delayRender(Obj, renderType){
     this.updateDOM.addObj(Obj, renderType);
     this.render(renderType);
+    return this;
 }
 
 function renderImmediately(){
     this.render(RENDER_TYPE.IMMEDIATELY);
+    return this;
 }
 
 function render(renderType) {
     var self = this;
     
-    if(!this.config.ifRender) return this;
+    this._canvas = select(this._selector);
+    
+    if(!this._canvas) return this;
+    if(!this._config.ifRender) return this;
     var canvasType = this._canvas.nodeName;
     if(canvasType === 'svg'){ this._init();}
     
@@ -177,7 +182,7 @@ function getY() {
 }
 
 function nudge (nudgeX, nudgeY) {
-    if(!this.graph.config.dragable) return;
+    if(!this.graph._config.dragable) return;
     
     this.x += nudgeX;
     this.y += nudgeY;
@@ -638,7 +643,7 @@ function deriveLinkFromLinks (Links, graph) {
     obj.width = average('width', Links);
     obj.src = Links[0].getSourceId();
     obj.dst = Links[0].getTargetId();
-    obj.color = graph.config.linkColor;
+    obj.color = graph._config.linkColor;
     obj.direction = direction$1(Links);
 
 
@@ -759,8 +764,8 @@ function Link(data, graph) {
     this.graph = graph;
     this.id = data.id;
     this._label = data.label || "";
-    this._width = data.width || (graph && graph.config.linkWidth);
-    this._color = data.color || (graph && graph.config.linkColor);
+    this._width = data.width || (graph && graph._config.linkWidth);
+    this._color = data.color || (graph && graph._config.linkColor);
     this._selected = data.selected || false;
     this._direction = data.direction === undefined? 1: data.direction;//0: none, 1: from, 2: to, 3 double
     this._disabled = data.disabled || false;
@@ -916,7 +921,7 @@ function ungroup () {
 }
 
 function getJSON$1 () {
-    var exceptKey = ['_element', '_needTransformed', 'graph'];
+    var exceptKey = ['_element', '_needTransformed', 'graph', 'objectData'];
     var json = {};
     for (var prop in this) {
         if (prop === 'groupedBy') {
@@ -939,10 +944,10 @@ function Node(data, graph) {
     this.x = data.x || 0;
     this.y = data.y || 0;
     this._disabled = data.disabled || false;
-    this._radius = data.radius || graph.config.radius;
-    this._color = data.color || graph.config.color;
-    this._icon = data.icon  || graph.config.icon;
-    this._mugshot = data.mugshot || graph.config.mugshot;
+    this._radius = data.radius || graph._config.radius;
+    this._color = data.color || graph._config.color;
+    this._icon = data.icon  || graph._config.icon;
+    this._mugshot = data.mugshot || graph._config.mugshot;
     this._selected = data.selected || false; //indicate whether node is select
     if(data.grouped) this._grouped = data.grouped;
     
@@ -1471,11 +1476,17 @@ function appendPreElement () {
 }
 
 function Zoom() {
-    return d3.zoom().scaleExtent([this.config.minScale, this.config.maxScale])
+    var self = this;
+    return d3.zoom().scaleExtent([this._config.minScale, this._config.maxScale])
         .on('start', function () {
+            self._config.onZoomStart.call(this);
         })
-        .on("zoom", this._zoomed.bind(this))
+        .on("zoom", function(){
+            self._zoomed.bind(self);
+            self._config.onZoom.call(this);
+        })
         .on('end', function () {
+            self._config.onZoomEnd.call(this);
         });
 }
 
@@ -1489,7 +1500,7 @@ function Brush () {
             self._getNodesSelection().each(function (Node) {
                 Node.pselected = d3.event.sourceEvent.ctrlKey && Node.selected();
             });
-            self.config.onBrushStart.call(this);
+            self._config.onBrushStart.call(this);
         })
         .on('brush', function () {
             if (!d3.event.selection) return; // Ignore empty selections.
@@ -1500,13 +1511,13 @@ function Brush () {
             self._getNodesSelection().each(function(Node){
                 Node.selected(Node.pselected ^ ( (extent[0][0] - t.x) / t.k  <= Node.getX() && Node.getX() < (extent[1][0] - t.x) / t.k  && (extent[0][1] - t.y) / t.k <= Node.getY() && Node.getY() < (extent[1][1] - t.y) / t.k ));
             });
-            self.config.onBrush.call(this);
+            self._config.onBrush.call(this);
         })
         .on('end', function () {
             if (!d3.event.selection) return; // Ignore empty selections.
             self._getBrushSelection()
                 .call(brush.move, null);
-            self.config.onBrushEnd.call(this);
+            self._config.onBrushEnd.call(this);
         });
 
     brush.show = function(){
@@ -1550,11 +1561,11 @@ function init () {
             
             self.deselectAll();
     
-            self.config.onGraphClick.call(this);
+            self._config.onGraphClick.call(this);
         })
         .on('contextmenu', function(){
             if (d3.event.target.nodeName !== 'svg') return;
-            self.config.onGraphContextmenu.call(this);
+            self._config.onGraphContextmenu.call(this);
         });
 
     //bind listener to page for keyboard shortCuts and mouse events
@@ -1599,11 +1610,11 @@ function drawNodesSvg (renderType) {
             self.deselectLinks();
             Node.selected(!Node.selected());
             
-            self.config.onNodeMouseDown.call(this, Node, i);
+            self._config.onNodeMouseDown.call(this, Node, i);
         })
-        .on('contextmenu', this.config.onNodeContextmenu)
-        .on('mouseover', this.config.onNodeMouseover)
-        .on('mouseout', this.config.onNodeMouseout)
+        .on('contextmenu', this._config.onNodeContextmenu)
+        .on('mouseover', this._config.onNodeMouseover)
+        .on('mouseout', this._config.onNodeMouseout)
         .call(this.dragNode);
 
     //添加矩形
@@ -1651,15 +1662,15 @@ function drawNodesSvg (renderType) {
             .attr("height", function(Node){return Node.radius()*2;});
         
         selection.select('.icon').select('span')
-            .attr('class', function(Node){ return self.config.iconPrefix + Node.icon();})
+            .attr('class', function(Node){ return self._config.iconPrefix + Node.icon();})
             .style("line-height", function(Node){return Node.radius()*2 + "px";});
         selection.select('.mugshot').select('img')
-            .attr('src', function(Node){return Node.mugshot()? self.config.mugshotPrefix + Node.mugshot(): "";})
+            .attr('src', function(Node){return Node.mugshot()? self._config.mugshotPrefix + Node.mugshot(): "";})
             .style('display', function(Node){return Node.mugshot()? "block": "none";});
         
         selection.select('.text-group')
             .style('display', function(Node){
-                return (scale < self.config.scaleOfHideLabel)? 'none': 'block';
+                return (scale < self._config.scaleOfHideLabel)? 'none': 'block';
             })
             .attr('width', function (Node) { return Node.getLabelWidth(); })
             .attr("height", function(Node){ return Node.radius() * scale; })
@@ -1689,11 +1700,11 @@ function drawLinksSvg (renderType) {
             self.deselectAll();
             Link.selected(!Link.selected());
             
-            self.config.onLinkMouseDown.call(this, Link, i);
+            self._config.onLinkMouseDown.call(this, Link, i);
         })
-        .on('contextmenu', this.config.onLinkContextmenu)
-        .on('mouseover', this.config.onLinkMouseover)
-        .on('mouseout', this.config.onLinkMouseout)
+        .on('contextmenu', this._config.onLinkContextmenu)
+        .on('mouseover', this._config.onLinkMouseover)
+        .on('mouseout', this._config.onLinkMouseout)
         .call(updatePathAttr);
     
     var text = linkLabels.enter().append('text')
@@ -1747,7 +1758,7 @@ function drawLinksSvg (renderType) {
         }
         selection
             .style('display', function(Link){
-                return (scale < self.config.scaleOfHideLabel)? 'none': 'block';
+                return (scale < self._config.scaleOfHideLabel)? 'none': 'block';
             })
             .classed("disabled", function(Node){return Node.disabled()})
             .attr('dx', function(Link){return Link.getTextOffset(); })
@@ -1812,7 +1823,7 @@ function zoomed () {
     this._getForceGroup().attr("transform", "translate(" + d3.event.transform.x + ", "+ d3.event.transform.y + ") scale(" + currentScale + ")");
     this._getForceGroup()._pScale = currentScale;
     
-    var hideScale = this.config.scaleOfHideLabel;
+    var hideScale = this._config.scaleOfHideLabel;
     
     //render while should hide label
     if(previousScale > hideScale && currentScale < hideScale) this.renderImmediately();
@@ -1889,8 +1900,6 @@ function group(filter) {
     var containLinks = this.getContainLinks(Nodes);
     var attachedLinks = this.getAttachedLinks(Nodes);
     var newNode = this._addNode(deriveNodeFromNodes(Nodes));
-    
-    
     
     newNode.groupedBy = new GroupedBy(newNode, Nodes, containLinks, attachedLinks);
     
@@ -1970,6 +1979,9 @@ const DEFAULT_CONFIG = {
     onBrushStart: function(){},
     onBrush: function(){},
     onBrushEnd: function(){},
+    onZoomStart: function(){},
+    onZoom: function(){},
+    onZoomEnd: function(){},
     onGraphClick: function(){},
     onGraphContextmenu: function(){},
     onNodeMouseDown: function(){},
@@ -1981,6 +1993,21 @@ const DEFAULT_CONFIG = {
     onLinkMouseDown: function(){},
     onLinkContextmenu: function(){}
 };
+
+
+function config(config) {
+    if(!arguments.length) return this._config;
+    
+    this._config = Object.assign({}, DEFAULT_CONFIG, config || {});
+    return this;
+}
+
+function selector(selector){
+    if(!arguments.length) return this._selector;
+    
+    this._selector = selector;
+    return this;
+}
 
 function findShortestPath$1 (fromNode, toNode, Nodes, Links) {
     var srcUUID = fromNode.id,
@@ -2627,11 +2654,10 @@ function clearUpdateLinks(){
 }
 
 function Graph(selector, config) {
-
-    this.config = Object.assign({}, DEFAULT_CONFIG, config || {});
-
-    this._canvas = select(selector);
-
+    
+    this.selector(selector);
+    this.config(config);
+    
     this._hasInit = false; //init only once
     
     this._nodes = [];
@@ -2644,6 +2670,8 @@ function Graph(selector, config) {
 
 Graph.prototype = {
     constructor: Graph,
+    selector: selector,
+    config: config,
     render: render,
     delayRender: delayRender,
     renderImmediately: renderImmediately,
@@ -2702,13 +2730,17 @@ Graph.prototype = {
     _draw: draw,
     _zoomed: zoomed,
     _getCurrentTransform: function(){
+        if(!this._canvas) return;
         return d3.zoomTransform(this._canvas);
     },
     _getCurrentScale: function(){
-        return this._getCurrentTransform().k;
+        var transform = this._getCurrentTransform();
+        if(!transform) return;
+        return transform.k;
     },
     _getCurrentTranslate: function(){
         var transform = this._getCurrentTransform();
+        if(!transform) return;
         return [transform.x, transform.y];
     },
     _getBrushSelection: function () {
