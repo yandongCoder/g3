@@ -93,19 +93,9 @@ Graph.prototype = {
     _init: init,
     _draw: draw,
     _zoomed: zoomed,
-    _getCurrentTransform: function(){
+    getCurrentTransform: function(){
         if(!this._canvas) return;
         return d3.zoomTransform(this._canvas);
-    },
-    _getCurrentScale: function(){
-        var transform = this._getCurrentTransform();
-        if(!transform) return;
-        return transform.k;
-    },
-    _getCurrentTranslate: function(){
-        var transform = this._getCurrentTransform();
-        if(!transform) return;
-        return [transform.x, transform.y];
     },
     _getBrushSelection: function () {
         return this._getSvgSelection().select('g.brush');

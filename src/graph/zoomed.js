@@ -11,7 +11,7 @@ export default function () {
     //Graph._ifShowLabels();
     
     var previousScale = this._getForceGroup()._pScale;
-    var currentScale = this._getCurrentScale().toFixed(4) / 1;
+    var currentScale = this.getCurrentTransform().k.toFixed(4) / 1;
     //缩放网络图
     this._getForceGroup().attr("transform", "translate(" + d3.event.transform.x + ", "+ d3.event.transform.y + ") scale(" + currentScale + ")");
     this._getForceGroup()._pScale = currentScale;

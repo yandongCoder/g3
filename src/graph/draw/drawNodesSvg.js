@@ -51,9 +51,8 @@ export default function (renderType) {
     
     nodes.exit().remove();
     
-    
     function updateAttr(selection){
-        var scale = self._getCurrentScale();
+        var scale = self.getCurrentTransform().k;
         
         selection.attr("transform", function (Node) { return "translate(" + Node.getX() + "," + Node.getY() + ")";})
             .classed("selected", function(Node){return Node.selected()})

@@ -1503,7 +1503,7 @@ function Brush () {
             if (!d3.event.selection) return; // Ignore empty selections.
 
             var extent = d3.event.selection;
-            var t = self._getCurrentTransform();
+            var t = self.getCurrentTransform();
 
             self._getNodesSelection().each(function(Node){
                 Node.selected(Node.pselected ^ ( (extent[0][0] - t.x) / t.k  <= Node.getX() && Node.getX() < (extent[1][0] - t.x) / t.k  && (extent[0][1] - t.y) / t.k <= Node.getY() && Node.getY() < (extent[1][1] - t.y) / t.k ));
@@ -1641,9 +1641,8 @@ function drawNodesSvg (renderType) {
     
     nodes.exit().remove();
     
-    
     function updateAttr(selection){
-        var scale = self._getCurrentScale();
+        var scale = self.getCurrentTransform().k;
         
         selection.attr("transform", function (Node) { return "translate(" + Node.getX() + "," + Node.getY() + ")";})
             .classed("selected", function(Node){return Node.selected()})
@@ -1683,7 +1682,7 @@ function drawNodesSvg (renderType) {
 
 function drawLinksSvg (renderType) {
     var self = this;
-    var scale = self._getCurrentScale();
+    var scale = self.getCurrentTransform().k;
     
     var linkPaths = this._getLinksSelection().data(this.getRenderedLinks(), function (Link) { return Link.id }),
         linkLabels = this._getLinksLabelSelection().data(this._links, function (Link) { return Link.id; });
@@ -1815,7 +1814,7 @@ function zoomed () {
     //Graph._ifShowLabels();
     
     var previousScale = this._getForceGroup()._pScale;
-    var currentScale = this._getCurrentScale().toFixed(4) / 1;
+    var currentScale = this.getCurrentTransform().k.toFixed(4) / 1;
     //缩放网络图
     this._getForceGroup().attr("transform", "translate(" + d3.event.transform.x + ", "+ d3.event.transform.y + ") scale(" + currentScale + ")");
     this._getForceGroup()._pScale = currentScale;
@@ -2573,9 +2572,10 @@ function hierarchyLayout(selectedNodes, relatedLinks, width, height) {
 }
 
 function getJSON$2 (nodeFilter, linkFilter) {
+    var transform = this.getCurrentTransform();
     var json = {
-        translate: this._getCurrentTranslate(),
-        scale: this._getCurrentScale(),
+        translate: [transform.x, transform.y],
+        scale: transform.k,
         nodes: [],
         links: []
     };
@@ -2726,19 +2726,9 @@ Graph.prototype = {
     _init: init,
     _draw: draw,
     _zoomed: zoomed,
-    _getCurrentTransform: function(){
+    getCurrentTransform: function(){
         if(!this._canvas) return;
         return d3.zoomTransform(this._canvas);
-    },
-    _getCurrentScale: function(){
-        var transform = this._getCurrentTransform();
-        if(!transform) return;
-        return transform.k;
-    },
-    _getCurrentTranslate: function(){
-        var transform = this._getCurrentTransform();
-        if(!transform) return;
-        return [transform.x, transform.y];
     },
     _getBrushSelection: function () {
         return this._getSvgSelection().select('g.brush');

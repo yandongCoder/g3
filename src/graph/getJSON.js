@@ -1,7 +1,8 @@
 export default function (nodeFilter, linkFilter) {
+    var transform = this.getCurrentTransform();
     var json = {
-        translate: this._getCurrentTranslate(),
-        scale: this._getCurrentScale(),
+        translate: [transform.x, transform.y],
+        scale: transform.k,
         nodes: [],
         links: []
     };

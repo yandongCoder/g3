@@ -3,7 +3,7 @@ import {RENDER_TYPE} from "../CONSTANT";
 
 export default function (renderType) {
     var self = this;
-    var scale = self._getCurrentScale();
+    var scale = self.getCurrentTransform().k;
     
     var linkPaths = this._getLinksSelection().data(this.getRenderedLinks(), function (Link) { return Link.id }),
         linkLabels = this._getLinksLabelSelection().data(this._links, function (Link) { return Link.id; });
