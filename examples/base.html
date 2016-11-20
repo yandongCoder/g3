@@ -44,7 +44,7 @@
 
     var groupedByRelatedNodes = {
         nodes: [{id: 1, label: 1, x: 50, y: 100}, {id: 2, label: 2, x: 100, y: 50}, {id: 3, label: 3, x: 100, y: 150}, {id: 4, label: 4, x: 200, y: 100}, {id: 5, label: 5, x: 300, y: 50}, {id: 6, label: 6, x: 300, y: 150}],
-        links: [{id:1, src: 1, dst: 2}, {id:2, src: 3, dst: 1}, {id:3, src: 2, dst: 4}, {id:4, src: 4, dst: 3}, {id:5, src: 4, dst: 5}, {id:6, src: 6, dst: 4}]
+        links: [{id:1, label: 123, src: 1, dst: 2}, {id:2, src: 3, dst: 1}, {id:3, src: 2, dst: 4}, {id:4, src: 4, dst: 3}, {id:5, src: 4, dst: 5}, {id:6, src: 6, dst: 4}]
     };
 
     var groupedData = {
@@ -92,6 +92,7 @@
 //    myGrid(myGraph.nodes());
     setTimeout(
             function getRemoteData() {
+                myGraph.links()[0].disabled(true);
 //                var force = myGraph.forceLayout(myGraph.nodes(), myGraph.links(), 1000, 200);
 //                for (var i = 100; i--;) {
 //                    force.tick();

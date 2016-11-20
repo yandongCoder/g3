@@ -23,7 +23,7 @@
   },
   "homepage": "https://github.com/yandongCoder/g3#readme",
   "dependencies": {
-    "d3": "^4.2.2",
+    "d3": "^4.3.0",
     "underscore": "^1.8.3"
   },
   "devDependencies": {

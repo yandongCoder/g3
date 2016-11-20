@@ -1271,16 +1271,16 @@ function deselectLinks(filter) {
     return this;
 }
 
-function disableNodes(filter, retainOther) {
-    if(!retainOther) this.enableAll();
+function disableNodes(filter, notRetainOther) {
+    if(notRetainOther) this.enableAll();
     this.getNodes(filter).forEach(function(Node){
         Node.disabled(true);
     }, this);
     return this;
 }
 
-function disableLinks(filter, retainOther) {
-    if(!retainOther) this.enableAll();
+function disableLinks(filter, notRetainOther) {
+    if(notRetainOther) this.enableAll();
     this.getLinks(filter).forEach(function(Link){
         Link.disabled(true);
     }, this);
