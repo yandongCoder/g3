@@ -1847,7 +1847,6 @@ function translateBy(x, y, duration) {
 }
 
 function keydowned() {
-    d3.event.preventDefault();
     if (!d3.event.metaKey) {
         switch (d3.event.keyCode) {
             //shift alt and space is used by d3 brush
@@ -1855,10 +1854,10 @@ function keydowned() {
                 this.brush.show();
                 break;
             case 46:
-            case 8:
                 this.removeNodes(this.getSelectedNodes());
             break;
             case 65:
+                d3.event.preventDefault();
                 if(d3.event.ctrlKey) this.selectNodes(this.getNodes());
             break;
         }
