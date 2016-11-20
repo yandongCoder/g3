@@ -4,10 +4,7 @@ export default function() {
         .on('start', function () {
             self._config.onZoomStart.call(this);
         })
-        .on("zoom", function(){
-            self._zoomed.bind(self);
-            self._config.onZoom.call(this);
-        })
+        .on("zoom", this._zoomed.bind(this))
         .on('end', function () {
             self._config.onZoomEnd.call(this);
         });

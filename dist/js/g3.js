@@ -1481,10 +1481,7 @@ function Zoom() {
         .on('start', function () {
             self._config.onZoomStart.call(this);
         })
-        .on("zoom", function(){
-            self._zoomed.bind(self);
-            self._config.onZoom.call(this);
-        })
+        .on("zoom", this._zoomed.bind(this))
         .on('end', function () {
             self._config.onZoomEnd.call(this);
         });
@@ -1826,7 +1823,7 @@ function zoomed () {
     var hideScale = this._config.scaleOfHideLabel;
     
     //render while should hide label
-    if(previousScale > hideScale && currentScale < hideScale) this.renderImmediately();
+    if(previousScale >= hideScale && currentScale <= hideScale) this.renderImmediately();
     //panning don't need re-render, render only after zooming
     if(currentScale !== previousScale && currentScale > hideScale) this.renderImmediately();
 }
