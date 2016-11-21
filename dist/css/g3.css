@@ -8,9 +8,9 @@ svg.graph {
   overflow: hidden;
   cursor: move;
   background-color: #f1f1f1; }
-  .graph .node, .graph .link-path, .graph .link-label {
+  .graph .node, .graph .link {
     cursor: default; }
-    .graph .node.disabled, .graph .link-path.disabled, .graph .link-label.disabled {
+    .graph .node.disabled, .graph .link.disabled {
       opacity: 0.1;
       pointer-events: none; }
   .graph .nodes .text-background {
@@ -60,17 +60,28 @@ svg.graph {
       background: #f65565; }
   .graph svg:focus {
     outline: 0; }
-  .graph .paths path {
-    fill-opacity: 0.5;
-    stroke-opacity: 0.5;
-    fill: none;
-    stroke: #a1a1a1;
-    stroke-width: 4px; }
-    .graph .paths path.selected {
+  .graph .links {
+    font-size: 13px; }
+    .graph .links .link-info .center {
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 100%; }
+      .graph .links .link-info .center .icon {
+        margin-right: 2px; }
+    .graph .links path {
+      fill-opacity: 0.5;
+      stroke-opacity: 0.5;
       fill: none;
-      stroke: #f65565 !important;
-      fill-opacity: 1;
-      stroke-opacity: 1; }
+      stroke: #a1a1a1;
+      stroke-width: 4px; }
+      .graph .links path.selected {
+        fill: none;
+        stroke: #f65565 !important;
+        fill-opacity: 1;
+        stroke-opacity: 1; }
   .graph #start-arrow path, .graph #end-arrow path {
     fill-opacity: 0.5;
     fill: #a1a1a1; }
@@ -80,15 +91,6 @@ svg.graph {
   .graph #start-arrow-selected path, .graph #end-arrow-selected path {
     fill-opacity: 1;
     fill: #f65565; }
-  .graph .links {
-    stroke: #ccc;
-    stroke-width: 1; }
-    .graph .links .link .link-label {
-      stroke: none;
-      stroke-width: 0; }
-    .graph .links line:hover {
-      stroke: #aaa;
-      stroke-width: 2; }
   .graph .brush {
     display: none; }
   .graph .brush .extent {

@@ -9,7 +9,7 @@ svg.graph{
   overflow: hidden;
   cursor: move;
   background-color: #f1f1f1;
-  .node, .link-path, .link-label{
+  .node, .link{
     cursor: default;
     &.disabled{
       opacity: 0.1;
@@ -90,7 +90,21 @@ svg.graph{
   svg:focus{
     outline: 0;
   }
-  .paths{
+  .links{
+    font-size: 13px;
+    .link-info{
+      .center{
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+        .icon{
+          margin-right: 2px;
+        }
+      }
+    }
     path{
       fill-opacity: 0.5;
       stroke-opacity: 0.5;
@@ -129,22 +143,6 @@ svg.graph{
     path{
       fill-opacity: 1;
       fill: #f65565;
-    }
-  }
-  .links{
-    stroke: #ccc;
-    stroke-width:1;
-
-    .link{
-      .link-label{
-        stroke: none;
-        stroke-width:0;
-      }
-    }
-
-    line:hover{
-      stroke: #aaa;
-      stroke-width:2;
     }
   }
   .brush{

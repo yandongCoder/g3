@@ -1,5 +1,4 @@
 import {DIRECTION} from "../CONSTANT";
-import getStrLen from "../../utils/getStrLen";
 import getOffsetCoordinate from "../../utils/getOffsetCoordinate";
 
 var absUrl = window.location.href.split('#')[0];
@@ -24,40 +23,39 @@ function getEndArrow (status) {
         return "";
 }
 
-function getTextOffset() {
-    var self = this;
-    var coord = this.getCoordination(true);
+function LineWidth(scale){
+    var c = this.getCoordination(true);
+    var x = c.Tx - c.Sx;
+    var y = c.Ty - c.Sy;
+    var z = Math.sqrt(x*x + y*y) * scale;
     
-    var x = Math.abs(coord.Tx - coord.Sx);
-    var y = Math.abs(coord.Ty - coord.Sy);
-    var z = Math.sqrt(x * x + y * y);
-    
-    var charLength = getStrLen(this.label()) * 6.6 / 2;
-    
-    var dx = z / 2 - charLength;
-    
-    return dx + textLeftOffset();
-    
-    function textLeftOffset(){
-        if((self.hasTargetArrow() && !self.hasSourceArrow()) || (!self.hasTargetArrow() && !self.hasSourceArrow())) return self.source.radius();
-        //else if(!self.hasTargetArrow() && self.hasSourceArrow()) return self.target.radius();
-        else return 0;
-    }
+    return z;
 }
 
+function LineHeight(scale) {
+    return this.width() * scale;
+}
 
-function getLinkLabelTransform(scaleFactor) {
-    var coord = this.getCoordination(true);
-    var rx = (coord.Sx + coord.Tx) / 2;
-    var ry = (coord.Sy + coord.Ty) / 2;
+function getLinkInfoTransform(scale) {
+    var c = this.getCoordination(true);
+    var rx = (c.Sx + c.Tx) / 2;
+    var ry = (c.Sy + c.Ty) / 2;
     
+    var x = c.Tx - c.Sx;
+    var y = c.Ty - c.Sy;
+
+    var radians =  Math.atan2(y, x) || 0;
+    if (radians < 0) radians += 2 * Math.PI;
+    var degrees = radians * 180 / Math.PI;
+    if(degrees > 90 && degrees < 270) degrees -= 180;
     
-    if (coord.Tx < coord.Sx) {
-        return 'rotate(180 ' + rx + ' ' + ry + ') translate(' + rx + ' ' + ry + ') scale(' + 1 / scaleFactor + ') translate(' + -rx + ' ' + -ry + ')';
-        //先移动原点到字体位置，然后进行缩放，在将原点移回到初始位置
-    } else {
-        return 'translate(' + rx + ' ' + ry + ') scale(' + 1 / scaleFactor + ') translate(' + -rx + ' ' + -ry + ')';
-    }
+    var transform  = 'rotate('+ degrees +' '+ rx +' '+ ry +') translate(' + rx + ' ' + ry + ') scale(' + 1 / scale + ')' + '';
+    
+    var offsetX =  - this.LineWidth(scale) / 2;
+    var offsetY =  - this.LineHeight(scale) / 2;
+    transform += ' translate('+ offsetX +' '+ offsetY +')';
+    
+    return transform;
 }
 
 //Link coordination is Node center's coordination or coordination where arrow placed, if any.
@@ -102,4 +100,4 @@ function getCoordination(forText) {
     };
 }
 
-export {getStartArrow, getEndArrow, getTextOffset, getLinkLabelTransform, getCoordination};
+export {getStartArrow, LineWidth, LineHeight, getEndArrow, getLinkInfoTransform, getCoordination};

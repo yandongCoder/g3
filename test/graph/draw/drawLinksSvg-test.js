@@ -15,9 +15,7 @@ tape("links DOM should correspond _links always", function(test){
 
     myGraph.renderImmediately();
     
-    test.equal(myGraph.links().length, document.querySelectorAll('.link-path').length);
-    test.equal(myGraph.links().length, document.querySelectorAll('.link-label').length);
-    
+    test.equal(myGraph.links().length, document.querySelectorAll('.link').length);
     test.end();
 });
 
@@ -29,11 +27,10 @@ tape("Link's DOM should correspond Link's property", function(test) {
         .nodes([{id: 1, x: 0, y: 0, selected: true}, {id: 2, x: 100, y: 0}])
         .links([{id: 1, src: 1, dst: 2, label: "a", color: "#342234", selected: true}, {id: 2, src: 1, dst: 2}, {id: 3, src: 1, dst: 2}]);
     
-    
     myGraph.renderImmediately();
     
-    var pathsEle = document.querySelectorAll(".link-path"),
-        labelsEle = document.querySelectorAll(".link-label");
+    var pathsEle = document.querySelectorAll(".link path"),
+        labelsEle = document.querySelectorAll(".link-info .text");
     var firstPath = pathsEle[0], secondPath = pathsEle[1], thirdPath = pathsEle[2],
         firstLabel = labelsEle[0],
         firstLink = myGraph.links()[0], secondLink = myGraph.links()[1], thirdLink = myGraph.links()[2],
@@ -42,13 +39,12 @@ tape("Link's DOM should correspond Link's property", function(test) {
     //width Attribute
     test.equal(firstPath.style.strokeWidth, '3');
     //label DOM
-    test.equal(document.querySelectorAll(".link-label")[0].textContent, "a");
+    test.equal(firstLabel.textContent, "a");
     //color Attribute
     test.equal(firstPath.style.stroke, "#342234");
     //direction Attribute
     test.equal(firstPath.style.markerStart, "");
     test.notEqual(firstPath.style.markerEnd, "");
-    
     
     firstLink.width(7);
     firstLink.label('abc');
@@ -69,8 +65,7 @@ tape("Link's DOM should correspond Link's property", function(test) {
     test.equal(thirdPath.style.markerStart, "");
     test.equal(thirdPath.style.markerEnd, "");
     
-    
-    secondLink._pathEle.dispatchEvent(new window.MouseEvent("mousedown"));
+    secondLink._element.dispatchEvent(new window.MouseEvent("mousedown"));
     myGraph.renderImmediately();
     test.equal(firstPath.className, 'link-path disabled');
     test.equal(secondPath.className, 'link-path selected');

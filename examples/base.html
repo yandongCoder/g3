@@ -42,9 +42,10 @@
     };
 
     var groupedByRelatedNodes = {
-        nodes: [{id: 1, label: 1, x: 50, y: 100}, {id: 2, label: 2, x: 100, y: 50}, {id: 3, label: 3, x: 100, y: 150}, {id: 4, label: 4, x: 200, y: 100}, {id: 5, label: 5, x: 300, y: 50}, {id: 6, label: 6, x: 300, y: 150}],
-        links: [{id:1, label: 123, width: 10, src: 1, dst: 2}, {id:2, src: 3, dst: 1}, {id:3, src: 2, dst: 4}, {id:4, src: 4, dst: 3}, {id:5, src: 4, dst: 5}, {id:6, src: 6, dst: 4}]
+        nodes: [{id: 1, label: 1, x: 50, y: 100, icon: 'male'}, {id: 2, label: 2, x: 300, y: 50}, {id: 3, label: 3, x: 100, y: 150}, {id: 4, label: 4, x: 200, y: 100}, {id: 5, label: 5, x: 300, y: 50}, {id: 6, label: 6, x: 300, y: 150}],
+        links: [{id:1, label: 'abc', icon: "female", width: 10, src: 1, dst: 2}]
     };
+    //, {id:2, label: "b", src: 3, dst: 1}, {id:3, src: 2, dst: 4}, {id:4, label: 'KNIGHT', src: 4, dst: 3}, {id:5, src: 4, dst: 5}, {id:6, label: 'loves', src: 6, dst: 4}
 
     var groupedData = {
         nodes: [{id: 1, x: 150, y: 150, fx: 59, fy: 59}, {id: 2}, {id: 3}],
@@ -54,7 +55,9 @@
     var myGraph = g3.graph("#my-graph",{
         zoomable: false,
         iconPrefix: "fa fa-",
-        onNodeMouseDown: function(Node){}
+        onLinkMouseDown: function(Link){
+            console.log(123);
+        }
     })
     .nodes(groupedByRelatedNodes.nodes)
     .links(groupedByRelatedNodes.links);

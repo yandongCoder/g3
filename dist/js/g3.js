@@ -232,40 +232,39 @@ function getEndArrow (status) {
         return "";
 }
 
-function getTextOffset() {
-    var self = this;
-    var coord = this.getCoordination(true);
+function LineWidth(scale){
+    var c = this.getCoordination(true);
+    var x = c.Tx - c.Sx;
+    var y = c.Ty - c.Sy;
+    var z = Math.sqrt(x*x + y*y) * scale;
     
-    var x = Math.abs(coord.Tx - coord.Sx);
-    var y = Math.abs(coord.Ty - coord.Sy);
-    var z = Math.sqrt(x * x + y * y);
-    
-    var charLength = getStrLen(this.label()) * 6.6 / 2;
-    
-    var dx = z / 2 - charLength;
-    
-    return dx + textLeftOffset();
-    
-    function textLeftOffset(){
-        if((self.hasTargetArrow() && !self.hasSourceArrow()) || (!self.hasTargetArrow() && !self.hasSourceArrow())) return self.source.radius();
-        //else if(!self.hasTargetArrow() && self.hasSourceArrow()) return self.target.radius();
-        else return 0;
-    }
+    return z;
 }
 
+function LineHeight(scale) {
+    return this.width() * scale;
+}
 
-function getLinkLabelTransform(scaleFactor) {
-    var coord = this.getCoordination(true);
-    var rx = (coord.Sx + coord.Tx) / 2;
-    var ry = (coord.Sy + coord.Ty) / 2;
+function getLinkInfoTransform(scale) {
+    var c = this.getCoordination(true);
+    var rx = (c.Sx + c.Tx) / 2;
+    var ry = (c.Sy + c.Ty) / 2;
     
+    var x = c.Tx - c.Sx;
+    var y = c.Ty - c.Sy;
+
+    var radians =  Math.atan2(y, x) || 0;
+    if (radians < 0) radians += 2 * Math.PI;
+    var degrees = radians * 180 / Math.PI;
+    if(degrees > 90 && degrees < 270) degrees -= 180;
     
-    if (coord.Tx < coord.Sx) {
-        return 'rotate(180 ' + rx + ' ' + ry + ') translate(' + rx + ' ' + ry + ') scale(' + 1 / scaleFactor + ') translate(' + -rx + ' ' + -ry + ')';
-        //先移动原点到字体位置，然后进行缩放，在将原点移回到初始位置
-    } else {
-        return 'translate(' + rx + ' ' + ry + ') scale(' + 1 / scaleFactor + ') translate(' + -rx + ' ' + -ry + ')';
-    }
+    var transform  = 'rotate('+ degrees +' '+ rx +' '+ ry +') translate(' + rx + ' ' + ry + ') scale(' + 1 / scale + ')' + '';
+    
+    var offsetX =  - this.LineWidth(scale) / 2;
+    var offsetY =  - this.LineHeight(scale) / 2;
+    transform += ' translate('+ offsetX +' '+ offsetY +')';
+    
+    return transform;
 }
 
 //Link coordination is Node center's coordination or coordination where arrow placed, if any.
@@ -323,6 +322,24 @@ function disabled$1(disabled) {
     if(!arguments.length) return this._disabled;
     
     this._disabled = disabled;
+    this.graph.delayRender(this);
+    
+    return this;
+}
+
+function icon$1(icon) {
+    if(!arguments.length) return this._icon;
+    
+    this._icon = icon;
+    this.graph.delayRender(this);
+    
+    return this;
+}
+
+function mugshot$1(mugshot) {
+    if(!arguments.length) return this._mugshot;
+    
+    this._mugshot = mugshot;
     this.graph.delayRender(this);
     
     return this;
@@ -766,6 +783,8 @@ function Link(data, graph) {
     this._label = data.label || "";
     this._width = data.width || (graph && graph._config.linkWidth);
     this._color = data.color || (graph && graph._config.linkColor);
+    this._icon = data.icon  || graph._config.icon;
+    this._mugshot = data.mugshot || graph._config.mugshot;
     this._selected = data.selected || false;
     this._direction = data.direction === undefined? 1: data.direction;//0: none, 1: from, 2: to, 3 double
     this._disabled = data.disabled || false;
@@ -793,11 +812,14 @@ Link.prototype = {
     getCoordination: getCoordination,
     getStartArrow: getStartArrow,
     getEndArrow: getEndArrow,
-    getTextOffset: getTextOffset,
-    getLinkLabelTransform: getLinkLabelTransform,
+    LineWidth: LineWidth,
+    LineHeight: LineHeight,
+    getLinkInfoTransform: getLinkInfoTransform,
     getJSON: getJSON,
     label: label$1,
     width: width,
+    icon: icon$1,
+    mugshot: mugshot$1,
     selected: selected$1,
     disabled: disabled$1,
     remove: remove,
@@ -1470,8 +1492,7 @@ function appendPreElement () {
 
     var forceGroup = this._forceGroupSelection = svg.append('g').attr('class', 'force');
     
-    forceGroup.append("g").attr("class", "paths");
-    forceGroup.append("g").attr("class", "link-labels");
+    forceGroup.append("g").attr("class", "links");
     forceGroup.append("g").attr("class", "nodes");
 }
 
@@ -1684,58 +1705,64 @@ function drawLinksSvg (renderType) {
     var self = this;
     var scale = self.getCurrentTransform().k;
     
-    var linkPaths = this._getLinksSelection().data(this.getRenderedLinks(), function (Link) { return Link.id }),
-        linkLabels = this._getLinksLabelSelection().data(this._links, function (Link) { return Link.id; });
+    var links = this._getLinksSelection().data(this.getRenderedLinks(), function (Link) { return Link.id });
 
-    linkPaths.enter()
-        .append('path')
-        .classed('link-path', true)
-        .each(function(Link){ Link._pathEle = this })
-        .attr('id', function(Link){ return "link-path" + Link.id})
+    var link = links.enter()
+        .append('g')
+        .each(function(Link){ Link._element = this })
+        .classed('link', true)
         .on('mousedown', function(Link, i){
             self.deselectAll();
             Link.selected(!Link.selected());
-            
+        
             self._config.onLinkMouseDown.call(this, Link, i);
         })
         .on('contextmenu', this._config.onLinkContextmenu)
         .on('mouseover', this._config.onLinkMouseover)
-        .on('mouseout', this._config.onLinkMouseout)
-        .call(updatePathAttr);
+        .on('mouseout', this._config.onLinkMouseout);
     
-    var text = linkLabels.enter().append('text')
-        .each(function(Link){ Link._labelEle = this })
-        .style("pointer-events", "none")
-        .classed('link-label', true)
-        .attr('id', function (Link) { return 'link-label' + Link.id; });
-    text.append('textPath')
-        .attr('xlink:href', function (Link) {  return getAbsUrl() + '#link-path' + Link.id; })
-        .style("pointer-events", "none");
+    link.append('path')
+        .classed('link-path', true)
+        .attr('id', function(Link){ return "link-path" + Link.id})
     
-    text.call(updateLabelAttr);
     
-    if(renderType === RENDER_TYPE.IMMEDIATELY || renderType === RENDER_TYPE.NUDGE){
-        var updateLinks  = this._getLinksSelection(),
-            updateLabels = this._getLinksLabelSelection();
+    var info = link
+        .append('svg:foreignObject')
+        .classed('link-info', true)
+        .append("xhtml:div")
+        .classed('center', true);
+    
+    info.append('xhtml:span').attr('class', 'icon');
+    info.append('xhtml:span').attr('class', 'text');
+    
+    
+    link.call(updateLinkAttr);
+    
+    
+    if(renderType === RENDER_TYPE.IMMEDIATELY){
+        var updateLinks  = this._getLinksSelection();
+    }else if(renderType === RENDER_TYPE.NUDGE){
+        updateLinks  = d3.selectAll(this.getRelatedLinks(this.getSelectedNodes()).map(function(Link){return Link._element;}));
     }else{
-        updateLinks = d3.selectAll(this.updateDOM.getLinksPath());
-        updateLabels = d3.selectAll(this.updateDOM.getLinksLabel());
+        updateLinks = d3.selectAll(this.updateDOM.getLinks());
     }
-
-    updateLinks.call(updatePathAttr);
-    updateLabels.call(updateLabelAttr);
+    
+    
+    updateLinks.call(updateLinkAttr);
     
     this.updateDOM.clearUpdateLinks();
     
-    linkPaths.exit().remove();
-    linkLabels.exit().remove();
+    links.exit().remove();
     
-    function updatePathAttr(selection){
-        if(renderType === RENDER_TYPE.NUDGE){
-            selection.attr('d', function (Link) { var c = Link.getCoordination();  return 'M ' + c.Sx + ' ' + c.Sy + ' L ' + c.Tx + ' ' + c.Ty; });
-            return;
-        }
+    function updateLinkAttr(selection){
+        // if(renderType === RENDER_TYPE.NUDGE){
+        //     selection
+        //         .select('path')
+        //         .attr('d', function (Link) { var c = Link.getCoordination();  return 'M ' + c.Sx + ' ' + c.Sy + ' L ' + c.Tx + ' ' + c.Ty; });
+        //     return;
+        // }
         selection
+            .select('path')
             .attr('d', function (Link) { var c = Link.getCoordination();  return 'M ' + c.Sx + ' ' + c.Sy + ' L ' + c.Tx + ' ' + c.Ty; })
             .classed("selected", function(Link){return Link.selected()})
             .classed("disabled", function(Node){return Node.disabled()})
@@ -1743,30 +1770,31 @@ function drawLinksSvg (renderType) {
             .style('marker-end', function (Link) { return Link.getEndArrow(); })
             .style('stroke-width', function(Link){ return Link.width(); })
             .style('stroke', function(Link){ return Link.color(); });
-    }
     
-    function updateLabelAttr(selection){
-        if(renderType === RENDER_TYPE.NUDGE){
-            selection
-                .attr('dx', function(Link){return Link.getTextOffset(); })
-                .attr('transform', function(Link){ return Link.getLinkLabelTransform(scale); });
-            return;
-        }
-        selection
+        // if(renderType === RENDER_TYPE.NUDGE){
+        //     selection
+        //         .attr('dx', function(Link){return Link.getTextOffset(); })
+        //         .attr('transform', function(Link){ return Link.getLinkLabelTransform(scale); });
+        //     return;
+        // }
+        
+        var info = selection
+            .select('.link-info')
+            .attr('transform', function(Link){
+                return Link.getLinkInfoTransform(scale);
+            })
             .style('display', function(Link){
                 return (scale < self._config.scaleOfHideLabel)? 'none': 'block';
             })
-            .classed("disabled", function(Node){return Node.disabled()})
-            .attr('dx', function(Link){return Link.getTextOffset(); })
-            .attr('dy', 1)
-            .attr('font-size', 13)
-            //反转字体，使字体总是朝上，该句放于该函数最后执行，提前会导致问题
-            .attr('transform', function(Link){ return Link.getLinkLabelTransform(scale); });
+            .classed("disabled", function(Link){return Link.disabled()})
+            .attr('width', function (Link) {return Link.LineWidth(scale)})
+            .attr('height', function(Link){return Link.LineHeight(scale)});
+        
+        info.select('.text')
+            .text(function (Link) {return Link.label();});
     
-        selection.select('textPath')
-            .text(function (Link) {
-                return Link.label();
-            });
+        info.select('.icon')
+            .attr('class', function(Link){ return self._config.iconPrefix + Link.icon();})
     }
 }
 
@@ -1857,8 +1885,8 @@ function keydowned() {
                 this.removeNodes(this.getSelectedNodes());
             break;
             case 65:
-                d3.event.preventDefault();
                 if(d3.event.ctrlKey) this.selectNodes(this.getNodes());
+                d3.event.preventDefault();
             break;
         }
     }
@@ -2599,7 +2627,7 @@ UpdateDOM.prototype = {
     _addNode: addNode$1,
     _addLink: addLink$1,
     getNodesEle: getNodesEle,
-    getLinksPath: getLinksPath,
+    getLinks: getLinks$1,
     getLinksLabel: getLinksLabel,
     clearUpdateNodes: clearUpdateNodes,
     clearUpdateLinks: clearUpdateLinks
@@ -2633,7 +2661,7 @@ function getNodesEle(){
     return this._updateNodes.map(function(Node){return Node._element;});
 }
 
-function getLinksPath(){
+function getLinks$1(){
     return this._updateLinks.map(function(Node){return Node._pathEle;});
 }
 
@@ -2749,10 +2777,7 @@ Graph.prototype = {
         return this._getNodesSelection().selectAll('.text-group');
     },
     _getLinksSelection: function(){
-        return this._getSvgSelection().select('g.paths').selectAll("path");
-    },
-    _getLinksLabelSelection: function(){
-        return this._getSvgSelection().select('g.link-labels').selectAll('text.link-label');
+        return this._getSvgSelection().select('g.links').selectAll(".link");
     },
     _getForceGroup: function(){
         return this._forceGroupSelection;

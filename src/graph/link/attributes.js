@@ -18,6 +18,24 @@ function disabled(disabled) {
     return this;
 }
 
+function icon(icon) {
+    if(!arguments.length) return this._icon;
+    
+    this._icon = icon;
+    this.graph.delayRender(this);
+    
+    return this;
+}
+
+function mugshot(mugshot) {
+    if(!arguments.length) return this._mugshot;
+    
+    this._mugshot = mugshot;
+    this.graph.delayRender(this);
+    
+    return this;
+}
+
 function direction(direction) {
     if(!arguments.length) return this._direction;
     
@@ -107,4 +125,4 @@ function transformed(transformed) {
     
     return this;
 }
-export {color, disabled, direction, label, selected, width, getSourceId, getTargetId, changeSource, changeTarget, merged, grouped, transformed};
+export {color, disabled, icon, mugshot, direction, label, selected, width, getSourceId, getTargetId, changeSource, changeTarget, merged, grouped, transformed};

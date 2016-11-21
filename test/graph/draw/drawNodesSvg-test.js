@@ -127,7 +127,7 @@ tape("Hide label while currentScale < scaleOfNodeLabelHide", function(test){
     myGraph.renderImmediately();
     
     test.equal(document.querySelectorAll(".node")[0].querySelector(".text-group").style.display, "none");
-    test.equal(document.querySelectorAll(".link-label")[0].style.display, "none");
+    test.equal(document.querySelectorAll(".link-info")[0].style.display, "none");
     
     test.end();
 });

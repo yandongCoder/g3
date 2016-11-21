@@ -58,13 +58,13 @@ tape("Custom event callback test.", function(test){
             triggerOnLinkMouseDown = true;
             test.equal(i, 0);
             test.deepEqual(Link, firstLink);
-            test.deepEqual(this, firstLinkPath);
+            test.deepEqual(this, firstLinkEle);
         },
         onLinkContextmenu: function(Link, i){
             triggerOnLinkContextmenu = true;
             test.equal(i, 0);
             test.deepEqual(Link, firstLink);
-            test.deepEqual(this, firstLinkPath);
+            test.deepEqual(this, firstLinkEle);
         }
         
     });
@@ -75,7 +75,7 @@ tape("Custom event callback test.", function(test){
     var firstNode = myGraph.nodes()[0],
         firstNodeEle = document.querySelector('.node'),
         firstLink = myGraph.links()[0],
-        firstLinkPath = document.querySelector('.link-path');
+        firstLinkEle = document.querySelectorAll('.link')[0];
     
     var mouseDownEvent = new window.MouseEvent("mousedown"),
         clickEvent = new window.MouseEvent("click"),
@@ -93,10 +93,10 @@ tape("Custom event callback test.", function(test){
     firstNodeEle.dispatchEvent(contextMenuEvent);
     test.equal(triggerOnNodeContextmenu, true);
     
-    firstLinkPath.dispatchEvent(mouseDownEvent);
+    firstLinkEle.dispatchEvent(mouseDownEvent);
     test.equal(triggerOnLinkMouseDown, true);
     
-    firstLinkPath.dispatchEvent(contextMenuEvent);
+    firstLinkEle.dispatchEvent(contextMenuEvent);
     test.equal(triggerOnLinkContextmenu, true);
     
     test.end();

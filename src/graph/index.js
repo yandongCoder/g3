@@ -117,10 +117,7 @@ Graph.prototype = {
         return this._getNodesSelection().selectAll('.text-group');
     },
     _getLinksSelection: function(){
-        return this._getSvgSelection().select('g.paths').selectAll("path");
-    },
-    _getLinksLabelSelection: function(){
-        return this._getSvgSelection().select('g.link-labels').selectAll('text.link-label');
+        return this._getSvgSelection().select('g.links').selectAll(".link");
     },
     _getForceGroup: function(){
         return this._forceGroupSelection;
