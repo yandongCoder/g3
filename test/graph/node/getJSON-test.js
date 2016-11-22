@@ -19,7 +19,7 @@ tape("Node's groupedBy property only maintain id array in json string.", functio
     myGraph.group([myGraph.nodes()[0], myGraph.nodes()[1]]);
     
     test.equal(myGraph.nodes()[0].getJSON().grouped, true);
-    test.deepEqual(myGraph.nodes()[3].getJSON(), {id:"grouped:1&2", icon: "", label:"&", mugshot: '', x:0, y:0, radius:15, color:"#359aff", disabled: false, selected:false, groupedBy:{nodes:[1,2], links:[1], attachedLinks: [{link:3, originalTarget:2},{link:2, originalSource:2}]}});
+    test.deepEqual(myGraph.nodes()[3].getJSON(), {id:"grouped:1&2", icon: "", label:"&", mugshot: '', x:0, y:0, radius:15, color:"#123456", disabled: false, selected:false, groupedBy:{nodes:[1,2], links:[1], attachedLinks: [{link:3, originalTarget:2},{link:2, originalSource:2}]}});
     
     test.end();
 });

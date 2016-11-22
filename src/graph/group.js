@@ -8,7 +8,7 @@ function group(filter) {
 
     var containLinks = this.getContainLinks(Nodes);
     var attachedLinks = this.getAttachedLinks(Nodes);
-    var newNode = this._addNode(deriveNodeFromNodes(Nodes));
+    var newNode = this._addNode(deriveNodeFromNodes(Nodes, this));
     
     newNode.groupedBy = new GroupedBy(newNode, Nodes, containLinks, attachedLinks);
     

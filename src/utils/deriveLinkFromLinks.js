@@ -1,4 +1,3 @@
-import colorMixer from "../utils/colorMixer";
 import concat from "../utils/deriveConcat";
 import average from "../utils/deriveAverage";
 import direction from "../utils/deriveDirection";
@@ -13,7 +12,6 @@ export default function (Links, graph) {
     obj.dst = Links[0].getTargetId();
     obj.color = graph._config.linkColor;
     obj.direction = direction(Links);
-
 
     
     return obj;

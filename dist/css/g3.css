@@ -63,7 +63,6 @@ svg.graph {
   .graph .links {
     font-size: 13px; }
     .graph .links .link-info .center {
-      overflow: hidden;
       display: flex;
       align-items: center;
       justify-content: center;
