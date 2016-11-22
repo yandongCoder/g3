@@ -49,7 +49,7 @@ function getRelatedLinks(Nodes) {
 
 function getRenderedLinks() {
     return this.getLinks(function(Link){
-        return !Link.transformed() && !Link.merged() && !Link.grouped();
+        return !Link.transformed() && !Link.merged() && !Link.grouped() && !Link.hide();
     });
 }
 

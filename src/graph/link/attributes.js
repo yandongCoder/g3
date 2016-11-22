@@ -18,6 +18,15 @@ function disabled(disabled) {
     return this;
 }
 
+function hide(hided) {
+    if(!arguments.length) return this._hide;
+    
+    this._hide = hided;
+    this.graph.delayRender(this);
+    
+    return this;
+}
+
 function icon(icon) {
     if(!arguments.length) return this._icon;
     
@@ -125,4 +134,4 @@ function transformed(transformed) {
     
     return this;
 }
-export {color, disabled, icon, mugshot, direction, label, selected, width, getSourceId, getTargetId, changeSource, changeTarget, merged, grouped, transformed};
+export {color, disabled, hide, icon, mugshot, direction, label, selected, width, getSourceId, getTargetId, changeSource, changeTarget, merged, grouped, transformed};

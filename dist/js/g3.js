@@ -327,6 +327,15 @@ function disabled$1(disabled) {
     return this;
 }
 
+function hide(hided) {
+    if(!arguments.length) return this._hide;
+    
+    this._hide = hided;
+    this.graph.delayRender(this);
+    
+    return this;
+}
+
 function icon$1(icon) {
     if(!arguments.length) return this._icon;
     
@@ -447,189 +456,6 @@ function remove (type) {
     return this;
 }
 
-// Real Life Color Mixer by Camilo Tapia (github.com/Camme)
-// Emulate color mixing as if you where mixing real life colors, ie substractive colors
-//
-// Usage:
-//
-// RLColorMixer.mixColorS(arrayOfColors);
-// where arrayOFColos is an array of hex rgb colors ['#ff0000', '#00ff00'] or an array with the amoutn of each color
-// [{color: '#ff0000', parts: 10}, {color: '#00ff00', parts: 2}].
-// or a mizture of the two.
-//
-// You can also snap to the nearest color in an array of hex rgb colors:
-// RLColorMixer.findNearest(orgColorinHex, listOfColors);
-//
-// Example:
-// RLColorMixer.findNearest('#fff000', ['#ff0000', '#ff0f00']);
-//
-
-var defaults = { result: "ryb", hex: true };
-
-function mix() {
-
-
-    var options = JSON.parse(JSON.stringify(defaults));
-
-    // check if the last arguments is an options object
-    var lastObject = arguments[arguments.length - 1];
-    if (typeof lastObject == "object" && lastObject.constructor != Array) {
-        var customOptions = lastObject;
-        options.result = customOptions.result || options.result;
-        options.hex = typeof customOptions.hex != "undefined" ? customOptions.hex : options.hex;
-        arguments.length--;
-    }
-
-    var colors = [];
-
-    // check if we got an array, but not if the array is just a representation of hex
-    if (arguments[0].constructor == Array && typeof arguments[0][0] != "number") {
-        colors = arguments[0];
-    } else {
-        colors = arguments;
-    }
-
-    //normalize, ie make sure all colors are in the same format
-    var normalized = [];
-    for(var i = 0, ii = colors.length; i < ii; i++){
-        var color = colors[i];
-        if (typeof color == "string") {
-            color = hexToArray(color);
-        }
-        normalized.push(color);
-    }
-
-    var newColor = mixRYB(normalized);
-
-    if (options.result == "rgb") {
-        newColor = rybToRgb(newColor);
-    }
-
-    if (options.hex) {
-        newColor = arrayToHex(newColor);
-    }
-
-    return newColor;
-
-}
-
-function mixRYB(colors) {
-
-    var newR = 0;
-    var newY = 0;
-    var newB = 0;
-
-    var total = 0;
-
-    var maxR = 0;
-    var maxY = 0;
-    var maxB = 0;
-
-    for(var i = 0, ii = colors.length; i < ii; i++){
-
-        var color = colors[i];
-
-        newR += color[0];
-        newY += color[1];
-        newB += color[2];
-
-    }
-
-    // Calculate the max of all sums for each color
-    var max = Math.max(newR, newY, newB);
-
-    // Now calculate each channel as a percentage of the max
-    var totalR = Math.floor(newR / max * 255);
-    var totalY = Math.floor(newY / max * 255);
-    var totalB = Math.floor(newB / max * 255);
-
-    return [totalR, totalY, totalB];
-
-}
-
-function hexToArray(hex) {
-    var hex = hex.replace("#", '');
-    var r = parseInt(hex.substr(0, 2), 16);
-    var g = parseInt(hex.substr(2, 2), 16);
-    var b = parseInt(hex.substr(4, 2), 16);
-    return [r, g, b];
-}
-
-
-function arrayToHex(rgbArray) {
-    var rHex = Math.round(rgbArray[0]).toString(16); rHex = rHex.length == 1 ? "0" + rHex : rHex;
-    var gHex = Math.round(rgbArray[1]).toString(16); gHex = gHex.length == 1 ? "0" + gHex : gHex;
-    var bHex = Math.round(rgbArray[2]).toString(16); bHex = bHex.length == 1 ? "0" + bHex : bHex;
-    return rHex + gHex + bHex;;
-}
-
-function cubicInt(t, A, B){
-    var weight = t*t*(3-2*t);
-    return A + weight*(B-A);
-}
-
-function getR(iR, iY, iB) {
-    // red
-    var x0 = cubicInt(iB, 1.0, 0.163);
-    var x1 = cubicInt(iB, 1.0, 0.0);
-    var x2 = cubicInt(iB, 1.0, 0.5);
-    var x3 = cubicInt(iB, 1.0, 0.2);
-    var y0 = cubicInt(iY, x0, x1);
-    var y1 = cubicInt(iY, x2, x3);
-    return Math.ceil (255 * cubicInt(iR, y0, y1));
-}
-
-function getG(iR, iY, iB) {
-    // green
-    var x0 = cubicInt(iB, 1.0, 0.373);
-    var x1 = cubicInt(iB, 1.0, 0.66);
-    var x2 = cubicInt(iB, 0.0, 0.0);
-    var x3 = cubicInt(iB, 0.5, 0.094);
-    var y0 = cubicInt(iY, x0, x1);
-    var y1 = cubicInt(iY, x2, x3);
-    return Math.ceil (255 * cubicInt(iR, y0, y1));
-}
-
-function getB(iR, iY, iB) {
-    // blue
-    var x0 = cubicInt(iB, 1.0, 0.6);
-    var x1 = cubicInt(iB, 0.0, 0.2);
-    var x2 = cubicInt(iB, 0.0, 0.5);
-    var x3 = cubicInt(iB, 0.0, 0.0);
-    var y0 = cubicInt(iY, x0, x1);
-    var y1 = cubicInt(iY, x2, x3);
-    return Math.ceil (255 * cubicInt(iR, y0, y1));
-}
-
-function rybToRgb(color, options){
-
-    if (typeof color == "string") {
-        color = hexToArray(color);
-    }
-
-    var R = color[0] / 255;
-    var Y = color[1] / 255;
-    var B = color[2] / 255;
-    var R1 = getR(R,Y,B) ;
-    var G1 = getG(R,Y,B) ;
-    var B1 = getB(R,Y,B) ;
-    var ret = [ R1, G1, B1 ];
-
-    if (options && options.hex == true) {
-        ret = arrayToHex(ret);
-    }
-
-    return ret;
-}
-
-//  colorMixer.mix = mix;
-//  colorMixer.rybToRgb = rybToRgb;
-//  colorMixer.findNearest = findNearest;
-
-var colorMixer = {
-    mix: mix
-};
-
 function concat(key, objArray){
     return objArray.map(function(obj){
         return obj[key] instanceof Function ? obj[key]() : obj[key];
@@ -662,7 +488,6 @@ function deriveLinkFromLinks (Links, graph) {
     obj.dst = Links[0].getTargetId();
     obj.color = graph._config.linkColor;
     obj.direction = direction$1(Links);
-
 
     
     return obj;
@@ -788,6 +613,7 @@ function Link(data, graph) {
     this._selected = data.selected || false;
     this._direction = data.direction === undefined? 1: data.direction;//0: none, 1: from, 2: to, 3 double
     this._disabled = data.disabled || false;
+    this._hide = data.hide || false;
 
     this.source = graph && this.graph._nodesHash[data.src];
     this.target = graph && this.graph._nodesHash[data.dst];
@@ -822,6 +648,7 @@ Link.prototype = {
     mugshot: mugshot$1,
     selected: selected$1,
     disabled: disabled$1,
+    hide: hide,
     remove: remove,
     getSourceId: getSourceId,
     getTargetId: getTargetId,
@@ -1254,7 +1081,7 @@ function getRelatedLinks(Nodes) {
 
 function getRenderedLinks() {
     return this.getLinks(function(Link){
-        return !Link.transformed() && !Link.merged() && !Link.grouped();
+        return !Link.transformed() && !Link.merged() && !Link.grouped() && !Link.hide();
     });
 }
 
@@ -1902,14 +1729,14 @@ function keyupped() {
     }
 }
 
-function deriveNodeFromNodes (Nodes) {
+function deriveNodeFromNodes (Nodes, graph) {
     var obj = {};
     obj.id = "grouped:" + concat("id", Nodes);
     obj.label = concat("label", Nodes);
     obj.radius = average('radius', Nodes);
     obj.x = average('x', Nodes);
     obj.y = average('y', Nodes);
-    obj.color = "#"+  colorMixer.mix(Nodes.map(function(Link){return Link.color()}));
+    obj.color = graph._config.color;
     obj.selected = Nodes.every(function(Node){ return Node.selected()});
 
     return obj;
@@ -1922,7 +1749,7 @@ function group(filter) {
 
     var containLinks = this.getContainLinks(Nodes);
     var attachedLinks = this.getAttachedLinks(Nodes);
-    var newNode = this._addNode(deriveNodeFromNodes(Nodes));
+    var newNode = this._addNode(deriveNodeFromNodes(Nodes, this));
     
     newNode.groupedBy = new GroupedBy(newNode, Nodes, containLinks, attachedLinks);
     
