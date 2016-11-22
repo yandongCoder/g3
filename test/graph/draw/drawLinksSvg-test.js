@@ -46,13 +46,13 @@ tape("Link's DOM should correspond Link's property", function(test) {
     test.equal(firstPath.style.markerStart, "");
     test.notEqual(firstPath.style.markerEnd, "");
     
-    firstLink.width(7);
-    firstLink.label('abc');
-    firstLink.color('#666888');
-    firstLink.direction(2);
-    firstLink.disabled(true);
-    secondLink.direction(3);
-    thirdLink.direction(0);
+    firstLink.attr("width", 7);
+    firstLink.attr("label", 'abc');
+    firstLink.attr("color", '#666888');
+    firstLink.attr("direction", 2);
+    firstLink.attr("disabled", true);
+    secondLink.attr("direction", 3);
+    thirdLink.attr("direction", 0);
     myGraph.renderImmediately();
     test.equal(firstPath.className, 'link-path selected disabled');
     test.equal(firstPath.style.strokeWidth, '7');

@@ -13,13 +13,13 @@ function getRenderedNodes() {
 
 function getSelectedNodes() {
     return this.getNodes(function(Node){
-        return Node.selected();
+        return Node.attr("selected");
     });
 }
 
 function getDisabledNodes() {
     return this.getNodes(function(Node){
-        return Node.disabled();
+        return Node.attr("disabled");
     });
 }
 
@@ -41,16 +41,16 @@ function getLinkedNodes(filter, type) {
     var relatedNodes = [];
     
     this.getRenderedLinks().forEach(function (Link) {
-        if(type === 'none' && Link.direction() !== DIRECTION.NONE) return;
-        if(type === 'double' && Link.direction() !== DIRECTION.DOUBLE) return;
+        if(type === 'none' && Link.attr("direction") !== DIRECTION.NONE) return;
+        if(type === 'double' && Link.attr("direction") !== DIRECTION.DOUBLE) return;
         if (Nodes.indexOf(Link.source) !== -1) {
-            if(type === 'in' && Link.direction() !== DIRECTION.D2S) return;
-            if(type === 'out' && Link.direction() !== DIRECTION.S2D) return;
+            if(type === 'in' && Link.attr("direction") !== DIRECTION.D2S) return;
+            if(type === 'out' && Link.attr("direction") !== DIRECTION.S2D) return;
             relatedNodes.push(Link.target);
         }
         if (Nodes.indexOf(Link.target) !== -1) {
-            if(type === 'in' && Link.direction() !== DIRECTION.S2D) return;
-            if(type === 'out' && Link.direction() !== DIRECTION.D2S) return;
+            if(type === 'in' && Link.attr("direction") !== DIRECTION.S2D) return;
+            if(type === 'out' && Link.attr("direction") !== DIRECTION.D2S) return;
             relatedNodes.push(Link.source);
         }
     });

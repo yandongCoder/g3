@@ -1,6 +1,6 @@
 import hasST from "./hasST";
 import {getStartArrow, getEndArrow, LineWidth, LineHeight, getLinkInfoTransform, getCoordination} from "./display";
-import {color, disabled, hide, icon, mugshot, direction, label, selected, width, getSourceId, getTargetId, changeSource, changeTarget, merged, grouped, transformed} from "./attributes";
+import {attr, getSourceId, getTargetId, changeSource, changeTarget, merged, grouped, transformed} from "./attributes";
 import {DIRECTION} from "../CONSTANT";
 import remove from "./remove";
 import {merge, flattenMerge, unmerge} from "./merge";
@@ -48,13 +48,7 @@ Link.prototype = {
     LineHeight: LineHeight,
     getLinkInfoTransform: getLinkInfoTransform,
     getJSON: getJSON,
-    label: label,
-    width: width,
-    icon: icon,
-    mugshot: mugshot,
-    selected: selected,
-    disabled: disabled,
-    hide: hide,
+    attr: attr,
     remove: remove,
     getSourceId: getSourceId,
     getTargetId: getTargetId,
@@ -67,13 +61,11 @@ Link.prototype = {
     grouped: grouped,
     LtoN: LtoN,
     NtoL: NtoL,
-    color: color,
-    direction: direction,
     getHomoLinks: getHomoLinks,
     hasSourceArrow: function(){
-        return this.direction() === DIRECTION.D2S || this.direction() === DIRECTION.DOUBLE;
+        return this.attr("direction") === DIRECTION.D2S || this.attr("direction") === DIRECTION.DOUBLE;
     },
     hasTargetArrow: function(){
-        return this.direction() === DIRECTION.S2D || this.direction() === DIRECTION.DOUBLE;
+        return this.attr("direction") === DIRECTION.S2D || this.attr("direction") === DIRECTION.DOUBLE;
     }
 };

@@ -69,8 +69,8 @@ tape("Group two Nodes which contain a Link, attach no Links", function(test){
 
     test.equal(myGraph.getRenderedNodes().length, 2);
 
-    test.equal(myGraph.nodes()[0].grouped(), true);
-    test.equal(myGraph.nodes()[1].grouped(), true);
+    test.equal(myGraph.nodes()[0].attr("grouped"), true);
+    test.equal(myGraph.nodes()[1].attr("grouped"), true);
     test.deepEqual(myGraph.nodes()[3].groupedBy.nodes, [myGraph.nodes()[0], myGraph.nodes()[1]]);
     test.deepEqual(myGraph.nodes()[3].groupedBy.links, [myGraph.links()[0]]);
     test.deepEqual(myGraph.nodes()[3].groupedBy.attachedLinks, [{"link": myGraph.links()[1], "originalSource": myGraph.nodes()[1]}]);
@@ -91,8 +91,8 @@ tape("A Node could only grouped once.", function(test){
     test.equal(myGraph.nodes().length, 4);
     test.equal(myGraph.getRenderedNodes().length, 2);
 
-    test.equal(myGraph.nodes()[0].grouped(), true);
-    test.equal(myGraph.nodes()[1].grouped(), true);
+    test.equal(myGraph.nodes()[0].attr("grouped"), true);
+    test.equal(myGraph.nodes()[1].attr("grouped"), true);
     test.deepEqual(myGraph.nodes()[3].groupedBy.nodes, [myGraph.nodes()[0], myGraph.nodes()[1]]);
     test.deepEqual(myGraph.nodes()[3].groupedBy.links, [myGraph.links()[0]]);
 

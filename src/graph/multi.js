@@ -1,7 +1,7 @@
 function selectNodes(filter, retainOther) {
     if(!retainOther) this.deselectAll();
     this.getNodes(filter).forEach(function(Node){
-        Node.selected(true);
+        Node.attr("selected",true);
     }, this);
     return this;
 }
@@ -9,7 +9,7 @@ function selectNodes(filter, retainOther) {
 function selectLinks(filter, retainOther) {
     if(!retainOther) this.deselectAll();
     this.getLinks(filter).forEach(function(Link){
-        Link.selected(true);
+        Link.attr("selected",true);
     }, this);
     return this;
 }
@@ -21,14 +21,14 @@ function deselectAll(){
 
 function deselectNodes() {
     this.getSelectedNodes().forEach(function(Node){
-        Node.selected(false);
+        Node.attr("selected",false);
     }, this);
     return this;
 }
 
 function deselectLinks(filter) {
     this.getSelectedLinks(filter).forEach(function(Link){
-        Link.selected(false);
+        Link.attr("selected", false);
     }, this);
     return this;
 }
@@ -36,7 +36,7 @@ function deselectLinks(filter) {
 function disableNodes(filter, notRetainOther) {
     if(notRetainOther) this.enableAll();
     this.getNodes(filter).forEach(function(Node){
-        Node.disabled(true);
+        Node.attr("disabled",true);
     }, this);
     return this;
 }
@@ -44,7 +44,7 @@ function disableNodes(filter, notRetainOther) {
 function disableLinks(filter, notRetainOther) {
     if(notRetainOther) this.enableAll();
     this.getLinks(filter).forEach(function(Link){
-        Link.disabled(true);
+        Link.attr("disabled", true);
     }, this);
     return this;
 }
@@ -56,14 +56,14 @@ function enableAll(){
 
 function enableNodes() {
     this.getDisabledNodes().forEach(function(Node){
-        Node.disabled(false);
+        Node.attr("disabled",false);
     }, this);
     return this;
 }
 
 function enableLinks(filter) {
     this.getDisabledLinks(filter).forEach(function(Link){
-        Link.disabled(false);
+        Link.attr("disabled", false);
     }, this);
     return this;
 }

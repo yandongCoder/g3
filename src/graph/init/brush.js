@@ -6,7 +6,7 @@ export default function () {
             if (!d3.event.selection) return; // Ignore empty selections.
             
             self._getNodesSelection().each(function (Node) {
-                Node.pselected = d3.event.sourceEvent.ctrlKey && Node.selected();
+                Node.pselected = d3.event.sourceEvent.ctrlKey && Node.attr("selected");
             });
             self._config.onBrushStart.call(this);
         })
@@ -17,7 +17,7 @@ export default function () {
             var t = self.getCurrentTransform();
 
             self._getNodesSelection().each(function(Node){
-                Node.selected(Node.pselected ^ ( (extent[0][0] - t.x) / t.k  <= Node.getX() && Node.getX() < (extent[1][0] - t.x) / t.k  && (extent[0][1] - t.y) / t.k <= Node.getY() && Node.getY() < (extent[1][1] - t.y) / t.k ));
+                Node.attr("selected",Node.pselected ^ ( (extent[0][0] - t.x) / t.k  <= Node.getX() && Node.getX() < (extent[1][0] - t.x) / t.k  && (extent[0][1] - t.y) / t.k <= Node.getY() && Node.getY() < (extent[1][1] - t.y) / t.k ));
             });
             self._config.onBrush.call(this);
         })

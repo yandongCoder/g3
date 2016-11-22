@@ -5,9 +5,9 @@ var absUrl = window.location.href.split('#')[0];
 
 function getStartArrow(status) {
     status = status? ("-" + status): "";
-    if(this.selected()) status = "-selected";
+    if(this.attr("selected")) status = "-selected";
     
-    if(this.direction() === DIRECTION.D2S || this.direction() === DIRECTION.DOUBLE)
+    if(this.attr("direction") === DIRECTION.D2S || this.attr("direction") === DIRECTION.DOUBLE)
         return "url(" + absUrl + "#start-arrow"+ status +")";
     else
         return "";
@@ -15,9 +15,9 @@ function getStartArrow(status) {
 
 function getEndArrow (status) {
     status = status? ("-" + status): "";
-    if(this.selected()) status = "-selected";
+    if(this.attr("selected")) status = "-selected";
     
-    if(this.direction() === DIRECTION.S2D || this.direction() === DIRECTION.DOUBLE)
+    if(this.attr("direction") === DIRECTION.S2D || this.attr("direction") === DIRECTION.DOUBLE)
         return "url(" + absUrl + "#end-arrow"+ status +")";
     else
         return "";
@@ -33,7 +33,7 @@ function LineWidth(scale){
 }
 
 function LineHeight(scale) {
-    return this.width() * scale;
+    return this.attr("width") * scale;
 }
 
 function getLinkInfoTransform(scale) {
@@ -61,9 +61,9 @@ function getLinkInfoTransform(scale) {
 //Link coordination is Node center's coordination or coordination where arrow placed, if any.
 function getCoordination(forText) {
     
-    var sourceOffset = this.source.radius();
-    var targetOffset = this.target.radius();
-    var arrowLength = this.width() * 3;
+    var sourceOffset = this.source.attr("radius");
+    var targetOffset = this.target.attr("radius");
+    var arrowLength = this.attr("width") * 3;
     
     var Sx = this.source.getX(),
         Sy = this.source.getY(),

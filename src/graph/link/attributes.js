@@ -1,81 +1,9 @@
 import Node from "../node/index";
 
-function color(color) {
-    if(!arguments.length) return this._color;
-
-    this._color = color;
-    this.graph.delayRender(this);
-
-    return this;
-}
-
-function disabled(disabled) {
-    if(!arguments.length) return this._disabled;
+function attr(prop, val){
+    if(val === undefined) return this["_" + prop];
     
-    this._disabled = disabled;
-    this.graph.delayRender(this);
-    
-    return this;
-}
-
-function hide(hided) {
-    if(!arguments.length) return this._hide;
-    
-    this._hide = hided;
-    this.graph.delayRender(this);
-    
-    return this;
-}
-
-function icon(icon) {
-    if(!arguments.length) return this._icon;
-    
-    this._icon = icon;
-    this.graph.delayRender(this);
-    
-    return this;
-}
-
-function mugshot(mugshot) {
-    if(!arguments.length) return this._mugshot;
-    
-    this._mugshot = mugshot;
-    this.graph.delayRender(this);
-    
-    return this;
-}
-
-function direction(direction) {
-    if(!arguments.length) return this._direction;
-    
-    this._direction = direction;
-    this.graph.delayRender(this);
-    
-    return this;
-}
-
-function label(label) {
-    if(!arguments.length) return this._label;
-    
-    this._label = label;
-    this.graph.delayRender(this);
-    
-    return this;
-}
-
-function selected(selected) {
-    if(!arguments.length) return this._selected;
-    this._selected = selected;
-    
-    this.graph.delayRender(this);
-    
-    return this;
-}
-
-function width(width) {
-    if(!arguments.length) return this._width;
-    
-    this._width = width;
+    this["_" + prop] = val;
     this.graph.delayRender(this);
     
     return this;
@@ -134,4 +62,4 @@ function transformed(transformed) {
     
     return this;
 }
-export {color, disabled, hide, icon, mugshot, direction, label, selected, width, getSourceId, getTargetId, changeSource, changeTarget, merged, grouped, transformed};
+export {attr, getSourceId, getTargetId, changeSource, changeTarget, merged, grouped, transformed};

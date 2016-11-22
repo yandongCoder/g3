@@ -94,37 +94,10 @@ function getStrLen (str) {
     return len;
 };
 
-function color(color) {
-    if(!arguments.length) return this._color;
-
-    this._color = color;
-    this.graph.delayRender(this);
-
-    return this;
-}
-
-function disabled(disabled) {
-    if(!arguments.length) return this._disabled;
+function attr(prop, val){
+    if(val === undefined) return this["_" + prop];
     
-    this._disabled = disabled;
-    this.graph.delayRender(this);
-    
-    return this;
-}
-
-function icon(icon) {
-    if(!arguments.length) return this._icon;
-    
-    this._icon = icon;
-    this.graph.delayRender(this);
-    
-    return this;
-}
-
-function mugshot(mugshot) {
-    if(!arguments.length) return this._mugshot;
-    
-    this._mugshot = mugshot;
+    this["_" + prop] = val;
     this.graph.delayRender(this);
     
     return this;
@@ -134,33 +107,6 @@ function grouped(grouped) {
     if(!arguments.length) return this._grouped === undefined? false : this._grouped;
     
     this._grouped = grouped;
-    
-    return this;
-}
-
-function label(label) {
-    if(!arguments.length) return this._label || "";
-    
-    this._label = label;
-    this.graph.delayRender(this);
-    
-    return this;
-}
-
-function selected(selected) {
-    if(!arguments.length) return this._selected;
-    this._selected = selected;
-    
-    this.graph.delayRender(this);
-    
-    return this;
-}
-
-function radius(radius) {
-    if(!arguments.length) return this._radius;
-    
-    this._radius = radius;
-    this.graph.delayRender(this);
     
     return this;
 }
@@ -214,9 +160,9 @@ var absUrl = window.location.href.split('#')[0];
 
 function getStartArrow(status) {
     status = status? ("-" + status): "";
-    if(this.selected()) status = "-selected";
+    if(this.attr("selected")) status = "-selected";
     
-    if(this.direction() === DIRECTION.D2S || this.direction() === DIRECTION.DOUBLE)
+    if(this.attr("direction") === DIRECTION.D2S || this.attr("direction") === DIRECTION.DOUBLE)
         return "url(" + absUrl + "#start-arrow"+ status +")";
     else
         return "";
@@ -224,9 +170,9 @@ function getStartArrow(status) {
 
 function getEndArrow (status) {
     status = status? ("-" + status): "";
-    if(this.selected()) status = "-selected";
+    if(this.attr("selected")) status = "-selected";
     
-    if(this.direction() === DIRECTION.S2D || this.direction() === DIRECTION.DOUBLE)
+    if(this.attr("direction") === DIRECTION.S2D || this.attr("direction") === DIRECTION.DOUBLE)
         return "url(" + absUrl + "#end-arrow"+ status +")";
     else
         return "";
@@ -242,7 +188,7 @@ function LineWidth(scale){
 }
 
 function LineHeight(scale) {
-    return this.width() * scale;
+    return this.attr("width") * scale;
 }
 
 function getLinkInfoTransform(scale) {
@@ -270,9 +216,9 @@ function getLinkInfoTransform(scale) {
 //Link coordination is Node center's coordination or coordination where arrow placed, if any.
 function getCoordination(forText) {
     
-    var sourceOffset = this.source.radius();
-    var targetOffset = this.target.radius();
-    var arrowLength = this.width() * 3;
+    var sourceOffset = this.source.attr("radius");
+    var targetOffset = this.target.attr("radius");
+    var arrowLength = this.attr("width") * 3;
     
     var Sx = this.source.getX(),
         Sy = this.source.getY(),
@@ -309,82 +255,10 @@ function getCoordination(forText) {
     };
 }
 
-function color$1(color) {
-    if(!arguments.length) return this._color;
-
-    this._color = color;
-    this.graph.delayRender(this);
-
-    return this;
-}
-
-function disabled$1(disabled) {
-    if(!arguments.length) return this._disabled;
+function attr$1(prop, val){
+    if(val === undefined) return this["_" + prop];
     
-    this._disabled = disabled;
-    this.graph.delayRender(this);
-    
-    return this;
-}
-
-function hide(hided) {
-    if(!arguments.length) return this._hide;
-    
-    this._hide = hided;
-    this.graph.delayRender(this);
-    
-    return this;
-}
-
-function icon$1(icon) {
-    if(!arguments.length) return this._icon;
-    
-    this._icon = icon;
-    this.graph.delayRender(this);
-    
-    return this;
-}
-
-function mugshot$1(mugshot) {
-    if(!arguments.length) return this._mugshot;
-    
-    this._mugshot = mugshot;
-    this.graph.delayRender(this);
-    
-    return this;
-}
-
-function direction(direction) {
-    if(!arguments.length) return this._direction;
-    
-    this._direction = direction;
-    this.graph.delayRender(this);
-    
-    return this;
-}
-
-function label$1(label) {
-    if(!arguments.length) return this._label;
-    
-    this._label = label;
-    this.graph.delayRender(this);
-    
-    return this;
-}
-
-function selected$1(selected) {
-    if(!arguments.length) return this._selected;
-    this._selected = selected;
-    
-    this.graph.delayRender(this);
-    
-    return this;
-}
-
-function width(width) {
-    if(!arguments.length) return this._width;
-    
-    this._width = width;
+    this["_" + prop] = val;
     this.graph.delayRender(this);
     
     return this;
@@ -468,13 +342,13 @@ function average(key, objArray){
         }, 0) / objArray.length;
 }
 
-function direction$1(Links){
+function direction(Links){
     return Links.reduce(function(p, Link){
-        if(p === DIRECTION.NONE) return Link.direction();
-        if(Link.direction() === DIRECTION.NONE) return p;
-        if(p === DIRECTION.DOUBLE || Link.direction() === DIRECTION.DOUBLE) return DIRECTION.DOUBLE;
-        if((p === DIRECTION.S2D && Link.direction() === DIRECTION.D2S) || (p === DIRECTION.D2S && Link.direction() === DIRECTION.S2D)) return DIRECTION.DOUBLE;
-        if(p === Link.direction()) return p;
+        if(p === DIRECTION.NONE) return Link.attr("direction");
+        if(Link.attr("direction") === DIRECTION.NONE) return p;
+        if(p === DIRECTION.DOUBLE || Link.attr("direction") === DIRECTION.DOUBLE) return DIRECTION.DOUBLE;
+        if((p === DIRECTION.S2D && Link.attr("direction") === DIRECTION.D2S) || (p === DIRECTION.D2S && Link.attr("direction") === DIRECTION.S2D)) return DIRECTION.DOUBLE;
+        if(p === Link.attr("direction")) return p;
     }, DIRECTION.NONE);
 }
 
@@ -483,11 +357,11 @@ function deriveLinkFromLinks (Links, graph) {
     var obj = {};
     obj.id = "merged:" + concat("id", Links);
     obj.label = concat("label", Links);
-    obj.width = average('width', Links);
+    obj.width = average('_width', Links);
     obj.src = Links[0].getSourceId();
     obj.dst = Links[0].getTargetId();
     obj.color = graph._config.linkColor;
-    obj.direction = direction$1(Links);
+    obj.direction = direction(Links);
 
     
     return obj;
@@ -642,13 +516,7 @@ Link.prototype = {
     LineHeight: LineHeight,
     getLinkInfoTransform: getLinkInfoTransform,
     getJSON: getJSON,
-    label: label$1,
-    width: width,
-    icon: icon$1,
-    mugshot: mugshot$1,
-    selected: selected$1,
-    disabled: disabled$1,
-    hide: hide,
+    attr: attr$1,
     remove: remove,
     getSourceId: getSourceId,
     getTargetId: getTargetId,
@@ -661,14 +529,12 @@ Link.prototype = {
     grouped: grouped$1,
     LtoN: LtoN,
     NtoL: NtoL$1,
-    color: color$1,
-    direction: direction,
     getHomoLinks: getHomoLinks,
     hasSourceArrow: function(){
-        return this.direction() === DIRECTION.D2S || this.direction() === DIRECTION.DOUBLE;
+        return this.attr("direction") === DIRECTION.D2S || this.attr("direction") === DIRECTION.DOUBLE;
     },
     hasTargetArrow: function(){
-        return this.direction() === DIRECTION.S2D || this.direction() === DIRECTION.DOUBLE;
+        return this.attr("direction") === DIRECTION.S2D || this.attr("direction") === DIRECTION.DOUBLE;
     }
 };
 
@@ -678,12 +544,12 @@ function deriveLinkFromLNL (srcLinks, Node, dstLinks, graph) {
 
     var obj = {};
     obj.id = "transformed:(" + srcLinks.id + ")" + Node.id + "(" + dstLinks.id + ")";
-    obj.label = "(" + srcLinks.label() + ")" + Node.label() + "(" + dstLinks.label() + ")";
+    obj.label = "(" + srcLinks.attr("label") + ")" + Node.attr("label") + "(" + dstLinks.attr("label") + ")";
     obj.src = srcLinks.getSourceId() === Node.id? srcLinks.getTargetId(): srcLinks.getSourceId();
     obj.dst = dstLinks.getSourceId() === Node.id? dstLinks.getTargetId(): dstLinks.getSourceId();
-    obj.width = (srcLinks.width() + dstLinks.width()) / 2;
-    obj.color = Node.color();
-    obj.direction = direction$1([srcLinks, dstLinks]);
+    obj.width = (srcLinks.attr("width") + dstLinks.attr("width")) / 2;
+    obj.color = Node.attr("color");
+    obj.direction = direction([srcLinks, dstLinks]);
 
     return obj;
 }
@@ -807,20 +673,14 @@ function Node(data, graph) {
 
 Node.prototype = {
     constructor: Node,
-    selected: selected,
     transformed: transformed,
     _nudge: nudge,
+    attr: attr,
     getX: getX,
     getY: getY,
-    label: label,
     getLabelWidth: function(){
-        return getStrLen(this.label()) * 9;
+        return getStrLen(this.attr("label")) * 9;
     },
-    color: color,
-    disabled: disabled,
-    icon: icon,
-    mugshot: mugshot,
-    radius: radius,
     remove: remove$3,
     NtoL: NtoL,
     getConnectedLinks: getConnectedLinks,
@@ -956,13 +816,13 @@ function getRenderedNodes() {
 
 function getSelectedNodes() {
     return this.getNodes(function(Node){
-        return Node.selected();
+        return Node.attr("selected");
     });
 }
 
 function getDisabledNodes() {
     return this.getNodes(function(Node){
-        return Node.disabled();
+        return Node.attr("disabled");
     });
 }
 
@@ -984,16 +844,16 @@ function getLinkedNodes(filter, type) {
     var relatedNodes = [];
     
     this.getRenderedLinks().forEach(function (Link) {
-        if(type === 'none' && Link.direction() !== DIRECTION.NONE) return;
-        if(type === 'double' && Link.direction() !== DIRECTION.DOUBLE) return;
+        if(type === 'none' && Link.attr("direction") !== DIRECTION.NONE) return;
+        if(type === 'double' && Link.attr("direction") !== DIRECTION.DOUBLE) return;
         if (Nodes.indexOf(Link.source) !== -1) {
-            if(type === 'in' && Link.direction() !== DIRECTION.D2S) return;
-            if(type === 'out' && Link.direction() !== DIRECTION.S2D) return;
+            if(type === 'in' && Link.attr("direction") !== DIRECTION.D2S) return;
+            if(type === 'out' && Link.attr("direction") !== DIRECTION.S2D) return;
             relatedNodes.push(Link.target);
         }
         if (Nodes.indexOf(Link.target) !== -1) {
-            if(type === 'in' && Link.direction() !== DIRECTION.S2D) return;
-            if(type === 'out' && Link.direction() !== DIRECTION.D2S) return;
+            if(type === 'in' && Link.attr("direction") !== DIRECTION.S2D) return;
+            if(type === 'out' && Link.attr("direction") !== DIRECTION.D2S) return;
             relatedNodes.push(Link.source);
         }
     });
@@ -1039,13 +899,13 @@ function getLinks(filter) {
 
 function getSelectedLinks() {
     return this.getLinks(function(Link){
-        return Link.selected();
+        return Link.attr("selected");
     });
 }
 
 function getDisabledLinks() {
     return this.getLinks(function(Link){
-        return Link.disabled();
+        return Link.attr("disabled");
     });
 }
 
@@ -1081,14 +941,14 @@ function getRelatedLinks(Nodes) {
 
 function getRenderedLinks() {
     return this.getLinks(function(Link){
-        return !Link.transformed() && !Link.merged() && !Link.grouped() && !Link.hide();
+        return !Link.transformed() && !Link.merged() && !Link.grouped() && !Link.attr("hide");
     });
 }
 
 function selectNodes(filter, retainOther) {
     if(!retainOther) this.deselectAll();
     this.getNodes(filter).forEach(function(Node){
-        Node.selected(true);
+        Node.attr("selected",true);
     }, this);
     return this;
 }
@@ -1096,7 +956,7 @@ function selectNodes(filter, retainOther) {
 function selectLinks(filter, retainOther) {
     if(!retainOther) this.deselectAll();
     this.getLinks(filter).forEach(function(Link){
-        Link.selected(true);
+        Link.attr("selected",true);
     }, this);
     return this;
 }
@@ -1108,14 +968,14 @@ function deselectAll(){
 
 function deselectNodes() {
     this.getSelectedNodes().forEach(function(Node){
-        Node.selected(false);
+        Node.attr("selected",false);
     }, this);
     return this;
 }
 
 function deselectLinks(filter) {
     this.getSelectedLinks(filter).forEach(function(Link){
-        Link.selected(false);
+        Link.attr("selected", false);
     }, this);
     return this;
 }
@@ -1123,7 +983,7 @@ function deselectLinks(filter) {
 function disableNodes(filter, notRetainOther) {
     if(notRetainOther) this.enableAll();
     this.getNodes(filter).forEach(function(Node){
-        Node.disabled(true);
+        Node.attr("disabled",true);
     }, this);
     return this;
 }
@@ -1131,7 +991,7 @@ function disableNodes(filter, notRetainOther) {
 function disableLinks(filter, notRetainOther) {
     if(notRetainOther) this.enableAll();
     this.getLinks(filter).forEach(function(Link){
-        Link.disabled(true);
+        Link.attr("disabled", true);
     }, this);
     return this;
 }
@@ -1143,14 +1003,14 @@ function enableAll(){
 
 function enableNodes() {
     this.getDisabledNodes().forEach(function(Node){
-        Node.disabled(false);
+        Node.attr("disabled",false);
     }, this);
     return this;
 }
 
 function enableLinks(filter) {
     this.getDisabledLinks(filter).forEach(function(Link){
-        Link.disabled(false);
+        Link.attr("disabled", false);
     }, this);
     return this;
 }
@@ -1343,7 +1203,7 @@ function Brush () {
             if (!d3.event.selection) return; // Ignore empty selections.
             
             self._getNodesSelection().each(function (Node) {
-                Node.pselected = d3.event.sourceEvent.ctrlKey && Node.selected();
+                Node.pselected = d3.event.sourceEvent.ctrlKey && Node.attr("selected");
             });
             self._config.onBrushStart.call(this);
         })
@@ -1354,7 +1214,7 @@ function Brush () {
             var t = self.getCurrentTransform();
 
             self._getNodesSelection().each(function(Node){
-                Node.selected(Node.pselected ^ ( (extent[0][0] - t.x) / t.k  <= Node.getX() && Node.getX() < (extent[1][0] - t.x) / t.k  && (extent[0][1] - t.y) / t.k <= Node.getY() && Node.getY() < (extent[1][1] - t.y) / t.k ));
+                Node.attr("selected",Node.pselected ^ ( (extent[0][0] - t.x) / t.k  <= Node.getX() && Node.getX() < (extent[1][0] - t.x) / t.k  && (extent[0][1] - t.y) / t.k <= Node.getY() && Node.getY() < (extent[1][1] - t.y) / t.k ));
             });
             self._config.onBrush.call(this);
         })
@@ -1449,11 +1309,11 @@ function drawNodesSvg (renderType) {
         .classed('node', true)
         .on('mousedown', function(Node, i){
             if(!d3.event.ctrlKey){
-                if(Node.selected()) return;
+                if(Node.attr("selected")) return;
                 self.deselectNodes();
             }
             self.deselectLinks();
-            Node.selected(!Node.selected());
+            Node.attr("selected",!Node.attr("selected"));
             
             self._config.onNodeMouseDown.call(this, Node, i);
         })
@@ -1493,38 +1353,38 @@ function drawNodesSvg (renderType) {
         var scale = self.getCurrentTransform().k;
         
         selection.attr("transform", function (Node) { return "translate(" + Node.getX() + "," + Node.getY() + ")";})
-            .classed("selected", function(Node){return Node.selected()})
-            .classed("disabled", function(Node){return Node.disabled()});
+            .classed("selected", function(Node){return Node.attr("selected")})
+            .classed("disabled", function(Node){return Node.attr("disabled")});
         
         selection.select('circle')
-            .attr("r", function(Node){ return Node.radius();})
-            .style("fill", function(Node){ return Node.color(); });
+            .attr("r", function(Node){ return Node.attr("radius");})
+            .style("fill", function(Node){ return Node.attr("color"); });
         
         selection.selectAll('.icon, .mugshot')
-            .attr("transform", function(Node){ return "translate(" + -Node.radius() + ", "+ -Node.radius() +")"; })
-            .attr("width", function(Node){return Node.radius()*2;})
-            .attr("height", function(Node){return Node.radius()*2;});
+            .attr("transform", function(Node){ return "translate(" + -Node.attr("radius") + ", "+ -Node.attr("radius") +")"; })
+            .attr("width", function(Node){return Node.attr("radius")*2;})
+            .attr("height", function(Node){return Node.attr("radius")*2;});
         
         selection.select('.icon').select('span')
-            .attr('class', function(Node){ return self._config.iconPrefix + Node.icon();})
-            .style("line-height", function(Node){return Node.radius()*2 + "px";});
+            .attr('class', function(Node){ return self._config.iconPrefix + Node.attr("icon");})
+            .style("line-height", function(Node){return Node.attr("radius")*2 + "px";});
         selection.select('.mugshot').select('img')
-            .attr('src', function(Node){return Node.mugshot()? self._config.mugshotPrefix + Node.mugshot(): "";})
-            .style('display', function(Node){return Node.mugshot()? "block": "none";});
+            .attr('src', function(Node){return Node.attr("mugshot")? self._config.mugshotPrefix + Node.attr("mugshot"): "";})
+            .style('display', function(Node){return Node.attr("mugshot")? "block": "none";});
         
         selection.select('.text-group')
             .style('display', function(Node){
                 return (scale < self._config.scaleOfHideLabel)? 'none': 'block';
             })
             .attr('width', function (Node) { return Node.getLabelWidth(); })
-            .attr("height", function(Node){ return Node.radius() * scale; })
-            .style("line-height", function(Node){ return Node.radius() * scale + "px"; })
-            .attr("transform", function(Node){ return "translate(" + (1 + Node.radius()) + ", 0) scale(" + 1 / scale + ")"; })
+            .attr("height", function(Node){ return Node.attr("radius") * scale; })
+            .style("line-height", function(Node){ return Node.attr("radius") * scale + "px"; })
+            .attr("transform", function(Node){ return "translate(" + (1 + Node.attr("radius")) + ", 0) scale(" + 1 / scale + ")"; })
             
             .select('div')
-            .attr('title', function (Node) { return Node.label(); })
+            .attr('title', function (Node) { return Node.attr("label"); })
             .select('span')
-            .text(function (Node) { return Node.label(); });
+            .text(function (Node) { return Node.attr("label"); });
     }
 }
 
@@ -1540,7 +1400,7 @@ function drawLinksSvg (renderType) {
         .classed('link', true)
         .on('mousedown', function(Link, i){
             self.deselectAll();
-            Link.selected(!Link.selected());
+            Link.attr("selected", !Link.attr("selected"));
         
             self._config.onLinkMouseDown.call(this, Link, i);
         })
@@ -1591,12 +1451,12 @@ function drawLinksSvg (renderType) {
         selection
             .select('path')
             .attr('d', function (Link) { var c = Link.getCoordination();  return 'M ' + c.Sx + ' ' + c.Sy + ' L ' + c.Tx + ' ' + c.Ty; })
-            .classed("selected", function(Link){return Link.selected()})
-            .classed("disabled", function(Node){return Node.disabled()})
+            .classed("selected", function(Link){return Link.attr("selected")})
+            .classed("disabled", function(Link){return Link.attr("disabled")})
             .style('marker-start', function (Link) { return Link.getStartArrow(); })
             .style('marker-end', function (Link) { return Link.getEndArrow(); })
-            .style('stroke-width', function(Link){ return Link.width(); })
-            .style('stroke', function(Link){ return Link.color(); });
+            .style('stroke-width', function(Link){ return Link.attr("width"); })
+            .style('stroke', function(Link){ return Link.attr("color"); });
     
         // if(renderType === RENDER_TYPE.NUDGE){
         //     selection
@@ -1613,15 +1473,15 @@ function drawLinksSvg (renderType) {
             .style('display', function(Link){
                 return (scale < self._config.scaleOfHideLabel)? 'none': 'block';
             })
-            .classed("disabled", function(Link){return Link.disabled()})
+            .classed("disabled", function(Link){return Link.attr("disabled")})
             .attr('width', function (Link) {return Link.LineWidth(scale)})
             .attr('height', function(Link){return Link.LineHeight(scale)});
         
         info.select('.text')
-            .text(function (Link) {return Link.label();});
+            .text(function (Link) {return Link.attr("label");});
     
         info.select('.icon')
-            .attr('class', function(Link){ return self._config.iconPrefix + Link.icon();})
+            .attr('class', function(Link){ return self._config.iconPrefix + Link.attr("icon");})
     }
 }
 
@@ -1640,9 +1500,9 @@ function drawCanvas () {
 
     context.beginPath();
     this.getRenderedNodes().forEach(function(Node) {
-        context.fillStyle = Node.color();
+        context.fillStyle = Node.attr("color");
         context.moveTo(Node.getX(), Node.getY());
-        context.arc(Node.getX(), Node.getY(), Node.radius(), 0, 2 * Math.PI);
+        context.arc(Node.getX(), Node.getY(), Node.attr("radius"), 0, 2 * Math.PI);
     });
     context.fill();
 }
@@ -1733,11 +1593,11 @@ function deriveNodeFromNodes (Nodes, graph) {
     var obj = {};
     obj.id = "grouped:" + concat("id", Nodes);
     obj.label = concat("label", Nodes);
-    obj.radius = average('radius', Nodes);
+    obj.radius = average('_radius', Nodes);
     obj.x = average('x', Nodes);
     obj.y = average('y', Nodes);
     obj.color = graph._config.color;
-    obj.selected = Nodes.every(function(Node){ return Node.selected()});
+    obj.selected = Nodes.every(function(Node){ return Node.attr("selected")});
 
     return obj;
 }
@@ -2640,7 +2500,7 @@ var utils = {
     deriveNodeFromNodes: deriveNodeFromNodes,
     concat: concat,
     average: average,
-    direction: direction$1,
+    direction: direction,
     safeExecute: safeExecute
 };
 

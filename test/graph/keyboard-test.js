@@ -12,12 +12,12 @@
 //     myGraph.nodes(nodes);
 //
 //     myGraph.render(function(){
-//         test.equal(myGraph.nodes()[0].selected(), true);
+//         test.equal(myGraph.nodes()[0].attr("selected"), true);
 //
 //         var event = new window.KeyboardEvent("keydown", {code: 90});
 //         document.querySelector('svg').dispatchEvent(event);
 //
-//         test.equal(myGraph.nodes()[0].selected(), false);
+//         test.equal(myGraph.nodes()[0].attr("selected"), false);
 //
 //         test.end();
 //     });
@@ -41,14 +41,14 @@
 //         new window.KeyboardEvent('keydown', { key : 'Escape'  })
 //     );
 //     myGraph.render(function(){
-//         test.equal(myGraph.nodes()[0].selected(), true);
+//         test.equal(myGraph.nodes()[0].attr("selected"), true);
 //
 //         var event = new window.KeyboardEvent("keydown", {key: "z", char: "z", keyCode: 90});
 //
 //         document.dispatchEvent(event);
 //
 //        // console.log(document.getElementsByClassName("brush")[0].style.display);
-//         test.equal(myGraph.nodes()[0].selected(), false);
+//         test.equal(myGraph.nodes()[0].attr("selected"), false);
 //
 //         test.end();
 //     });

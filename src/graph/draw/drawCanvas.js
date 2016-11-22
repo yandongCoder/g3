@@ -13,9 +13,9 @@ export default function () {
 
     context.beginPath();
     this.getRenderedNodes().forEach(function(Node) {
-        context.fillStyle = Node.color();
+        context.fillStyle = Node.attr("color");
         context.moveTo(Node.getX(), Node.getY());
-        context.arc(Node.getX(), Node.getY(), Node.radius(), 0, 2 * Math.PI);
+        context.arc(Node.getX(), Node.getY(), Node.attr("radius"), 0, 2 * Math.PI);
     });
     context.fill();
 }

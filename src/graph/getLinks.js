@@ -7,13 +7,13 @@ function getLinks(filter) {
 
 function getSelectedLinks() {
     return this.getLinks(function(Link){
-        return Link.selected();
+        return Link.attr("selected");
     });
 }
 
 function getDisabledLinks() {
     return this.getLinks(function(Link){
-        return Link.disabled();
+        return Link.attr("disabled");
     });
 }
 
@@ -49,7 +49,7 @@ function getRelatedLinks(Nodes) {
 
 function getRenderedLinks() {
     return this.getLinks(function(Link){
-        return !Link.transformed() && !Link.merged() && !Link.grouped() && !Link.hide();
+        return !Link.transformed() && !Link.merged() && !Link.grouped() && !Link.attr("hide");
     });
 }
 

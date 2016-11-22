@@ -12,7 +12,7 @@ export default function (renderType) {
         .classed('link', true)
         .on('mousedown', function(Link, i){
             self.deselectAll();
-            Link.selected(!Link.selected());
+            Link.attr("selected", !Link.attr("selected"));
         
             self._config.onLinkMouseDown.call(this, Link, i);
         })
@@ -63,12 +63,12 @@ export default function (renderType) {
         selection
             .select('path')
             .attr('d', function (Link) { var c = Link.getCoordination();  return 'M ' + c.Sx + ' ' + c.Sy + ' L ' + c.Tx + ' ' + c.Ty; })
-            .classed("selected", function(Link){return Link.selected()})
-            .classed("disabled", function(Node){return Node.disabled()})
+            .classed("selected", function(Link){return Link.attr("selected")})
+            .classed("disabled", function(Link){return Link.attr("disabled")})
             .style('marker-start', function (Link) { return Link.getStartArrow(); })
             .style('marker-end', function (Link) { return Link.getEndArrow(); })
-            .style('stroke-width', function(Link){ return Link.width(); })
-            .style('stroke', function(Link){ return Link.color(); });
+            .style('stroke-width', function(Link){ return Link.attr("width"); })
+            .style('stroke', function(Link){ return Link.attr("color"); });
     
         // if(renderType === RENDER_TYPE.NUDGE){
         //     selection
@@ -85,14 +85,14 @@ export default function (renderType) {
             .style('display', function(Link){
                 return (scale < self._config.scaleOfHideLabel)? 'none': 'block';
             })
-            .classed("disabled", function(Link){return Link.disabled()})
+            .classed("disabled", function(Link){return Link.attr("disabled")})
             .attr('width', function (Link) {return Link.LineWidth(scale)})
             .attr('height', function(Link){return Link.LineHeight(scale)});
         
         info.select('.text')
-            .text(function (Link) {return Link.label();});
+            .text(function (Link) {return Link.attr("label");});
     
         info.select('.icon')
-            .attr('class', function(Link){ return self._config.iconPrefix + Link.icon();})
+            .attr('class', function(Link){ return self._config.iconPrefix + Link.attr("icon");})
     }
 }

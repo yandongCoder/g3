@@ -50,14 +50,14 @@ tape("Node's DOM should correspond Node's property", function(test){
     test.equal(secondNodeEle.querySelector(".mugshot").querySelector('img').src, "./someUrl/default.png");
     
     
-    firstNode.label('abc');
-    firstNode.selected(false);
-    firstNode.disabled(true);
-    firstNode.radius(40);
+    firstNode.attr("label", 'abc');
+    firstNode.attr("selected", false);
+    firstNode.attr("disabled",true);
+    firstNode.attr("radius", 40);
     firstNode._nudge(10, 10);
-    firstNode.color('#666888');
-    firstNode.icon('female');
-    firstNode.mugshot('bar.png');
+    firstNode.attr("color",'#666888');
+    firstNode.attr("icon",'female');
+    firstNode.attr("mugshot", 'bar.png');
     
     myGraph.renderImmediately();
     test.equal(firstNodeEle.querySelector(".text-group").querySelector('span').textContent, "abc");
@@ -92,9 +92,9 @@ tape("select Node event", function(test){
     firstNodeEle.dispatchEvent(event);
     secondCircle.dispatchEvent(event);
     
-    test.equal(firstNode.selected(), false);
-    test.equal(secondNode.selected(), true);
-    test.equal(firstLink.selected(), false);
+    test.equal(firstNode.attr("selected"), false);
+    test.equal(secondNode.attr("selected"), true);
+    test.equal(firstLink.attr("selected"), false);
     
     //Don't deselect others when press Ctrl key
     myGraph.deselectNodes();
@@ -102,16 +102,16 @@ tape("select Node event", function(test){
     firstNodeEle.dispatchEvent(eventCtrl);
     secondCircle.dispatchEvent(eventCtrl);
     
-    test.equal(firstNode.selected(), true);
-    test.equal(secondNode.selected(), true);
+    test.equal(firstNode.attr("selected"), true);
+    test.equal(secondNode.attr("selected"), true);
     
     
     //toggle Node selected status when press Ctrl key
     myGraph.deselectNodes();
     firstNodeEle.dispatchEvent(eventCtrl);
-    test.equal(firstNode.selected(), true);
+    test.equal(firstNode.attr("selected"), true);
     firstNodeEle.dispatchEvent(eventCtrl);
-    test.equal(firstNode.selected(), false);
+    test.equal(firstNode.attr("selected"), false);
     
     test.end();
 });

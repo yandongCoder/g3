@@ -1,11 +1,12 @@
 import getStrLen from "../../utils/getStrLen";
-import {color, disabled, icon, mugshot, grouped, label, selected, radius, transformed, getX, getY} from "./attributes";
+import {attr, grouped, transformed, getX, getY} from "./attributes";
 import nudge from "./nudge";
 import NtoL from "./NtoL";
 import getConnectedLinks from "./getConnectedLinks";
 import remove from "./remove";
 import ungroup from "./ungroup";
 import getJSON from "./getJSON";
+
 
 //data: data obj, graph: graphInstance
 export default function Node(data, graph) {
@@ -29,20 +30,14 @@ export default function Node(data, graph) {
 
 Node.prototype = {
     constructor: Node,
-    selected: selected,
     transformed: transformed,
     _nudge: nudge,
+    attr: attr,
     getX: getX,
     getY: getY,
-    label: label,
     getLabelWidth: function(){
-        return getStrLen(this.label()) * 9;
+        return getStrLen(this.attr("label")) * 9;
     },
-    color: color,
-    disabled: disabled,
-    icon: icon,
-    mugshot: mugshot,
-    radius: radius,
     remove: remove,
     NtoL: NtoL,
     getConnectedLinks: getConnectedLinks,
