@@ -54,10 +54,7 @@
 
     var myGraph = g3.graph("#my-graph",{
         zoomable: false,
-        iconPrefix: "fa fa-",
-        onLinkMouseDown: function(Link){
-            console.log(123);
-        }
+        iconPrefix: "fa fa-"
     })
     .nodes(groupedByRelatedNodes.nodes)
     .links(groupedByRelatedNodes.links);

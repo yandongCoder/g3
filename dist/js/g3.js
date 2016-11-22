@@ -1744,7 +1744,7 @@ function drawLinksSvg (renderType) {
     }else if(renderType === RENDER_TYPE.NUDGE){
         updateLinks  = d3.selectAll(this.getRelatedLinks(this.getSelectedNodes()).map(function(Link){return Link._element;}));
     }else{
-        updateLinks = d3.selectAll(this.updateDOM.getLinks());
+        updateLinks = d3.selectAll(this.updateDOM.getLinksEle());
     }
     
     
@@ -2627,8 +2627,7 @@ UpdateDOM.prototype = {
     _addNode: addNode$1,
     _addLink: addLink$1,
     getNodesEle: getNodesEle,
-    getLinks: getLinks$1,
-    getLinksLabel: getLinksLabel,
+    getLinksEle: getLinksEle,
     clearUpdateNodes: clearUpdateNodes,
     clearUpdateLinks: clearUpdateLinks
     
@@ -2661,12 +2660,8 @@ function getNodesEle(){
     return this._updateNodes.map(function(Node){return Node._element;});
 }
 
-function getLinks$1(){
-    return this._updateLinks.map(function(Node){return Node._pathEle;});
-}
-
-function getLinksLabel(){
-    return this._updateLinks.map(function(Node){return Node._labelEle;});
+function getLinksEle(){
+    return this._updateLinks.map(function(Link){return Link._element;});
 }
 
 function clearUpdateNodes(){

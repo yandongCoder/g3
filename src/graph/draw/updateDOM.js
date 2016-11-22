@@ -14,8 +14,7 @@ UpdateDOM.prototype = {
     _addNode: addNode,
     _addLink: addLink,
     getNodesEle: getNodesEle,
-    getLinks: getLinks,
-    getLinksLabel: getLinksLabel,
+    getLinksEle: getLinksEle,
     clearUpdateNodes: clearUpdateNodes,
     clearUpdateLinks: clearUpdateLinks
     
@@ -48,12 +47,8 @@ function getNodesEle(){
     return this._updateNodes.map(function(Node){return Node._element;});
 }
 
-function getLinks(){
-    return this._updateLinks.map(function(Node){return Node._pathEle;});
-}
-
-function getLinksLabel(){
-    return this._updateLinks.map(function(Node){return Node._labelEle;});
+function getLinksEle(){
+    return this._updateLinks.map(function(Link){return Link._element;});
 }
 
 function clearUpdateNodes(){

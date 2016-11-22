@@ -43,7 +43,7 @@ export default function (renderType) {
     }else if(renderType === RENDER_TYPE.NUDGE){
         updateLinks  = d3.selectAll(this.getRelatedLinks(this.getSelectedNodes()).map(function(Link){return Link._element;}));
     }else{
-        updateLinks = d3.selectAll(this.updateDOM.getLinks());
+        updateLinks = d3.selectAll(this.updateDOM.getLinksEle());
     }
     
     
