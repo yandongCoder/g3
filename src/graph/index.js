@@ -13,7 +13,6 @@ import {group, groupBy, flattenGroup} from "./group";
 import draged from "./draged";
 import {selector, config} from "./config";
 import findShortestPath from "./findShortestPath";
-import {forceLayout, gridLayout, hierarchyLayout} from "./layout";
 import getJSON from "./getJSON";
 import updateDOM from "./draw/updateDOM";
 
@@ -85,9 +84,6 @@ Graph.prototype = {
     flattenGroup: flattenGroup,
     draged: draged,
     findShortestPath: findShortestPath,
-    gridLayout: gridLayout,
-    forceLayout: forceLayout,
-    hierarchyLayout: hierarchyLayout,
     _keydowned: keydowned,
     _keyupped: keyupped,
     _init: init,

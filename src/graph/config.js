@@ -10,7 +10,7 @@ const DEFAULT_CONFIG = {
     minScale: 0.1,
     maxScale: 3.0,
     scaleOfHideNodeLabel: 0.8,
-    scaleOfHideLinkLabel: 0.5,
+    scaleOfHideLinkLabel: 0.8,
     icon: "",
     iconPrefix: "",
     mugshot: "",
@@ -38,7 +38,7 @@ const DEFAULT_CONFIG = {
 function config(config) {
     if(!arguments.length) return this._config;
     
-    this._config = Object.assign({}, DEFAULT_CONFIG, config || {});
+    this._config = Object.assign({}, DEFAULT_CONFIG, this._config || {}, config || {});
     return this;
 }
 
