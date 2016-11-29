@@ -83,7 +83,7 @@ export default function (renderType) {
                 return Link.getLinkInfoTransform(scale);
             })
             .style('display', function(Link){
-                return (scale < self._config.scaleOfHideLabel)? 'none': 'block';
+                return (scale < self._config.scaleOfHideLinkLabel)? 'none': 'block';
             })
             .classed("disabled", function(Link){return Link.attr("disabled")})
             .attr('width', function (Link) {return Link.LineWidth(scale)})

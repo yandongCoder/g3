@@ -1374,7 +1374,7 @@ function drawNodesSvg (renderType) {
         
         selection.select('.text-group')
             .style('display', function(Node){
-                return (scale < self._config.scaleOfHideLabel)? 'none': 'block';
+                return (scale < self._config.scaleOfHideNodeLabel)? 'none': 'block';
             })
             .attr('width', function (Node) { return Node.getLabelWidth(); })
             .attr("height", function(Node){ return Node.attr("radius") * scale; })
@@ -1471,7 +1471,7 @@ function drawLinksSvg (renderType) {
                 return Link.getLinkInfoTransform(scale);
             })
             .style('display', function(Link){
-                return (scale < self._config.scaleOfHideLabel)? 'none': 'block';
+                return (scale < self._config.scaleOfHideLinkLabel)? 'none': 'block';
             })
             .classed("disabled", function(Link){return Link.attr("disabled")})
             .attr('width', function (Link) {return Link.LineWidth(scale)})
@@ -1534,7 +1534,7 @@ function zoomed () {
     this._getForceGroup().attr("transform", "translate(" + d3.event.transform.x + ", "+ d3.event.transform.y + ") scale(" + currentScale + ")");
     this._getForceGroup()._pScale = currentScale;
     
-    var hideScale = this._config.scaleOfHideLabel;
+    var hideScale = d3.min([this._config.scaleOfHideNodeLabel, this._config.scaleOfHideLinkLabel]);
     
     //render while should hide label
     if(previousScale >= hideScale && currentScale <= hideScale) this.renderImmediately();
@@ -1681,7 +1681,8 @@ const DEFAULT_CONFIG = {
     linkColor: "#a1a1a1",
     minScale: 0.1,
     maxScale: 3.0,
-    scaleOfHideLabel: 0.8,
+    scaleOfHideNodeLabel: 0.8,
+    scaleOfHideLinkLabel: 0.5,
     icon: "",
     iconPrefix: "",
     mugshot: "",
@@ -1701,7 +1702,8 @@ const DEFAULT_CONFIG = {
     onLinkMouseover: function(){},
     onLinkMouseout: function(){},
     onLinkMouseDown: function(){},
-    onLinkContextmenu: function(){}
+    onLinkContextmenu: function(){},
+    radiusFunc: null
 };
 
 

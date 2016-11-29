@@ -9,7 +9,8 @@ const DEFAULT_CONFIG = {
     linkColor: "#a1a1a1",
     minScale: 0.1,
     maxScale: 3.0,
-    scaleOfHideLabel: 0.8,
+    scaleOfHideNodeLabel: 0.8,
+    scaleOfHideLinkLabel: 0.5,
     icon: "",
     iconPrefix: "",
     mugshot: "",
@@ -29,7 +30,8 @@ const DEFAULT_CONFIG = {
     onLinkMouseover: function(){},
     onLinkMouseout: function(){},
     onLinkMouseDown: function(){},
-    onLinkContextmenu: function(){}
+    onLinkContextmenu: function(){},
+    radiusFunc: null
 };
 
 

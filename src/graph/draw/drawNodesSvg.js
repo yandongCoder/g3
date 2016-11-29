@@ -76,7 +76,7 @@ export default function (renderType) {
         
         selection.select('.text-group')
             .style('display', function(Node){
-                return (scale < self._config.scaleOfHideLabel)? 'none': 'block';
+                return (scale < self._config.scaleOfHideNodeLabel)? 'none': 'block';
             })
             .attr('width', function (Node) { return Node.getLabelWidth(); })
             .attr("height", function(Node){ return Node.attr("radius") * scale; })

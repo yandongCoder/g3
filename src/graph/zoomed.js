@@ -16,7 +16,7 @@ export default function () {
     this._getForceGroup().attr("transform", "translate(" + d3.event.transform.x + ", "+ d3.event.transform.y + ") scale(" + currentScale + ")");
     this._getForceGroup()._pScale = currentScale;
     
-    var hideScale = this._config.scaleOfHideLabel;
+    var hideScale = d3.min([this._config.scaleOfHideNodeLabel, this._config.scaleOfHideLinkLabel]);
     
     //render while should hide label
     if(previousScale >= hideScale && currentScale <= hideScale) this.renderImmediately();
