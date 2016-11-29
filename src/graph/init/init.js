@@ -17,12 +17,12 @@ export default function () {
 
     this._getSvgSelection()
         .classed("graph", true)
-        .on('click', function(){
+        .on('mousedown', function(){
             if (d3.event.target.nodeName !== 'svg') return;
             
             self.deselectAll();
     
-            self._config.onGraphClick.call(this);
+            self._config.onGraphMousedown.call(this);
         })
         .on('contextmenu', function(){
             if (d3.event.target.nodeName !== 'svg') return;

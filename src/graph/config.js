@@ -21,7 +21,7 @@ const DEFAULT_CONFIG = {
     onZoomStart: function(){},
     onZoom: function(){},
     onZoomEnd: function(){},
-    onGraphClick: function(){},
+    onGraphMousedown: function(){},
     onGraphContextmenu: function(){},
     onNodeMouseDown: function(){},
     onNodeContextmenu: function(){},

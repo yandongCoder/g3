@@ -24,7 +24,7 @@ tape("Deselect all Nodes and Links when click canvas itself.", function(test){
         .links([{id: 1, src: 1, dst: 2, selected: true}]);
     
     myGraph.renderImmediately();
-    var event = new window.MouseEvent("click");
+    var event = new window.MouseEvent("mousedown");
     document.querySelector('svg').dispatchEvent(event);
     
     test.equal(myGraph.nodes()[0].attr("selected"), false);
