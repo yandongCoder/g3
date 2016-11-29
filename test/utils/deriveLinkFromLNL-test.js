@@ -14,7 +14,7 @@ tape("derive new Link from received Links&Node&Links", function(test){
     test.equal(linkObj.dst, myGraph.nodes()[2].id);
     test.equal(linkObj.width, 3.5);
     test.equal(linkObj.color, myGraph.nodes()[1].attr("color"));
-    test.equal(linkObj.direction, 3);
+    test.equal(linkObj.direction, 1);
 
     test.end();
 });
