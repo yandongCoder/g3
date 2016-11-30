@@ -1,10 +1,8 @@
 import getStrLen from "../../utils/getStrLen";
-import {attr, grouped, transformed, getX, getY} from "./attributes";
+import {attr, getX, getY} from "./attributes";
 import nudge from "./nudge";
-import NtoL from "./NtoL";
 import getConnectedLinks from "./getConnectedLinks";
 import remove from "./remove";
-import ungroup from "./ungroup";
 
 
 //data: data obj, graph: graphInstance
@@ -29,7 +27,6 @@ export default function Node(data, graph) {
 
 Node.prototype = {
     constructor: Node,
-    transformed: transformed,
     _nudge: nudge,
     attr: attr,
     getX: getX,
@@ -38,8 +35,5 @@ Node.prototype = {
         return getStrLen(this.attr("label")) * 9;
     },
     remove: remove,
-    NtoL: NtoL,
-    getConnectedLinks: getConnectedLinks,
-    grouped: grouped,
-    ungroup: ungroup
+    getConnectedLinks: getConnectedLinks
 };

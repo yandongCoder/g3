@@ -69,7 +69,6 @@ function nodes(nodes, cover) {
     if(cover) this.clearNodes();
     
     nodes.forEach(function(v){ this._addNode(v);},this);
-    this.buildReference(BUILD_REF_TYPE.NODE);
     
     this.render();
     return this;
@@ -82,7 +81,6 @@ function links(links, cover) {
     if(cover) this.clearLinks();
     
     links.forEach(function(v){ this._addLink(v); },this);
-    this.buildReference(BUILD_REF_TYPE.LINK);
     
     this.render();
     return this;

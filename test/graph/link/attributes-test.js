@@ -62,23 +62,3 @@ tape("Get and set width of a Link", function(test){
     
     test.end();
 });
-
-tape("Get and set _grouped property of a Link", function(test){
-    var myGraph = g3.graph(null, {ifRender: false})
-        .nodes([{id: 1, x: 0, y: 0}, {id: 2, x: 100, y: 0}])
-        .links({id: 1, src: 1, dst: 2});
-    
-    test.equal(myGraph.links()[0].attr("grouped"), undefined);
-    
-    test.end();
-});
-
-tape("Transform Link should mark this Link's _transform true.", function(test){
-    var myGraph = g3.graph(null, {ifRender: false})
-        .nodes([{id: 1}, {id: 2}, {id: 3}])
-        .links([{id:1, src: 1, dst: 2}]);
-    
-    test.equal(myGraph.links()[0].transformed(), false);
-    
-    test.end();
-});

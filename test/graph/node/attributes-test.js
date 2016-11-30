@@ -89,19 +89,6 @@ tape("Select a Node", function(test){
     test.end();
 });
 
-tape("Transform Node should mark Node's _transform true.", function(test){
-    var myGraph = g3.graph(null, {ifRender: false})
-        .nodes([{id: 1}, {id: 2}, {id: 3}])
-        .links([{id:1, src: 1, dst: 2}]);
-    
-    
-    test.equal(myGraph.nodes()[0].transformed(), false);
-    myGraph.nodes()[0].transformed(true);
-    test.equal(myGraph.nodes()[0]._transformed, true);
-    
-    test.end();
-});
-
 tape("Move X, Y to Node's center point, rather than LeftTop point", function(test){
     var myGraph = g3.graph(null, {ifRender: false})
         .nodes([{id: 1, x: 0, y: 0, radius: 15}, {id: 2, x: 100, y: 100, radius: 200}, {id: 3, x: -100, y: 0, radius: 100}]);

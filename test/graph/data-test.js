@@ -187,20 +187,6 @@ tape("Push new nodes and cover graph's current nodes", function(test){
     test.end();
 });
 
-tape("Add a grouped Node to graph", function(test){
-    var myGraph = g3.graph(null, {ifRender: false})
-        .nodes([{id: 1, grouped: true}, {id: 2, grouped: true},{id: 3}, {id: 4, groupedBy:{nodes: [1, 2], links:[1], attachedLinks: [2]}}])
-        .links([{id:1, src: 1, dst: 2, grouped: true}, {id:2, src: 2, dst: 3}]);
-    
-    test.deepEqual(myGraph.getRenderedNodes(), myGraph.getNodes([3, 4]));
-    test.deepEqual(myGraph.getRenderedLinks(), myGraph.getLinks([2]));
-    
-    myGraph.nodes()[3].ungroup();
-    test.deepEqual(myGraph.getRenderedNodes(), myGraph.getNodes([1, 2, 3]));
-    test.deepEqual(myGraph.getRenderedLinks(), myGraph.getLinks([1, 2]));
-    
-    test.end();
-});
 
 //links method
 tape("Could not add link which not has source or target in nodes", function(test){
@@ -229,34 +215,6 @@ tape("Add link to graph", function(test){
     //could not add link which id has been in links
     myGraph.links({id: 3, label: "A->B", src: 2, dst: 4,direction: 0});
     test.equal(myGraph.links().length, 2);
-    
-    test.end();
-});
-
-tape('Add merged Link to graph', function(test){
-    var myGraph = g3.graph(null, {ifRender: false})
-        .nodes([{id: 1}, {id: 2}])
-        .links([{id:1, src: 1, dst: 2, merged: true}, {id:2, src: 1, dst: 2, merged: true}, {id: 3, src: 1, dst: 2, mergedBy: {links: [1,2]}}]);
-    
-    test.deepEqual(myGraph.getRenderedLinks(), myGraph.getLinks([3]));
-    
-    myGraph.getLinks(3)[0].unmerge();
-    
-    test.deepEqual(myGraph.getRenderedLinks(), myGraph.getLinks([1,2]));
-    
-    test.end();
-});
-
-tape('Add transformed Link to graph', function(test){
-    var myGraph = g3.graph(null, {ifRender: false})
-        .nodes([{id: 1, transformed: true}, {id: 2}, {id: 3}])
-        .links([{id:1, src: 1, dst: 2, transformed: true}, {id: 2, src: 1, dst: 3, transformed: true}, {id: 3, src: 2, dst: 3, transformedBy: {node: 1, links: [1, 2]}}]);
-    
-    test.deepEqual(myGraph.getRenderedLinks(), myGraph.getLinks(3));
-    
-    myGraph.getLinks(3)[0].LtoN();
-    
-    test.deepEqual(myGraph.getRenderedLinks(), myGraph.getLinks([1,2]));
     
     test.end();
 });

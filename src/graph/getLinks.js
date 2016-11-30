@@ -23,7 +23,7 @@ function getContainLinks(Nodes) {
     
     for(var i = this._links.length; i--;){
         var Link = this._links[i];
-        if((ids.indexOf(Link.getSourceId()) !== -1) && (ids.indexOf(Link.getTargetId()) !== -1) && !Link.merged()){
+        if((ids.indexOf(Link.getSourceId()) !== -1) && (ids.indexOf(Link.getTargetId()) !== -1)){
             containedLinks.push(Link);
         }
     }
@@ -49,7 +49,7 @@ function getRelatedLinks(Nodes) {
 
 function getRenderedLinks() {
     return this.getLinks(function(Link){
-        return !Link.transformed() && !Link.merged() && !Link.grouped() && !Link.attr("hide");
+        return !Link.attr("hide");
     });
 }
 

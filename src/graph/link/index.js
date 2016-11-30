@@ -3,9 +3,7 @@ import {getStartArrow, getEndArrow, LineWidth, LineHeight, getLinkInfoTransform,
 import {attr, getSourceId, getTargetId, changeSource, changeTarget, merged, grouped, transformed} from "./attributes";
 import {DIRECTION} from "../CONSTANT";
 import remove from "./remove";
-import {merge, flattenMerge, unmerge} from "./merge";
 import getHomoLinks from "./getHomoLinks";
-import {LtoN, NtoL} from "./L2N_N2L";
 
 export default function Link(data, graph) {
     this.graph = graph;
@@ -23,12 +21,6 @@ export default function Link(data, graph) {
     this.source = graph && this.graph._nodesHash[data.src];
     this.target = graph && this.graph._nodesHash[data.dst];
     
-    if(data.grouped) this._grouped = data.grouped;
-    if(data.merged) this._merged = data.merged;
-    //this._needMerged = data.merged || false;
-
-    if(data.mergedBy) this.mergedBy = data.mergedBy;
-    if(data.transformedBy) this.transformedBy = data.transformedBy;
     
     var exceptKey = ['src', 'dst'];
     for (var prop in data) {
@@ -39,7 +31,6 @@ export default function Link(data, graph) {
 Link.prototype = {
     constructor: Link,
     hasST: hasST,
-    transformed: transformed,
     getCoordination: getCoordination,
     getStartArrow: getStartArrow,
     getEndArrow: getEndArrow,
@@ -52,13 +43,6 @@ Link.prototype = {
     getTargetId: getTargetId,
     changeSource: changeSource,
     changeTarget: changeTarget,
-    merged: merged,
-    merge: merge,
-    flattenMerge: flattenMerge,
-    unmerge: unmerge,
-    grouped: grouped,
-    LtoN: LtoN,
-    NtoL: NtoL,
     getHomoLinks: getHomoLinks,
     hasSourceArrow: function(){
         return this.attr("direction") === DIRECTION.D2S || this.attr("direction") === DIRECTION.DOUBLE;

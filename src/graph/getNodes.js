@@ -7,7 +7,7 @@ function getNodes(filter) {
 
 function getRenderedNodes() {
     return this.getNodes(function(Node){
-        return !Node.transformed() && !Node.grouped();
+        return !Node.attr("hide");
     });
 }
 

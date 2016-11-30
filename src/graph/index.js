@@ -3,13 +3,11 @@ import {clearNodes, clearLinks, hasNode, hasLink, addNode, addLink, removeNodes,
 import {getNodes, getRenderedNodes, getSelectedNodes, getDisabledNodes, getInvertedNodes, getUngroupedNodes, getLinkedNodes, getRelatedNodes} from "./getNodes";
 import {getLinks, getSelectedLinks, getDisabledLinks, getContainLinks, getAttachedLinks, getRelatedLinks, getRenderedLinks} from "./getLinks";
 import {selectNodes, selectLinks, deselectNodes, deselectLinks, deselectAll, disableNodes, disableLinks, enableAll, enableNodes, enableLinks} from "./multi";
-import buildReference from "./buildReference";
 import init from "./init/init";
 import draw from "./draw/index";
 import zoomed from "./zoomed";
 import {transform, scaleTo, translateBy} from "./transform";
 import {keyupped, keydowned} from "./keyboard";
-import {group, groupBy, flattenGroup} from "./group";
 import draged from "./draged";
 import {selector, config} from "./config";
 import findShortestPath from "./findShortestPath";
@@ -60,7 +58,6 @@ Graph.prototype = {
     getRelatedNodes: getRelatedNodes,
     getLinkedNodes: getLinkedNodes,
     hasNode: hasNode,
-    buildReference: buildReference,
     links: links,
     getLinks: getLinks,
     getSelectedLinks: getSelectedLinks,
@@ -77,9 +74,6 @@ Graph.prototype = {
     transform: transform,
     scaleTo: scaleTo,
     translateBy: translateBy,
-    group: group,
-    groupBy: groupBy,
-    flattenGroup: flattenGroup,
     draged: draged,
     findShortestPath: findShortestPath,
     _keydowned: keydowned,

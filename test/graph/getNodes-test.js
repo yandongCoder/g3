@@ -70,25 +70,12 @@ tape("Get Nodes related to received Nodes", function(test){
 });
 
 //getRenderedNodes
-tape("Rendered Nodes should exclude transformed Nodes", function(test){
+tape("Rendered Nodes should exclude hide Nodes", function(test){
     var myGraph = g3.graph(null, {ifRender: false})
-        .nodes([{id: 1}, {id: 2}, {id: 3}])
-        .links([{id:1, src: 1, dst: 2}, {id: 2, src: 1, dst: 3}]);
+        .nodes([{id: 1}]);
     
-    test.equal(myGraph.getRenderedNodes().length, 3);
-    myGraph.nodes()[0].NtoL();
-    test.equal(myGraph.getRenderedNodes().length, 2);
-    
-    test.end();
-});
-
-tape("Rendered Nodes should exclude grouped Nodes", function(test){
-    var myGraph = g3.graph(null, {ifRender: false})
-        .nodes([{id: 1}, {id: 2}, {id: 3}]);
-    
-    test.equal(myGraph.getRenderedNodes().length, 3);
-    myGraph.group([myGraph.nodes()[0], myGraph.nodes()[1]]);
-    test.equal(myGraph.getRenderedNodes().length, 2);
+    myGraph.nodes()[0].attr("hide", true);
+    test.equal(myGraph.getRenderedNodes().length, 0);
     
     test.end();
 });
@@ -107,16 +94,4 @@ tape("Get selected nodes", function(test){
     test.equal(myGraph.getSelectedNodes().length, 2);
     test.end();
     
-});
-
-//getUngroupedNodes
-tape("getUngroupedNodes should not return Node which property _grouped is true", function(test){
-    var myGraph = g3.graph(null, {ifRender: false})
-        .nodes([{id: 1}, {id: 2}, {id: 3}]);
-    
-    myGraph.group([myGraph.nodes()[0], myGraph.nodes()[1]]);
-    
-    test.deepEqual(myGraph.getUngroupedNodes(), [myGraph.nodes()[2], myGraph.nodes()[3]]);
-    
-    test.end();
 });
