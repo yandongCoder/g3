@@ -17,7 +17,8 @@ export default function () {
             var t = self.getCurrentTransform();
 
             self._getNodesSelection().each(function(Node){
-                Node.attr("selected",Node.pselected ^ ( (extent[0][0] - t.x) / t.k  <= Node.getX() && Node.getX() < (extent[1][0] - t.x) / t.k  && (extent[0][1] - t.y) / t.k <= Node.getY() && Node.getY() < (extent[1][1] - t.y) / t.k ));
+                console.log(Node);
+                Node.attr("selected",Boolean(Node.pselected ^ ( (extent[0][0] - t.x) / t.k  <= Node.getX() && Node.getX() < (extent[1][0] - t.x) / t.k  && (extent[0][1] - t.y) / t.k <= Node.getY() && Node.getY() < (extent[1][1] - t.y) / t.k )));
             });
             self._config.onBrush.call(this);
         })
