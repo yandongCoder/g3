@@ -22,7 +22,7 @@ export default function (renderType) {
     
     link.append('path')
         .classed('link-path', true)
-        .attr('id', function(Link){ return "link-path" + Link.id})
+        .attr('id', function(Link){ return "link-path" + Link.id});
     
     
     var info = link

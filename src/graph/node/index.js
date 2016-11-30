@@ -5,7 +5,6 @@ import NtoL from "./NtoL";
 import getConnectedLinks from "./getConnectedLinks";
 import remove from "./remove";
 import ungroup from "./ungroup";
-import getJSON from "./getJSON";
 
 
 //data: data obj, graph: graphInstance
@@ -42,6 +41,5 @@ Node.prototype = {
     NtoL: NtoL,
     getConnectedLinks: getConnectedLinks,
     grouped: grouped,
-    ungroup: ungroup,
-    getJSON: getJSON
+    ungroup: ungroup
 };

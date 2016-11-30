@@ -13,7 +13,6 @@ import {group, groupBy, flattenGroup} from "./group";
 import draged from "./draged";
 import {selector, config} from "./config";
 import findShortestPath from "./findShortestPath";
-import getJSON from "./getJSON";
 import updateDOM from "./draw/updateDOM";
 
 function Graph(selector, config) {
@@ -70,7 +69,6 @@ Graph.prototype = {
     getContainLinks: getContainLinks,
     getAttachedLinks: getAttachedLinks,
     getRelatedLinks: getRelatedLinks,
-    getJSON: getJSON,
     _addLink: addLink,
     hasLink: hasLink,
     removeLinks: removeLinks,

@@ -462,31 +462,6 @@ function NtoL$1() {
     if(!this.transformed() && this.target.transformed()) this.target.NtoL();
 }
 
-function getJSON () {
-    var exceptKey = ['_element', '_pathEle', '_labelEle', '_needMerged', '_needTransformed', 'graph'];
-    var json = {};
-    for (var prop in this) {
-        if (prop === 'mergedBy') {
-            json[prop] = {links: []};
-            this[prop].links.map(function(Link){ json[prop].links.push(Link.id);});
-            
-        } else if(prop === 'source'){
-            json['src'] = this.getSourceId();
-        } else if(prop === 'target'){
-            json['dst'] = this.getTargetId();
-        } else if(prop === 'transformedBy'){
-            json[prop] = {node: this[prop].node.id, links: []};
-            this[prop].links.map(function(Link){ json[prop].links.push(Link.id);});
-            
-        } else if (this.hasOwnProperty(prop) && (exceptKey.indexOf(prop) === -1)) {
-            var jsonProp = prop.replace(/_/, "");
-            json[jsonProp] = this[prop];
-        }
-    }
-    
-    return json;
-}
-
 function Link(data, graph) {
     this.graph = graph;
     this.id = data.id;
@@ -526,7 +501,6 @@ Link.prototype = {
     LineWidth: LineWidth,
     LineHeight: LineHeight,
     getLinkInfoTransform: getLinkInfoTransform,
-    getJSON: getJSON,
     attr: attr$1,
     remove: remove,
     getSourceId: getSourceId,
@@ -646,22 +620,6 @@ function ungroup () {
     return this;
 }
 
-function getJSON$1 () {
-    var exceptKey = ['_element', '_needTransformed', 'graph', 'objectData'];
-    var json = {};
-    for (var prop in this) {
-        if (prop === 'groupedBy') {
-            json[prop] = this[prop].pickIds();
-    
-        } else if (this.hasOwnProperty(prop) && (exceptKey.indexOf(prop) === -1)) {
-            var jsonProp = prop.replace(/_/, "");
-            json[jsonProp] = this[prop];
-        }
-    }
-    
-    return json;
-}
-
 //data: data obj, graph: graphInstance
 function Node(data, graph) {
     this.graph = graph;
@@ -696,8 +654,7 @@ Node.prototype = {
     NtoL: NtoL,
     getConnectedLinks: getConnectedLinks,
     grouped: grouped,
-    ungroup: ungroup,
-    getJSON: getJSON$1
+    ungroup: ungroup
 };
 
 function clearNodes() {
@@ -1421,7 +1378,7 @@ function drawLinksSvg (renderType) {
     
     link.append('path')
         .classed('link-path', true)
-        .attr('id', function(Link){ return "link-path" + Link.id})
+        .attr('id', function(Link){ return "link-path" + Link.id});
     
     
     var info = link
@@ -1950,23 +1907,6 @@ function findShortestPath (fromNode, toNode) {
     }
 }
 
-function getJSON$2 (nodeFilter, linkFilter) {
-    var transform = this.getCurrentTransform();
-    var json = {
-        translate: [transform.x, transform.y],
-        scale: transform.k,
-        nodes: [],
-        links: []
-    };
-    this.getNodes(nodeFilter).forEach(function(Node){
-       json.nodes.push(Node.getJSON());
-    });
-    this.getLinks(linkFilter).forEach(function (Link) {
-        json.links.push(Link.getJSON());
-    });
-    return json;
-}
-
 function UpdateDOM(graph){
     this.graph = graph;
     this._updateNodes = [];
@@ -2078,7 +2018,6 @@ Graph.prototype = {
     getContainLinks: getContainLinks,
     getAttachedLinks: getAttachedLinks,
     getRelatedLinks: getRelatedLinks,
-    getJSON: getJSON$2,
     _addLink: addLink,
     hasLink: hasLink,
     removeLinks: removeLinks,

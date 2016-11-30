@@ -6,7 +6,6 @@ import remove from "./remove";
 import {merge, flattenMerge, unmerge} from "./merge";
 import getHomoLinks from "./getHomoLinks";
 import {LtoN, NtoL} from "./L2N_N2L";
-import getJSON from "./getJSON";
 
 export default function Link(data, graph) {
     this.graph = graph;
@@ -47,7 +46,6 @@ Link.prototype = {
     LineWidth: LineWidth,
     LineHeight: LineHeight,
     getLinkInfoTransform: getLinkInfoTransform,
-    getJSON: getJSON,
     attr: attr,
     remove: remove,
     getSourceId: getSourceId,
