@@ -1,6 +1,6 @@
 import {render, delayRender, renderImmediately} from "./render";
 import {clearNodes, clearLinks, hasNode, hasLink, addNode, addLink, removeNodes, removeLinks, removeLinksOfNode, nodes, links} from "./data";
-import {getNodes, getRenderedNodes, getSelectedNodes, getDisabledNodes, getInvertedNodes, getUngroupedNodes, getLinkedNodes, getRelatedNodes} from "./getNodes";
+import {getNodes, getRenderedNodes, getSelectedNodes} from "./getNodes";
 import {getLinks, getSelectedLinks, getDisabledLinks, getContainLinks, getAttachedLinks, getRelatedLinks, getRenderedLinks} from "./getLinks";
 import {selectNodes, selectLinks, deselectNodes, deselectLinks, deselectAll, disableNodes, disableLinks, enableAll, enableNodes, enableLinks} from "./multi";
 import init from "./init/init";
@@ -10,7 +10,6 @@ import {transform, scaleTo, translateBy} from "./transform";
 import {keyupped, keydowned} from "./keyboard";
 import draged from "./draged";
 import {selector, config} from "./config";
-import findShortestPath from "./findShortestPath";
 import updateDOM from "./draw/updateDOM";
 
 function Graph(selector, config) {
@@ -38,9 +37,7 @@ Graph.prototype = {
     nodes: nodes,
     getNodes: getNodes,
     getSelectedNodes: getSelectedNodes,
-    getDisabledNodes: getDisabledNodes,
     getRenderedNodes: getRenderedNodes,
-    getUngroupedNodes: getUngroupedNodes,
     _addNode: addNode,
     removeNodes: removeNodes,
     clearNodes: clearNodes,
@@ -54,9 +51,6 @@ Graph.prototype = {
     enableAll: enableAll,
     enableNodes: enableNodes,
     enableLinks: enableLinks,
-    getInvertedNodes: getInvertedNodes,
-    getRelatedNodes: getRelatedNodes,
-    getLinkedNodes: getLinkedNodes,
     hasNode: hasNode,
     links: links,
     getLinks: getLinks,
@@ -75,7 +69,6 @@ Graph.prototype = {
     scaleTo: scaleTo,
     translateBy: translateBy,
     draged: draged,
-    findShortestPath: findShortestPath,
     _keydowned: keydowned,
     _keyupped: keyupped,
     _init: init,
