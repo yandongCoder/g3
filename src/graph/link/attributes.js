@@ -1,9 +1,9 @@
 import Node from "../node/index";
 
 function attr(prop, val){
-    if(val === undefined) return this["_" + prop];
+    if(val === undefined) return this[prop];
     
-    this["_" + prop] = val;
+    this[prop] = val instanceof Function? val(this): val;
     this.graph.delayRender(this);
     
     return this;
@@ -33,33 +33,4 @@ function getTargetId(){
     return this.target.id;
 }
 
-function merged(merged, mergedToLink) {
-    if(!arguments.length) return this._merged === undefined? false : this._merged;
-    
-    if(merged && mergedToLink) this.mergedTo = mergedToLink;
-    else delete this.mergedTo;
-    
-    this._merged = merged;
-    this.graph.delayRender(this);
-    
-    return this;
-}
-
-function grouped(grouped) {
-    if(!arguments.length) return this._grouped === undefined? false : this._grouped;
-    
-    this._grouped = grouped;
-    this.graph.delayRender(this);
-    
-    return this;
-}
-
-function transformed(transformed) {
-    if(!arguments.length) return this._transformed || false;
-    
-    this._transformed = transformed;
-    this.graph.delayRender(this);
-    
-    return this;
-}
-export {attr, getSourceId, getTargetId, changeSource, changeTarget, merged, grouped, transformed};
+export {attr, getSourceId, getTargetId, changeSource, changeTarget};

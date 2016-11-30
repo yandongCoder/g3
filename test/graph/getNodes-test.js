@@ -25,7 +25,10 @@ tape("Get nodes by id filter", function(test){
 
     //by Id obj Array
     test.deepEqual(myGraph.getNodes([{id: 5}, {id: 6}]), [myGraph.nodes()[4], myGraph.nodes()[5]]);
-
+    
+    //by attr
+    test.deepEqual(myGraph.getNodes('id', 2), [myGraph.nodes()[1]]);
+    
     //get all
     test.equal(myGraph.getNodes().length, 6);
 
@@ -48,7 +51,6 @@ tape("Rendered Nodes should exclude hide Nodes", function(test){
 tape("Get selected nodes", function(test){
     var myGraph = g3.graph(null, {ifRender: false});
     
-    
     var nodes = [{id: 1, selected: true}, {id: 2},{id: 3},{id: 4}, {id: 5},{id: 6}];
     myGraph.nodes(nodes);
     
@@ -59,3 +61,7 @@ tape("Get selected nodes", function(test){
     test.end();
     
 });
+
+// tape("Get Nodes Selection", function(test){
+//
+// });

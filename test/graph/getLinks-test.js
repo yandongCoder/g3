@@ -22,6 +22,9 @@ tape("get links by id filter", function(test){
 
     //by Id obj
     test.deepEqual(myGraph.getLinks({id: 2}), [myGraph.links()[1]]);
+    
+    //by attr
+    test.deepEqual(myGraph.getLinks('id', 2), [myGraph.links()[1]]);
 
     //by Id obj Array
     test.deepEqual(myGraph.getLinks([{id: 2}, {id: 3}]), [myGraph.links()[1], myGraph.links()[2]]);

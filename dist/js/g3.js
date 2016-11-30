@@ -90,9 +90,9 @@ function getStrLen (str) {
 };
 
 function attr(prop, val){
-    if(val === undefined) return this["_" + prop];
+    if(val === undefined) return this[prop];
     
-    this["_" + prop] = val;
+    this[prop] = val;
     this.graph.delayRender(this);
     
     return this;
@@ -149,15 +149,15 @@ function remove (removeType) {
 function Node(data, graph) {
     this.graph = graph;
     this.id = data.id;
-    this._label = data.label || "";
+    this.label = data.label || "";
     this.x = data.x || 0;
     this.y = data.y || 0;
-    this._disabled = data.disabled || false;
-    this._radius = data.radius || graph._config.radius;
-    this._color = data.color || graph._config.color;
-    this._icon = data.icon  || graph._config.icon;
-    this._mugshot = data.mugshot || graph._config.mugshot;
-    this._selected = data.selected || false; //indicate whether node is select
+    this.disabled = data.disabled || false;
+    this.radius = data.radius || graph._config.radius;
+    this.color = data.color || graph._config.color;
+    this.icon = data.icon  || graph._config.icon;
+    this.mugshot = data.mugshot || graph._config.mugshot;
+    this.selected = data.selected || false; //indicate whether node is select
     if(data.grouped) this._grouped = data.grouped;
     
     for (var prop in data) {
@@ -298,9 +298,9 @@ function getCoordination(forText) {
 }
 
 function attr$1(prop, val){
-    if(val === undefined) return this["_" + prop];
+    if(val === undefined) return this[prop];
     
-    this["_" + prop] = val;
+    this[prop] = val instanceof Function? val(this): val;
     this.graph.delayRender(this);
     
     return this;
@@ -352,15 +352,15 @@ function getHomoLinks () {
 function Link(data, graph) {
     this.graph = graph;
     this.id = data.id;
-    this._label = data.label || "";
-    this._width = data.width || (graph && graph._config.linkWidth);
-    this._color = data.color || (graph && graph._config.linkColor);
-    this._icon = data.icon  || graph._config.icon;
-    this._mugshot = data.mugshot || graph._config.mugshot;
-    this._selected = data.selected || false;
-    this._direction = data.direction === undefined? 1: data.direction;//0: none, 1: from, 2: to, 3 double
-    this._disabled = data.disabled || false;
-    this._hide = data.hide || false;
+    this.label = data.label || "";
+    this.width = data.width || (graph && graph._config.linkWidth);
+    this.color = data.color || (graph && graph._config.linkColor);
+    this.icon = data.icon  || graph._config.icon;
+    this.mugshot = data.mugshot || graph._config.mugshot;
+    this.selected = data.selected || false;
+    this.direction = data.direction === undefined? 1: data.direction;//0: none, 1: from, 2: to, 3 double
+    this.disabled = data.disabled || false;
+    this.hide = data.hide || false;
 
     this.source = graph && this.graph._nodesHash[data.src];
     this.target = graph && this.graph._nodesHash[data.dst];
@@ -509,7 +509,36 @@ function filterBy (filter, objArray) {
     return filteredArr;
 }
 
-function getNodes(filter) {
+function attr$2 (prop, val) {
+    this.arr.forEach(function(datum){
+        datum.attr(prop, val instanceof Function? val(datum): val);
+    });
+    return this;
+}
+
+function data () {
+    return this.arr;
+}
+
+function Selection(arr) {
+    this.arr = arr;
+}
+
+Selection.prototype = {
+    constructor: Selection,
+    attr: attr$2,
+    data: data
+};
+
+function getNodesOP(filter, val){
+    return new Selection(this.getNodes(filter, val), this);
+}
+
+function getNodes(filter, val) {
+    if(arguments.length === 2 && val !== undefined){
+        var key = filter;
+        filter = function(Node){return Node.attr(key) === val;}
+    }
     return filterBy(filter, this._nodes);
 }
 
@@ -520,12 +549,19 @@ function getRenderedNodes() {
 }
 
 function getSelectedNodes() {
-    return this.getNodes(function(Node){
-        return Node.attr("selected");
-    });
+    return this.getNodes("selected", true);
 }
 
-function getLinks(filter) {
+function getLinksOP(filter, val){
+    return new Selection(this.getLinks(filter, val));
+}
+
+function getLinks(filter, val) {
+    if(arguments.length === 2 && val !== undefined){
+        var key = filter;
+        filter = function(Node){return Node.attr(key) === val;}
+    }
+    
     return filterBy(filter, this._links);
 }
 
@@ -579,17 +615,13 @@ function getRenderedLinks() {
 
 function selectNodes(filter, retainOther) {
     if(!retainOther) this.deselectAll();
-    this.getNodes(filter).forEach(function(Node){
-        Node.attr("selected",true);
-    }, this);
+    this.getNodesOP(filter).attr("selected", true);
     return this;
 }
 
 function selectLinks(filter, retainOther) {
     if(!retainOther) this.deselectAll();
-    this.getLinks(filter).forEach(function(Link){
-        Link.attr("selected",true);
-    }, this);
+    this.getLinksOP(filter).attr("selected",true);
     return this;
 }
 
@@ -599,32 +631,24 @@ function deselectAll(){
 }
 
 function deselectNodes() {
-    this.getSelectedNodes().forEach(function(Node){
-        Node.attr("selected",false);
-    }, this);
+    this.getNodesOP('selected', true).attr("selected",false);
     return this;
 }
 
 function deselectLinks(filter) {
-    this.getSelectedLinks(filter).forEach(function(Link){
-        Link.attr("selected", false);
-    }, this);
+    this.getLinksOP(filter).attr("selected", false);
     return this;
 }
 
 function disableNodes(filter, notRetainOther) {
     if(notRetainOther) this.enableAll();
-    this.getNodes(filter).forEach(function(Node){
-        Node.attr("disabled",true);
-    }, this);
+    this.getNodesOP(filter).attr("disabled",true);
     return this;
 }
 
 function disableLinks(filter, notRetainOther) {
     if(notRetainOther) this.enableAll();
-    this.getLinks(filter).forEach(function(Link){
-        Link.attr("disabled", true);
-    }, this);
+    this.getLinksOP(filter).attr("disabled", true);
     return this;
 }
 
@@ -634,16 +658,12 @@ function enableAll(){
 }
 
 function enableNodes() {
-    this.getDisabledNodes().forEach(function(Node){
-        Node.attr("disabled",false);
-    }, this);
+    this.getNodesOP("disabled", true).attr("disabled",false);
     return this;
 }
 
 function enableLinks(filter) {
-    this.getDisabledLinks(filter).forEach(function(Link){
-        Link.attr("disabled", false);
-    }, this);
+    this.getDisabledLinks(filter).attr("disabled", false);
     return this;
 }
 
@@ -713,7 +733,7 @@ function Brush () {
             var t = self.getCurrentTransform();
 
             self._getNodesSelection().each(function(Node){
-                Node.attr("selected",Node.pselected ^ ( (extent[0][0] - t.x) / t.k  <= Node.getX() && Node.getX() < (extent[1][0] - t.x) / t.k  && (extent[0][1] - t.y) / t.k <= Node.getY() && Node.getY() < (extent[1][1] - t.y) / t.k ));
+                Node.attr("selected",Boolean(Node.pselected ^ ( (extent[0][0] - t.x) / t.k  <= Node.getX() && Node.getX() < (extent[1][0] - t.x) / t.k  && (extent[0][1] - t.y) / t.k <= Node.getY() && Node.getY() < (extent[1][1] - t.y) / t.k )));
             });
             self._config.onBrush.call(this);
         })
@@ -1228,6 +1248,7 @@ Graph.prototype = {
     delayRender: delayRender,
     renderImmediately: renderImmediately,
     nodes: nodes,
+    getNodesOP: getNodesOP,
     getNodes: getNodes,
     getSelectedNodes: getSelectedNodes,
     getRenderedNodes: getRenderedNodes,
@@ -1247,6 +1268,7 @@ Graph.prototype = {
     hasNode: hasNode,
     links: links,
     getLinks: getLinks,
+    getLinksOP: getLinksOP,
     getSelectedLinks: getSelectedLinks,
     getDisabledLinks: getDisabledLinks,
     getRenderedLinks: getRenderedLinks,
@@ -1314,18 +1336,6 @@ function parseHTML (str) {
     return tmp.body.children[0];
 }
 
-function concat(key, objArray){
-    return objArray.map(function(obj){
-        return obj[key] instanceof Function ? obj[key]() : obj[key];
-    }).join("&");
-}
-
-function average(key, objArray){
-    return objArray.reduce(function(p, obj){
-            return p + (obj[key] instanceof Function ? obj[key]() : obj[key]);
-        }, 0) / objArray.length;
-}
-
 function direction(Links){
     var src = Links[0].getSourceId();
     var dst = Links[0].getTargetId();
@@ -1347,50 +1357,6 @@ function direction(Links){
     }, DIRECTION.NONE);
 }
 
-function deriveLinkFromLinks (Links, graph) {
-
-    var obj = {};
-    obj.id = "merged:" + concat("id", Links);
-    obj.label = concat("label", Links);
-    obj.width = average('_width', Links);
-    obj.src = Links[0].getSourceId();
-    obj.dst = Links[0].getTargetId();
-    obj.color = graph._config.linkColor;
-    obj.direction = direction(Links);
-
-    
-    return obj;
-}
-
-function deriveLinkFromLNL (srcLinks, Node, dstLinks, graph) {
-    srcLinks = srcLinks.length > 1? new Link(deriveLinkFromLinks(srcLinks, graph), graph): srcLinks[0];
-    dstLinks = dstLinks.length > 1? new Link(deriveLinkFromLinks(dstLinks, graph), graph): dstLinks[0];
-
-    var obj = {};
-    obj.id = "transformed:(" + srcLinks.id + ")" + Node.id + "(" + dstLinks.id + ")";
-    obj.label = "(" + srcLinks.attr("label") + ")" + Node.attr("label") + "(" + dstLinks.attr("label") + ")";
-    obj.src = srcLinks.getSourceId() === Node.id? srcLinks.getTargetId(): srcLinks.getSourceId();
-    obj.dst = dstLinks.getSourceId() === Node.id? dstLinks.getTargetId(): dstLinks.getSourceId();
-    obj.width = (srcLinks.attr("width") + dstLinks.attr("width")) / 2;
-    obj.color = Node.attr("color");
-    obj.direction = direction([srcLinks, dstLinks]);
-
-    return obj;
-}
-
-function deriveNodeFromNodes (Nodes, graph) {
-    var obj = {};
-    obj.id = "grouped:" + concat("id", Nodes);
-    obj.label = concat("label", Nodes);
-    obj.radius = average('_radius', Nodes);
-    obj.x = average('x', Nodes);
-    obj.y = average('y', Nodes);
-    obj.color = graph._config.color;
-    obj.selected = Nodes.every(function(Node){ return Node.attr("selected")});
-
-    return obj;
-}
-
 function safeExecute (maybeFunction) {
     return (maybeFunction instanceof Function)? maybeFunction(): maybeFunction;
 }
@@ -1404,11 +1370,6 @@ var utils = {
     getStrLen: getStrLen,
     getOffsetCoordinate: getOffsetCoordinate,
     parseHTML: parseHTML,
-    deriveLinkFromLinks: deriveLinkFromLinks,
-    deriveLinkFromLNL: deriveLinkFromLNL,
-    deriveNodeFromNodes: deriveNodeFromNodes,
-    concat: concat,
-    average: average,
     direction: direction,
     safeExecute: safeExecute
 };

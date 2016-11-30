@@ -13,6 +13,19 @@ tape("Get and set attr of a Link", function(test){
     test.end();
 });
 
+tape("Set attr of a Link by function", function(test){
+    var myGraph = g3.graph(null, {ifRender: false})
+        .nodes([{id: 1}, {id: 2}])
+        .links([{id: 1, src: 1, dst: 2}]);
+    
+    myGraph.links()[0].attr('foo', function(Link){
+        return Link.id;
+    });
+    test.equal(myGraph.links()[0].attr("foo"), 1);
+    
+    test.end();
+});
+
 tape("Set attr by data or defaultConfig", function(test){
     var myGraph = g3.graph(null, {ifRender: false})
         .nodes([{id: 1}, {id: 2}])
@@ -30,16 +43,6 @@ tape("Set attr by data or defaultConfig", function(test){
     test.end();
 });
 
-
-tape("Get and set _merge property of a Link", function(test){
-    var myGraph = g3.graph(null, {ifRender: false})
-        .nodes([{id: 1}, {id: 2}])
-        .links([{id: 1, src: 1, dst: 2}, {id: 2, src: 1, dst: 2}]);
-    
-    test.equal(myGraph.links()[0].attr("merged"), undefined);
-    
-    test.end();
-});
 
 tape("Select a Link", function(test){
     var myGraph = g3.graph(null, {ifRender: false})

@@ -1,7 +1,7 @@
 function attr(prop, val){
-    if(val === undefined) return this["_" + prop];
+    if(val === undefined) return this[prop];
     
-    this["_" + prop] = val;
+    this[prop] = val;
     this.graph.delayRender(this);
     
     return this;

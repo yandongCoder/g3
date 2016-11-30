@@ -1,7 +1,17 @@
 import filterBy from "../utils/filterBy";
 import getIds from "../utils/getIds";
+import Selection from "./Selection/index";
 
-function getLinks(filter) {
+function getLinksOP(filter, val){
+    return new Selection(this.getLinks(filter, val));
+}
+
+function getLinks(filter, val) {
+    if(arguments.length === 2 && val !== undefined){
+        var key = filter;
+        filter = function(Node){return Node.attr(key) === val;}
+    }
+    
     return filterBy(filter, this._links);
 }
 
@@ -53,4 +63,4 @@ function getRenderedLinks() {
     });
 }
 
-export {getLinks, getSelectedLinks, getDisabledLinks, getContainLinks, getAttachedLinks, getRelatedLinks, getRenderedLinks};
+export {getLinksOP, getLinks, getSelectedLinks, getDisabledLinks, getContainLinks, getAttachedLinks, getRelatedLinks, getRenderedLinks};

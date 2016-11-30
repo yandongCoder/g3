@@ -1,16 +1,12 @@
 function selectNodes(filter, retainOther) {
     if(!retainOther) this.deselectAll();
-    this.getNodes(filter).forEach(function(Node){
-        Node.attr("selected",true);
-    }, this);
+    this.getNodesOP(filter).attr("selected", true);
     return this;
 }
 
 function selectLinks(filter, retainOther) {
     if(!retainOther) this.deselectAll();
-    this.getLinks(filter).forEach(function(Link){
-        Link.attr("selected",true);
-    }, this);
+    this.getLinksOP(filter).attr("selected",true);
     return this;
 }
 
@@ -20,32 +16,24 @@ function deselectAll(){
 }
 
 function deselectNodes() {
-    this.getSelectedNodes().forEach(function(Node){
-        Node.attr("selected",false);
-    }, this);
+    this.getNodesOP('selected', true).attr("selected",false);
     return this;
 }
 
 function deselectLinks(filter) {
-    this.getSelectedLinks(filter).forEach(function(Link){
-        Link.attr("selected", false);
-    }, this);
+    this.getLinksOP(filter).attr("selected", false);
     return this;
 }
 
 function disableNodes(filter, notRetainOther) {
     if(notRetainOther) this.enableAll();
-    this.getNodes(filter).forEach(function(Node){
-        Node.attr("disabled",true);
-    }, this);
+    this.getNodesOP(filter).attr("disabled",true);
     return this;
 }
 
 function disableLinks(filter, notRetainOther) {
     if(notRetainOther) this.enableAll();
-    this.getLinks(filter).forEach(function(Link){
-        Link.attr("disabled", true);
-    }, this);
+    this.getLinksOP(filter).attr("disabled", true);
     return this;
 }
 
@@ -55,19 +43,14 @@ function enableAll(){
 }
 
 function enableNodes() {
-    this.getDisabledNodes().forEach(function(Node){
-        Node.attr("disabled",false);
-    }, this);
+    this.getNodesOP("disabled", true).attr("disabled",false);
     return this;
 }
 
 function enableLinks(filter) {
-    this.getDisabledLinks(filter).forEach(function(Link){
-        Link.attr("disabled", false);
-    }, this);
+    this.getDisabledLinks(filter).attr("disabled", false);
     return this;
 }
-
 
 export {selectNodes, selectLinks, deselectAll, deselectNodes, deselectLinks,
         disableNodes, disableLinks, enableAll, enableNodes, enableLinks};
