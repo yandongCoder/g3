@@ -1,7 +1,7 @@
 var tape = require("tape"),
     g3 = require("../../../dist/js/g3");
 
-tape("remove a Link", function(test){
+tape("Remove a Link", function(test){
     var myGraph = g3.graph(null, {ifRender: false});
 
 

@@ -9,8 +9,7 @@ tape("append element container correctly", function(test){
 
     test.notEqual(svg.querySelector("g.brush"), null);
     test.notEqual(svg.querySelector("g.force"), null);
-    test.notEqual(svg.querySelector("g.force").querySelector('g.paths'), null);
-    test.notEqual(svg.querySelector("g.force").querySelector('g.link-labels'), null);
+    test.notEqual(svg.querySelector("g.force").querySelector('g.links'), null);
     test.notEqual(svg.querySelector("g.force").querySelector('g.nodes'), null);
 
     test.end();

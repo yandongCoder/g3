@@ -160,4 +160,5 @@ export default function () {
         //进行重绘
         render();
     }
+
 }

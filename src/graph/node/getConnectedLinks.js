@@ -1,13 +1,13 @@
 export default function (grouped) {
     var connectedLinks = this.graph._links.filter(function (Link) {
-        return  ((Link.source === this) || (Link.target === this)) && !Link.merged() && (Link.transformed() === this.transformed());
+        return (Link.source === this) || (Link.target === this);
     }, this);
     
     if(grouped){
         var separated = {};
 
         connectedLinks.forEach(function(Link){
-            var separatedId = Link.src === this.id? Link.dst: Link.src;
+            var separatedId = Link.getSourceId() === this.id? Link.getTargetId(): Link.getSourceId();
             if(separated[separatedId] === undefined) separated[separatedId] = [];
             separated[separatedId].push(Link);
         },this);

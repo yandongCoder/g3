@@ -4,7 +4,8 @@
   "description": "graph data visualization based on D3.js",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "pretest": "rollup -c -m -n g3",
+    "test": "tape test/**/*-test.js"
   },
   "repository": {
     "type": "git",
@@ -22,13 +23,14 @@
   },
   "homepage": "https://github.com/yandongCoder/g3#readme",
   "dependencies": {
-    "d3": "^4.2.2",
-    "lodash-es": "^4.15.0"
+    "d3": "^4.4.0",
+    "underscore": "^1.8.3"
   },
   "devDependencies": {
     "babel-plugin-external-helpers": "^6.8.0",
     "babel-preset-es2015": "^6.14.0",
     "babel-preset-es2015-rollup": "^1.2.0",
+    "font-awesome": "^4.7.0",
     "jsdom": "^9.4.2",
     "rollup": "^0.34.10",
     "rollup-plugin-babel": "^2.6.1",

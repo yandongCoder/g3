@@ -9,9 +9,20 @@ tape("Nudge a Node", function(test){
     test.equal(myGraph.nodes()[0].getX(), 5);
     test.equal(myGraph.nodes()[0].getY(), 0);
 
-    myGraph.nodes()[0].nudge(10, 10);
+    myGraph.nodes()[0]._nudge(10, 10);
     test.equal(myGraph.nodes()[0].getX(), 15);
     test.equal(myGraph.nodes()[0].getY(), 10);
+    
+    test.end();
+});
+
+tape("If dragable is false, can't nudge Node.", function(test){
+    var myGraph = g3.graph(null, {ifRender: false, dragable: false})
+        .nodes([{id: 1, x: 5, y: 0}]);
+    
+    myGraph.nodes()[0]._nudge(10, 10);
+    test.equal(myGraph.nodes()[0].getX(), 5);
+    test.equal(myGraph.nodes()[0].getY(), 0);
     
     test.end();
 });

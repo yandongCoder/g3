@@ -17,11 +17,17 @@ export default function () {
 
     this._getSvgSelection()
         .classed("graph", true)
-        .on('click', function(){
+        .on('mousedown', function(){
             if (d3.event.target.nodeName !== 'svg') return;
-
-            //scope.cMenu.hide();
-            self.unselectNodes();
+            
+            self.getNodesOP().attr('selected', false);
+            self.getLinksOP().attr('selected', false);
+    
+            self._config.onGraphMousedown.call(this);
+        })
+        .on('contextmenu', function(){
+            if (d3.event.target.nodeName !== 'svg') return;
+            self._config.onGraphContextmenu.call(this);
         });
 
     //bind listener to page for keyboard shortCuts and mouse events

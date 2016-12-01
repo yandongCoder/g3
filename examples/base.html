@@ -2,19 +2,22 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <link rel="stylesheet" href="../dist/css/graph.css">
+    <link rel="stylesheet" href="../dist/css/g3.css">
+    <link rel="stylesheet" href="../node_modules/font-awesome/css/font-awesome.css">
     <style>
-        html, body{
+        html, body {
             height: 100%;
             margin: 0;
             padding: 0;
         }
+
         .svg1 {
             width: 1500px;
             height: 500px;
             background: beige;
         }
-        .tools{
+
+        .tools {
             position: fixed;
             top: 10px;
             left: 10px;
@@ -28,60 +31,100 @@
 </div>
 </body>
 </html>
+<script src="../node_modules/underscore/underscore-min.js"></script>
 <script src="../node_modules/d3/build/d3.js"></script>
 <script src="../node_modules/jquery/dist/jquery.min.js"></script>
 <script src="../dist/js/g3.js"></script>
 <script>
+    var groupedByNodeProperty = {
+        nodes: [{id: 1, type: 1, label: 1, icon: 'male', x: 200, y: 100, mugshot: 'mugshot.jpg'}, {id: 2, type: 2, radius: 50, mugshot: 'mugshot.jpg',icon: 'bath', label: 2, x: 100, y: 200}, {id: 3, type: 3, label: 3, x: 300, y: 200}, {id: 4, type: 1,radius: 10, label: 4, icon: 'circle', x: 150, y: 300}, {id: 5, type: 2, label: 5, x: 250, y: 300}],
+        links: [{id:1, label: 'AAA', src: 1, dst: 4, selected: true, direction: 3}, {id:2, label: 'BBB', src: 1, dst: 5}, {id:3, label: 'CCC', src: 2, dst: 3}, {id:4, label: 'DDD', src: 2, dst: 5}, {id:5, label: 'EEEEEEEEEEEEEEEEE', src: 3, dst: 4}]
+    };
 
-    var nodes = [{id: 1, label: "A", x: 0, y: 0, radius: 30, color: "#547895"}, {id: 2, label: "A", x: 100, y: 0, radius: 20},
-        {id: 3, label: "C", x: 0, y: 100, radius: 30}, {id: 4, label: "D", x: 100, y: 100, radius: 20},
-        {id: 5, label: "E", x: 0, y: 200, radius: 30}, {id: 6, label: "F", x: 100, y: 200, radius: 20},
-        {id: 7, label: "X", x: 0, y: 300, radius: 30}, {id: 8, label: "Y", x: 100, y: 300, radius: 20}
-    ];
-    var links = [{id: 1, label: "A", src: 1, dst: 2,direction: 1, width: 5},
-        {id: 2, label: "C", src: 1, dst: 3,direction: 2, width: 5},
-        {id: 3, label: "EF1", src: 5, dst: 6,direction: 3, width: 5},
-        {id: 4, label: "EF2", src: 6, dst: 5, direction: 3},
-        {id: 5, label: "X", src: 7, dst: 8,direction: 0, width: 5, color: 'blue'}
+    var groupedByRelatedNodes = {
+        nodes: [{id: 1, label: 1, x: 50, y: 100, icon: 'male'}, {id: 2, label: 2, x: 300, y: 50, selected: true}, {id: 3, label: 3, x: 100, y: 150}, {id: 4, label: 4, x: 200, y: 100}, {id: 5, label: 5, x: 300, y: 50}, {id: 6, label: 6, x: 300, y: 150}],
+        links: [{id:1, label: 'abc', icon: "female", width: 10, src: 2, dst: 1, direction: 3, selected: true}]
+    };
+    //, {id:2, label: "b", src: 3, dst: 1}, {id:3, src: 2, dst: 4}, {id:4, label: 'KNIGHT', src: 4, dst: 3}, {id:5, src: 4, dst: 5}, {id:6, label: 'loves', src: 6, dst: 4}
 
-    ];
+    var groupedData = {
+        nodes: [{id: 1, x: 150, y: 150, fx: 59, fy: 59}, {id: 2}, {id: 3}],
+        links: [{id:1, src: 1, dst: 2}, {id:2, src: 2, dst: 3}]
+    };
+
+    var myGraph = g3.graph("#my-graph",{
+        zoomable: false,
+        iconPrefix: "fa fa-"
+    })
+    .nodes(groupedByRelatedNodes.nodes)
+    .links(groupedByRelatedNodes.links);
 
 
-    var myGraph = g3.graph("#my-graph")
-            .nodes([{id: 1, label: "a", x: 100, y: 100}, {id: 2, label: "b", x: 200, y: 200}, {id: 3, label: "c", x: 300, y: 300}, {id: 4, label: "d", x: 400, y: 200}])
-            .links([{id:1, label: "a", src: 1, dst: 2}, {id:2, label: "b", src: 1, dst: 2}, {id:3, label: "c", src: 2, dst: 1}, {id:4, label: "d", src: 3, dst: 2}, {id:5, label: "e", src: 3, dst: 4}]);
+
+//    myGraph.groupBy(null, function(Node){
+//        var groupIds = [];
+//        Node.getConnectedLinks().forEach(function(Link){
+//            if(Link.source === Node) groupIds.push(Link.target.id);
+//            else groupIds.push(Link.source.id);
+//        });
+//        groupIds = _.sortBy(groupIds, function (val) {return val;});
+//
+//        return groupIds;
+//    });
+//
+//    var colorArr = d3.scaleOrdinal(d3.schemeCategory20);
+//    myGraph.getRenderedNodes().forEach(function(Node){
+//        Node.color(colorArr(Node.type));
+//    });
+
+
 
     d3.select("#showBrush").on('click', myGraph.brush.show);
     d3.select("#hideBrush").on('click', myGraph.brush.hide);
 
-    myGraph.group([myGraph.nodes()[0], myGraph.nodes()[1]]);
-    myGraph.links()[0].merge();
-    //    myGraph.group([myGraph.nodes()[2], myGraph.nodes()[4]]);
-    //    myGraph.group([myGraph.nodes()[3], myGraph.nodes()[5]]);
-
 
     //myGraph.links()[0].merge();
     //console.log(myGraph.nodes()[2].getConnectedLinks());
+//    var myGrid = myGraph.gridLayout().nodeSize([100, 100]).padding([70, 70]);
+//    myGrid(myGraph.nodes());
     setTimeout(
-            function getRemoteData(){
-        // myGraph.links({id: 5, label: "e", src: 3, dst: 2});
-        //myGraph.links({id:5, label: "e", src: 1, dst: 2});
-        //myGraph.links()[4].unmerge();
-        //myGraph.links()[5].LtoN();
-        //myGraph.links({id:6, label: "added", src: 5, dst: 6});
-        //myGraph.links()[6].merge();
-        //myGraph.removeNodes(nodes[4]);
-        //myGraph.nodes({id: 7, label: "G", x: 80, y:170});
-        //myGraph.links({id: 99, label: "A->D", src: 2, dst: 4,direction: 0});
-        //myGraph.nodes()[0].NtoL(true);
-        //myGraph.nodes()[0].color("#442233").label("AAA");
-        //graph.n2l(4);
+            function getRemoteData() {
+                //myGraph.focus();
+             //   myGraph.links()[0].disabled(true);
+//                var force = myGraph.forceLayout(myGraph.nodes(), myGraph.links(), 1000, 200);
+//                for (var i = 100; i--;) {
+//                    force.tick();
+//                }
+//                force.stop();
+//                var myGrid = myGraph.gridLayout().nodeSize([100, 100]).padding([70, 70]);
+//                myGrid(myGraph.nodes(), 500, 200);
+//                myGraph.renderImmediately();
+
+                //myGraph.group([myGraph.nodes()[2], myGraph.nodes()[4]]);
+                //myGraph.links()[2].merge();
+//                myGraph._getSvgSelection().call(myGraph.zoom.scaleTo, 0.4);
+//                myGraph._getSvgSelection().call(myGraph.zoom.translateBy, 800, 800);
+                //myGraph.transform(0.3, 0, 0);
+                //myGraph.transform(2, 200, -200, 1000);
+                //myGraph.nodes()[6].ungroup();
+//                var forceLayout = myGraph
+//                        .forceLayout()
+//                        .nodes(myGraph.nodes())
+//                        .force("link", d3.forceLink(myGraph.links()).distance(200).strength(1))
+//                        .force("charge", d3.forceManyBody());
+//
+//                for (var i = 300; i--;) {
+//                    forceLayout.tick();forceSimulation
+//                }
+//                myGraph.hierarchyLayout(myGraph.nodes(), myGraph.links(), 1500, 500);
+//                myGraph.render();
+
 //        $.getJSON('http://localhost/magneto_api/g3.php/nodes')
 //                .then(function(data){
 //                    myGraph.nodes(data.nodes)
 //                            .links(data.links);
 //                });
-    },500);
+            }, 500);
     //
     //    setTimeout(function () {
     //        myGraph.links()[7].unmerge();
@@ -111,7 +154,6 @@
     //            .links(links);
     //
     //    graph2.render();
-
 
 
 </script>
