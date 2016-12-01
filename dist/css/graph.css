@@ -74,7 +74,8 @@ svg.graph {
     font-weight: bold; }
   .graph .nodes .node.selected circle, .graph .nodes .node.selected rect {
     stroke: #f65565;
-    stroke-width: 5; }
+    stroke-width: 5;
+    }
   .graph .nodes .node.selected .text-background {
     display: block; }
   .graph .nodes .node.selected text {

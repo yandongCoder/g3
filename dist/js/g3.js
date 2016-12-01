@@ -1260,26 +1260,384 @@ var drawLinksSvg = function (drawType) {
     linkLabels.exit().remove();
 };
 
-var drawCanvas = function () {
-    var context = this._canvas.getContext("2d");
+/**
+ * Created by lcx on 2016/11/1.
+ * 利用canvas 画点 
+ */
+var drawNodeCanvas = function (canvasObj) {
+    var nodes = canvasObj.nodes;
+    var context = canvasObj.context;
 
-    context.clearRect(0, 0, this._canvas.width, this._canvas.height);
-
-    context.strokeStyle = "#ccc";
-    context.beginPath();
-    this.getRenderedLinks().forEach(function(Link) {
-        context.moveTo(Link.source.getX(), Link.source.getY());
-        context.lineTo(Link.target.getX(), Link.target.getY());
-    });
-    context.stroke();
-
-    context.beginPath();
-    this.getRenderedNodes().forEach(function(Node) {
+    nodes.forEach(function(Node) {
+        var x = Node.getX();
+        var y = Node.getY();
+        var r = Node.radius();
+        // console.log(Node.selected());
+        context.beginPath();
+        var radius = Node.selected() ? Node.radius()-5 : Node.radius();
         context.fillStyle = Node.color();
-        context.moveTo(Node.getX(), Node.getY());
-        context.arc(Node.getX(), Node.getY(), Node.radius(), 0, 2 * Math.PI);
+        context.moveTo(x, y);
+        if(Node.selected()){
+            context.strokeStyle = '#f65565';
+            context.lineWidth=10;
+        }else{
+            context.strokeStyle=Node.color();
+            context.lineWidth=1;
+        }
+        
+        context.arc(x, y, radius, 0, 2 * Math.PI);
+        context.stroke();
+        context.fill();
+
+        //画字
+        //在点的旁边写对应文字
+        context.beginPath();
+        if(Node.selected()){
+            //有点选状态
+            var labelLength = context.measureText(Node.label()).width+10;
+            context.fillStyle='#f65565';
+            context.fillRect(x+radius,y+radius,labelLength,20);
+        }
+        context.strokeWidth = 1;
+        context.fillStyle = '#555';
+        context.font="16px 微软雅黑";
+        context.textAlign='left';
+        context.textBaseline='hanging';
+        var label = '';
+        if(Node.selected()){
+            label = Node.label();
+        }else{
+            if(Node.label().length>8){
+                label = Node.label().slice(0,8)+'...';
+            }else{
+                label = Node.label();
+            }
+        }
+        context.fillText(label,x+r,y+r);
+
     });
-    context.fill();
+};
+
+/**
+ * Created by lcx on 2016/11/2.
+ */
+var drawArrow = function(ctx,link,lineWidth) {
+    var s1 = link.source.getX();
+    var e1 = link.source.getY();
+    var s2 = link.target.getX();
+    var e2 = link.target.getY();
+    var r = link.target.radius();
+    var text = link.label();
+
+    //计算x2 y2,x1 y1 的坐标 因为若是带箭头的话，不能从两个圆圈的中心点出发去画
+    var l = Math.sqrt((s2-s1)*(s2-s1) + (e2-e1)*(e2-e1));
+    var sin = (e2-e1)/l;
+    var cos = (s2-s1)/l;
+    var xlen = (r+lineWidth)*cos;
+    var ylen = (r+lineWidth)*sin;
+
+    var dx = (r+lineWidth)*cos;
+    var dy = (r+lineWidth)*sin;
+    var x2 = s2-dx;
+    var y2 = e2-dy;
+    var x1 = s1+dx;
+    var y1 = e1+dy;
+    
+    //进行箭头的绘制
+    var angle = Math.abs(Math.atan((x2 - x1) / (y2 - y1))); //倾斜角余角
+    var length = 10; //箭头斜线长度
+    var degree = Math.PI / 6; //箭头倾斜角
+    var theta = 0;
+    var altha = 0;
+    var a1 = 0;
+    var b1 = 0;
+    var a2 = 0;
+    var b2 = 0;
+
+    if (angle >= degree && angle <= Math.PI / 2 - degree) {
+        theta = angle - degree;
+        altha = Math.PI / 2 - 2 * degree - theta;
+        if (x2 >= x1) {
+            a1 = x2 - length * Math.sin(theta);
+            a2 = x2 - length * Math.cos(altha);
+        } else {
+            a1 = x2 + length * Math.sin(theta);
+            a2 = x2 + length * Math.cos(altha);
+        }
+        if (y2 >= y1) {
+            b1 = y2 - length * Math.cos(theta);
+            b2 = y2 - length * Math.sin(altha);
+        } else {
+            b1 = y2 + length * Math.cos(theta);
+            b2 = y2 + length * Math.sin(altha);
+        }
+    } else {
+        theta = angle - degree;
+        altha = theta + 2 * degree - Math.PI / 2;
+        if (x2 >= x1 && y2 >= y1) {
+            a1 = x2 - length * Math.sin(theta);
+            b1 = y2 - length * Math.cos(theta);
+            a2 = x2 - length * Math.cos(altha);
+            b2 = y2 + length * Math.sin(altha);
+        } else if (x2 >= x1 && y2 < y1) {
+            a1 = x2 - length * Math.sin(theta);
+            b1 = y2 + length * Math.cos(theta);
+            a2 = x2 - length * Math.cos(altha);
+            b2 = y2 - length * Math.sin(altha);
+        } else if (x2 < x1 && y2 < y1) {
+            a1 = x2 + length * Math.sin(theta);
+            b1 = y2 + length * Math.cos(theta);
+            a2 = x2 + length * Math.cos(altha);
+            b2 = y2 - length * Math.sin(altha);
+        } else {
+            a1 = x2 + length * Math.sin(theta);
+            b1 = y2 - length * Math.cos(theta);
+            a2 = x2 + length * Math.cos(altha);
+            b2 = y2 + length * Math.sin(altha);
+        }
+    }
+
+    ctx.beginPath();
+    ctx.strokeStyle = "#ccc";
+    ctx.lineWidth = 3;
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+    ctx.stroke();
+    ctx.moveTo(a1, b1);
+    ctx.lineTo(x2, y2);
+    ctx.lineTo(a2, b2);
+    ctx.stroke();
+    //绘制文字
+    // ctx.beginPath();
+    ctx.strokeWidth = 0;
+    ctx.fillStyle = '#555';
+    ctx.font="16px 微软雅黑";
+    ctx.fillText(text,(s2+s1)/2,(e2+e1)/2);
+
+};
+
+/**
+ * Created by lcx on 2016/11/1.
+ * 利用canvas 画线
+ */
+var drawLinkCanvas = function (canvasObj) {
+    //取得经过计算之后的links 数据
+    var links = canvasObj.links;
+    var context = canvasObj.context;
+    //进行绘制
+    // context.beginPath();
+    context.strokeStyle = "#ccc";
+    context.lineWidth = 3;
+    for(var i=0;i<links.length;i++){
+        // drawArrow(context,links[i].source.getX(), links[i].source.getY(),links[i].target.getX(), links[i].target.getY(),links[i].target.radius(),3);
+        drawArrow(context,links[i],3);
+        // context.moveTo(links[i].source.getX(), links[i].source.getY());
+        // context.lineTo(links[i].target.getX(), links[i].target.getY());
+    }
+    // context.stroke();
+};
+
+function findPoint(nodes,x, y) {
+    var i,
+
+        x = x,
+        y = y,
+        dx,
+        dy;
+
+    // var nodes = this.getRenderedNodes();
+
+    for (i = nodes.length - 1; i >= 0; --i) {
+        var r = nodes[i].radius();
+        var point = nodes[i];
+        var xx = point.x;
+        var yy = point.y;
+
+        // var xx = transform.applyX(point.x);
+        // var yy = transform.applyY(point.y);
+
+        dx = x - xx;
+        dy = y - yy;
+        if (dx * dx + dy * dy < r*r) {
+            return point;
+        }
+    }
+}
+
+/**
+ * Created by lcx on 2016/11/1.
+ */
+var convertToCanvasCor = function(canvas,x, y) {
+    // var canvas = this._canvas;
+    var res = {};
+    var cBox = canvas.getBoundingClientRect();
+    var cx = cBox.left;
+    var cy = cBox.top;
+    res.x = x - cx;
+    res.y = y - cy;
+    return res;
+};
+
+/**
+ * Created by lcx on 2016/11/7.
+ */
+
+var drawCanvas = function () {
+    var that = this;
+    var context = this._canvas.getContext("2d");
+    // console.log(that._getCurrentTransform());
+    //绘制的canvas 对象，在优化的时候可以对nodes 和 links 的数据进行相应的分组优化
+    var canvas = {
+        canvas:that._canvas,
+        context:context,
+        nodes:this.getRenderedNodes(),
+        links:this.getRenderedLinks(),
+        transform:that._getCurrentTransform()
+    };
+
+
+    //进行事件绑定，canvas 在进行事件绑定的时候没有对应的dom 结构，所以要进行相应的计算来判断事件的目标对象时哪个点或者边
+    render();
+    //绘制
+    //canvas 事件绑定
+    d3.select(this._canvas)
+        .on('click',_click)
+        .on('dblclick',_dblClick)
+        .on('mousemove',_mousemove)
+        .call(d3.drag()
+            .container(that._canvas)
+            .subject(dragsubject)
+            // .on("start", dragstarted)
+            .on("drag", dragged)
+            .on("end", dragended))
+        .call( d3.zoom().scaleExtent([0.5, 8]).on('zoom', zoomed) )
+        // .on("mousedown.zoom", null)
+        .on("dblclick.zoom", null);//取消双击时zoom 事件的触发
+    // that._hasInit = true;
+
+
+    function render() {
+        canvas.nodes = that.getRenderedNodes();
+        canvas.links = that.getRenderedLinks();
+        context.clearRect(0, 0, that._canvas.width, that._canvas.height);
+        context.save();
+        context.translate(canvas.transform.x, canvas.transform.y);
+        context.scale(canvas.transform.k, canvas.transform.k);
+        drawLinkCanvas(canvas);
+        drawNodeCanvas(canvas);
+        context.restore();
+    }
+
+
+    //单击事件
+    function _click(d) {
+        var p = convertToCanvasCor(that._canvas,d3.event.x,d3.event.y);
+        var x = canvas.transform.invertX(p.x);
+        var y = canvas.transform.invertY(p.y);
+        var targetNode = findPoint(canvas.nodes,x,y);
+        //调用click 的回调函数
+        // console.log(targetNode);
+        // console.log(targetNode);
+        // render();
+        if(targetNode){
+            if(!d3.event.ctrlKey){
+                if(targetNode.selected()) return;
+                that.unselectNodes();
+            }
+            targetNode.selected(!targetNode.selected());
+        }else{
+            console.log(context.isPointInPath(x,y));
+            // targetNode = findLinks(context,canvas.links,x,y);
+            // console.log(targetNode);
+            that.unselectNodes();
+        }
+
+    }
+
+    //双击事件
+    function _dblClick(d) {
+        var p = convertToCanvasCor(that._canvas,d3.event.x,d3.event.y);
+        var x = canvas.transform.invertX(p.x);
+        var y = canvas.transform.invertY(p.y);
+        var targetNode = findPoint(canvas.nodes,x,y);
+        // console.log(targetNode);
+        //调用dblClick 的回调函数
+        // console.log(targetNode);
+
+
+        // $scope.$emit('dblClickNode',targetNode);
+
+    }
+
+    function _mousemove() {
+        var p = convertToCanvasCor(that._canvas,d3.event.x,d3.event.y);
+        var x = canvas.transform.invertX(p.x);
+        var y = canvas.transform.invertY(p.y);
+        var targetNode = findPoint(canvas.nodes,x,y);
+        if(targetNode){
+            if(canvas.mouseTarget && targetNode.id == canvas.mouseTarget.id){
+                //nodeMouseOver mouseOver 回调函数
+                // console.log('mouseover');
+                // console.log(targetNode);
+            }else{
+                //mouseup 回调函数
+                // console.log('mouseout');
+
+            }
+            canvas.mouseTarget = targetNode;
+            // render();
+
+        }else{
+            //mouseout
+            if(canvas.mouseTarget){
+                // console.log('out'); mouseout 回调函数
+                // console.log('mousemove');
+                // render();
+            }
+
+        }
+    }
+
+    function dragsubject() {
+        // console.log('dragsubject');
+        var transform = canvas.transform;
+
+        var x = canvas.transform.invertX(d3.event.x);
+        var y = canvas.transform.invertY(d3.event.y);
+
+        var targetNode = findPoint(canvas.nodes,x,y);
+        if(targetNode){
+            targetNode.x = canvas.transform.applyX(targetNode.x);
+            targetNode.y = canvas.transform.applyY(targetNode.y);
+        }
+        // console.log(targetNode);
+        return targetNode;
+    }
+
+    //拖拽
+    function dragged() {
+        // console.log('drag');
+        d3.event.subject.x = canvas.transform.invertX(d3.event.x);
+        d3.event.subject.y = canvas.transform.invertY(d3.event.y);
+        //进行重绘
+        render();
+
+    }
+
+    //拖拽结束
+    function dragended() {
+        // console.log('dragend');
+        d3.event.subject.x = canvas.transform.invertX(d3.event.x);
+        d3.event.subject.y = canvas.transform.invertY(d3.event.y);
+    }
+
+    function zoomed() {
+        // console.log('zoom');
+        canvas.transform = d3.event.transform;
+
+        //进行重绘
+        render();
+    }
 };
 
 var draw = function (drawType, canvasType) {
@@ -1420,9 +1778,9 @@ var draged = function (currentNode) {
 const DEFAULT_CONFIG = {
     radius: 15,
     linkWidth: 3,
-    movable: true,
-    zoomable: true,
-    ifRender: true
+    movable: true,//node 是否可拖动
+    zoomable: true,//是否可缩放
+    ifRender: true//
 };
 
 function Graph(selector, config) {
