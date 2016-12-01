@@ -3,16 +3,16 @@ import select from "../utils/select";
 
 function delayRender(Obj, renderType){
     this.updateDOM.addObj(Obj, renderType);
-    this.render(renderType);
+    this._render(renderType);
     return this;
 }
 
-function renderImmediately(){
-    this.render(RENDER_TYPE.IMMEDIATELY);
+function render(){
+    this._render(RENDER_TYPE.IMMEDIATELY);
     return this;
 }
 
-function render(renderType) {
+function _render(renderType) {
     var self = this;
     
     this._canvas = select(this._selector);
@@ -38,4 +38,4 @@ function render(renderType) {
     }
 }
 
-export {render, delayRender, renderImmediately};
+export {_render, delayRender, render};

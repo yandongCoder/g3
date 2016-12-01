@@ -19,7 +19,7 @@ export default function () {
     var hideScale = d3.min([this._config.scaleOfHideNodeLabel, this._config.scaleOfHideLinkLabel]);
     
     //render while should hide label
-    if(previousScale >= hideScale && currentScale <= hideScale) this.renderImmediately();
+    if(previousScale >= hideScale && currentScale <= hideScale) this.render();
     //panning don't need re-render, render only after zooming
-    if(currentScale !== previousScale && currentScale > hideScale) this.renderImmediately();
+    if(currentScale !== previousScale && currentScale > hideScale) this.render();
 }

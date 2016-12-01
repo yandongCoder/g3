@@ -7,7 +7,7 @@ tape("Transform graph to specified k, x, y", function(test){
     var document = jsdom.jsdom('<svg id="graph"></svg>');
     var svg = document.querySelector("#graph");
 
-    var myGraph = g3.graph(svg).render();
+    var myGraph = g3.graph(svg)._render();
 
     test.deepEqual(d3.zoomTransform(svg), {k:1, x: 0, y: 0});
 
@@ -28,7 +28,7 @@ tape("Translate graph to specified x, y", function(test){
     var document = jsdom.jsdom('<svg id="graph"></svg>');
     var svg = document.querySelector("#graph");
     
-    var myGraph = g3.graph(svg).render();
+    var myGraph = g3.graph(svg)._render();
     
     test.deepEqual(d3.zoomTransform(svg), {k:1, x: 0, y: 0});
     
@@ -49,7 +49,7 @@ tape("Scale graph to specified k", function(test){
     var document = jsdom.jsdom('<svg id="graph"></svg>');
     var svg = document.querySelector("#graph");
     
-    var myGraph = g3.graph(svg).render();
+    var myGraph = g3.graph(svg)._render();
     
     test.equal(d3.zoomTransform(svg).k, 1);
     

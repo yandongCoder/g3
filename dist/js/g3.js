@@ -32,16 +32,16 @@ function select (selector) {
 
 function delayRender(Obj, renderType){
     this.updateDOM.addObj(Obj, renderType);
-    this.render(renderType);
+    this._render(renderType);
     return this;
 }
 
-function renderImmediately(){
-    this.render(RENDER_TYPE.IMMEDIATELY);
+function render(){
+    this._render(RENDER_TYPE.IMMEDIATELY);
     return this;
 }
 
-function render(renderType) {
+function _render(renderType) {
     var self = this;
     
     this._canvas = select(this._selector);
@@ -333,7 +333,7 @@ function remove$1 (type) {
     delete this.graph._linksHash[this.id];
     this.graph._links.splice(this.graph._links.indexOf(this), 1);
 
-    this.graph.render();
+    this.graph._render();
     
     if(this.mergedBy && (type !== LINK_REMOVE_TYPE.UNMERGE) ) this.mergedBy.remove();
     if(this.transformedBy && (type !== LINK_REMOVE_TYPE.L2N)) this.transformedBy.remove();
@@ -435,7 +435,7 @@ function removeNodes(filter) {
         Node.remove();
     }, this);
     
-    this.render();
+    this._render();
 }
 
 function removeLinks(filter) {
@@ -443,7 +443,7 @@ function removeLinks(filter) {
         Link.remove();
     }, this);
     
-    this.render();
+    this._render();
 }
 
 function removeLinksOfNode(Node) {
@@ -460,7 +460,7 @@ function nodes(nodes, cover) {
     
     nodes.forEach(function(v){ this._addNode(v);},this);
     
-    this.render();
+    this._render();
     return this;
 }
 
@@ -472,7 +472,7 @@ function links(links, cover) {
     
     links.forEach(function(v){ this._addLink(v); },this);
     
-    this.render();
+    this._render();
     return this;
 }
 
@@ -1296,9 +1296,9 @@ function zoomed () {
     var hideScale = d3.min([this._config.scaleOfHideNodeLabel, this._config.scaleOfHideLinkLabel]);
     
     //render while should hide label
-    if(previousScale >= hideScale && currentScale <= hideScale) this.renderImmediately();
+    if(previousScale >= hideScale && currentScale <= hideScale) this.render();
     //panning don't need re-render, render only after zooming
-    if(currentScale !== previousScale && currentScale > hideScale) this.renderImmediately();
+    if(currentScale !== previousScale && currentScale > hideScale) this.render();
 }
 
 function transform(k, x, y, duration) {
@@ -1504,9 +1504,9 @@ Graph.prototype = {
     constructor: Graph,
     selector: selector,
     config: config,
-    render: render,
+    _render: _render,
     delayRender: delayRender,
-    renderImmediately: renderImmediately,
+    render: render,
     nodes: nodes,
     getNodesOP: getNodesOP,
     getNodes: getNodes,

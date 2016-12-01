@@ -45,7 +45,7 @@ function removeNodes(filter) {
         Node.remove();
     }, this);
     
-    this.render();
+    this._render();
 }
 
 function removeLinks(filter) {
@@ -53,7 +53,7 @@ function removeLinks(filter) {
         Link.remove();
     }, this);
     
-    this.render();
+    this._render();
 }
 
 function removeLinksOfNode(Node) {
@@ -70,7 +70,7 @@ function nodes(nodes, cover) {
     
     nodes.forEach(function(v){ this._addNode(v);},this);
     
-    this.render();
+    this._render();
     return this;
 }
 
@@ -82,7 +82,7 @@ function links(links, cover) {
     
     links.forEach(function(v){ this._addLink(v); },this);
     
-    this.render();
+    this._render();
     return this;
 }
 
