@@ -29,9 +29,11 @@ tape("Link's DOM should correspond Link's property", function(test) {
     
     myGraph.renderImmediately();
     
-    var pathsEle = document.querySelectorAll(".link path"),
+    var linksEle = document.querySelectorAll(".link"),
+        pathsEle = document.querySelectorAll(".link path"),
         labelsEle = document.querySelectorAll(".link-info .text");
-    var firstPath = pathsEle[0], secondPath = pathsEle[1], thirdPath = pathsEle[2],
+    var firstLinkEle = linksEle[0],
+        firstPath = pathsEle[0], secondPath = pathsEle[1], thirdPath = pathsEle[2],
         firstLabel = labelsEle[0],
         firstLink = myGraph.links()[0], secondLink = myGraph.links()[1], thirdLink = myGraph.links()[2],
         firstCircle = document.querySelectorAll('.node')[0];
@@ -54,7 +56,8 @@ tape("Link's DOM should correspond Link's property", function(test) {
     secondLink.attr("direction", 3);
     thirdLink.attr("direction", 0);
     myGraph.renderImmediately();
-    test.equal(firstPath.className, 'link-path selected disabled');
+    test.equal(firstLinkEle.className, "link disabled");
+    test.equal(firstPath.className, 'link-path selected');
     test.equal(firstPath.style.strokeWidth, '7');
     test.equal(firstLabel.textContent, "abc");
     test.equal(firstPath.style.stroke, "#666888");
@@ -67,7 +70,6 @@ tape("Link's DOM should correspond Link's property", function(test) {
     
     secondLink._element.dispatchEvent(new window.MouseEvent("mousedown"));
     myGraph.renderImmediately();
-    test.equal(firstPath.className, 'link-path disabled');
     test.equal(secondPath.className, 'link-path selected');
     test.equal(firstCircle.className, 'node');
     

@@ -60,11 +60,12 @@ export default function (renderType) {
         //         .attr('d', function (Link) { var c = Link.getCoordination();  return 'M ' + c.Sx + ' ' + c.Sy + ' L ' + c.Tx + ' ' + c.Ty; });
         //     return;
         // }
+        selection.classed("disabled", function(Link){return Link.attr("disabled")});
+        
         selection
             .select('path')
             .attr('d', function (Link) { var c = Link.getCoordination();  return 'M ' + c.Sx + ' ' + c.Sy + ' L ' + c.Tx + ' ' + c.Ty; })
             .classed("selected", function(Link){return Link.attr("selected")})
-            .classed("disabled", function(Link){return Link.attr("disabled")})
             .style('marker-start', function (Link) { return Link.getStartArrow(); })
             .style('marker-end', function (Link) { return Link.getEndArrow(); })
             .style('stroke-width', function(Link){ return Link.attr("width"); })
@@ -85,7 +86,6 @@ export default function (renderType) {
             .style('display', function(Link){
                 return (scale < self._config.scaleOfHideLinkLabel)? 'none': 'block';
             })
-            .classed("disabled", function(Link){return Link.attr("disabled")})
             .attr('width', function (Link) {return Link.LineWidth(scale)})
             .attr('height', function(Link){return Link.LineHeight(scale)});
         

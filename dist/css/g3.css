@@ -34,7 +34,6 @@ svg.graph {
     width: 80px;
     pointer-events: none; }
     .graph .nodes .node .text-group > div > span {
-      pointer-events: auto;
       text-overflow: ellipsis;
       overflow: hidden;
       height: 20px;

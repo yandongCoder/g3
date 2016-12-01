@@ -9,7 +9,7 @@ function keydowned() {
                 this.removeNodes(this.getSelectedNodes());
             break;
             case 65:
-                if(d3.event.ctrlKey) this.selectNodes(this.getNodes());
+                if(d3.event.ctrlKey) this.getNodesOP().attr("selected", true);
                 d3.event.preventDefault();
             break;
         }

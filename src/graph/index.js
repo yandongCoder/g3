@@ -1,12 +1,11 @@
 import {render, delayRender, renderImmediately} from "./render";
 import {clearNodes, clearLinks, hasNode, hasLink, addNode, addLink, removeNodes, removeLinks, removeLinksOfNode, nodes, links} from "./data";
 import {getNodesOP, getNodes, getRenderedNodes, getSelectedNodes} from "./getNodes";
-import {getLinksOP, getLinks, getSelectedLinks, getDisabledLinks, getContainLinks, getAttachedLinks, getRelatedLinks, getRenderedLinks} from "./getLinks";
-import {selectNodes, selectLinks, deselectNodes, deselectLinks, deselectAll, disableNodes, disableLinks, enableAll, enableNodes, enableLinks} from "./multi";
+import {getLinksOP, getLinks, getSelectedLinks, getContainLinks, getAttachedLinks, getRelatedLinks, getRenderedLinks} from "./getLinks";
 import init from "./init/init";
 import draw from "./draw/index";
 import zoomed from "./zoomed";
-import {transform, scaleTo, translateBy} from "./transform";
+import {transform, scaleTo, translateBy, focus} from "./transform";
 import {keyupped, keydowned} from "./keyboard";
 import draged from "./draged";
 import {selector, config} from "./config";
@@ -42,22 +41,11 @@ Graph.prototype = {
     _addNode: addNode,
     removeNodes: removeNodes,
     clearNodes: clearNodes,
-    selectNodes: selectNodes,
-    selectLinks: selectLinks,
-    deselectNodes: deselectNodes,
-    deselectLinks: deselectLinks,
-    deselectAll: deselectAll,
-    disableNodes: disableNodes,
-    disableLinks: disableLinks,
-    enableAll: enableAll,
-    enableNodes: enableNodes,
-    enableLinks: enableLinks,
     hasNode: hasNode,
     links: links,
     getLinks: getLinks,
     getLinksOP: getLinksOP,
     getSelectedLinks: getSelectedLinks,
-    getDisabledLinks: getDisabledLinks,
     getRenderedLinks: getRenderedLinks,
     getContainLinks: getContainLinks,
     getAttachedLinks: getAttachedLinks,
@@ -70,6 +58,7 @@ Graph.prototype = {
     transform: transform,
     scaleTo: scaleTo,
     translateBy: translateBy,
+    focus: focus,
     draged: draged,
     _keydowned: keydowned,
     _keyupped: keyupped,

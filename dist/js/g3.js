@@ -571,12 +571,6 @@ function getSelectedLinks() {
     });
 }
 
-function getDisabledLinks() {
-    return this.getLinks(function(Link){
-        return Link.attr("disabled");
-    });
-}
-
 function getContainLinks(Nodes) {
     var ids = getIds(Nodes);
     var containedLinks = [];
@@ -611,60 +605,6 @@ function getRenderedLinks() {
     return this.getLinks(function(Link){
         return !Link.attr("hide");
     });
-}
-
-function selectNodes(filter, retainOther) {
-    if(!retainOther) this.deselectAll();
-    this.getNodesOP(filter).attr("selected", true);
-    return this;
-}
-
-function selectLinks(filter, retainOther) {
-    if(!retainOther) this.deselectAll();
-    this.getLinksOP(filter).attr("selected",true);
-    return this;
-}
-
-function deselectAll(){
-    this.deselectNodes();
-    this.deselectLinks();
-}
-
-function deselectNodes() {
-    this.getNodesOP('selected', true).attr("selected",false);
-    return this;
-}
-
-function deselectLinks(filter) {
-    this.getLinksOP(filter).attr("selected", false);
-    return this;
-}
-
-function disableNodes(filter, notRetainOther) {
-    if(notRetainOther) this.enableAll();
-    this.getNodesOP(filter).attr("disabled",true);
-    return this;
-}
-
-function disableLinks(filter, notRetainOther) {
-    if(notRetainOther) this.enableAll();
-    this.getLinksOP(filter).attr("disabled", true);
-    return this;
-}
-
-function enableAll(){
-    this.enableNodes();
-    this.enableLinks();
-}
-
-function enableNodes() {
-    this.getNodesOP("disabled", true).attr("disabled",false);
-    return this;
-}
-
-function enableLinks(filter) {
-    this.getDisabledLinks(filter).attr("disabled", false);
-    return this;
 }
 
 function appendPreDefs () {
@@ -733,7 +673,7 @@ function Brush () {
             var t = self.getCurrentTransform();
 
             self._getNodesSelection().each(function(Node){
-                Node.attr("selected",Boolean(Node.pselected ^ ( (extent[0][0] - t.x) / t.k  <= Node.getX() && Node.getX() < (extent[1][0] - t.x) / t.k  && (extent[0][1] - t.y) / t.k <= Node.getY() && Node.getY() < (extent[1][1] - t.y) / t.k )));
+                Node.attr("selected", !Node.attr('disabled') && Boolean(Node.pselected ^ ( (extent[0][0] - t.x) / t.k  <= Node.getX() && Node.getX() < (extent[1][0] - t.x) / t.k  && (extent[0][1] - t.y) / t.k <= Node.getY() && Node.getY() < (extent[1][1] - t.y) / t.k )));
             });
             self._config.onBrush.call(this);
         })
@@ -967,11 +907,12 @@ function drawLinksSvg (renderType) {
         //         .attr('d', function (Link) { var c = Link.getCoordination();  return 'M ' + c.Sx + ' ' + c.Sy + ' L ' + c.Tx + ' ' + c.Ty; });
         //     return;
         // }
+        selection.classed("disabled", function(Link){return Link.attr("disabled")});
+        
         selection
             .select('path')
             .attr('d', function (Link) { var c = Link.getCoordination();  return 'M ' + c.Sx + ' ' + c.Sy + ' L ' + c.Tx + ' ' + c.Ty; })
             .classed("selected", function(Link){return Link.attr("selected")})
-            .classed("disabled", function(Link){return Link.attr("disabled")})
             .style('marker-start', function (Link) { return Link.getStartArrow(); })
             .style('marker-end', function (Link) { return Link.getEndArrow(); })
             .style('stroke-width', function(Link){ return Link.attr("width"); })
@@ -992,7 +933,6 @@ function drawLinksSvg (renderType) {
             .style('display', function(Link){
                 return (scale < self._config.scaleOfHideLinkLabel)? 'none': 'block';
             })
-            .classed("disabled", function(Link){return Link.attr("disabled")})
             .attr('width', function (Link) {return Link.LineWidth(scale)})
             .attr('height', function(Link){return Link.LineHeight(scale)});
         
@@ -1080,6 +1020,33 @@ function translateBy(x, y, duration) {
     return this;
 }
 
+function focus(filter, duration){
+    var Nodes = this.getNodes(filter);
+    
+    var xAccessor = function(Node){return Node.x}, yAccessor = function(Node){return Node.y};
+    var minX = d3.min(Nodes, xAccessor), maxX = d3.max(Nodes, xAccessor), minY = d3.min(Nodes, yAccessor), maxY = d3.max(Nodes, yAccessor);
+    var xSpan = maxX - minX, ySpan = maxY - minY;
+    var xCenter = (maxX + minX) / 2, yCenter = (maxY + minY) / 2;
+    var canvasW = this._canvas.width.baseVal.value,
+        canvasH = this._canvas.height.baseVal.value;
+    
+    var xScale = canvasW / xSpan,
+        yScale = canvasH / ySpan;
+    
+    var scale = d3.min([xScale, yScale]);
+    if(scale > this._config.maxScale) scale = this._config.maxScale;
+    scale = scale === Infinity? 1: scale;
+    scale -= 0.1;
+    
+    
+    var transformed = d3.zoomIdentity
+        .translate(canvasW / 2, canvasH / 2)
+        .scale(scale)
+        .translate(-xCenter, -yCenter);
+    
+    this._getSvgSelection(duration || 1000).call(this.zoom.transform, transformed);
+}
+
 function keydowned() {
     if (!d3.event.metaKey) {
         switch (d3.event.keyCode) {
@@ -1091,7 +1058,7 @@ function keydowned() {
                 this.removeNodes(this.getSelectedNodes());
             break;
             case 65:
-                if(d3.event.ctrlKey) this.selectNodes(this.getNodes());
+                if(d3.event.ctrlKey) this.getNodesOP().attr("selected", true);
                 d3.event.preventDefault();
             break;
         }
@@ -1255,22 +1222,11 @@ Graph.prototype = {
     _addNode: addNode,
     removeNodes: removeNodes,
     clearNodes: clearNodes,
-    selectNodes: selectNodes,
-    selectLinks: selectLinks,
-    deselectNodes: deselectNodes,
-    deselectLinks: deselectLinks,
-    deselectAll: deselectAll,
-    disableNodes: disableNodes,
-    disableLinks: disableLinks,
-    enableAll: enableAll,
-    enableNodes: enableNodes,
-    enableLinks: enableLinks,
     hasNode: hasNode,
     links: links,
     getLinks: getLinks,
     getLinksOP: getLinksOP,
     getSelectedLinks: getSelectedLinks,
-    getDisabledLinks: getDisabledLinks,
     getRenderedLinks: getRenderedLinks,
     getContainLinks: getContainLinks,
     getAttachedLinks: getAttachedLinks,
@@ -1283,6 +1239,7 @@ Graph.prototype = {
     transform: transform,
     scaleTo: scaleTo,
     translateBy: translateBy,
+    focus: focus,
     draged: draged,
     _keydowned: keydowned,
     _keyupped: keyupped,

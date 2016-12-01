@@ -21,12 +21,6 @@ function getSelectedLinks() {
     });
 }
 
-function getDisabledLinks() {
-    return this.getLinks(function(Link){
-        return Link.attr("disabled");
-    });
-}
-
 function getContainLinks(Nodes) {
     var ids = getIds(Nodes);
     var containedLinks = [];
@@ -63,4 +57,4 @@ function getRenderedLinks() {
     });
 }
 
-export {getLinksOP, getLinks, getSelectedLinks, getDisabledLinks, getContainLinks, getAttachedLinks, getRelatedLinks, getRenderedLinks};
+export {getLinksOP, getLinks, getSelectedLinks, getContainLinks, getAttachedLinks, getRelatedLinks, getRenderedLinks};
