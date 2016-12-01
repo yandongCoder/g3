@@ -157,8 +157,7 @@ function Node(data, graph) {
     this.color = data.color || graph._config.color;
     this.icon = data.icon  || graph._config.icon;
     this.mugshot = data.mugshot || graph._config.mugshot;
-    this.selected = data.selected || false; //indicate whether node is select
-    if(data.grouped) this._grouped = data.grouped;
+    this.selected = data.selected || false;
     
     for (var prop in data) {
         if (data.hasOwnProperty(prop) && this[prop] === undefined) this[prop] = data[prop];
@@ -723,7 +722,8 @@ function init () {
         .on('mousedown', function(){
             if (d3.event.target.nodeName !== 'svg') return;
             
-            self.deselectAll();
+            self.getNodesOP().attr('selected', false);
+            self.getLinksOP().attr('selected', false);
     
             self._config.onGraphMousedown.call(this);
         })
@@ -769,9 +769,9 @@ function drawNodesSvg (renderType) {
         .on('mousedown', function(Node, i){
             if(!d3.event.ctrlKey){
                 if(Node.attr("selected")) return;
-                self.deselectNodes();
+                self.getNodesOP().attr("selected", false);
             }
-            self.deselectLinks();
+            self.getLinksOP().attr("selected", false);
             Node.attr("selected",!Node.attr("selected"));
             
             self._config.onNodeMouseDown.call(this, Node, i);
@@ -858,7 +858,8 @@ function drawLinksSvg (renderType) {
         .each(function(Link){ Link._element = this })
         .classed('link', true)
         .on('mousedown', function(Link, i){
-            self.deselectAll();
+            self.getNodesOP().attr("selected", false);
+            self.getLinksOP().attr("selected", false);
             Link.attr("selected", !Link.attr("selected"));
         
             self._config.onLinkMouseDown.call(this, Link, i);

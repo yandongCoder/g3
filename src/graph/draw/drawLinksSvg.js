@@ -11,7 +11,8 @@ export default function (renderType) {
         .each(function(Link){ Link._element = this })
         .classed('link', true)
         .on('mousedown', function(Link, i){
-            self.deselectAll();
+            self.getNodesOP().attr("selected", false);
+            self.getLinksOP().attr("selected", false);
             Link.attr("selected", !Link.attr("selected"));
         
             self._config.onLinkMouseDown.call(this, Link, i);

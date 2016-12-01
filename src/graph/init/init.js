@@ -20,7 +20,8 @@ export default function () {
         .on('mousedown', function(){
             if (d3.event.target.nodeName !== 'svg') return;
             
-            self.deselectAll();
+            self.getNodesOP().attr('selected', false);
+            self.getLinksOP().attr('selected', false);
     
             self._config.onGraphMousedown.call(this);
         })

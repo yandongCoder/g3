@@ -97,7 +97,7 @@ tape("select Node event", function(test){
     test.equal(firstLink.attr("selected"), false);
     
     //Don't deselect others when press Ctrl key
-    myGraph.deselectNodes();
+    myGraph.getNodesOP().attr('selected', false);
     var eventCtrl = new window.MouseEvent("mousedown", {ctrlKey: true});
     firstNodeEle.dispatchEvent(eventCtrl);
     secondCircle.dispatchEvent(eventCtrl);
@@ -107,7 +107,7 @@ tape("select Node event", function(test){
     
     
     //toggle Node selected status when press Ctrl key
-    myGraph.deselectNodes();
+    myGraph.getNodesOP().attr('selected', false);
     firstNodeEle.dispatchEvent(eventCtrl);
     test.equal(firstNode.attr("selected"), true);
     firstNodeEle.dispatchEvent(eventCtrl);

@@ -12,9 +12,9 @@ export default function (renderType) {
         .on('mousedown', function(Node, i){
             if(!d3.event.ctrlKey){
                 if(Node.attr("selected")) return;
-                self.deselectNodes();
+                self.getNodesOP().attr("selected", false);
             }
-            self.deselectLinks();
+            self.getLinksOP().attr("selected", false);
             Node.attr("selected",!Node.attr("selected"));
             
             self._config.onNodeMouseDown.call(this, Node, i);
