@@ -26,9 +26,9 @@ const RENDER_TYPE = {
     IMMEDIATELY: "IMMEDIATELY"
 };
 
-var select = function (selector) {
+function select (selector) {
     return typeof selector === "string"? document.querySelector(selector): selector;
-};
+}
 
 function delayRender(Obj, renderType){
     this.updateDOM.addObj(Obj, renderType);
@@ -56,7 +56,7 @@ function render(renderType) {
     }
     else{
         clearTimeout(this._renderDelay);
-        this._renderDelay = setTimeout(function timeoutDraw(){draw(renderType);}, 0);
+        this._renderDelay = setTimeout(function timeoutDraw(){draw(renderType)}, 0);
     }
     
     return this;
@@ -67,14 +67,14 @@ function render(renderType) {
     }
 }
 
-var toArray = function (maybeArr) {
+function toArray (maybeArr) {
     if(!Array.isArray(maybeArr)) maybeArr = [maybeArr];
     return maybeArr;
-};
+}
 
 //中文为2长度，非中文为1
 
-var getStrLen = function (str) {
+function getStrLen (str) {
     var len = 0;
     if (typeof str !== "string") {
         str = str.toString();
@@ -106,16 +106,16 @@ function getY() {
     return this.y;
 }
 
-var nudge = function (nudgeX, nudgeY) {
+function nudge (nudgeX, nudgeY) {
     if(!this.graph._config.dragable) return;
     
     this.x += nudgeX;
     this.y += nudgeY;
     
     return this;
-};
+}
 
-var getConnectedLinks = function (grouped) {
+function getConnectedLinks (grouped) {
     var connectedLinks = this.graph._links.filter(function (Link) {
         return (Link.source === this) || (Link.target === this);
     }, this);
@@ -136,14 +136,14 @@ var getConnectedLinks = function (grouped) {
     }
 
     return connectedLinks;
-};
+}
 
-var remove = function (removeType) {
+function remove (removeType) {
     delete this.graph._nodesHash[this.id];
     this.graph._nodes.splice(this.graph._nodes.indexOf(this), 1);
     
     if(this.groupedBy && (removeType !== REMOVE_TYPE.UNGROUP) ) this.groupedBy.remove();
-};
+}
 
 //data: data obj, graph: graphInstance
 function Node(data, graph) {
@@ -178,11 +178,11 @@ Node.prototype = {
 };
 
 //Link has source and target Node in _nodes
-var hasST = function () {
+function hasST () {
     return (this.source !== undefined) && (this.target !== undefined);
-};
+}
 
-var getOffsetCoordinate = function (Sx, Sy, Tx, Ty, offsetS, offsetT) {
+function getOffsetCoordinate (Sx, Sy, Tx, Ty, offsetS, offsetT) {
     var l = Math.sqrt((Tx - Sx) * (Tx - Sx) + (Ty - Sy) * (Ty - Sy));
     if(l === 0) l = 1;
 
@@ -195,7 +195,7 @@ var getOffsetCoordinate = function (Sx, Sy, Tx, Ty, offsetS, offsetT) {
         Tx: Tx - offsetT * cos,
         Ty: Ty - offsetT * sin
     }
-};
+}
 
 var absUrl = window.location.href.split('#')[0];
 
@@ -329,7 +329,7 @@ function getTargetId(){
     return this.target.id;
 }
 
-var remove$1 = function (type) {
+function remove$1 (type) {
     delete this.graph._linksHash[this.id];
     this.graph._links.splice(this.graph._links.indexOf(this), 1);
 
@@ -339,14 +339,14 @@ var remove$1 = function (type) {
     if(this.transformedBy && (type !== LINK_REMOVE_TYPE.L2N)) this.transformedBy.remove();
 
     return this;
-};
+}
 
-var getHomoLinks = function () {
+function getHomoLinks () {
     return this.graph._links.filter(function(Link){
         return (Link.source === this.source || Link.source === this.target) &&
                 (Link.target === this.source || Link.target === this.target);
     }, this) || [];
-};
+}
 
 function Link(data, graph) {
     this.graph = graph;
@@ -431,26 +431,26 @@ function addLink(obj) {
 }
 
 function removeNodes(filter) {
-    this.getNodes(filter).forEach(function(Node$$1){
+    this.getNodes(filter).forEach(function(Node){
         //remove links first
-        this._removeLinksOfNode(Node$$1);
-        Node$$1.remove();
+        this._removeLinksOfNode(Node);
+        Node.remove();
     }, this);
     
     this.render();
 }
 
 function removeLinks(filter) {
-    this.getLinks(filter).forEach(function(Link$$1){
-        Link$$1.remove();
+    this.getLinks(filter).forEach(function(Link){
+        Link.remove();
     }, this);
     
     this.render();
 }
 
-function removeLinksOfNode(Node$$1) {
-    Node$$1.getConnectedLinks().map(function (Link$$1) {
-        Link$$1.remove();
+function removeLinksOfNode(Node) {
+    Node.getConnectedLinks().map(function (Link) {
+        Link.remove();
     }, this);
 }
 
@@ -478,16 +478,16 @@ function links(links, cover) {
     return this;
 }
 
-var getIds = function (array) {
+function getIds (array) {
     return array.map(function(item){
         if(typeof item  ===  'object') return item.id;
         else return item;
     });
-};
+}
 
 //filter array of object which has id; filtered by id, or id array, or object that has id, or object array
 //this function is convenient to Nodes or Links data.
-var filterBy = function (filter, objArray) {
+function filterBy (filter, objArray) {
     if(typeof filter === "function"){
         var filtered = filter;
     }else if(filter === undefined || filter === null){
@@ -506,18 +506,18 @@ var filterBy = function (filter, objArray) {
         if(filtered(objArray[i])) filteredArr.push(objArray[i]);
     }
     return filteredArr;
-};
+}
 
-var attr$2 = function (prop, val) {
+function attr$2 (prop, val) {
     this.arr.forEach(function(datum){
         datum.attr(prop, val instanceof Function? val(datum): val);
     });
     return this;
-};
+}
 
-var data = function () {
+function data () {
     return this.arr;
-};
+}
 
 function Selection(arr) {
     this.arr = arr;
@@ -536,7 +536,7 @@ function getNodesOP(filter, val){
 function getNodes(filter, val) {
     if(arguments.length === 2 && val !== undefined){
         var key = filter;
-        filter = function(Node){return Node.attr(key) === val;};
+        filter = function(Node){return Node.attr(key) === val;}
     }
     return filterBy(filter, this._nodes);
 }
@@ -558,7 +558,7 @@ function getLinksOP(filter, val){
 function getLinks(filter, val) {
     if(arguments.length === 2 && val !== undefined){
         var key = filter;
-        filter = function(Node){return Node.attr(key) === val;};
+        filter = function(Node){return Node.attr(key) === val;}
     }
     
     return filterBy(filter, this._links);
@@ -606,7 +606,7 @@ function getRenderedLinks() {
     });
 }
 
-var appendPreDefs = function () {
+function appendPreDefs () {
     var str = '<defs>'+
                         '<filter id="shadow" x="-20%" y="-20%" width="200%" height="200%" type="Shadow" shadowoffsetx="5" shadowoffsety="5" shadowblur="5" shadowcolor="rgba(0,0,0)">' +
                             '<feOffset result="offOut" in="SourceGraphic" dx="0" dy="3"></feOffset>' +
@@ -629,9 +629,9 @@ var appendPreDefs = function () {
                 '</defs>';
 
     this._canvas.insertAdjacentHTML("afterbegin", str);
-};
+}
 
-var appendPreElement = function () {
+function appendPreElement () {
     var svg = this._getSvgSelection();
     this._brushSelection = svg.append("g").attr("class", "brush");
 
@@ -639,9 +639,9 @@ var appendPreElement = function () {
     
     forceGroup.append("g").attr("class", "links");
     forceGroup.append("g").attr("class", "nodes");
-};
+}
 
-var Zoom = function() {
+function Zoom() {
     var self = this;
     return d3.zoom().scaleExtent([this._config.minScale, this._config.maxScale])
         .on('start', function () {
@@ -651,9 +651,9 @@ var Zoom = function() {
         .on('end', function () {
             self._config.onZoomEnd.call(this);
         });
-};
+}
 
-var Brush = function () {
+function Brush () {
     var self = this;
     var brush = d3.brush()
         .extent([[0, 0], [3840, 2400]])
@@ -691,9 +691,9 @@ var Brush = function () {
     };
 
     return brush;
-};
+}
 
-var dragNode = function () {
+function dragNode () {
     var self = this;
     var drag = d3.drag()
         .on("start", function (Node) {
@@ -704,9 +704,9 @@ var dragNode = function () {
 
         });
     return drag;
-};
+}
 
-var init = function () {
+function init () {
     //init trigger only once a graph
     if(this._hasInit) return;
 
@@ -752,19 +752,19 @@ var init = function () {
     this.dragNode = dragNode.call(this);
 
     this._hasInit = true;
-};
+}
 
-var getAbsUrl = function (url) {
+function getAbsUrl (url) {
     return (url || window.location.href).split('#')[0];
-};
+}
 
-var drawNodesSvg = function (renderType) {
+function drawNodesSvg (renderType) {
  
     var self = this;
     var nodes = this._getNodesSelection().data(this.getRenderedNodes(), function (Node) { return Node.id;});
 
     var g = nodes.enter().append('g')
-        .each(function(Node){ Node._element = this; })//reference element to Node
+        .each(function(Node){ Node._element = this })//reference element to Node
         .classed('node', true)
         .on('mousedown', function(Node, i){
             if(!d3.event.ctrlKey){
@@ -845,9 +845,9 @@ var drawNodesSvg = function (renderType) {
             .select('span')
             .text(function (Node) { return Node.attr("label"); });
     }
-};
+}
 
-var drawLinksSvg = function (renderType) {
+function drawLinksSvg (renderType) {
     var self = this;
     var scale = self.getCurrentTransform().k;
     
@@ -855,7 +855,7 @@ var drawLinksSvg = function (renderType) {
 
     var link = links.enter()
         .append('g')
-        .each(function(Link){ Link._element = this; })
+        .each(function(Link){ Link._element = this })
         .classed('link', true)
         .on('mousedown', function(Link, i){
             self.getNodesOP().attr("selected", false);
@@ -941,72 +941,18 @@ var drawLinksSvg = function (renderType) {
             .text(function (Link) {return Link.attr("label");});
     
         info.select('.icon')
-            .attr('class', function(Link){ return self._config.iconPrefix + Link.attr("icon");});
+            .attr('class', function(Link){ return self._config.iconPrefix + Link.attr("icon");})
     }
-};
+}
 
-/**
- * Created by lcx on 2016/11/1.
- * 利用canvas 画点 
- */
-var drawNodeCanvas = function (canvasObj) {
-    var nodes = canvasObj.nodes;
-    var context = canvasObj.context;
-
-    nodes.forEach(function(Node) {
-        var x = Node.getX();
-        var y = Node.getY();
-        var r = Node.radius();
-        // console.log(Node.selected());
-        context.beginPath();
-        var radius = Node.selected() ? Node.radius()-5 : Node.radius();
-        context.fillStyle = Node.color();
-        context.moveTo(x, y);
-        if(Node.selected()){
-            context.strokeStyle = '#f65565';
-            context.lineWidth=10;
-        }else{
-            context.strokeStyle=Node.color();
-            context.lineWidth=1;
-        }
-        
-        context.arc(x, y, radius, 0, 2 * Math.PI);
-        context.stroke();
-        context.fill();
-
-        //画字
-        //在点的旁边写对应文字
-        context.beginPath();
-        if(Node.selected()){
-            //有点选状态
-            var labelLength = context.measureText(Node.label()).width+10;
-            context.fillStyle='#f65565';
-            context.fillRect(x+radius,y+radius,labelLength,20);
-        }
-        context.strokeWidth = 1;
-        context.fillStyle = '#555';
-        context.font="16px 微软雅黑";
-        context.textAlign='left';
-        context.textBaseline='hanging';
-        var label = '';
-        if(Node.selected()){
-            label = Node.label();
-        }else{
-            if(Node.label().length>8){
-                label = Node.label().slice(0,8)+'...';
-            }else{
-                label = Node.label();
-            }
-        }
-        context.fillText(label,x+r,y+r);
-
-    });
-};
+function drawNodeCanvas () {
+    
+}
 
 /**
  * Created by lcx on 2016/11/2.
  */
-var drawArrow = function(ctx,link,lineWidth) {
+function drawArrow(ctx,link,lineWidth) {
     var s1 = link.source.getX();
     var e1 = link.source.getY();
     var s2 = link.target.getX();
@@ -1099,13 +1045,13 @@ var drawArrow = function(ctx,link,lineWidth) {
     ctx.font="16px 微软雅黑";
     ctx.fillText(text,(s2+s1)/2,(e2+e1)/2);
 
-};
+}
 
 /**
  * Created by lcx on 2016/11/1.
  * 利用canvas 画线
  */
-var drawLinkCanvas = function (canvasObj) {
+function drawLinkCanvas (canvasObj) {
     //取得经过计算之后的links 数据
     var links = canvasObj.links;
     var context = canvasObj.context;
@@ -1120,7 +1066,7 @@ var drawLinkCanvas = function (canvasObj) {
         // context.lineTo(links[i].target.getX(), links[i].target.getY());
     }
     // context.stroke();
-};
+}
 
 function findPoint(nodes,x, y) {
     var i,
@@ -1152,7 +1098,7 @@ function findPoint(nodes,x, y) {
 /**
  * Created by lcx on 2016/11/1.
  */
-var convertToCanvasCor = function(canvas,x, y) {
+function convertToCanvasCor(canvas,x, y) {
     // var canvas = this._canvas;
     var res = {};
     var cBox = canvas.getBoundingClientRect();
@@ -1161,13 +1107,9 @@ var convertToCanvasCor = function(canvas,x, y) {
     res.x = x - cx;
     res.y = y - cy;
     return res;
-};
+}
 
-/**
- * Created by lcx on 2016/11/7.
- */
-
-var drawCanvas = function () {
+function drawCanvas () {
     var that = this;
     var context = this._canvas.getContext("2d");
     // console.log(that._getCurrentTransform());
@@ -1324,18 +1266,18 @@ var drawCanvas = function () {
         render();
     }
 
-};
+}
 
-var draw = function (renderType, canvasType) {
+function draw (renderType, canvasType) {
     if(canvasType === 'svg'){
         drawNodesSvg.call(this, renderType);
         drawLinksSvg.call(this, renderType);
     }else if(canvasType === 'CANVAS'){
         drawCanvas.call(this);
     }
-};
+}
 
-var zoomed = function () {
+function zoomed () {
     //不可移动
     if (!this.movable) {
         //将变换前的translate值赋给变换后的translate值,保持位置不变
@@ -1359,7 +1301,7 @@ var zoomed = function () {
     if(previousScale >= hideScale && currentScale <= hideScale) this.renderImmediately();
     //panning don't need re-render, render only after zooming
     if(currentScale !== previousScale && currentScale > hideScale) this.renderImmediately();
-};
+}
 
 function transform(k, x, y, duration) {
     var transformed = d3.zoomIdentity;
@@ -1414,13 +1356,6 @@ function keydowned() {
             case 90:
                 this.brush.show();
                 break;
-            case 46:
-                this.removeNodes(this.getSelectedNodes());
-            break;
-            case 65:
-                if(d3.event.ctrlKey) this.getNodesOP().attr("selected", true);
-                d3.event.preventDefault();
-            break;
         }
     }
 }
@@ -1435,14 +1370,14 @@ function keyupped() {
     }
 }
 
-var draged = function (currentNode) {
+function draged (currentNode) {
     var nudgedNodes = this.getSelectedNodes();
     for(var i = nudgedNodes.length; i--;){
         nudgedNodes[i]._nudge(d3.event.dx, d3.event.dy, true);
         this.updateDOM.addObj(nudgedNodes[i]);
     }
     this.delayRender(null, RENDER_TYPE.NUDGE);
-};
+}
 
 const DEFAULT_CONFIG = {
     radius: 15,
@@ -1499,7 +1434,7 @@ function UpdateDOM(graph){
     this.graph = graph;
     this._updateNodes = [];
     this._updateLinks = [];
-}
+};
 
 UpdateDOM.prototype = {
     constructor: UpdateDOM,
@@ -1519,8 +1454,8 @@ function addObj(Obj, renderType){
         if(renderType === RENDER_TYPE.NUDGE){
             var selectedNodes = this.graph.getSelectedNodes();
             var relatedLinks = this.graph.getRelatedLinks(selectedNodes);
-            relatedLinks.forEach(function(Link$$1){
-                this._addLink(Link$$1);
+            relatedLinks.forEach(function(Link){
+                this._addLink(Link);
             }, this);
             
         }
@@ -1528,20 +1463,20 @@ function addObj(Obj, renderType){
     if(Obj instanceof Link) this._addLink(Obj);
 }
 
-function addNode$1(Node$$1){
-    if(this._updateNodes.indexOf(Node$$1) === -1) this._updateNodes.push(Node$$1);
+function addNode$1(Node){
+    if(this._updateNodes.indexOf(Node) === -1) this._updateNodes.push(Node);
 }
 
-function addLink$1(Link$$1){
-    if(this._updateLinks.indexOf(Link$$1) === -1) this._updateLinks.push(Link$$1);
+function addLink$1(Link){
+    if(this._updateLinks.indexOf(Link) === -1) this._updateLinks.push(Link);
 }
 
 function getNodesEle(){
-    return this._updateNodes.map(function(Node$$1){return Node$$1._element;});
+    return this._updateNodes.map(function(Node){return Node._element;});
 }
 
 function getLinksEle(){
-    return this._updateLinks.map(function(Link$$1){return Link$$1._element;});
+    return this._updateLinks.map(function(Link){return Link._element;});
 }
 
 function clearUpdateNodes(){
@@ -1552,10 +1487,10 @@ function clearUpdateLinks(){
     this._updateLinks = [];
 }
 
-function Graph(selector$$1, config$$1) {
+function Graph(selector, config) {
     
-    this.selector(selector$$1);
-    this.config(config$$1);
+    this.selector(selector);
+    this.config(config);
     
     this._hasInit = false; //init only once
     
@@ -1637,21 +1572,21 @@ Graph.prototype = {
     }
 };
 
-var index = function (selector$$1, config$$1) {
-    return new Graph(selector$$1, config$$1);
-};
+function index (selector, config) {
+    return new Graph(selector, config);
+}
 
-var filterById = function (id, Nodes) {
+function filterById (id, Nodes) {
     return Nodes.filter(function(Node){
         return Node.id === id;
     })[0];
-};
+}
 
-var parseHTML = function (str) {
+function parseHTML (str) {
     var tmp = document.implementation.createHTMLDocument();
     tmp.body.innerHTML = str;
     return tmp.body.children[0];
-};
+}
 
 function direction(Links){
     var src = Links[0].getSourceId();
@@ -1674,9 +1609,9 @@ function direction(Links){
     }, DIRECTION.NONE);
 }
 
-var safeExecute = function (maybeFunction) {
+function safeExecute (maybeFunction) {
     return (maybeFunction instanceof Function)? maybeFunction(): maybeFunction;
-};
+}
 
 var utils = {
     filterBy: filterBy,
@@ -1690,8 +1625,6 @@ var utils = {
     direction: direction,
     safeExecute: safeExecute
 };
-
-//only for test now
 
 exports.graph = index;
 exports.utils = utils;

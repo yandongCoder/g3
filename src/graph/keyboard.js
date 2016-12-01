@@ -5,13 +5,6 @@ function keydowned() {
             case 90:
                 this.brush.show();
                 break;
-            case 46:
-                this.removeNodes(this.getSelectedNodes());
-            break;
-            case 65:
-                if(d3.event.ctrlKey) this.getNodesOP().attr("selected", true);
-                d3.event.preventDefault();
-            break;
         }
     }
 }
