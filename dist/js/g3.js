@@ -1322,6 +1322,7 @@ function translateBy(x, y, duration) {
 
 function focus(filter, duration){
     var Nodes = this.getNodes(filter);
+    if(!Nodes.length) return;
     
     var xAccessor = function(Node){return Node.x}, yAccessor = function(Node){return Node.y};
     var minX = d3.min(Nodes, xAccessor), maxX = d3.max(Nodes, xAccessor), minY = d3.min(Nodes, yAccessor), maxY = d3.max(Nodes, yAccessor);
