@@ -7,6 +7,7 @@ const DEFAULT_CONFIG = {
     ifRender: true,
     color: "#123456",
     linkColor: "#a1a1a1",
+    background: "#f1f1f1",
     minScale: 0.1,
     maxScale: 3.0,
     scaleOfHideNodeLabel: 0.8,

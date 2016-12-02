@@ -717,6 +717,7 @@ function init () {
 
     this._getSvgSelection()
         .classed("graph", true)
+        .style("background", this._config.background)
         .on('mousedown', function(){
             if (d3.event.target.nodeName !== 'svg') return;
             
@@ -1387,6 +1388,7 @@ const DEFAULT_CONFIG = {
     ifRender: true,
     color: "#123456",
     linkColor: "#a1a1a1",
+    background: "#f1f1f1",
     minScale: 0.1,
     maxScale: 3.0,
     scaleOfHideNodeLabel: 0.8,
