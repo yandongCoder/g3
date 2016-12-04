@@ -23,8 +23,7 @@
   },
   "homepage": "https://github.com/yandongCoder/g3#readme",
   "dependencies": {
-    "d3": "^4.4.0",
-    "underscore": "^1.8.3"
+    "d3": "^4.4.0"
   },
   "devDependencies": {
     "babel-plugin-external-helpers": "^6.8.0",
