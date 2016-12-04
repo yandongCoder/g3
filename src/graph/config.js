@@ -5,6 +5,7 @@ const DEFAULT_CONFIG = {
     zoomable: true,
     dragable: true,
     ifRender: true,
+    autoId: false,
     color: "#123456",
     linkColor: "#a1a1a1",
     background: "#f1f1f1",
