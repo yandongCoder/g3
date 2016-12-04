@@ -1,5 +1,4 @@
 import toArray from "../utils/toArray";
-import UUID from "../utils/UUID";
 import Node from "./node/index";
 import Link from "./link/index";
 
@@ -20,8 +19,6 @@ function hasLink(obj) {
 }
 
 function addNode(obj) {
-    if(!obj.id && this._config.autoId) obj.id = UUID();
-    
     var node = new Node(obj, this);
     if(!this.hasNode(node)){
         this._nodesHash[node.id] = node;
@@ -31,8 +28,6 @@ function addNode(obj) {
 }
 
 function addLink(obj) {
-    if(!obj.id && this._config.autoId) obj.id = UUID();
-    
     var link = new Link(obj, this);
     if(!this.hasLink(link) && link.hasST()){
         this._linksHash[link.id] = link;

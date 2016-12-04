@@ -72,10 +72,6 @@ function toArray (maybeArr) {
     return maybeArr;
 }
 
-function UUID(){
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {var r = Math.random()*16|0,v=c=='x'?r:r&0x3|0x8;return v.toString(16);});
-};
-
 //中文为2长度，非中文为1
 
 function getStrLen (str) {
@@ -414,8 +410,6 @@ function hasLink(obj) {
 }
 
 function addNode(obj) {
-    if(!obj.id && this._config.autoId) obj.id = UUID();
-    
     var node = new Node(obj, this);
     if(!this.hasNode(node)){
         this._nodesHash[node.id] = node;
@@ -425,8 +419,6 @@ function addNode(obj) {
 }
 
 function addLink(obj) {
-    if(!obj.id && this._config.autoId) obj.id = UUID();
-    
     var link = new Link(obj, this);
     if(!this.hasLink(link) && link.hasST()){
         this._linksHash[link.id] = link;
@@ -1394,7 +1386,6 @@ const DEFAULT_CONFIG = {
     zoomable: true,
     dragable: true,
     ifRender: true,
-    autoId: false,
     color: "#123456",
     linkColor: "#a1a1a1",
     background: "#f1f1f1",
