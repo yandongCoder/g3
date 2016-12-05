@@ -1,0 +1,72 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="../dist/css/g3.css">
+    <link rel="stylesheet" href="../node_modules/font-awesome/css/font-awesome.css">
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        .svg1 {
+            width: 1500px;
+            height: 500px;
+            background: beige;
+        }
+
+        .tools {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+        }
+    </style>
+</head>
+<body>
+<svg id="my-graph"></svg>
+</body>
+</html>
+<script src="../node_modules/d3/build/d3.js"></script>
+<script src="../dist/js/g3.js"></script>
+<script>
+    var data = {
+        nodes: [
+                {id: 11, label: "Tywin", mugshot: "Tywin.jpg"}, {id: 12, label: "Tyrion", mugshot: "Tyrion.jpg"}, {id: 13, label: "Queen Cersei", mugshot: "Cersei.jpg"}, {id: 14, label: "Jaime", mugshot: "Jaime.jpg"},
+                {id: 21, label: "King Robert", mugshot: "Robert.jpg"}, {id: 22, label: "Stannis", mugshot: "Stannis.jpg"},{id: 23, label: "Renly", mugshot: "Renly.jpg"},
+                {id: 31, label: "Eddard", mugshot: "Eddard.jpg"},{id: 32 , label: "Robb", mugshot: "Robb.jpg"},{id: 33, label: "Sansa", mugshot: "Sansa.jpg"},{id: 34, label: "Arya", mugshot: "Arya.jpg"}, {id: 35, label: "Bran", mugshot: "Bran.jpg"}, {id: 36, label: "Catelyn", mugshot: "Catelyn.jpg"},
+                {id: 41, label: "Jon Snow", mugshot: "Jon.jpg"},{id: 42, label: "Samwell Tarly", mugshot: "Samwell.jpg"},{id: 43, label: "Jeor Mormont", mugshot: "Jeor.jpg"},{id: 44, label: "Maester Aemon", mugshot: "Aemon.jpg"},
+                {id: 51, label: "Daenerys Stormborn", mugshot: "Daenerys.jpg"}, {id: 52, label: "Viserys", mugshot: "Viserys.jpg"},{id: 53, label: "Jorah Mormont", mugshot: "Jorah.jpg"},{id: 54, label: "Khal Drogo", mugshot: "Drogo.jpg"},
+                ],
+        links: [
+                {id:11, label: 'Father of', src: 11, dst: 12}, {id:12, label: 'Father of', src: 11, dst: 13}, {id:13, label: 'Father of', src: 11, dst: 14}, {id:14, label: 'Twins and lover', src: 13, dst: 14, direction: 3},{id: 15, label: "Couple", src: 13, dst: 21, direction: 3},
+                {id: 21, label: "Siblings", src: 21, dst: 22, direction: 0}, {id: 22, label: "Siblings", src: 21, dst: 23, direction: 0},
+                {id: 31, label: "Father of", src: 31, dst: 32},{id: 32, label: "Father of", src: 31, dst: 33}, {id: 33, label: "Father of", src: 31, dst: 34}, {id: 34, label: "Father of", src: 31, dst: 35}, {id: 35, label: "Couple", src: 31, dst: 36, direction: 2},
+                {id: 41, label: "Friends", src: 41, dst: 42, direction: 0},  {id: 42, label: "Leader of", src: 43, dst: 41}, {id: 43, label: "Friends", src: 41, dst: 44, direction: 0}, {id: 44, label: "Grand-uncle of", src: 44, dst: 51, direction: 0}, {id: 45, label: "Bastard son of", src: 41, dst: 31},
+                {id: 51, label: "Couple", src: 51, dst: 54, direction: 3}, {id: 52, label: "Sister of", src: 51, dst: 52}, {id: 53, label: "Advisor of", src: 53, dst: 51},
+        ]
+    };
+
+    var myGraph = g3.graph("#my-graph",{
+        zoomable: false,
+        radius: 30,
+        mugshotPrefix: "./img/actor/",
+        background: "url('./img/oldpaper.jpg')",
+        iconPrefix: "fa fa-",
+        linkColor: "black"
+    })
+        .nodes(data.nodes)
+        .links(data.links);
+
+    var simulation = d3.forceSimulation(myGraph.nodes())
+        .force("charge", d3.forceManyBody().distanceMin(200).strength(-3000))
+        .force("link", d3.forceLink(myGraph.links()).distance(200).strength(0.3))
+        .force("x", d3.forceX())
+        .force("y", d3.forceY())
+        .force("center", d3.forceCenter(300, 300))
+        .on("tick", function(){
+            myGraph.render();
+        });
+
+</script>
