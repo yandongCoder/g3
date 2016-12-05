@@ -605,7 +605,6 @@ function getRenderedLinks() {
 }
 
 function appendPreDefs () {
-    //console.log(thi)
     var str = '<defs>'+
                         '<filter id="shadow" x="-20%" y="-20%" width="200%" height="200%" type="Shadow" shadowoffsetx="5" shadowoffsety="5" shadowblur="5" shadowcolor="rgba(0,0,0)">' +
                             '<feOffset result="offOut" in="SourceGraphic" dx="0" dy="3"></feOffset>' +
@@ -614,10 +613,8 @@ function appendPreDefs () {
                             '<feBlend in="SourceGraphic" in2="blurOut" mode="normal"></feBlend>' +
                         '</filter>' +
                         '<marker id="start-arrow" viewBox="0 -5 10 10" refX="10" markerWidth="3" markerHeight="3" orient="auto"><path d="M10,-5L0,0L10,5"></path></marker>' +
-                        '<marker id="start-arrow-hover" viewBox="0 -5 10 10" refX="10" markerWidth="3" markerHeight="3" orient="auto"><path d="M10,-5L0,0L10,5"></path></marker>' +
                         '<marker id="start-arrow-selected" viewBox="0 -5 10 10" refX="10" markerWidth="3" markerHeight="3" orient="auto"><path d="M10,-5L0,0L10,5"></path></marker>' +
                         '<marker id="end-arrow" viewBox="0 -5 10 10" refX="0" markerWidth="3" markerHeight="3" orient="auto"><path d="M0,-5L10,0L0,5"></path></marker>' +
-                        '<marker id="end-arrow-hover" viewBox="0 -5 10 10" refX="0" markerWidth="3" markerHeight="3" orient="auto"><path d="M0,-5L10,0L0,5"></path></marker>' +
                         '<marker id="end-arrow-selected" viewBox="0 -5 10 10" refX="0" markerWidth="3" markerHeight="3" orient="auto"><path d="M0,-5L10,0L0,5"></path></marker>' +
                         '<radialGradient id="linear" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">' +
                             '<stop offset="0%" style="stop-color:rgb(255，255,255);stop-opacity:0" />' +
@@ -628,6 +625,9 @@ function appendPreDefs () {
                 '</defs>';
 
     this._canvas.insertAdjacentHTML("afterbegin", str);
+    
+    d3.select("#start-arrow path").style('fill', this._config.linkColor);
+    d3.select("#end-arrow path").style('fill', this._config.linkColor);
 }
 
 function appendPreElement () {

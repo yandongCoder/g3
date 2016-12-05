@@ -12,7 +12,6 @@ tape("append svg pre defs correctly", function(test){
     test.notEqual(document.querySelector('#shadow'), null);
     test.notEqual(document.querySelector('#start-arrow'), null);
     test.notEqual(document.querySelector('#end-arrow'), null);
-    test.notEqual(document.querySelector('#end-arrow-hover'), null);
     test.notEqual(document.querySelector('#end-arrow-selected'), null);
     test.notEqual(document.querySelector('#linear'), null);
     test.end();
