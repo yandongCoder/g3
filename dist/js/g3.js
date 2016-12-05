@@ -199,9 +199,9 @@ function getOffsetCoordinate (Sx, Sy, Tx, Ty, offsetS, offsetT) {
 
 var absUrl = window.location.href.split('#')[0];
 
-function getStartArrow(status) {
-    status = status? ("-" + status): "";
-    if(this.attr("selected")) status = "-selected";
+function getStartArrow() {
+    if(this.attr("selected")) var status = "-selected";
+    else status = "-" + this.attr("color");
     
     if(this.attr("direction") === DIRECTION.D2S || this.attr("direction") === DIRECTION.DOUBLE)
         return "url(" + absUrl + "#start-arrow"+ status +")";
@@ -209,9 +209,9 @@ function getStartArrow(status) {
         return "";
 }
 
-function getEndArrow (status) {
-    status = status? ("-" + status): "";
-    if(this.attr("selected")) status = "-selected";
+function getEndArrow () {
+    if(this.attr("selected")) var status = "-selected";
+    else status = "-" + this.attr("color");
     
     if(this.attr("direction") === DIRECTION.S2D || this.attr("direction") === DIRECTION.DOUBLE)
         return "url(" + absUrl + "#end-arrow"+ status +")";
@@ -605,6 +605,7 @@ function getRenderedLinks() {
 }
 
 function appendPreDefs () {
+    var self = this;
     var str = '<defs>'+
                         '<filter id="shadow" x="-20%" y="-20%" width="200%" height="200%" type="Shadow" shadowoffsetx="5" shadowoffsety="5" shadowblur="5" shadowcolor="rgba(0,0,0)">' +
                             '<feOffset result="offOut" in="SourceGraphic" dx="0" dy="3"></feOffset>' +
@@ -626,8 +627,12 @@ function appendPreDefs () {
 
     this._canvas.insertAdjacentHTML("afterbegin", str);
     
-    d3.select("#start-arrow path").style('fill', this._config.linkColor);
-    d3.select("#end-arrow path").style('fill', this._config.linkColor);
+    d3.select("#start-arrow path").call(arrowAttr);
+    d3.select("#end-arrow path").call(arrowAttr);
+    
+    function arrowAttr(selection){
+        selection.style('fill', self._config.linkColor);
+    }
 }
 
 function appendPreElement () {
@@ -848,9 +853,19 @@ function drawNodesSvg (renderType) {
     }
 }
 
+function unique (array) {
+    var n = [];
+    for (var i = 0; i < array.length; i++) {
+        if (n.indexOf(array[i]) == -1) n.push(array[i]);
+    }
+    return n;
+}
+
 function drawLinksSvg (renderType) {
     var self = this;
     var scale = self.getCurrentTransform().k;
+    
+    addArrowByColor();
     
     var links = this._getLinksSelection().data(this.getRenderedLinks(), function (Link) { return Link.id });
 
@@ -943,6 +958,44 @@ function drawLinksSvg (renderType) {
     
         info.select('.icon')
             .attr('class', function(Link){ return self._config.iconPrefix + Link.attr("icon");})
+    }
+    
+    function addArrowByColor(){
+        var uniqueColor = unique(self.getRenderedLinks().map(function(Link){return Link.color;}));
+        var startArrow = self._getStartArrowSelection().data(uniqueColor, function(v){return v;});
+        var endArrow = self._getEndArrowSelection().data(uniqueColor, function(v){return v;});
+    
+        startArrow.enter()
+            .append("svg:marker")
+            .attr("id", function(v){ return "start-arrow-"+ v; })
+            .classed('color-start-arrow', true)
+            .attr("refX", 10)
+            .call(arrowAttr)
+            .append("svg:path")
+            .attr("d", "M10,-5L0,0L10,5")
+            .call(arrowPathAttr);
+    
+        endArrow.enter()
+            .append("svg:marker")
+            .attr("id", function(v){ return "end-arrow-"+ v; })
+            .attr("refX", 0)
+            .classed('color-end-arrow', true)
+            .call(arrowAttr)
+            .append("svg:path")
+            .attr("d", "M0,-5L10,0L0,5")
+            .call(arrowPathAttr);
+    
+        function arrowAttr(selection){
+            selection
+                .attr("viewBox", "0 -5 10 10")
+                .attr("markerWidth", 3)
+                .attr("markerHeight", 3)
+                .attr("orient", "auto");
+        }
+        function arrowPathAttr(selection){
+            selection
+                .style("fill", function(v){return v});
+        }
     }
 }
 
@@ -1570,6 +1623,12 @@ Graph.prototype = {
     },
     _getLinksSelection: function(){
         return this._getSvgSelection().select('g.links').selectAll(".link");
+    },
+    _getStartArrowSelection: function(){
+        return this._getSvgSelection().select('defs').selectAll('marker.color-start-arrow');
+    },
+    _getEndArrowSelection: function(){
+        return this._getSvgSelection().select('defs').selectAll('marker.color-end-arrow');
     },
     _getForceGroup: function(){
         return this._forceGroupSelection;

@@ -3,9 +3,9 @@ import getOffsetCoordinate from "../../utils/getOffsetCoordinate";
 
 var absUrl = window.location.href.split('#')[0];
 
-function getStartArrow(status) {
-    status = status? ("-" + status): "";
-    if(this.attr("selected")) status = "-selected";
+function getStartArrow() {
+    if(this.attr("selected")) var status = "-selected";
+    else status = "-" + this.attr("color");
     
     if(this.attr("direction") === DIRECTION.D2S || this.attr("direction") === DIRECTION.DOUBLE)
         return "url(" + absUrl + "#start-arrow"+ status +")";
@@ -13,9 +13,9 @@ function getStartArrow(status) {
         return "";
 }
 
-function getEndArrow (status) {
-    status = status? ("-" + status): "";
-    if(this.attr("selected")) status = "-selected";
+function getEndArrow () {
+    if(this.attr("selected")) var status = "-selected";
+    else status = "-" + this.attr("color");
     
     if(this.attr("direction") === DIRECTION.S2D || this.attr("direction") === DIRECTION.DOUBLE)
         return "url(" + absUrl + "#end-arrow"+ status +")";

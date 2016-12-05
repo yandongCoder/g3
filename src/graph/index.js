@@ -91,6 +91,12 @@ Graph.prototype = {
     _getLinksSelection: function(){
         return this._getSvgSelection().select('g.links').selectAll(".link");
     },
+    _getStartArrowSelection: function(){
+        return this._getSvgSelection().select('defs').selectAll('marker.color-start-arrow');
+    },
+    _getEndArrowSelection: function(){
+        return this._getSvgSelection().select('defs').selectAll('marker.color-end-arrow');
+    },
     _getForceGroup: function(){
         return this._forceGroupSelection;
     }

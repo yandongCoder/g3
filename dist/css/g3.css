@@ -35,12 +35,12 @@ svg.graph {
       height: 100%;
       display: flex;
       align-items: center;
-      width: 100%;
+      width: 80px;
       pointer-events: none; }
       .graph .nodes .node .text-group > div > span {
         text-overflow: ellipsis;
         overflow: hidden;
-        white-space: nowrap;
+        white-space: no;
         height: 20px;
         line-height: 20px; }
   .graph .nodes .node.linked-node circle, .graph .nodes .node.linked-node rect, .graph .nodes .node.selected-linked-node circle, .graph .nodes .node.selected-linked-node rect, .graph .nodes .node.selected-link circle, .graph .nodes .node.selected-link rect {
@@ -62,6 +62,7 @@ svg.graph {
     .graph .nodes .node.selected .text-group > div > span {
       padding-right: 5px;
       background: #f65565;
+      white-space: nowrap;
       text-overflow: initial; }
   .graph svg:focus {
     outline: 0; }
@@ -90,12 +91,8 @@ svg.graph {
         stroke: #f65565 !important;
         fill-opacity: 1;
         stroke-opacity: 1; }
-  .graph #start-arrow path, .graph #end-arrow path {
-    fill-opacity: 0.5;
-    fill: #a1a1a1; }
-  .graph #start-arrow-hover path, .graph #end-arrow-hover path {
-    fill-opacity: 1;
-    fill: #a1a1a1; }
+  .graph #start-arrow path, .graph #end-arrow path, .graph .color-start-arrow path, .graph .color-end-arrow path {
+    fill-opacity: 0.5; }
   .graph #start-arrow-selected path, .graph #end-arrow-selected path {
     fill-opacity: 1;
     fill: #f65565; }

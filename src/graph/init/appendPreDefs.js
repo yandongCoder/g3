@@ -1,4 +1,5 @@
 export default function () {
+    var self = this;
     var str = '<defs>'+
                         '<filter id="shadow" x="-20%" y="-20%" width="200%" height="200%" type="Shadow" shadowoffsetx="5" shadowoffsety="5" shadowblur="5" shadowcolor="rgba(0,0,0)">' +
                             '<feOffset result="offOut" in="SourceGraphic" dx="0" dy="3"></feOffset>' +
@@ -20,6 +21,10 @@ export default function () {
 
     this._canvas.insertAdjacentHTML("afterbegin", str);
     
-    d3.select("#start-arrow path").style('fill', this._config.linkColor);
-    d3.select("#end-arrow path").style('fill', this._config.linkColor);
+    d3.select("#start-arrow path").call(arrowAttr);
+    d3.select("#end-arrow path").call(arrowAttr);
+    
+    function arrowAttr(selection){
+        selection.style('fill', self._config.linkColor);
+    }
 }

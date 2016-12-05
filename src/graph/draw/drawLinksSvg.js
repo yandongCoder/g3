@@ -1,8 +1,11 @@
 import {RENDER_TYPE} from "../CONSTANT";
+import unique from "../../utils/unique";
 
 export default function (renderType) {
     var self = this;
     var scale = self.getCurrentTransform().k;
+    
+    addArrowByColor();
     
     var links = this._getLinksSelection().data(this.getRenderedLinks(), function (Link) { return Link.id });
 
@@ -95,5 +98,43 @@ export default function (renderType) {
     
         info.select('.icon')
             .attr('class', function(Link){ return self._config.iconPrefix + Link.attr("icon");})
+    }
+    
+    function addArrowByColor(){
+        var uniqueColor = unique(self.getRenderedLinks().map(function(Link){return Link.color;}));
+        var startArrow = self._getStartArrowSelection().data(uniqueColor, function(v){return v;});
+        var endArrow = self._getEndArrowSelection().data(uniqueColor, function(v){return v;});
+    
+        startArrow.enter()
+            .append("svg:marker")
+            .attr("id", function(v){ return "start-arrow-"+ v; })
+            .classed('color-start-arrow', true)
+            .attr("refX", 10)
+            .call(arrowAttr)
+            .append("svg:path")
+            .attr("d", "M10,-5L0,0L10,5")
+            .call(arrowPathAttr);
+    
+        endArrow.enter()
+            .append("svg:marker")
+            .attr("id", function(v){ return "end-arrow-"+ v; })
+            .attr("refX", 0)
+            .classed('color-end-arrow', true)
+            .call(arrowAttr)
+            .append("svg:path")
+            .attr("d", "M0,-5L10,0L0,5")
+            .call(arrowPathAttr);
+    
+        function arrowAttr(selection){
+            selection
+                .attr("viewBox", "0 -5 10 10")
+                .attr("markerWidth", 3)
+                .attr("markerHeight", 3)
+                .attr("orient", "auto");
+        }
+        function arrowPathAttr(selection){
+            selection
+                .style("fill", function(v){return v});
+        }
     }
 }
