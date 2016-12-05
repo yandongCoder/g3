@@ -44,11 +44,11 @@ function render(){
 function _render(renderType) {
     var self = this;
     
-    this._canvas = select(this._selector);
+    this.canvas = select(this._selector);
     
-    if(!this._canvas) return this;
+    if(!this.canvas) return this;
     if(!this._config.ifRender) return this;
-    var canvasType = this._canvas.nodeName;
+    var canvasType = this.canvas.nodeName;
     if(canvasType === 'svg'){ this._init();}
     
     if(renderType === RENDER_TYPE.IMMEDIATELY){
@@ -625,7 +625,7 @@ function appendPreDefs () {
                         '</radialGradient>' +
                 '</defs>';
 
-    this._canvas.insertAdjacentHTML("afterbegin", str);
+    this.canvas.insertAdjacentHTML("afterbegin", str);
     
     d3.select("#start-arrow path").call(arrowAttr);
     d3.select("#end-arrow path").call(arrowAttr);
@@ -1165,11 +1165,11 @@ function convertToCanvasCor(canvas,x, y) {
 
 function drawCanvas () {
     var that = this;
-    var context = this._canvas.getContext("2d");
+    var context = this.canvas.getContext("2d");
     // console.log(that._getCurrentTransform());
     //绘制的canvas 对象，在优化的时候可以对nodes 和 links 的数据进行相应的分组优化
     var canvas = {
-        canvas:that._canvas,
+        canvas:that.canvas,
         context:context,
         nodes:this.getRenderedNodes(),
         links:this.getRenderedLinks(),
@@ -1181,12 +1181,12 @@ function drawCanvas () {
     render();
     //绘制
     //canvas 事件绑定
-    d3.select(this._canvas)
+    d3.select(this.canvas)
         .on('click',_click)
         .on('dblclick',_dblClick)
         .on('mousemove',_mousemove)
         .call(d3.drag()
-            .container(that._canvas)
+            .container(that.canvas)
             .subject(dragsubject)
             // .on("start", dragstarted)
             .on("drag", dragged)
@@ -1200,7 +1200,7 @@ function drawCanvas () {
     function render() {
         canvas.nodes = that.getRenderedNodes();
         canvas.links = that.getRenderedLinks();
-        context.clearRect(0, 0, that._canvas.width, that._canvas.height);
+        context.clearRect(0, 0, that.canvas.width, that.canvas.height);
         context.save();
         context.translate(canvas.transform.x, canvas.transform.y);
         context.scale(canvas.transform.k, canvas.transform.k);
@@ -1212,7 +1212,7 @@ function drawCanvas () {
 
     //单击事件
     function _click(d) {
-        var p = convertToCanvasCor(that._canvas,d3.event.x,d3.event.y);
+        var p = convertToCanvasCor(that.canvas, d3.event.x, d3.event.y);
         var x = canvas.transform.invertX(p.x);
         var y = canvas.transform.invertY(p.y);
         var targetNode = findPoint(canvas.nodes,x,y);
@@ -1237,7 +1237,7 @@ function drawCanvas () {
 
     //双击事件
     function _dblClick(d) {
-        var p = convertToCanvasCor(that._canvas,d3.event.x,d3.event.y);
+        var p = convertToCanvasCor(that.canvas, d3.event.x, d3.event.y);
         var x = canvas.transform.invertX(p.x);
         var y = canvas.transform.invertY(p.y);
         var targetNode = findPoint(canvas.nodes,x,y);
@@ -1251,7 +1251,7 @@ function drawCanvas () {
     }
 
     function _mousemove() {
-        var p = convertToCanvasCor(that._canvas,d3.event.x,d3.event.y);
+        var p = convertToCanvasCor(that.canvas, d3.event.x, d3.event.y);
         var x = canvas.transform.invertX(p.x);
         var y = canvas.transform.invertY(p.y);
         var targetNode = findPoint(canvas.nodes,x,y);
@@ -1384,8 +1384,8 @@ function focus(filter, duration){
     var minX = d3.min(Nodes, xAccessor), maxX = d3.max(Nodes, xAccessor), minY = d3.min(Nodes, yAccessor), maxY = d3.max(Nodes, yAccessor);
     var xSpan = maxX - minX, ySpan = maxY - minY;
     var xCenter = (maxX + minX) / 2, yCenter = (maxY + minY) / 2;
-    var canvasW = this._canvas.width.baseVal.value,
-        canvasH = this._canvas.height.baseVal.value;
+    var canvasW = this.canvas.width.baseVal.value,
+        canvasH = this.canvas.height.baseVal.value;
     
     var xScale = canvasW / xSpan,
         yScale = canvasH / ySpan;
@@ -1599,14 +1599,14 @@ Graph.prototype = {
     _draw: draw,
     _zoomed: zoomed,
     getCurrentTransform: function(){
-        if(!this._canvas) return;
-        return d3.zoomTransform(this._canvas);
+        if(!this.canvas) return;
+        return d3.zoomTransform(this.canvas);
     },
     _getBrushSelection: function () {
         return this._getSvgSelection().select('g.brush');
     },
     _getSvgSelection: function(duration){
-        var svgSelection = d3.select(this._canvas);
+        var svgSelection = d3.select(this.canvas);
 
         if(duration) svgSelection = svgSelection.transition(Math.random()).duration(duration);
 

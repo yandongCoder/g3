@@ -19,7 +19,7 @@ export default function () {
                         '</radialGradient>' +
                 '</defs>';
 
-    this._canvas.insertAdjacentHTML("afterbegin", str);
+    this.canvas.insertAdjacentHTML("afterbegin", str);
     
     d3.select("#start-arrow path").call(arrowAttr);
     d3.select("#end-arrow path").call(arrowAttr);

@@ -66,14 +66,14 @@ Graph.prototype = {
     _draw: draw,
     _zoomed: zoomed,
     getCurrentTransform: function(){
-        if(!this._canvas) return;
-        return d3.zoomTransform(this._canvas);
+        if(!this.canvas) return;
+        return d3.zoomTransform(this.canvas);
     },
     _getBrushSelection: function () {
         return this._getSvgSelection().select('g.brush');
     },
     _getSvgSelection: function(duration){
-        var svgSelection = d3.select(this._canvas);
+        var svgSelection = d3.select(this.canvas);
 
         if(duration) svgSelection = svgSelection.transition(Math.random()).duration(duration);
 

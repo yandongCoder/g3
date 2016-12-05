@@ -64,9 +64,22 @@
         .force("link", d3.forceLink(myGraph.links()).distance(200).strength(0.3))
         .force("x", d3.forceX())
         .force("y", d3.forceY())
-        .force("center", d3.forceCenter(300, 300))
+        .force("center", d3.forceCenter(myGraph.width(), myGraph.height()))
         .on("tick", function(){
             myGraph.render();
         });
 
+    setTimeout(function(){
+        myGraph.focus();
+    },1000);
+    setTimeout(function(){
+        myGraph.focus(getPersonByName("Jon Snow"));
+    },2500);
+    setTimeout(function(){
+        myGraph.focus(getPersonByName("Daenerys Stormborn"));
+    },4000);
+
+    function getPersonByName(name){
+        return myGraph.getNodes(function(Node){ return Node.label === name;});
+    }
 </script>

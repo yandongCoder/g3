@@ -6,11 +6,11 @@ import findLinks from './findLink';
 
 export default function () {
     var that = this;
-    var context = this._canvas.getContext("2d");
+    var context = this.canvas.getContext("2d");
     // console.log(that._getCurrentTransform());
     //绘制的canvas 对象，在优化的时候可以对nodes 和 links 的数据进行相应的分组优化
     var canvas = {
-        canvas:that._canvas,
+        canvas:that.canvas,
         context:context,
         nodes:this.getRenderedNodes(),
         links:this.getRenderedLinks(),
@@ -22,12 +22,12 @@ export default function () {
     render();
     //绘制
     //canvas 事件绑定
-    d3.select(this._canvas)
+    d3.select(this.canvas)
         .on('click',_click)
         .on('dblclick',_dblClick)
         .on('mousemove',_mousemove)
         .call(d3.drag()
-            .container(that._canvas)
+            .container(that.canvas)
             .subject(dragsubject)
             // .on("start", dragstarted)
             .on("drag", dragged)
@@ -41,7 +41,7 @@ export default function () {
     function render() {
         canvas.nodes = that.getRenderedNodes();
         canvas.links = that.getRenderedLinks();
-        context.clearRect(0, 0, that._canvas.width, that._canvas.height);
+        context.clearRect(0, 0, that.canvas.width, that.canvas.height);
         context.save();
         context.translate(canvas.transform.x, canvas.transform.y);
         context.scale(canvas.transform.k, canvas.transform.k);
@@ -53,7 +53,7 @@ export default function () {
 
     //单击事件
     function _click(d) {
-        var p = convertToCanvasCor(that._canvas,d3.event.x,d3.event.y);
+        var p = convertToCanvasCor(that.canvas, d3.event.x, d3.event.y);
         var x = canvas.transform.invertX(p.x);
         var y = canvas.transform.invertY(p.y);
         var targetNode = findPoint(canvas.nodes,x,y);
@@ -78,7 +78,7 @@ export default function () {
 
     //双击事件
     function _dblClick(d) {
-        var p = convertToCanvasCor(that._canvas,d3.event.x,d3.event.y);
+        var p = convertToCanvasCor(that.canvas, d3.event.x, d3.event.y);
         var x = canvas.transform.invertX(p.x);
         var y = canvas.transform.invertY(p.y);
         var targetNode = findPoint(canvas.nodes,x,y);
@@ -92,7 +92,7 @@ export default function () {
     }
 
     function _mousemove() {
-        var p = convertToCanvasCor(that._canvas,d3.event.x,d3.event.y);
+        var p = convertToCanvasCor(that.canvas, d3.event.x, d3.event.y);
         var x = canvas.transform.invertX(p.x);
         var y = canvas.transform.invertY(p.y);
         var targetNode = findPoint(canvas.nodes,x,y);
