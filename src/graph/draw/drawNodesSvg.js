@@ -84,6 +84,7 @@ export default function (renderType) {
             .attr("transform", function(Node){ return "translate(" + (1 + Node.attr("radius")) + ", 0) scale(" + 1 / scale + ")"; })
             
             .select('div')
+            .style("width", self._config.nodeLabelClipWidth + "px")
             .attr('title', function (Node) { return Node.attr("label"); })
             .select('span')
             .text(function (Node) { return Node.attr("label"); });

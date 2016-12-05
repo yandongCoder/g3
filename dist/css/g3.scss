@@ -44,11 +44,12 @@ svg.graph{
           height: 100%;
           display: flex;
           align-items: center;
-          width: 80px;
+          width: 100%;
           pointer-events: none;
           >span{
             text-overflow: ellipsis;
             overflow: hidden;
+            white-space: nowrap;
             height: 20px;
             line-height: 20px;
           }
@@ -83,7 +84,6 @@ svg.graph{
             >span{
               padding-right: 5px;
               background: #f65565;
-              white-space: nowrap;
               text-overflow: initial;
             }
           }

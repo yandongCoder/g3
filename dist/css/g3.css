@@ -35,11 +35,12 @@ svg.graph {
       height: 100%;
       display: flex;
       align-items: center;
-      width: 80px;
+      width: 100%;
       pointer-events: none; }
       .graph .nodes .node .text-group > div > span {
         text-overflow: ellipsis;
         overflow: hidden;
+        white-space: nowrap;
         height: 20px;
         line-height: 20px; }
   .graph .nodes .node.linked-node circle, .graph .nodes .node.linked-node rect, .graph .nodes .node.selected-linked-node circle, .graph .nodes .node.selected-linked-node rect, .graph .nodes .node.selected-link circle, .graph .nodes .node.selected-link rect {
@@ -61,7 +62,6 @@ svg.graph {
     .graph .nodes .node.selected .text-group > div > span {
       padding-right: 5px;
       background: #f65565;
-      white-space: nowrap;
       text-overflow: initial; }
   .graph svg:focus {
     outline: 0; }

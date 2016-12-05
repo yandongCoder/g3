@@ -248,7 +248,7 @@ function getLinkInfoTransform(scale) {
     var transform  = 'rotate('+ degrees +' '+ rx +' '+ ry +') translate(' + rx + ' ' + ry + ') scale(' + 1 / scale + ')' + '';
     
     var offsetX =  - this.LineWidth(scale) / 2;
-    var offsetY =  - this.LineHeight(scale) / 2;
+    var offsetY =  this.LineHeight(scale) / 2 + 5;
     transform += ' translate('+ offsetX +' '+ offsetY +')';
     
     return transform;
@@ -605,6 +605,7 @@ function getRenderedLinks() {
 }
 
 function appendPreDefs () {
+    //console.log(thi)
     var str = '<defs>'+
                         '<filter id="shadow" x="-20%" y="-20%" width="200%" height="200%" type="Shadow" shadowoffsetx="5" shadowoffsety="5" shadowblur="5" shadowcolor="rgba(0,0,0)">' +
                             '<feOffset result="offOut" in="SourceGraphic" dx="0" dy="3"></feOffset>' +
@@ -840,6 +841,7 @@ function drawNodesSvg (renderType) {
             .attr("transform", function(Node){ return "translate(" + (1 + Node.attr("radius")) + ", 0) scale(" + 1 / scale + ")"; })
             
             .select('div')
+            .style("width", self._config.nodeLabelClipWidth + "px")
             .attr('title', function (Node) { return Node.attr("label"); })
             .select('span')
             .text(function (Node) { return Node.attr("label"); });
@@ -1387,6 +1389,7 @@ const DEFAULT_CONFIG = {
     dragable: true,
     ifRender: true,
     color: "#123456",
+    nodeLabelClipWidth: 500,
     linkColor: "#a1a1a1",
     background: "#f1f1f1",
     minScale: 0.1,

@@ -6,6 +6,7 @@ const DEFAULT_CONFIG = {
     dragable: true,
     ifRender: true,
     color: "#123456",
+    nodeLabelClipWidth: 500,
     linkColor: "#a1a1a1",
     background: "#f1f1f1",
     minScale: 0.1,
