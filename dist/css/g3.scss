@@ -33,11 +33,13 @@ svg.graph{
         width: 100%;
         height: 100%;
         border-radius: 50%;
+        object-fit: cover;
       }
       .icon{
         border-radius: 50%;
       }
       .text-group{
+        font-family: Microsoft YaHei UI, Lato, sans-serif;
         >div{
           height: 100%;
           display: flex;
@@ -81,6 +83,8 @@ svg.graph{
             >span{
               padding-right: 5px;
               background: #f65565;
+              white-space: nowrap;
+              text-overflow: initial;
             }
           }
         }
@@ -92,7 +96,11 @@ svg.graph{
   }
   .links{
     font-size: 13px;
+    .fa{
+      font-size: 16px;
+    }
     .link-info{
+      font-family: Microsoft YaHei UI, Lato, sans-serif;
       .center{
         display: flex;
         align-items: center;
