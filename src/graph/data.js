@@ -11,11 +11,11 @@ function clearLinks() {
 }
 
 function hasNode(obj) {
-    return this._nodesHash[obj.id]? true: false;
+    return Boolean(this._nodesHash[obj.id]);
 }
 
 function hasLink(obj) {
-    return this._linksHash[obj.id]? true: false;
+    return Boolean(this._linksHash[obj.id]);
 }
 
 function addNode(obj) {

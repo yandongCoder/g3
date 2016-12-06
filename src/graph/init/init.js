@@ -17,19 +17,7 @@ export default function () {
 
     this.svgSelection()
         .classed("graph", true)
-        .style("background", this._config.background)
-        .on('mousedown', function(){
-            if (d3.event.target.nodeName !== 'svg') return;
-            
-            self.getNodesOP().attr('selected', false);
-            self.getLinksOP().attr('selected', false);
-    
-            self._config.onGraphMousedown.call(this);
-        })
-        .on('contextmenu', function(){
-            if (d3.event.target.nodeName !== 'svg') return;
-            self._config.onGraphContextmenu.call(this);
-        });
+        .style("background", this._config.background);
 
     //bind listener to page for keyboard shortCuts and mouse events
     d3.select(document.body)

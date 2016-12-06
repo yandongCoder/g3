@@ -15,11 +15,11 @@ function render(){
 function _render(renderType) {
     var self = this;
     
-    this.canvas = select(this._selector);
+    this.element = select(this._selector);
     
-    if(!this.canvas) return this;
+    if(!this.element) return this;
     if(!this._config.ifRender) return this;
-    var canvasType = this.canvas.nodeName;
+    var canvasType = this.element.nodeName;
     if(canvasType === 'svg'){ this._init();}
     
     if(renderType === RENDER_TYPE.IMMEDIATELY){

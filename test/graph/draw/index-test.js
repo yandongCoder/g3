@@ -23,9 +23,7 @@ var tape = require("tape"),
 
 
 tape("Custom event callback test.", function(test){
-    var triggerOnGraphMousedown = false,
-        triggerOnGraphContextmenu = false,
-        triggerOnNodeMouseDown = false,
+    var triggerOnNodeMouseDown = false,
         triggerOnNodeContextmenu = false,
         triggerOnLinkMouseDown = false,
         triggerOnLinkContextmenu = false;
@@ -34,14 +32,6 @@ tape("Custom event callback test.", function(test){
     
     var svg = document.querySelector("#graph");
     var myGraph = g3.graph(svg, {
-        onGraphMousedown: function () {
-            triggerOnGraphMousedown = true;
-            test.deepEqual(this, svg);
-        },
-        onGraphContextmenu: function(){
-            triggerOnGraphContextmenu = true;
-            test.deepEqual(this, svg);
-        },
         onNodeMouseDown: function(Node, i){
             triggerOnNodeMouseDown = true;
             test.equal(i, 0);
@@ -80,12 +70,6 @@ tape("Custom event callback test.", function(test){
     var mouseDownEvent = new window.MouseEvent("mousedown"),
         clickEvent = new window.MouseEvent("click"),
         contextMenuEvent = new window.MouseEvent('contextmenu');
-    
-    svg.dispatchEvent(mouseDownEvent);
-    test.equal(triggerOnGraphMousedown, true);
-    
-    svg.dispatchEvent(contextMenuEvent);
-    test.equal(triggerOnGraphContextmenu, true);
     
     firstNodeEle.dispatchEvent(mouseDownEvent);
     test.equal(triggerOnNodeMouseDown, true);
