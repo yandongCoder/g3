@@ -8,11 +8,11 @@ function attr(prop, val){
 }
 
 function getX() {
-    return this.x;
+    return this.x || 0;
 }
 
 function getY() {
-    return this.y;
+    return this.y || 0;
 }
 
 export {attr, getX, getY};

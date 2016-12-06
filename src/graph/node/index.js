@@ -10,8 +10,8 @@ export default function Node(data, graph) {
     this.graph = graph;
     this.id = data.id;
     this.label = data.label || "";
-    this.x = data.x || 0;
-    this.y = data.y || 0;
+    this.x = data.x;
+    this.y = data.y;
     this.disabled = data.disabled || false;
     this.radius = data.radius || graph._config.radius;
     this.color = data.color || graph._config.color;
