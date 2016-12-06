@@ -11,7 +11,7 @@ export default function (renderType) {
 
     var link = links.enter()
         .append('g')
-        .each(function(Link){ Link._element = this })
+        .each(function(Link){ Link.element = this })
         .classed('link', true)
         .on('mousedown', function(Link, i){
             self.getNodesOP().attr("selected", false);
@@ -45,7 +45,7 @@ export default function (renderType) {
     if(renderType === RENDER_TYPE.IMMEDIATELY){
         var updateLinks  = this.linksSelection();
     }else if(renderType === RENDER_TYPE.NUDGE){
-        updateLinks  = d3.selectAll(this.getRelatedLinks(this.getSelectedNodes()).map(function(Link){return Link._element;}));
+        updateLinks  = d3.selectAll(this.getRelatedLinks(this.getSelectedNodes()).map(function(Link){return Link.element;}));
     }else{
         updateLinks = d3.selectAll(this.updateDOM.getLinksEle());
     }

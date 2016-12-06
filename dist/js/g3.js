@@ -769,7 +769,7 @@ function drawNodesSvg (renderType) {
     var nodes = this.nodesSelection().data(this.getRenderedNodes(), function (Node) { return Node.id;});
 
     var g = nodes.enter().append('g')
-        .each(function(Node){ Node._element = this })//reference element to Node
+        .each(function(Node){ Node.element = this })//reference element to Node
         .classed('node', true)
         .on('mousedown', function(Node, i){
             if(!d3.event.ctrlKey){
@@ -871,7 +871,7 @@ function drawLinksSvg (renderType) {
 
     var link = links.enter()
         .append('g')
-        .each(function(Link){ Link._element = this })
+        .each(function(Link){ Link.element = this })
         .classed('link', true)
         .on('mousedown', function(Link, i){
             self.getNodesOP().attr("selected", false);
@@ -905,7 +905,7 @@ function drawLinksSvg (renderType) {
     if(renderType === RENDER_TYPE.IMMEDIATELY){
         var updateLinks  = this.linksSelection();
     }else if(renderType === RENDER_TYPE.NUDGE){
-        updateLinks  = d3.selectAll(this.getRelatedLinks(this.getSelectedNodes()).map(function(Link){return Link._element;}));
+        updateLinks  = d3.selectAll(this.getRelatedLinks(this.getSelectedNodes()).map(function(Link){return Link.element;}));
     }else{
         updateLinks = d3.selectAll(this.updateDOM.getLinksEle());
     }
@@ -1402,7 +1402,6 @@ function focus(filter, duration){
             .scale(scale)
             .translate(-xCenter, -yCenter);
     
-        console.log(canvasW, canvasH);
         this.svgSelection(duration || 1000).call(this.zoom.transform, transformed);
     }.bind(this), 0)
 }
@@ -1532,11 +1531,11 @@ function addLink$1(Link){
 }
 
 function getNodesEle(){
-    return this._updateNodes.map(function(Node){return Node._element;});
+    return this._updateNodes.map(function(Node){return Node.element;});
 }
 
 function getLinksEle(){
-    return this._updateLinks.map(function(Link){return Link._element;});
+    return this._updateLinks.map(function(Link){return Link.element;});
 }
 
 function clearUpdateNodes(){

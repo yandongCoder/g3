@@ -43,7 +43,6 @@ function focus(filter, duration){
             .scale(scale)
             .translate(-xCenter, -yCenter);
     
-        console.log(canvasW, canvasH);
         this.svgSelection(duration || 1000).call(this.zoom.transform, transformed);
     }.bind(this), 0)
 }

@@ -7,7 +7,7 @@ export default function (renderType) {
     var nodes = this.nodesSelection().data(this.getRenderedNodes(), function (Node) { return Node.id;});
 
     var g = nodes.enter().append('g')
-        .each(function(Node){ Node._element = this })//reference element to Node
+        .each(function(Node){ Node.element = this })//reference element to Node
         .classed('node', true)
         .on('mousedown', function(Node, i){
             if(!d3.event.ctrlKey){

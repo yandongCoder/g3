@@ -44,11 +44,11 @@ function addLink(Link){
 }
 
 function getNodesEle(){
-    return this._updateNodes.map(function(Node){return Node._element;});
+    return this._updateNodes.map(function(Node){return Node.element;});
 }
 
 function getLinksEle(){
-    return this._updateLinks.map(function(Link){return Link._element;});
+    return this._updateLinks.map(function(Link){return Link.element;});
 }
 
 function clearUpdateNodes(){
