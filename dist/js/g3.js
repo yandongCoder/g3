@@ -723,7 +723,13 @@ function init () {
 
     this.svgSelection()
         .classed("graph", true)
-        .style("background", this._config.background);
+        .style("background", this._config.background)
+        .call(this._config.bindGraphEvent)
+        .on("click.deselect", function () {
+            if (d3.event.target.nodeName !== 'svg') return;
+            self.getNodesOP().attr('selected', false);
+            self.getLinksOP().attr('selected', false);
+        }, true);
 
     //bind listener to page for keyboard shortCuts and mouse events
     d3.select(document.body)
@@ -759,19 +765,15 @@ function drawNodesSvg (renderType) {
     var g = nodes.enter().append('g')
         .each(function(Node){ Node.element = this })//reference element to Node
         .classed('node', true)
-        .on('mousedown', function(Node, i){
+        .on('mousedown.select', function(Node, i){
             if(!d3.event.ctrlKey){
                 if(Node.attr("selected")) return;
                 self.getNodesOP().attr("selected", false);
             }
             self.getLinksOP().attr("selected", false);
             Node.attr("selected",!Node.attr("selected"));
-            
-            self._config.onNodeMouseDown.call(this, Node, i);
         })
-        .on('contextmenu', this._config.onNodeContextmenu)
-        .on('mouseover', this._config.onNodeMouseover)
-        .on('mouseout', this._config.onNodeMouseout)
+        .call(this._config.bindNodeEvent)
         .call(this.dragNode);
 
     //添加矩形
@@ -861,16 +863,7 @@ function drawLinksSvg (renderType) {
         .append('g')
         .each(function(Link){ Link.element = this })
         .classed('link', true)
-        .on('mousedown', function(Link, i){
-            self.getNodesOP().attr("selected", false);
-            self.getLinksOP().attr("selected", false);
-            Link.attr("selected", !Link.attr("selected"));
-        
-            self._config.onLinkMouseDown.call(this, Link, i);
-        })
-        .on('contextmenu', this._config.onLinkContextmenu)
-        .on('mouseover', this._config.onLinkMouseover)
-        .on('mouseout', this._config.onLinkMouseout);
+        .call(this._config.bindLinkEvent);
     
     link.append('path')
         .classed('link-path', true)
@@ -1443,24 +1436,18 @@ const DEFAULT_CONFIG = {
     iconPrefix: "",
     mugshot: "",
     mugshotPrefix: "",
+    
     onBrushStart: function(){},
     onBrush: function(){},
     onBrushEnd: function(){},
+    
     onZoomStart: function(){},
     onZoom: function(){},
     onZoomEnd: function(){},
-    onGraphClick: function(){},
-    onGraphMousedown: function(){},
-    onGraphMouseup: function(){},
-    onGraphContextmenu: function(){},
-    onNodeMouseDown: function(){},
-    onNodeContextmenu: function(){},
-    onNodeMouseover: function(){},
-    onNodeMouseout: function(){},
-    onLinkMouseover: function(){},
-    onLinkMouseout: function(){},
-    onLinkMouseDown: function(){},
-    onLinkContextmenu: function(){},
+    
+    bindGraphEvent: function(){},
+    bindNodeEvent: function(){},
+    bindLinkEvent: function(){},
     radiusFunc: null
 };
 

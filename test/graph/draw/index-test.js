@@ -24,39 +24,34 @@ var tape = require("tape"),
 
 tape("Custom event callback test.", function(test){
     var triggerOnNodeMouseDown = false,
-        triggerOnNodeContextmenu = false,
-        triggerOnLinkMouseDown = false,
-        triggerOnLinkContextmenu = false;
+        triggerOnLinkContextmenu = false,
+        triggerOnGraphClick = false;
     
     var document = jsdom.jsdom('<svg id="graph"></svg>');
     
     var svg = document.querySelector("#graph");
     var myGraph = g3.graph(svg, {
-        onNodeMouseDown: function(Node, i){
-            triggerOnNodeMouseDown = true;
-            test.equal(i, 0);
-            test.deepEqual(Node, firstNode);
-            test.deepEqual(this, firstNodeEle);
+        bindNodeEvent: function(selection){
+            selection.on('mousedown', function(Node, i){
+                triggerOnNodeMouseDown = true;
+                test.equal(i, 0);
+                test.deepEqual(Node, firstNode);
+                test.deepEqual(this, firstNodeEle);
+            })
         },
-        onNodeContextmenu: function(Node, i){
-            triggerOnNodeContextmenu = true;
-            test.equal(i, 0);
-            test.deepEqual(Node, firstNode);
-            test.deepEqual(this, firstNodeEle);
+        bindLinkEvent: function(selection){
+            selection.on('contextmenu', function(Link, i){
+                triggerOnLinkContextmenu = true;
+                test.equal(i, 0);
+                test.deepEqual(Link, firstLink);
+                test.deepEqual(this, firstLinkEle);
+            });
         },
-        onLinkMouseDown: function(Link, i){
-            triggerOnLinkMouseDown = true;
-            test.equal(i, 0);
-            test.deepEqual(Link, firstLink);
-            test.deepEqual(this, firstLinkEle);
-        },
-        onLinkContextmenu: function(Link, i){
-            triggerOnLinkContextmenu = true;
-            test.equal(i, 0);
-            test.deepEqual(Link, firstLink);
-            test.deepEqual(this, firstLinkEle);
+        bindGraphEvent: function(selection){
+            selection.on('click', function(){
+                triggerOnGraphClick = true;
+            });
         }
-        
     });
     myGraph.nodes([{id: 1}, {id: 2}])
         .links([{id: 1, src: 1, dst: 2}]);
@@ -71,17 +66,16 @@ tape("Custom event callback test.", function(test){
         clickEvent = new window.MouseEvent("click"),
         contextMenuEvent = new window.MouseEvent('contextmenu');
     
+    svg.dispatchEvent(clickEvent);
+    test.equal(triggerOnGraphClick, true);
+    
     firstNodeEle.dispatchEvent(mouseDownEvent);
     test.equal(triggerOnNodeMouseDown, true);
     
-    firstNodeEle.dispatchEvent(contextMenuEvent);
-    test.equal(triggerOnNodeContextmenu, true);
-    
-    firstLinkEle.dispatchEvent(mouseDownEvent);
-    test.equal(triggerOnLinkMouseDown, true);
-    
     firstLinkEle.dispatchEvent(contextMenuEvent);
     test.equal(triggerOnLinkContextmenu, true);
+    
+    
     
     test.end();
 });

@@ -68,11 +68,6 @@ tape("Link's DOM should correspond Link's property", function(test) {
     test.equal(thirdPath.style.markerStart, "");
     test.equal(thirdPath.style.markerEnd, "");
     
-    secondLink.element.dispatchEvent(new window.MouseEvent("mousedown"));
-    myGraph.render();
-    test.equal(secondPath.className, 'link-path selected');
-    test.equal(firstCircle.className, 'node');
-    
     test.end();
     
 });

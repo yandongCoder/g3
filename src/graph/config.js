@@ -17,24 +17,18 @@ const DEFAULT_CONFIG = {
     iconPrefix: "",
     mugshot: "",
     mugshotPrefix: "",
+    
     onBrushStart: function(){},
     onBrush: function(){},
     onBrushEnd: function(){},
+    
     onZoomStart: function(){},
     onZoom: function(){},
     onZoomEnd: function(){},
-    onGraphClick: function(){},
-    onGraphMousedown: function(){},
-    onGraphMouseup: function(){},
-    onGraphContextmenu: function(){},
-    onNodeMouseDown: function(){},
-    onNodeContextmenu: function(){},
-    onNodeMouseover: function(){},
-    onNodeMouseout: function(){},
-    onLinkMouseover: function(){},
-    onLinkMouseout: function(){},
-    onLinkMouseDown: function(){},
-    onLinkContextmenu: function(){},
+    
+    bindGraphEvent: function(){},
+    bindNodeEvent: function(){},
+    bindLinkEvent: function(){},
     radiusFunc: null
 };
 

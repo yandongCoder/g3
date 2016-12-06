@@ -9,19 +9,15 @@ export default function (renderType) {
     var g = nodes.enter().append('g')
         .each(function(Node){ Node.element = this })//reference element to Node
         .classed('node', true)
-        .on('mousedown', function(Node, i){
+        .on('mousedown.select', function(Node, i){
             if(!d3.event.ctrlKey){
                 if(Node.attr("selected")) return;
                 self.getNodesOP().attr("selected", false);
             }
             self.getLinksOP().attr("selected", false);
             Node.attr("selected",!Node.attr("selected"));
-            
-            self._config.onNodeMouseDown.call(this, Node, i);
         })
-        .on('contextmenu', this._config.onNodeContextmenu)
-        .on('mouseover', this._config.onNodeMouseover)
-        .on('mouseout', this._config.onNodeMouseout)
+        .call(this._config.bindNodeEvent)
         .call(this.dragNode);
 
     //添加矩形

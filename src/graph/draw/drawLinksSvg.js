@@ -13,16 +13,7 @@ export default function (renderType) {
         .append('g')
         .each(function(Link){ Link.element = this })
         .classed('link', true)
-        .on('mousedown', function(Link, i){
-            self.getNodesOP().attr("selected", false);
-            self.getLinksOP().attr("selected", false);
-            Link.attr("selected", !Link.attr("selected"));
-        
-            self._config.onLinkMouseDown.call(this, Link, i);
-        })
-        .on('contextmenu', this._config.onLinkContextmenu)
-        .on('mouseover', this._config.onLinkMouseover)
-        .on('mouseout', this._config.onLinkMouseout);
+        .call(this._config.bindLinkEvent);
     
     link.append('path')
         .classed('link-path', true)

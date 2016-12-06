@@ -17,7 +17,13 @@ export default function () {
 
     this.svgSelection()
         .classed("graph", true)
-        .style("background", this._config.background);
+        .style("background", this._config.background)
+        .call(this._config.bindGraphEvent)
+        .on("click.deselect", function () {
+            if (d3.event.target.nodeName !== 'svg') return;
+            self.getNodesOP().attr('selected', false);
+            self.getLinksOP().attr('selected', false);
+        }, true);
 
     //bind listener to page for keyboard shortCuts and mouse events
     d3.select(document.body)
