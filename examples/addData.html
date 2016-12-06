@@ -87,16 +87,25 @@
 
     setTimeout(function(){
         addNewData(theTargaryens.nodes, theTargaryens.links);
-    }, 4000);
+    }, 8000);
 
 
     function addNewData(nodes, links){
         myGraph.nodes(nodes).links(links);
+        fixedCurrentNodes();
         forceLayout();
         myGraph.render().focus();
         blinkNewNodesAfterRender();
     }
 
+    function fixedCurrentNodes(){
+        myGraph.nodes().forEach(function (Node) {
+            if (Node.x !== undefined && Node.y !== undefined) {
+                Node.fx = Node.x;
+                Node.fy = Node.y;
+            }
+        });
+    }
 
     function forceLayout(){
         var simulation = d3.forceSimulation(myGraph.nodes())
