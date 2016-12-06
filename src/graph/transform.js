@@ -35,7 +35,7 @@ function focus(filter, duration){
         var scale = d3.min([xScale, yScale]);
         if(scale > this._config.maxScale) scale = this._config.maxScale;
         scale = scale === Infinity? 1: scale;
-        scale -= 0.1;
+        scale -= scale/5;
     
     
         var transformed = d3.zoomIdentity
