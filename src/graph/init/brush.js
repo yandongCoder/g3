@@ -5,7 +5,7 @@ export default function () {
         .on('start', function () {
             if (!d3.event.selection) return; // Ignore empty selections.
             
-            self._getNodesSelection().each(function (Node) {
+            self.nodesSelection().each(function (Node) {
                 Node.pselected = d3.event.sourceEvent.ctrlKey && Node.attr("selected");
             });
             self._config.onBrushStart.call(this);
@@ -14,25 +14,25 @@ export default function () {
             if (!d3.event.selection) return; // Ignore empty selections.
 
             var extent = d3.event.selection;
-            var t = self.getCurrentTransform();
+            var t = self.currentTransform();
 
-            self._getNodesSelection().each(function(Node){
+            self.nodesSelection().each(function(Node){
                 Node.attr("selected", !Node.attr('disabled') && Boolean(Node.pselected ^ ( (extent[0][0] - t.x) / t.k  <= Node.getX() && Node.getX() < (extent[1][0] - t.x) / t.k  && (extent[0][1] - t.y) / t.k <= Node.getY() && Node.getY() < (extent[1][1] - t.y) / t.k )));
             });
             self._config.onBrush.call(this);
         })
         .on('end', function () {
             if (!d3.event.selection) return; // Ignore empty selections.
-            self._getBrushSelection()
+            self.brushSelection()
                 .call(brush.move, null);
             self._config.onBrushEnd.call(this);
         });
 
     brush.show = function(){
-        self._getBrushSelection().style('display', 'block');
+        self.brushSelection().style('display', 'block');
     };
     brush.hide = function(){
-        self._getBrushSelection().style('display', 'none');
+        self.brushSelection().style('display', 'none');
     };
 
     return brush;

@@ -15,7 +15,7 @@ export default function () {
     appendPreDefs.call(this);
 
 
-    this._getSvgSelection()
+    this.svgSelection()
         .classed("graph", true)
         .style("background", this._config.background)
         .on('mousedown', function(){
@@ -38,12 +38,12 @@ export default function () {
 
     //add zoom instance to graph
     this.zoom = Zoom.call(this);
-    this._getSvgSelection()
+    this.svgSelection()
         .call(this.zoom);
 
     //add brush instance to graph
     this.brush = Brush.call(this);
-    this._getBrushSelection()
+    this.brushSelection()
         .call(this.brush);
 
     

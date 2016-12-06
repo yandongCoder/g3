@@ -3,11 +3,11 @@ import unique from "../../utils/unique";
 
 export default function (renderType) {
     var self = this;
-    var scale = self.getCurrentTransform().k;
+    var scale = self.currentTransform().k;
     
     addArrowByColor();
     
-    var links = this._getLinksSelection().data(this.getRenderedLinks(), function (Link) { return Link.id });
+    var links = this.linksSelection().data(this.getRenderedLinks(), function (Link) { return Link.id });
 
     var link = links.enter()
         .append('g')
@@ -43,7 +43,7 @@ export default function (renderType) {
     
     
     if(renderType === RENDER_TYPE.IMMEDIATELY){
-        var updateLinks  = this._getLinksSelection();
+        var updateLinks  = this.linksSelection();
     }else if(renderType === RENDER_TYPE.NUDGE){
         updateLinks  = d3.selectAll(this.getRelatedLinks(this.getSelectedNodes()).map(function(Link){return Link._element;}));
     }else{
@@ -102,8 +102,8 @@ export default function (renderType) {
     
     function addArrowByColor(){
         var uniqueColor = unique(self.getRenderedLinks().map(function(Link){return Link.color;}));
-        var startArrow = self._getStartArrowSelection().data(uniqueColor, function(v){return v;});
-        var endArrow = self._getEndArrowSelection().data(uniqueColor, function(v){return v;});
+        var startArrow = self.svgSelection().select('defs').selectAll('marker.color-start-arrow').data(uniqueColor, function(v){return v;});
+        var endArrow = self.svgSelection().select('defs').selectAll('marker.color-end-arrow').data(uniqueColor, function(v){return v;});
     
         startArrow.enter()
             .append("svg:marker")

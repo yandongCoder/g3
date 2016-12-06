@@ -14,7 +14,7 @@ export default function () {
         context:context,
         nodes:this.getRenderedNodes(),
         links:this.getRenderedLinks(),
-        transform:that._getCurrentTransform()
+        transform:that.currentTransform()
     };
 
 

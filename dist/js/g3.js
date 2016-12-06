@@ -636,7 +636,7 @@ function appendPreDefs () {
 }
 
 function appendPreElement () {
-    var svg = this._getSvgSelection();
+    var svg = this.svgSelection();
     this._brushSelection = svg.append("g").attr("class", "brush");
 
     var forceGroup = this._forceGroupSelection = svg.append('g').attr('class', 'force');
@@ -664,7 +664,7 @@ function Brush () {
         .on('start', function () {
             if (!d3.event.selection) return; // Ignore empty selections.
             
-            self._getNodesSelection().each(function (Node) {
+            self.nodesSelection().each(function (Node) {
                 Node.pselected = d3.event.sourceEvent.ctrlKey && Node.attr("selected");
             });
             self._config.onBrushStart.call(this);
@@ -673,25 +673,25 @@ function Brush () {
             if (!d3.event.selection) return; // Ignore empty selections.
 
             var extent = d3.event.selection;
-            var t = self.getCurrentTransform();
+            var t = self.currentTransform();
 
-            self._getNodesSelection().each(function(Node){
+            self.nodesSelection().each(function(Node){
                 Node.attr("selected", !Node.attr('disabled') && Boolean(Node.pselected ^ ( (extent[0][0] - t.x) / t.k  <= Node.getX() && Node.getX() < (extent[1][0] - t.x) / t.k  && (extent[0][1] - t.y) / t.k <= Node.getY() && Node.getY() < (extent[1][1] - t.y) / t.k )));
             });
             self._config.onBrush.call(this);
         })
         .on('end', function () {
             if (!d3.event.selection) return; // Ignore empty selections.
-            self._getBrushSelection()
+            self.brushSelection()
                 .call(brush.move, null);
             self._config.onBrushEnd.call(this);
         });
 
     brush.show = function(){
-        self._getBrushSelection().style('display', 'block');
+        self.brushSelection().style('display', 'block');
     };
     brush.hide = function(){
-        self._getBrushSelection().style('display', 'none');
+        self.brushSelection().style('display', 'none');
     };
 
     return brush;
@@ -721,7 +721,7 @@ function init () {
     appendPreDefs.call(this);
 
 
-    this._getSvgSelection()
+    this.svgSelection()
         .classed("graph", true)
         .style("background", this._config.background)
         .on('mousedown', function(){
@@ -744,12 +744,12 @@ function init () {
 
     //add zoom instance to graph
     this.zoom = Zoom.call(this);
-    this._getSvgSelection()
+    this.svgSelection()
         .call(this.zoom);
 
     //add brush instance to graph
     this.brush = Brush.call(this);
-    this._getBrushSelection()
+    this.brushSelection()
         .call(this.brush);
 
     
@@ -766,7 +766,7 @@ function getAbsUrl (url) {
 function drawNodesSvg (renderType) {
  
     var self = this;
-    var nodes = this._getNodesSelection().data(this.getRenderedNodes(), function (Node) { return Node.id;});
+    var nodes = this.nodesSelection().data(this.getRenderedNodes(), function (Node) { return Node.id;});
 
     var g = nodes.enter().append('g')
         .each(function(Node){ Node._element = this })//reference element to Node
@@ -803,7 +803,7 @@ function drawNodesSvg (renderType) {
     
     //need update Nodes Element
     if(renderType === RENDER_TYPE.IMMEDIATELY){
-        var updateNodes = this._getNodesSelection();
+        var updateNodes = this.nodesSelection();
     }else{
         updateNodes = d3.selectAll(this.updateDOM.getNodesEle());
     }
@@ -814,7 +814,7 @@ function drawNodesSvg (renderType) {
     nodes.exit().remove();
     
     function updateAttr(selection){
-        var scale = self.getCurrentTransform().k;
+        var scale = self.currentTransform().k;
         
         selection.attr("transform", function (Node) { return "translate(" + Node.getX() + "," + Node.getY() + ")";})
             .classed("selected", function(Node){return Node.attr("selected")})
@@ -863,11 +863,11 @@ function unique (array) {
 
 function drawLinksSvg (renderType) {
     var self = this;
-    var scale = self.getCurrentTransform().k;
+    var scale = self.currentTransform().k;
     
     addArrowByColor();
     
-    var links = this._getLinksSelection().data(this.getRenderedLinks(), function (Link) { return Link.id });
+    var links = this.linksSelection().data(this.getRenderedLinks(), function (Link) { return Link.id });
 
     var link = links.enter()
         .append('g')
@@ -903,7 +903,7 @@ function drawLinksSvg (renderType) {
     
     
     if(renderType === RENDER_TYPE.IMMEDIATELY){
-        var updateLinks  = this._getLinksSelection();
+        var updateLinks  = this.linksSelection();
     }else if(renderType === RENDER_TYPE.NUDGE){
         updateLinks  = d3.selectAll(this.getRelatedLinks(this.getSelectedNodes()).map(function(Link){return Link._element;}));
     }else{
@@ -962,8 +962,8 @@ function drawLinksSvg (renderType) {
     
     function addArrowByColor(){
         var uniqueColor = unique(self.getRenderedLinks().map(function(Link){return Link.color;}));
-        var startArrow = self._getStartArrowSelection().data(uniqueColor, function(v){return v;});
-        var endArrow = self._getEndArrowSelection().data(uniqueColor, function(v){return v;});
+        var startArrow = self.svgSelection().select('defs').selectAll('marker.color-start-arrow').data(uniqueColor, function(v){return v;});
+        var endArrow = self.svgSelection().select('defs').selectAll('marker.color-end-arrow').data(uniqueColor, function(v){return v;});
     
         startArrow.enter()
             .append("svg:marker")
@@ -1173,7 +1173,7 @@ function drawCanvas () {
         context:context,
         nodes:this.getRenderedNodes(),
         links:this.getRenderedLinks(),
-        transform:that._getCurrentTransform()
+        transform:that.currentTransform()
     };
 
 
@@ -1344,7 +1344,7 @@ function zoomed () {
     //Graph._ifShowLabels();
     
     var previousScale = this._getForceGroup()._pScale;
-    var currentScale = this.getCurrentTransform().k.toFixed(4) / 1;
+    var currentScale = this.currentTransform().k.toFixed(4) / 1;
     //缩放网络图
     this._getForceGroup().attr("transform", "translate(" + d3.event.transform.x + ", "+ d3.event.transform.y + ") scale(" + currentScale + ")");
     this._getForceGroup()._pScale = currentScale;
@@ -1361,7 +1361,7 @@ function transform(k, x, y, duration) {
     var transformed = d3.zoomIdentity;
     if(typeof k === "number") transformed = transformed.scale(k);
     if(typeof x === "number" && typeof y === "number") transformed = transformed.translate(x, y);
-    this._getSvgSelection(duration).call(this.zoom.transform, transformed);
+    this.svgSelection(duration).call(this.zoom.transform, transformed);
     
     return this;
 }
@@ -1403,7 +1403,7 @@ function focus(filter, duration){
             .translate(-xCenter, -yCenter);
     
         console.log(canvasW, canvasH);
-        this._getSvgSelection(duration || 1000).call(this.zoom.transform, transformed);
+        this.svgSelection(duration || 1000).call(this.zoom.transform, transformed);
     }.bind(this), 0)
 }
 
@@ -1601,37 +1601,25 @@ Graph.prototype = {
     _init: init,
     _draw: draw,
     _zoomed: zoomed,
-    getCurrentTransform: function(){
+    currentTransform: function(){
         if(!this.canvas) return;
         return d3.zoomTransform(this.canvas);
     },
-    _getBrushSelection: function () {
-        return this._getSvgSelection().select('g.brush');
+    brushSelection: function () {
+        return this.svgSelection().select('g.brush');
     },
-    _getSvgSelection: function(duration){
+    svgSelection: function(duration){
         var svgSelection = d3.select(this.canvas);
 
         if(duration) svgSelection = svgSelection.transition(Math.random()).duration(duration);
 
-        return svgSelection
+        return svgSelection;
     },
-    _getSelectedNodesSelection: function(){
-        return this._getSvgSelection().select('.nodes').selectAll("g.node.selected");
+    nodesSelection: function(){
+        return this.svgSelection().select('.nodes').selectAll("g.node");
     },
-    _getNodesSelection: function(){
-        return this._getSvgSelection().select('.nodes').selectAll("g.node");
-    },
-    _getNodesLabelSelection: function(){
-        return this._getNodesSelection().selectAll('.text-group');
-    },
-    _getLinksSelection: function(){
-        return this._getSvgSelection().select('g.links').selectAll(".link");
-    },
-    _getStartArrowSelection: function(){
-        return this._getSvgSelection().select('defs').selectAll('marker.color-start-arrow');
-    },
-    _getEndArrowSelection: function(){
-        return this._getSvgSelection().select('defs').selectAll('marker.color-end-arrow');
+    linksSelection: function(){
+        return this.svgSelection().select('g.links').selectAll(".link");
     },
     _getForceGroup: function(){
         return this._forceGroupSelection;

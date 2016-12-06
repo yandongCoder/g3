@@ -2,7 +2,7 @@ function transform(k, x, y, duration) {
     var transformed = d3.zoomIdentity;
     if(typeof k === "number") transformed = transformed.scale(k);
     if(typeof x === "number" && typeof y === "number") transformed = transformed.translate(x, y);
-    this._getSvgSelection(duration).call(this.zoom.transform, transformed);
+    this.svgSelection(duration).call(this.zoom.transform, transformed);
     
     return this;
 }
@@ -44,7 +44,7 @@ function focus(filter, duration){
             .translate(-xCenter, -yCenter);
     
         console.log(canvasW, canvasH);
-        this._getSvgSelection(duration || 1000).call(this.zoom.transform, transformed);
+        this.svgSelection(duration || 1000).call(this.zoom.transform, transformed);
     }.bind(this), 0)
 }
 

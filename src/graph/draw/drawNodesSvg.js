@@ -4,7 +4,7 @@ import {RENDER_TYPE} from "../CONSTANT";
 export default function (renderType) {
  
     var self = this;
-    var nodes = this._getNodesSelection().data(this.getRenderedNodes(), function (Node) { return Node.id;});
+    var nodes = this.nodesSelection().data(this.getRenderedNodes(), function (Node) { return Node.id;});
 
     var g = nodes.enter().append('g')
         .each(function(Node){ Node._element = this })//reference element to Node
@@ -41,7 +41,7 @@ export default function (renderType) {
     
     //need update Nodes Element
     if(renderType === RENDER_TYPE.IMMEDIATELY){
-        var updateNodes = this._getNodesSelection();
+        var updateNodes = this.nodesSelection();
     }else{
         updateNodes = d3.selectAll(this.updateDOM.getNodesEle());
     }
@@ -52,7 +52,7 @@ export default function (renderType) {
     nodes.exit().remove();
     
     function updateAttr(selection){
-        var scale = self.getCurrentTransform().k;
+        var scale = self.currentTransform().k;
         
         selection.attr("transform", function (Node) { return "translate(" + Node.getX() + "," + Node.getY() + ")";})
             .classed("selected", function(Node){return Node.attr("selected")})

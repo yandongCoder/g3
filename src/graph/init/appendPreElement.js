@@ -1,5 +1,5 @@
 export default function () {
-    var svg = this._getSvgSelection();
+    var svg = this.svgSelection();
     this._brushSelection = svg.append("g").attr("class", "brush");
 
     var forceGroup = this._forceGroupSelection = svg.append('g').attr('class', 'force');

@@ -65,37 +65,25 @@ Graph.prototype = {
     _init: init,
     _draw: draw,
     _zoomed: zoomed,
-    getCurrentTransform: function(){
+    currentTransform: function(){
         if(!this.canvas) return;
         return d3.zoomTransform(this.canvas);
     },
-    _getBrushSelection: function () {
-        return this._getSvgSelection().select('g.brush');
+    brushSelection: function () {
+        return this.svgSelection().select('g.brush');
     },
-    _getSvgSelection: function(duration){
+    svgSelection: function(duration){
         var svgSelection = d3.select(this.canvas);
 
         if(duration) svgSelection = svgSelection.transition(Math.random()).duration(duration);
 
-        return svgSelection
+        return svgSelection;
     },
-    _getSelectedNodesSelection: function(){
-        return this._getSvgSelection().select('.nodes').selectAll("g.node.selected");
+    nodesSelection: function(){
+        return this.svgSelection().select('.nodes').selectAll("g.node");
     },
-    _getNodesSelection: function(){
-        return this._getSvgSelection().select('.nodes').selectAll("g.node");
-    },
-    _getNodesLabelSelection: function(){
-        return this._getNodesSelection().selectAll('.text-group');
-    },
-    _getLinksSelection: function(){
-        return this._getSvgSelection().select('g.links').selectAll(".link");
-    },
-    _getStartArrowSelection: function(){
-        return this._getSvgSelection().select('defs').selectAll('marker.color-start-arrow');
-    },
-    _getEndArrowSelection: function(){
-        return this._getSvgSelection().select('defs').selectAll('marker.color-end-arrow');
+    linksSelection: function(){
+        return this.svgSelection().select('g.links').selectAll(".link");
     },
     _getForceGroup: function(){
         return this._forceGroupSelection;
