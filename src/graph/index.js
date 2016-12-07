@@ -1,4 +1,4 @@
-import {render, delayRender, renderImmediately} from "./render";
+import {_render, delayRender, render} from "./render";
 import {clearNodes, clearLinks, hasNode, hasLink, addNode, addLink, removeNodes, removeLinks, removeLinksOfNode, nodes, links} from "./data";
 import {getNodesOP, getNodes, getRenderedNodes, getSelectedNodes} from "./getNodes";
 import {getLinksOP, getLinks, getSelectedLinks, getContainLinks, getAttachedLinks, getRelatedLinks, getRenderedLinks} from "./getLinks";
@@ -30,9 +30,9 @@ Graph.prototype = {
     constructor: Graph,
     selector: selector,
     config: config,
-    render: render,
+    _render: _render,
     delayRender: delayRender,
-    renderImmediately: renderImmediately,
+    render: render,
     nodes: nodes,
     getNodesOP: getNodesOP,
     getNodes: getNodes,
@@ -90,6 +90,12 @@ Graph.prototype = {
     },
     _getLinksSelection: function(){
         return this._getSvgSelection().select('g.links').selectAll(".link");
+    },
+    _getStartArrowSelection: function(){
+        return this._getSvgSelection().select('defs').selectAll('marker.color-start-arrow');
+    },
+    _getEndArrowSelection: function(){
+        return this._getSvgSelection().select('defs').selectAll('marker.color-end-arrow');
     },
     _getForceGroup: function(){
         return this._forceGroupSelection;

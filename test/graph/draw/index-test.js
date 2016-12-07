@@ -70,7 +70,7 @@ tape("Custom event callback test.", function(test){
     });
     myGraph.nodes([{id: 1}, {id: 2}])
         .links([{id: 1, src: 1, dst: 2}]);
-    myGraph.renderImmediately();
+    myGraph.render();
     
     var firstNode = myGraph.nodes()[0],
         firstNodeEle = document.querySelector('.node'),

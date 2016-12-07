@@ -9,7 +9,7 @@ tape("Add Link's start arrow by direction", function(test){
     
     test.equal(myGraph.links()[0].getStartArrow(), "");
     test.equal(myGraph.links()[1].getStartArrow(), "");
-    test.equal(myGraph.links()[2].getStartArrow(), "url(about:blank#start-arrow)");
+    test.equal(myGraph.links()[2].getStartArrow(), "url(about:blank#start-arrow-"+ myGraph._config.linkColor +")");
     test.equal(myGraph.links()[3].getStartArrow(), "url(about:blank#start-arrow-selected)");
 
     test.end();
@@ -22,7 +22,7 @@ tape("Add Link's end arrow by direction", function(test){
         .links([{id: 1, src: 1, dst: 2, direction: 0}, {id: 2, src: 1, dst: 2, direction: 1}, {id: 3, src: 1, dst: 2, direction: 2}, {id: 4, src: 1, dst: 2, direction: 3, selected: true}]);
     
     test.equal(myGraph.links()[0].getEndArrow(), "");
-    test.equal(myGraph.links()[1].getEndArrow(), "url(about:blank#end-arrow)");
+    test.equal(myGraph.links()[1].getEndArrow(), "url(about:blank#end-arrow-"+ myGraph._config.linkColor +")");
     test.equal(myGraph.links()[2].getEndArrow(), "");
     test.equal(myGraph.links()[3].getEndArrow(), "url(about:blank#end-arrow-selected)");
     
@@ -83,8 +83,8 @@ tape("Transform label, make label text always upward", function(test){
         .nodes([{id: 1, x: 0, y: 0, radius: 30}, {id: 2, x: 100, y: 0, radius: 20}])
         .links([{id: 1, src: 1, dst: 2, direction: 1}, {id: 2, src: 2, dst: 1, direction: 1}]);
     
-    test.deepEqual(myGraph.links()[0].getLinkInfoTransform(2), 'rotate(0 50.5 0) translate(50.5 0) scale(0.5) translate(-41 -3)');
-    test.deepEqual(myGraph.links()[1].getLinkInfoTransform(2), 'rotate(0 59.5 0) translate(59.5 0) scale(0.5) translate(-41 -3)');
+    test.deepEqual(myGraph.links()[0].getLinkInfoTransform(2), 'rotate(0 50.5 0) translate(50.5 0) scale(0.5) translate(-41 8)');
+    test.deepEqual(myGraph.links()[1].getLinkInfoTransform(2), 'rotate(0 59.5 0) translate(59.5 0) scale(0.5) translate(-41 8)');
     
     test.end();
 });

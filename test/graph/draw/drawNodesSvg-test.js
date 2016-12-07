@@ -12,7 +12,7 @@ tape("Nodes DOM should correspond _nodes always", function(test){
     myGraph.nodes(nodes);
     myGraph.removeNodes(1);
     
-    myGraph.renderImmediately();
+    myGraph.render();
     test.equal(myGraph.nodes().length, document.querySelectorAll('.node').length);
     test.end();
 });
@@ -25,7 +25,7 @@ tape("Node's DOM should correspond Node's property", function(test){
     var myGraph = g3.graph(svg, {iconPrefix: 'fa fa-',icon: 'default', mugshotPrefix: "./someUrl/", mugshot: "default.png"})
         .nodes([{id: 1, x: 5, y: 0, icon: "male", mugshot: "foo.png", label: "a", selected: true, radius: 30, color: "#123444"},{id: 2}]);
     
-    myGraph.renderImmediately();
+    myGraph.render();
     
     var firstNode = myGraph.nodes()[0],
         firstNodeEle = document.querySelectorAll(".node")[0],
@@ -59,7 +59,7 @@ tape("Node's DOM should correspond Node's property", function(test){
     firstNode.attr("icon",'female');
     firstNode.attr("mugshot", 'bar.png');
     
-    myGraph.renderImmediately();
+    myGraph.render();
     test.equal(firstNodeEle.querySelector(".text-group").querySelector('span').textContent, "abc");
     test.equal(firstNodeEle.className, "node disabled");
     test.equal(firstNodeEle.querySelector("circle").getAttribute('r'), '40');
@@ -80,7 +80,7 @@ tape("select Node event", function(test){
     myGraph.nodes([{id: 1}, {id: 2}])
         .links({id: 1, src: 1, dst: 2, selected: true});
     
-    myGraph.renderImmediately();
+    myGraph.render();
     var firstNode = myGraph.nodes()[0],
         firstNodeEle = document.querySelectorAll('.node')[0],
         secondNode = myGraph.nodes()[1],
@@ -124,7 +124,7 @@ tape("Hide Node label while currentScale < scaleOfNodeLabelHide", function(test)
         .links([{id: 1, src: 1, dst: 2}]);
     
     myGraph.scaleTo(myGraph._config.scaleOfHideNodeLabel - 0.1);
-    myGraph.renderImmediately();
+    myGraph.render();
     
     test.equal(document.querySelectorAll(".node")[0].querySelector(".text-group").style.display, "none");
     
@@ -139,7 +139,7 @@ tape("Hide Link label while currentScale < scaleOfLinkLabelHide", function(test)
         .links([{id: 1, src: 1, dst: 2}]);
     
     myGraph.scaleTo(myGraph._config.scaleOfHideLinkLabel - 0.1);
-    myGraph.renderImmediately();
+    myGraph.render();
     
     test.equal(document.querySelectorAll(".link-info")[0].style.display, "none");
     

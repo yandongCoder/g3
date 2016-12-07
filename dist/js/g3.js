@@ -32,16 +32,16 @@ var select = function (selector) {
 
 function delayRender(Obj, renderType){
     this.updateDOM.addObj(Obj, renderType);
-    this.render(renderType);
+    this._render(renderType);
     return this;
 }
 
-function renderImmediately(){
-    this.render(RENDER_TYPE.IMMEDIATELY);
+function render(){
+    this._render(RENDER_TYPE.IMMEDIATELY);
     return this;
 }
 
-function render(renderType) {
+function _render(renderType) {
     var self = this;
     
     this._canvas = select(this._selector);
@@ -202,9 +202,9 @@ var getOffsetCoordinate = function (Sx, Sy, Tx, Ty, offsetS, offsetT) {
 
 var absUrl = window.location.href.split('#')[0];
 
-function getStartArrow(status) {
-    status = status? ("-" + status): "";
-    if(this.attr("selected")) status = "-selected";
+function getStartArrow() {
+    if(this.attr("selected")) var status = "-selected";
+    else status = "-" + this.attr("color");
     
     if(this.attr("direction") === DIRECTION.D2S || this.attr("direction") === DIRECTION.DOUBLE)
         return "url(" + absUrl + "#start-arrow"+ status +")";
@@ -212,9 +212,9 @@ function getStartArrow(status) {
         return "";
 }
 
-function getEndArrow (status) {
-    status = status? ("-" + status): "";
-    if(this.attr("selected")) status = "-selected";
+function getEndArrow () {
+    if(this.attr("selected")) var status = "-selected";
+    else status = "-" + this.attr("color");
     
     if(this.attr("direction") === DIRECTION.S2D || this.attr("direction") === DIRECTION.DOUBLE)
         return "url(" + absUrl + "#end-arrow"+ status +")";
@@ -251,7 +251,7 @@ function getLinkInfoTransform(scale) {
     var transform  = 'rotate('+ degrees +' '+ rx +' '+ ry +') translate(' + rx + ' ' + ry + ') scale(' + 1 / scale + ')' + '';
     
     var offsetX =  - this.LineWidth(scale) / 2;
-    var offsetY =  - this.LineHeight(scale) / 2;
+    var offsetY =  this.LineHeight(scale) / 2 + 5;
     transform += ' translate('+ offsetX +' '+ offsetY +')';
     
     return transform;
@@ -336,7 +336,7 @@ var remove$1 = function (type) {
     delete this.graph._linksHash[this.id];
     this.graph._links.splice(this.graph._links.indexOf(this), 1);
 
-    this.graph.render();
+    this.graph._render();
     
     if(this.mergedBy && (type !== LINK_REMOVE_TYPE.UNMERGE) ) this.mergedBy.remove();
     if(this.transformedBy && (type !== LINK_REMOVE_TYPE.L2N)) this.transformedBy.remove();
@@ -367,10 +367,8 @@ function Link(data, graph) {
     this.source = graph && this.graph._nodesHash[data.src];
     this.target = graph && this.graph._nodesHash[data.dst];
     
-    
-    var exceptKey = ['src', 'dst'];
     for (var prop in data) {
-        if (data.hasOwnProperty(prop) && this[prop] === undefined && exceptKey.indexOf(prop) === -1) this[prop] = data[prop];
+        if (data.hasOwnProperty(prop) && this[prop] === undefined) this[prop] = data[prop];
     }
 }
 
@@ -440,7 +438,7 @@ function removeNodes(filter) {
         Node$$1.remove();
     }, this);
     
-    this.render();
+    this._render();
 }
 
 function removeLinks(filter) {
@@ -448,7 +446,7 @@ function removeLinks(filter) {
         Link$$1.remove();
     }, this);
     
-    this.render();
+    this._render();
 }
 
 function removeLinksOfNode(Node$$1) {
@@ -465,7 +463,7 @@ function nodes(nodes, cover) {
     
     nodes.forEach(function(v){ this._addNode(v);},this);
     
-    this.render();
+    this._render();
     return this;
 }
 
@@ -477,7 +475,7 @@ function links(links, cover) {
     
     links.forEach(function(v){ this._addLink(v); },this);
     
-    this.render();
+    this._render();
     return this;
 }
 
@@ -610,6 +608,7 @@ function getRenderedLinks() {
 }
 
 var appendPreDefs = function () {
+    var self = this;
     var str = '<defs>'+
                         '<filter id="shadow" x="-20%" y="-20%" width="200%" height="200%" type="Shadow" shadowoffsetx="5" shadowoffsety="5" shadowblur="5" shadowcolor="rgba(0,0,0)">' +
                             '<feOffset result="offOut" in="SourceGraphic" dx="0" dy="3"></feOffset>' +
@@ -618,10 +617,8 @@ var appendPreDefs = function () {
                             '<feBlend in="SourceGraphic" in2="blurOut" mode="normal"></feBlend>' +
                         '</filter>' +
                         '<marker id="start-arrow" viewBox="0 -5 10 10" refX="10" markerWidth="3" markerHeight="3" orient="auto"><path d="M10,-5L0,0L10,5"></path></marker>' +
-                        '<marker id="start-arrow-hover" viewBox="0 -5 10 10" refX="10" markerWidth="3" markerHeight="3" orient="auto"><path d="M10,-5L0,0L10,5"></path></marker>' +
                         '<marker id="start-arrow-selected" viewBox="0 -5 10 10" refX="10" markerWidth="3" markerHeight="3" orient="auto"><path d="M10,-5L0,0L10,5"></path></marker>' +
                         '<marker id="end-arrow" viewBox="0 -5 10 10" refX="0" markerWidth="3" markerHeight="3" orient="auto"><path d="M0,-5L10,0L0,5"></path></marker>' +
-                        '<marker id="end-arrow-hover" viewBox="0 -5 10 10" refX="0" markerWidth="3" markerHeight="3" orient="auto"><path d="M0,-5L10,0L0,5"></path></marker>' +
                         '<marker id="end-arrow-selected" viewBox="0 -5 10 10" refX="0" markerWidth="3" markerHeight="3" orient="auto"><path d="M0,-5L10,0L0,5"></path></marker>' +
                         '<radialGradient id="linear" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">' +
                             '<stop offset="0%" style="stop-color:rgb(255，255,255);stop-opacity:0" />' +
@@ -632,6 +629,13 @@ var appendPreDefs = function () {
                 '</defs>';
 
     this._canvas.insertAdjacentHTML("afterbegin", str);
+    
+    d3.select("#start-arrow path").call(arrowAttr);
+    d3.select("#end-arrow path").call(arrowAttr);
+    
+    function arrowAttr(selection){
+        selection.style('fill', self._config.linkColor);
+    }
 };
 
 var appendPreElement = function () {
@@ -722,6 +726,7 @@ var init = function () {
 
     this._getSvgSelection()
         .classed("graph", true)
+        .style("background", this._config.background)
         .on('mousedown', function(){
             if (d3.event.target.nodeName !== 'svg') return;
             
@@ -841,18 +846,29 @@ var drawNodesSvg = function (renderType) {
             .attr('width', function (Node) { return Node.getLabelWidth(); })
             .attr("height", function(Node){ return Node.attr("radius") * scale; })
             .style("line-height", function(Node){ return Node.attr("radius") * scale + "px"; })
-            .attr("transform", function(Node){ return "translate(" + (1 + Node.attr("radius")) + ", 0) scale(" + 1 / scale + ")"; })
+            .attr("transform", function(Node){ return "translate(" + (1 + Node.attr("radius")) + ", "+ (-Node.attr("radius") / 2) +") scale(" + 1 / scale + ")"; })
             
             .select('div')
+            .style("width", self._config.nodeLabelClipWidth + "px")
             .attr('title', function (Node) { return Node.attr("label"); })
             .select('span')
             .text(function (Node) { return Node.attr("label"); });
     }
 };
 
+var unique = function (array) {
+    var n = [];
+    for (var i = 0; i < array.length; i++) {
+        if (n.indexOf(array[i]) == -1) n.push(array[i]);
+    }
+    return n;
+};
+
 var drawLinksSvg = function (renderType) {
     var self = this;
     var scale = self.getCurrentTransform().k;
+    
+    addArrowByColor();
     
     var links = this._getLinksSelection().data(this.getRenderedLinks(), function (Link) { return Link.id });
 
@@ -945,6 +961,44 @@ var drawLinksSvg = function (renderType) {
     
         info.select('.icon')
             .attr('class', function(Link){ return self._config.iconPrefix + Link.attr("icon");});
+    }
+    
+    function addArrowByColor(){
+        var uniqueColor = unique(self.getRenderedLinks().map(function(Link){return Link.color;}));
+        var startArrow = self._getStartArrowSelection().data(uniqueColor, function(v){return v;});
+        var endArrow = self._getEndArrowSelection().data(uniqueColor, function(v){return v;});
+    
+        startArrow.enter()
+            .append("svg:marker")
+            .attr("id", function(v){ return "start-arrow-"+ v; })
+            .classed('color-start-arrow', true)
+            .attr("refX", 10)
+            .call(arrowAttr)
+            .append("svg:path")
+            .attr("d", "M10,-5L0,0L10,5")
+            .call(arrowPathAttr);
+    
+        endArrow.enter()
+            .append("svg:marker")
+            .attr("id", function(v){ return "end-arrow-"+ v; })
+            .attr("refX", 0)
+            .classed('color-end-arrow', true)
+            .call(arrowAttr)
+            .append("svg:path")
+            .attr("d", "M0,-5L10,0L0,5")
+            .call(arrowPathAttr);
+    
+        function arrowAttr(selection){
+            selection
+                .attr("viewBox", "0 -5 10 10")
+                .attr("markerWidth", 3)
+                .attr("markerHeight", 3)
+                .attr("orient", "auto");
+        }
+        function arrowPathAttr(selection){
+            selection
+                .style("fill", function(v){return v});
+        }
     }
 };
 
@@ -1421,9 +1475,9 @@ var zoomed = function () {
     var hideScale = d3.min([this._config.scaleOfHideNodeLabel, this._config.scaleOfHideLinkLabel]);
     
     //render while should hide label
-    if(previousScale >= hideScale && currentScale <= hideScale) this.renderImmediately();
+    if(previousScale >= hideScale && currentScale <= hideScale) this.render();
     //panning don't need re-render, render only after zooming
-    if(currentScale !== previousScale && currentScale > hideScale) this.renderImmediately();
+    if(currentScale !== previousScale && currentScale > hideScale) this.render();
 };
 
 function transform(k, x, y, duration) {
@@ -1447,6 +1501,7 @@ function translateBy(x, y, duration) {
 
 function focus(filter, duration){
     var Nodes = this.getNodes(filter);
+    if(!Nodes.length) return;
     
     var xAccessor = function(Node){return Node.x}, yAccessor = function(Node){return Node.y};
     var minX = d3.min(Nodes, xAccessor), maxX = d3.max(Nodes, xAccessor), minY = d3.min(Nodes, yAccessor), maxY = d3.max(Nodes, yAccessor);
@@ -1479,13 +1534,6 @@ function keydowned() {
             case 90:
                 this.brush.show();
                 break;
-            case 46:
-                this.removeNodes(this.getSelectedNodes());
-            break;
-            case 65:
-                if(d3.event.ctrlKey) this.getNodesOP().attr("selected", true);
-                d3.event.preventDefault();
-            break;
         }
     }
 }
@@ -1517,7 +1565,9 @@ const DEFAULT_CONFIG = {
     dragable: true,
     ifRender: true,
     color: "#123456",
+    nodeLabelClipWidth: 500,
     linkColor: "#a1a1a1",
+    background: "#f1f1f1",
     minScale: 0.1,
     maxScale: 3.0,
     scaleOfHideNodeLabel: 0.8,
@@ -1636,9 +1686,9 @@ Graph.prototype = {
     constructor: Graph,
     selector: selector,
     config: config,
-    render: render,
+    _render: _render,
     delayRender: delayRender,
-    renderImmediately: renderImmediately,
+    render: render,
     nodes: nodes,
     getNodesOP: getNodesOP,
     getNodes: getNodes,
@@ -1696,6 +1746,12 @@ Graph.prototype = {
     },
     _getLinksSelection: function(){
         return this._getSvgSelection().select('g.links').selectAll(".link");
+    },
+    _getStartArrowSelection: function(){
+        return this._getSvgSelection().select('defs').selectAll('marker.color-start-arrow');
+    },
+    _getEndArrowSelection: function(){
+        return this._getSvgSelection().select('defs').selectAll('marker.color-end-arrow');
     },
     _getForceGroup: function(){
         return this._forceGroupSelection;

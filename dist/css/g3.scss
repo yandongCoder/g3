@@ -8,7 +8,8 @@ svg.graph{
   position: relative;
   overflow: hidden;
   cursor: move;
-  background-color: #f1f1f1;
+  background-size: cover !important;
+  background-position: center !important;
   .node, .link{
     cursor: default;
     &.disabled{
@@ -32,11 +33,13 @@ svg.graph{
         width: 100%;
         height: 100%;
         border-radius: 50%;
+        object-fit: cover;
       }
       .icon{
         border-radius: 50%;
       }
       .text-group{
+        font-family: Microsoft YaHei UI, Lato, sans-serif;
         >div{
           height: 100%;
           display: flex;
@@ -46,6 +49,7 @@ svg.graph{
           >span{
             text-overflow: ellipsis;
             overflow: hidden;
+            white-space: no;
             height: 20px;
             line-height: 20px;
           }
@@ -80,6 +84,8 @@ svg.graph{
             >span{
               padding-right: 5px;
               background: #f65565;
+              white-space: nowrap;
+              text-overflow: initial;
             }
           }
         }
@@ -91,7 +97,11 @@ svg.graph{
   }
   .links{
     font-size: 13px;
+    .fa{
+      font-size: 16px;
+    }
     .link-info{
+      font-family: Microsoft YaHei UI, Lato, sans-serif;
       .center{
         display: flex;
         align-items: center;
@@ -106,35 +116,20 @@ svg.graph{
     path{
       fill-opacity: 0.5;
       stroke-opacity: 0.5;
-      fill: none;//#a1a1a1;
+      fill: none;
       stroke: #a1a1a1;
       stroke-width: 4px;
-      //marker-end: url("#end-arrow");
-      //&:hover{
-      //  fill-opacity: 1;
-      //  stroke-opacity: 1;
-      //  //marker-end: url("/#end-arrow-hover");
-      //}
       &.selected{
-        fill: none;//#f65565;
+        fill: none;
         stroke: #f65565 !important;
         fill-opacity: 1;
         stroke-opacity: 1;
-        //marker-end: url("/#end-arrow-selected");
       }
     }
   }
-  #start-arrow, #end-arrow{
+  #start-arrow, #end-arrow, .color-start-arrow, .color-end-arrow{
     path{
       fill-opacity: 0.5;
-      fill: #a1a1a1;
-    }
-  }
-
-  #start-arrow-hover, #end-arrow-hover{
-    path{
-      fill-opacity: 1;
-      fill: #a1a1a1;
     }
   }
   #start-arrow-selected, #end-arrow-selected{

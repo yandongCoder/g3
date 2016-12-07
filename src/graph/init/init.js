@@ -17,6 +17,7 @@ export default function () {
 
     this._getSvgSelection()
         .classed("graph", true)
+        .style("background", this._config.background)
         .on('mousedown', function(){
             if (d3.event.target.nodeName !== 'svg') return;
             

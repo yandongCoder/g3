@@ -21,10 +21,8 @@ export default function Link(data, graph) {
     this.source = graph && this.graph._nodesHash[data.src];
     this.target = graph && this.graph._nodesHash[data.dst];
     
-    
-    var exceptKey = ['src', 'dst'];
     for (var prop in data) {
-        if (data.hasOwnProperty(prop) && this[prop] === undefined && exceptKey.indexOf(prop) === -1) this[prop] = data[prop];
+        if (data.hasOwnProperty(prop) && this[prop] === undefined) this[prop] = data[prop];
     }
 }
 

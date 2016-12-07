@@ -81,9 +81,10 @@ export default function (renderType) {
             .attr('width', function (Node) { return Node.getLabelWidth(); })
             .attr("height", function(Node){ return Node.attr("radius") * scale; })
             .style("line-height", function(Node){ return Node.attr("radius") * scale + "px"; })
-            .attr("transform", function(Node){ return "translate(" + (1 + Node.attr("radius")) + ", 0) scale(" + 1 / scale + ")"; })
+            .attr("transform", function(Node){ return "translate(" + (1 + Node.attr("radius")) + ", "+ (-Node.attr("radius") / 2) +") scale(" + 1 / scale + ")"; })
             
             .select('div')
+            .style("width", self._config.nodeLabelClipWidth + "px")
             .attr('title', function (Node) { return Node.attr("label"); })
             .select('span')
             .text(function (Node) { return Node.attr("label"); });
