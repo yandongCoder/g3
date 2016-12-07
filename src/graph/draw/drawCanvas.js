@@ -38,14 +38,15 @@ export default function () {
     // that._hasInit = true;
 
 
-    function render() {
+    //若x,y 有值，则为单击时的重新渲染
+    function render(x,y) {
         canvas.nodes = that.getRenderedNodes();
         canvas.links = that.getRenderedLinks();
         context.clearRect(0, 0, that.element.width, that.element.height);
         context.save();
         context.translate(canvas.transform.x, canvas.transform.y);
         context.scale(canvas.transform.k, canvas.transform.k);
-        drawLinkCanvas(canvas);
+        drawLinkCanvas(canvas,x,y);
         drawNodeCanvas(canvas);
         context.restore();
     }
@@ -54,24 +55,44 @@ export default function () {
     //单击事件
     function _click(d) {
         var p = convertToCanvasCor(that.element, d3.event.x, d3.event.y);
+        console.log('click');
+        var p = convertToCanvasCor(that._canvas,d3.event.x,d3.event.y);
         var x = canvas.transform.invertX(p.x);
         var y = canvas.transform.invertY(p.y);
         var targetNode = findPoint(canvas.nodes,x,y);
+        var targetLink = null;
+        if(!targetNode) targetLink = findLinks(canvas,p.x,p.y);
         //调用click 的回调函数
-        // console.log(targetNode);
-        // console.log(targetNode);
-        // render();
         if(targetNode){
             if(!d3.event.ctrlKey){
-                if(targetNode.selected()) return;
-                that.unselectNodes();
+                if(targetNode.selected) return;
+                that.getSelectedNodes().forEach(function (node) {
+                    node.attr('selected',false);
+                });
             }
-            targetNode.selected(!targetNode.selected());
+            targetNode.attr('selected',!targetNode.selected);
         }else{
             console.log(context.isPointInPath(x,y));
-            // targetNode = findLinks(context,canvas.links,x,y);
-            // console.log(targetNode);
-            that.unselectNodes();
+            if(targetLink){
+                //选中lilnk
+                console.log(targetLink);
+                if(!d3.event.ctrlKey){
+                    if(targetLink.select) return;
+                    that.getSelectedLinks().forEach(function (link) {
+                        link.attr('selected',false);
+                    });
+                }
+                targetLink.attr('selected',!targetLink.selected);
+
+            }else{
+                that.getSelectedNodes().forEach(function (node) {
+                    node.attr('selected',false);
+                });
+                that.getSelectedLinks().forEach(function (link) {
+                    link.attr('selected',false);
+                });
+            }
+
         }
 
     }
