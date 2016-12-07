@@ -2,8 +2,11 @@ function attr(prop, val){
     if(val === undefined) return this[prop];
     
     this[prop] = val;
-    this.graph.delayRender(this);
-    
+    //canvas 渲染 这个delayRender 函数会导致重绘函数延迟
+    // this.graph.delayRender(this);
+    this.graph.renderImmediately();
+
+
     return this;
 }
 

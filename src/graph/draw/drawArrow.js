@@ -1,13 +1,14 @@
 /**
  * Created by lcx on 2016/11/2.
  */
-export default function(ctx,link,lineWidth) {
+export default function(ctx,link,lineWidth,x,y) {
+    var targetLink = false;
     var s1 = link.source.getX();
     var e1 = link.source.getY();
     var s2 = link.target.getX();
     var e2 = link.target.getY();
-    var r = link.target.radius();
-    var text = link.label();
+    var r = link.target.radius;
+    var text = link.label;
 
     //计算x2 y2,x1 y1 的坐标 因为若是带箭头的话，不能从两个圆圈的中心点出发去画
     var l = Math.sqrt((s2-s1)*(s2-s1) + (e2-e1)*(e2-e1));
@@ -78,20 +79,37 @@ export default function(ctx,link,lineWidth) {
     }
 
     ctx.beginPath();
+    if(link.attr('selected')){
+        ctx.strokeStyle = "#800";
+    }else{
+        ctx.strokeStyle = "#ccc";
+    }
     ctx.strokeStyle = "#ccc";
     ctx.lineWidth = 3;
     ctx.moveTo(x1, y1);
     ctx.lineTo(x2, y2);
-    ctx.stroke();
+    // ctx.lineTo(x1, y1);
+   /* ctx.stroke();
+    if(ctx.isPointInPath(x,y)){
+        targetLink = true;
+    }*/
+    if(ctx.isPointInPath(x,y)){
+        targetLink = true;
+    }
     ctx.moveTo(a1, b1);
     ctx.lineTo(x2, y2);
     ctx.lineTo(a2, b2);
+    if(ctx.isPointInPath(x,y)){
+        targetLink = true;
+    }
     ctx.stroke();
+
     //绘制文字
     // ctx.beginPath();
     ctx.strokeWidth = 0;
     ctx.fillStyle = '#555';
     ctx.font="16px 微软雅黑";
     ctx.fillText(text,(s2+s1)/2,(e2+e1)/2);
+    return targetLink;
 
 }
