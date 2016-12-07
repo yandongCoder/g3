@@ -89,10 +89,13 @@ function getStrLen (str) {
     return len;
 };
 
-function attr(prop, val){
+function attr (prop, val){
     if(val === undefined) return this[prop];
     
+    val = val instanceof Function? val(this): val;
+    if(val === this[prop]) return;
     this[prop] = val;
+    
     this.graph.delayRender(this);
     
     return this;
@@ -296,15 +299,6 @@ function getCoordination(forText) {
     };
 }
 
-function attr$1(prop, val){
-    if(val === undefined) return this[prop];
-    
-    this[prop] = val instanceof Function? val(this): val;
-    this.graph.delayRender(this);
-    
-    return this;
-}
-
 function changeSource(source){
     if(source instanceof Node) this.source = source;
     
@@ -378,7 +372,7 @@ Link.prototype = {
     LineWidth: LineWidth,
     LineHeight: LineHeight,
     getLinkInfoTransform: getLinkInfoTransform,
-    attr: attr$1,
+    attr: attr,
     remove: remove$1,
     getSourceId: getSourceId,
     getTargetId: getTargetId,
@@ -506,7 +500,7 @@ function filterBy (filter, objArray) {
     return filteredArr;
 }
 
-function attr$2 (prop, val) {
+function attr$1 (prop, val) {
     this.arr.forEach(function(datum){
         datum.attr(prop, val instanceof Function? val(datum): val);
     });
@@ -523,7 +517,7 @@ function Selection(arr) {
 
 Selection.prototype = {
     constructor: Selection,
-    attr: attr$2,
+    attr: attr$1,
     data: data
 };
 
@@ -805,7 +799,6 @@ function drawNodesSvg (renderType) {
     
     function updateAttr(selection){
         var scale = self.currentTransform().k;
-        
         selection.attr("transform", function (Node) { return "translate(" + Node.getX() + "," + Node.getY() + ")";})
             .classed("selected", function(Node){return Node.attr("selected")})
             .classed("disabled", function(Node){return Node.attr("disabled")});

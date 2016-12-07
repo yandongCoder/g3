@@ -1,11 +1,4 @@
-function attr(prop, val){
-    if(val === undefined) return this[prop];
-    
-    this[prop] = val;
-    this.graph.delayRender(this);
-    
-    return this;
-}
+import attr from "../../utils/attr";
 
 function getX() {
     return this.x || 0;

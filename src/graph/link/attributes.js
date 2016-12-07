@@ -1,13 +1,6 @@
 import Node from "../node/index";
+import attr from "../../utils/attr";
 
-function attr(prop, val){
-    if(val === undefined) return this[prop];
-    
-    this[prop] = val instanceof Function? val(this): val;
-    this.graph.delayRender(this);
-    
-    return this;
-}
 
 function changeSource(source){
     if(source instanceof Node) this.source = source;
