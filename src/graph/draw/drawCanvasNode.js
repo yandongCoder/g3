@@ -7,10 +7,16 @@ export default function (canvasObj) {
     var nodes = canvasObj.nodes;
     var context = canvasObj.context;
 
-    nodes.forEach(function(Node) {
+    nodes.forEach(function(Node,i) {
         var x = Node.getX();
         var y = Node.getY();
         var r = Node.radius;
+
+        // canvasObj.nodesCache[i].width = r*2;
+        // canvasObj.nodesCache[i].height = r*2;
+
+        // var context = canvasObj.nodesCache[i].getContext('2d');
+
         // console.log(Node.selected());
         context.beginPath();
         var radius = Node.selected ? Node.radius-5 : Node.radius;

@@ -26,9 +26,9 @@ const RENDER_TYPE = {
     IMMEDIATELY: "IMMEDIATELY"
 };
 
-function select (selector) {
+var select = function (selector) {
     return typeof selector === "string"? document.querySelector(selector): selector;
-}
+};
 
 function delayRender(Obj, renderType){
     this.updateDOM.addObj(Obj, renderType);
@@ -50,31 +50,33 @@ function _render(renderType) {
     if(!this._config.ifRender) return this;
     var canvasType = this.element.nodeName;
     if(canvasType === 'svg'){ this._init();}
+    else{
+        // this._initCache();
+    }
     
     if(renderType === RENDER_TYPE.IMMEDIATELY){
         draw(renderType);
     }
     else{
         clearTimeout(this._renderDelay);
-        this._renderDelay = setTimeout(function timeoutDraw(){draw(renderType)}, 0);
+        this._renderDelay = setTimeout(function timeoutDraw(){draw(renderType);}, 0);
     }
     
     return this;
     
     function draw(renderType){
-        console.log('draw');
         self._draw(renderType, canvasType);
     }
 }
 
-function toArray (maybeArr) {
+var toArray = function (maybeArr) {
     if(!Array.isArray(maybeArr)) maybeArr = [maybeArr];
     return maybeArr;
-}
+};
 
 //中文为2长度，非中文为1
 
-function getStrLen (str) {
+var getStrLen = function (str) {
     var len = 0;
     if (typeof str !== "string") {
         str = str.toString();
@@ -89,17 +91,18 @@ function getStrLen (str) {
     return len;
 };
 
-function attr (prop, val){
+var attr = function (prop, val){
     if(val === undefined) return this[prop];
     
     val = val instanceof Function? val(this): val;
     if(val === this[prop]) return;
     this[prop] = val;
     
-    this.graph.delayRender(this);
-    
+    // this.graph.delayRender(this);
+    this.graph.render(this);
+
     return this;
-}
+};
 
 function getX() {
     return this.x || 0;
@@ -109,16 +112,16 @@ function getY() {
     return this.y || 0;
 }
 
-function nudge (nudgeX, nudgeY) {
+var nudge = function (nudgeX, nudgeY) {
     if(!this.graph._config.dragable) return;
     
     this.x += nudgeX;
     this.y += nudgeY;
     
     return this;
-}
+};
 
-function getConnectedLinks (grouped) {
+var getConnectedLinks = function (grouped) {
     var connectedLinks = this.graph._links.filter(function (Link) {
         return (Link.source === this) || (Link.target === this);
     }, this);
@@ -139,14 +142,14 @@ function getConnectedLinks (grouped) {
     }
 
     return connectedLinks;
-}
+};
 
-function remove (removeType) {
+var remove = function (removeType) {
     delete this.graph._nodesHash[this.id];
     this.graph._nodes.splice(this.graph._nodes.indexOf(this), 1);
     
     if(this.groupedBy && (removeType !== REMOVE_TYPE.UNGROUP) ) this.groupedBy.remove();
-}
+};
 
 //data: data obj, graph: graphInstance
 function Node(data, graph) {
@@ -181,11 +184,11 @@ Node.prototype = {
 };
 
 //Link has source and target Node in _nodes
-function hasST () {
+var hasST = function () {
     return (this.source !== undefined) && (this.target !== undefined);
-}
+};
 
-function getOffsetCoordinate (Sx, Sy, Tx, Ty, offsetS, offsetT) {
+var getOffsetCoordinate = function (Sx, Sy, Tx, Ty, offsetS, offsetT) {
     var l = Math.sqrt((Tx - Sx) * (Tx - Sx) + (Ty - Sy) * (Ty - Sy));
     if(l === 0) l = 1;
 
@@ -198,7 +201,7 @@ function getOffsetCoordinate (Sx, Sy, Tx, Ty, offsetS, offsetT) {
         Tx: Tx - offsetT * cos,
         Ty: Ty - offsetT * sin
     }
-}
+};
 
 var absUrl = window.location.href.split('#')[0];
 
@@ -323,7 +326,7 @@ function getTargetId(){
     return this.target.id;
 }
 
-function remove$1 (type) {
+var remove$1 = function (type) {
     delete this.graph._linksHash[this.id];
     this.graph._links.splice(this.graph._links.indexOf(this), 1);
 
@@ -333,14 +336,14 @@ function remove$1 (type) {
     if(this.transformedBy && (type !== LINK_REMOVE_TYPE.L2N)) this.transformedBy.remove();
 
     return this;
-}
+};
 
-function getHomoLinks () {
+var getHomoLinks = function () {
     return this.graph._links.filter(function(Link){
         return (Link.source === this.source || Link.source === this.target) &&
                 (Link.target === this.source || Link.target === this.target);
     }, this) || [];
-}
+};
 
 function Link(data, graph) {
     this.graph = graph;
@@ -423,26 +426,26 @@ function addLink(obj) {
 }
 
 function removeNodes(filter) {
-    this.getNodes(filter).forEach(function(Node){
+    this.getNodes(filter).forEach(function(Node$$1){
         //remove links first
-        this._removeLinksOfNode(Node);
-        Node.remove();
+        this._removeLinksOfNode(Node$$1);
+        Node$$1.remove();
     }, this);
     
     this._render();
 }
 
 function removeLinks(filter) {
-    this.getLinks(filter).forEach(function(Link){
-        Link.remove();
+    this.getLinks(filter).forEach(function(Link$$1){
+        Link$$1.remove();
     }, this);
     
     this._render();
 }
 
-function removeLinksOfNode(Node) {
-    Node.getConnectedLinks().map(function (Link) {
-        Link.remove();
+function removeLinksOfNode(Node$$1) {
+    Node$$1.getConnectedLinks().map(function (Link$$1) {
+        Link$$1.remove();
     }, this);
 }
 
@@ -470,16 +473,16 @@ function links(links, cover) {
     return this;
 }
 
-function getIds (array) {
+var getIds = function (array) {
     return array.map(function(item){
         if(typeof item  ===  'object') return item.id;
         else return item;
     });
-}
+};
 
 //filter array of object which has id; filtered by id, or id array, or object that has id, or object array
 //this function is convenient to Nodes or Links data.
-function filterBy (filter, objArray) {
+var filterBy = function (filter, objArray) {
     if(typeof filter === "function"){
         var filtered = filter;
     }else if(filter === undefined || filter === null){
@@ -498,18 +501,18 @@ function filterBy (filter, objArray) {
         if(filtered(objArray[i])) filteredArr.push(objArray[i]);
     }
     return filteredArr;
-}
+};
 
-function attr$1 (prop, val) {
+var attr$1 = function (prop, val) {
     this.arr.forEach(function(datum){
         datum.attr(prop, val instanceof Function? val(datum): val);
     });
     return this;
-}
+};
 
-function data () {
+var data = function () {
     return this.arr;
-}
+};
 
 function Selection(arr) {
     this.arr = arr;
@@ -528,7 +531,7 @@ function getNodesOP(filter, val){
 function getNodes(filter, val) {
     if(arguments.length === 2 && val !== undefined){
         var key = filter;
-        filter = function(Node){return Node.attr(key) === val;}
+        filter = function(Node){return Node.attr(key) === val;};
     }
     return filterBy(filter, this._nodes);
 }
@@ -550,7 +553,7 @@ function getLinksOP(filter, val){
 function getLinks(filter, val) {
     if(arguments.length === 2 && val !== undefined){
         var key = filter;
-        filter = function(Node){return Node.attr(key) === val;}
+        filter = function(Node){return Node.attr(key) === val;};
     }
     
     return filterBy(filter, this._links);
@@ -598,7 +601,7 @@ function getRenderedLinks() {
     });
 }
 
-function appendPreDefs () {
+var appendPreDefs = function () {
     var self = this;
     var str = '<defs>'+
                         '<filter id="shadow" x="-20%" y="-20%" width="200%" height="200%" type="Shadow" shadowoffsetx="5" shadowoffsety="5" shadowblur="5" shadowcolor="rgba(0,0,0)">' +
@@ -627,9 +630,9 @@ function appendPreDefs () {
     function arrowAttr(selection){
         selection.style('fill', self._config.linkColor);
     }
-}
+};
 
-function appendPreElement () {
+var appendPreElement = function () {
     var svg = this.svgSelection();
     this._brushSelection = svg.append("g").attr("class", "brush");
 
@@ -637,9 +640,9 @@ function appendPreElement () {
     
     forceGroup.append("g").attr("class", "links");
     forceGroup.append("g").attr("class", "nodes");
-}
+};
 
-function Zoom() {
+var Zoom = function() {
     var self = this;
     return d3.zoom().scaleExtent([this._config.minScale, this._config.maxScale])
         .on('start', function () {
@@ -649,9 +652,9 @@ function Zoom() {
         .on('end', function () {
             self._config.onZoomEnd.call(this);
         });
-}
+};
 
-function Brush () {
+var Brush = function () {
     var self = this;
     var brush = d3.brush()
         .extent([[0, 0], [3840, 2400]])
@@ -689,9 +692,9 @@ function Brush () {
     };
 
     return brush;
-}
+};
 
-function dragNode () {
+var dragNode = function () {
     var self = this;
     var drag = d3.drag()
         .on("start", function (Node) {
@@ -702,9 +705,9 @@ function dragNode () {
 
         });
     return drag;
-}
+};
 
-function init () {
+var init = function () {
     //init trigger only once a graph
     if(this._hasInit) return;
 
@@ -745,19 +748,336 @@ function init () {
     this.dragNode = dragNode.call(this);
 
     this._hasInit = true;
-}
+};
 
-function getAbsUrl (url) {
+/**
+ * Created by lcx on 2016/11/1.
+ * 利用canvas 画点 
+ */
+var drawCanvasNode = function (canvasObj) {
+    var nodes = canvasObj.nodes;
+    var context = canvasObj.context;
+
+    nodes.forEach(function(Node,i) {
+        var x = Node.getX();
+        var y = Node.getY();
+        var r = Node.radius;
+
+        // canvasObj.nodesCache[i].width = r*2;
+        // canvasObj.nodesCache[i].height = r*2;
+
+        // var context = canvasObj.nodesCache[i].getContext('2d');
+
+        // console.log(Node.selected());
+        context.beginPath();
+        var radius = Node.selected ? Node.radius-5 : Node.radius;
+        context.fillStyle = Node.color;
+        context.moveTo(x, y);
+        if(Node.selected){
+            context.strokeStyle = '#f65565';
+            context.lineWidth=10;
+        }else{
+            context.strokeStyle=Node.color;
+            context.lineWidth=1;
+        }
+        
+        context.arc(x, y, radius, 0, 2 * Math.PI);
+        context.stroke();
+        context.fill();
+
+        //画字
+        //在点的旁边写对应文字
+        context.beginPath();
+        if(Node.selected){
+            //有点选状态
+            var labelLength = context.measureText(Node.label).width+10;
+            context.fillStyle='#f65565';
+            context.fillRect(x+radius,y+radius,labelLength,20);
+        }
+        context.strokeWidth = 1;
+        context.fillStyle = '#555';
+        context.font="16px 微软雅黑";
+        context.textAlign='left';
+        context.textBaseline='hanging';
+        var label = '';
+        if(Node.selected){
+            label = Node.label;
+        }else{
+            if(Node.label.length>8){
+                label = Node.label.slice(0,8)+'...';
+            }else{
+                label = Node.label;
+            }
+        }
+        context.fillText(label,x+r,y+r);
+
+    });
+};
+
+/**
+ * Created by lcx on 2016/11/2.
+ */
+var drawArrow = function(ctx,link,lineWidth,x,y) {
+    var targetLink = false;
+    var s1 = link.source.getX();
+    var e1 = link.source.getY();
+    var s2 = link.target.getX();
+    var e2 = link.target.getY();
+    var text = link.label;
+    var r ,r1;//r1 为source 的 半径
+
+    // 判断哪个是source 哪个是target
+    if(link.hasSourceArrow() && link.hasTargetArrow()){
+        //双箭头
+        r = link.target.radius;
+        r1 = link.source.radius;
+        draw(e1,s1,e2,s2,true);
+    }else if(link.hasSourceArrow()){
+        r = link.source.radius;
+        r1 = link.target.radius;
+        //箭头指向source
+        draw(e2,s2,e1,s1);
+    }else if(link.hasTargetArrow()){
+        r = link.target.radius;
+        r1 = link.source.radius;
+        //箭头指向target
+        draw(e1,s1,e2,s2);
+    }
+
+    function draw(e1, s1, e2, s2,isDouble) {
+        //1  --- source   2  ----target
+        var l = Math.sqrt((s2-s1)*(s2-s1) + (e2-e1)*(e2-e1));
+        var sin = (e2-e1)/l;
+        var cos = (s2-s1)/l;
+        var xlen = (r+lineWidth)*cos;
+        var ylen = (r+lineWidth)*sin;
+
+        var dx = (r+lineWidth)*cos;
+        var dy = (r+lineWidth)*sin;
+
+        var sdx = (r1+lineWidth)*cos;
+        var sdy = (r1+lineWidth)*sin;
+        var x2,y2,x1,y1;
+        x2 = s2-dx;
+        y2 = e2-dy;
+        x1 = s1+sdx;
+        y1 = e1+sdy;
+
+        var lineList = [];
+        lineList.push([x2,y2]);
+        if(!isDouble){
+            var targetArrow = calcArrow(x1,y1,x2,y2);
+
+            var x3 = (targetArrow.a1+targetArrow.a2)/2;
+            var y3 = (targetArrow.b1+targetArrow.b2)/2;
+
+            var a3 = (targetArrow.a1+x3)/2;
+            var b3 = (targetArrow.b1+y3)/2;
+            var a4 = (x3+targetArrow.a2)/2;
+            var b4 = (y3+targetArrow.b2)/2;
+
+            var a5 = a3-x3+x1;
+            var b5 = b3-y3+y1;
+
+            var a6 = a4-x3+x1;
+            var b6 = b4-y3+y1;
+            lineList.push([targetArrow.a1,targetArrow.b1]);
+            lineList.push([a3,b3]);
+            lineList.push([a5,b5]);
+            lineList.push([x1,y1]);
+            lineList.push([a6,b6]);
+            lineList.push([a4,b4]);
+            lineList.push([targetArrow.a2,targetArrow.b2]);
+
+        }else{
+            //双箭头
+            var targetArrow = calcArrow(x1,y1,x2,y2);
+            var sourceArrow = calcArrow(x2,y2,x1,y1);
+
+            var x3 = (targetArrow.a1+targetArrow.a2)/2;
+            var y3 = (targetArrow.b1+targetArrow.b2)/2;
+
+            var x4 = (sourceArrow.a1+sourceArrow.a2)/2;
+            var y4 = (sourceArrow.b1+sourceArrow.b2)/2;
+
+            var a3 = (targetArrow.a1+x3)/2;
+            var b3 = (targetArrow.b1+y3)/2;
+            var a4 = (targetArrow.a2+x3)/2;
+            var b4 = (targetArrow.b2+y3)/2;
+
+            var a5 = (sourceArrow.a1+x4)/2;
+            var b5 = (sourceArrow.b1+y4)/2;
+            var a6 = (sourceArrow.a2+x4)/2;
+            var b6 = (sourceArrow.b2+y4)/2;
+            lineList.push([targetArrow.a1,targetArrow.b1]);
+            lineList.push([a3,b3]);
+            lineList.push([a6,b6]);
+            lineList.push([sourceArrow.a1,sourceArrow.b1]);
+            lineList.push([x1,y1]);
+            lineList.push([sourceArrow.a2,sourceArrow.b2]);
+            lineList.push([a5,b5]);
+            lineList.push([a4,b4]);
+            lineList.push([targetArrow.a2,targetArrow.b2]);
+        }
+
+        lineList.push([x2,y2]);
+
+        ctx.beginPath();
+        if(link.attr('selected')){
+            ctx.fillStyle = "#f00";
+        }else{
+            ctx.fillStyle = "#ccc";
+        }
+        ctx.lineWidth = 3;
+        ctx.moveTo(lineList[0][0],lineList[0][1]);
+        for(var i=1;i<lineList.length;i++){
+            ctx.lineTo(lineList[i][0],lineList[i][1]);
+        }
+        if(ctx.isPointInPath(x,y)){
+            targetLink = true;
+        }
+        ctx.fill();
+
+        //绘制文字
+        // ctx.beginPath();
+        ctx.strokeWidth = 0;
+        ctx.fillStyle = '#555';
+        ctx.font="16px 微软雅黑";
+        ctx.fillText(text,(s2+s1)/2,(e2+e1)/2);
+    }
+
+    //计算箭头两端坐标
+    function calcArrow(x1, y1, x2, y2) {
+        //进行箭头的绘制
+        var angle = Math.abs(Math.atan((x2 - x1) / (y2 - y1))); //倾斜角余角
+        var length = 10; //箭头斜线长度
+        var degree = Math.PI / 6; //箭头倾斜角
+        var theta = 0;
+        var altha = 0;
+        var a1 = 0;
+        var b1 = 0;
+        var a2 = 0;
+        var b2 = 0;
+        //a1，b1  求箭头的坐标
+
+        if (angle >= degree && angle <= Math.PI / 2 - degree) {
+            theta = angle - degree;
+            altha = Math.PI / 2 - 2 * degree - theta;
+            if (x2 >= x1) {
+                a1 = x2 - length * Math.sin(theta);
+                a2 = x2 - length * Math.cos(altha);
+            } else {
+                a1 = x2 + length * Math.sin(theta);
+                a2 = x2 + length * Math.cos(altha);
+            }
+            if (y2 >= y1) {
+                b1 = y2 - length * Math.cos(theta);
+                b2 = y2 - length * Math.sin(altha);
+            } else {
+                b1 = y2 + length * Math.cos(theta);
+                b2 = y2 + length * Math.sin(altha);
+            }
+        } else {
+            theta = angle - degree;
+            altha = theta + 2 * degree - Math.PI / 2;
+            if (x2 >= x1 && y2 >= y1) {
+                a1 = x2 - length * Math.sin(theta);
+                b1 = y2 - length * Math.cos(theta);
+                a2 = x2 - length * Math.cos(altha);
+                b2 = y2 + length * Math.sin(altha);
+            } else if (x2 >= x1 && y2 < y1) {
+                a1 = x2 - length * Math.sin(theta);
+                b1 = y2 + length * Math.cos(theta);
+                a2 = x2 - length * Math.cos(altha);
+                b2 = y2 - length * Math.sin(altha);
+            } else if (x2 < x1 && y2 < y1) {
+                a1 = x2 + length * Math.sin(theta);
+                b1 = y2 + length * Math.cos(theta);
+                a2 = x2 + length * Math.cos(altha);
+                b2 = y2 - length * Math.sin(altha);
+            } else {
+                a1 = x2 + length * Math.sin(theta);
+                b1 = y2 - length * Math.cos(theta);
+                a2 = x2 + length * Math.cos(altha);
+                b2 = y2 + length * Math.sin(altha);
+            }
+        }
+        return {
+            a1:a1,
+            b1:b1,
+            a2:a2,
+            b2:b2
+        };
+    }
+    return targetLink;
+
+};
+
+/**
+ * Created by lcx on 2016/11/1.
+ * 利用canvas 画线
+ */
+var drawCanvasLink = function (canvasObj,x,y) {
+    //取得经过计算之后的links 数据
+    var links = canvasObj.links;
+    var context = canvasObj.context;
+
+    //进行绘制
+    context.strokeStyle = "#ccc";
+    var targetLink = null;
+    for(var i=0;i<links.length;i++){
+     /*   canvasObj.linksCache[i].width = Math.abs(links[i].source.x-links[i].target.x);
+        canvasObj.linksCache[i].height = Math.abs(links[i].source.y-links[i].target.y);
+        var cacheCtx = canvasObj.linksCache[i].getContext('2d');*/
+        var tag = drawArrow(context,links[i],3,x,y);
+        if(tag) targetLink = links[i];
+
+    }
+    return targetLink;
+};
+
+/**
+ * Created by lcx on 2016/12/8.
+ */
+var initCache = function () {
+    var that = this;
+    var nodes = that.getNodes();
+    var links = that.getLinks();
+    var nodesCache = [],linksCache = [];
+
+    for(var i=0;i<nodes.length;i++){
+        var tempCanvas = document.createElement('canvas');
+        nodesCache.push(tempCanvas);
+    }
+    for(var j=0;j<links.length;j++){
+        var tempCanvas = document.createElement('canvas');
+        linksCache.push(tempCanvas);
+    }
+    this.linksCache = linksCache;
+    this.nodesCache = nodesCache;
+    var canvasObj = {
+        nodes:that.getRenderedNodes(),
+        links:that.getRenderedLinks(),
+        linksCache:that.linksCache,
+        nodesCache:that.nodesCache
+    };
+    console.log('initCache');
+    drawCanvasLink(canvasObj);
+    drawCanvasNode(canvasObj);
+
+};
+
+var getAbsUrl = function (url) {
     return (url || window.location.href).split('#')[0];
-}
+};
 
-function drawNodesSvg (renderType) {
+var drawNodesSvg = function (renderType) {
  
     var self = this;
     var nodes = this.nodesSelection().data(this.getRenderedNodes(), function (Node) { return Node.id;});
 
     var g = nodes.enter().append('g')
-        .each(function(Node){ Node.element = this })//reference element to Node
+        .each(function(Node){ Node.element = this; })//reference element to Node
         .classed('node', true)
         .on('mousedown.select', function(Node, i){
             if(!d3.event.ctrlKey){
@@ -834,17 +1154,17 @@ function drawNodesSvg (renderType) {
             .select('span')
             .text(function (Node) { return Node.attr("label"); });
     }
-}
+};
 
-function unique (array) {
+var unique = function (array) {
     var n = [];
     for (var i = 0; i < array.length; i++) {
         if (n.indexOf(array[i]) == -1) n.push(array[i]);
     }
     return n;
-}
+};
 
-function drawLinksSvg (renderType) {
+var drawLinksSvg = function (renderType) {
     var self = this;
     var scale = self.currentTransform().k;
     
@@ -854,7 +1174,7 @@ function drawLinksSvg (renderType) {
 
     var link = links.enter()
         .append('g')
-        .each(function(Link){ Link.element = this })
+        .each(function(Link){ Link.element = this; })
         .classed('link', true)
         .call(this._config.bindLinkEvent);
     
@@ -931,7 +1251,7 @@ function drawLinksSvg (renderType) {
             .text(function (Link) {return Link.attr("label");});
     
         info.select('.icon')
-            .attr('class', function(Link){ return self._config.iconPrefix + Link.attr("icon");})
+            .attr('class', function(Link){ return self._config.iconPrefix + Link.attr("icon");});
     }
     
     function addArrowByColor(){
@@ -971,130 +1291,7 @@ function drawLinksSvg (renderType) {
                 .style("fill", function(v){return v});
         }
     }
-}
-
-function drawNodeCanvas () {
-    
-}
-
-/**
- * Created by lcx on 2016/11/2.
- */
-function drawArrow(ctx,link,lineWidth) {
-    var s1 = link.source.getX();
-    var e1 = link.source.getY();
-    var s2 = link.target.getX();
-    var e2 = link.target.getY();
-    var r = link.target.radius();
-    var text = link.label();
-
-    //计算x2 y2,x1 y1 的坐标 因为若是带箭头的话，不能从两个圆圈的中心点出发去画
-    var l = Math.sqrt((s2-s1)*(s2-s1) + (e2-e1)*(e2-e1));
-    var sin = (e2-e1)/l;
-    var cos = (s2-s1)/l;
-    var xlen = (r+lineWidth)*cos;
-    var ylen = (r+lineWidth)*sin;
-
-    var dx = (r+lineWidth)*cos;
-    var dy = (r+lineWidth)*sin;
-    var x2 = s2-dx;
-    var y2 = e2-dy;
-    var x1 = s1+dx;
-    var y1 = e1+dy;
-    
-    //进行箭头的绘制
-    var angle = Math.abs(Math.atan((x2 - x1) / (y2 - y1))); //倾斜角余角
-    var length = 10; //箭头斜线长度
-    var degree = Math.PI / 6; //箭头倾斜角
-    var theta = 0;
-    var altha = 0;
-    var a1 = 0;
-    var b1 = 0;
-    var a2 = 0;
-    var b2 = 0;
-
-    if (angle >= degree && angle <= Math.PI / 2 - degree) {
-        theta = angle - degree;
-        altha = Math.PI / 2 - 2 * degree - theta;
-        if (x2 >= x1) {
-            a1 = x2 - length * Math.sin(theta);
-            a2 = x2 - length * Math.cos(altha);
-        } else {
-            a1 = x2 + length * Math.sin(theta);
-            a2 = x2 + length * Math.cos(altha);
-        }
-        if (y2 >= y1) {
-            b1 = y2 - length * Math.cos(theta);
-            b2 = y2 - length * Math.sin(altha);
-        } else {
-            b1 = y2 + length * Math.cos(theta);
-            b2 = y2 + length * Math.sin(altha);
-        }
-    } else {
-        theta = angle - degree;
-        altha = theta + 2 * degree - Math.PI / 2;
-        if (x2 >= x1 && y2 >= y1) {
-            a1 = x2 - length * Math.sin(theta);
-            b1 = y2 - length * Math.cos(theta);
-            a2 = x2 - length * Math.cos(altha);
-            b2 = y2 + length * Math.sin(altha);
-        } else if (x2 >= x1 && y2 < y1) {
-            a1 = x2 - length * Math.sin(theta);
-            b1 = y2 + length * Math.cos(theta);
-            a2 = x2 - length * Math.cos(altha);
-            b2 = y2 - length * Math.sin(altha);
-        } else if (x2 < x1 && y2 < y1) {
-            a1 = x2 + length * Math.sin(theta);
-            b1 = y2 + length * Math.cos(theta);
-            a2 = x2 + length * Math.cos(altha);
-            b2 = y2 - length * Math.sin(altha);
-        } else {
-            a1 = x2 + length * Math.sin(theta);
-            b1 = y2 - length * Math.cos(theta);
-            a2 = x2 + length * Math.cos(altha);
-            b2 = y2 + length * Math.sin(altha);
-        }
-    }
-
-    ctx.beginPath();
-    ctx.strokeStyle = "#ccc";
-    ctx.lineWidth = 3;
-    ctx.moveTo(x1, y1);
-    ctx.lineTo(x2, y2);
-    ctx.stroke();
-    ctx.moveTo(a1, b1);
-    ctx.lineTo(x2, y2);
-    ctx.lineTo(a2, b2);
-    ctx.stroke();
-    //绘制文字
-    // ctx.beginPath();
-    ctx.strokeWidth = 0;
-    ctx.fillStyle = '#555';
-    ctx.font="16px 微软雅黑";
-    ctx.fillText(text,(s2+s1)/2,(e2+e1)/2);
-
-}
-
-/**
- * Created by lcx on 2016/11/1.
- * 利用canvas 画线
- */
-function drawLinkCanvas (canvasObj) {
-    //取得经过计算之后的links 数据
-    var links = canvasObj.links;
-    var context = canvasObj.context;
-    //进行绘制
-    // context.beginPath();
-    context.strokeStyle = "#ccc";
-    context.lineWidth = 3;
-    for(var i=0;i<links.length;i++){
-        // drawArrow(context,links[i].source.getX(), links[i].source.getY(),links[i].target.getX(), links[i].target.getY(),links[i].target.radius(),3);
-        drawArrow(context,links[i],3);
-        // context.moveTo(links[i].source.getX(), links[i].source.getY());
-        // context.lineTo(links[i].target.getX(), links[i].target.getY());
-    }
-    // context.stroke();
-}
+};
 
 function findPoint(nodes,x, y) {
     var i,
@@ -1107,7 +1304,7 @@ function findPoint(nodes,x, y) {
     // var nodes = this.getRenderedNodes();
 
     for (i = nodes.length - 1; i >= 0; --i) {
-        var r = nodes[i].radius();
+        var r = nodes[i].radius;
         var point = nodes[i];
         var xx = point.x;
         var yy = point.y;
@@ -1126,7 +1323,7 @@ function findPoint(nodes,x, y) {
 /**
  * Created by lcx on 2016/11/1.
  */
-function convertToCanvasCor(canvas,x, y) {
+var convertToCanvasCor = function(canvas,x, y) {
     // var canvas = this._canvas;
     var res = {};
     var cBox = canvas.getBoundingClientRect();
@@ -1135,19 +1332,46 @@ function convertToCanvasCor(canvas,x, y) {
     res.x = x - cx;
     res.y = y - cy;
     return res;
-}
+};
 
-function drawCanvas () {
+/**
+ * Created by lcx on 2016/11/7.
+ */
+var findLinks = function (canvasObj, x, y) {
+    // console.log(links);
+    var context = canvasObj.context;
+    var target = null;
+    function render(x,y) {
+        context.clearRect(0, 0, canvasObj.canvas.width, canvasObj.canvas.height);
+        context.save();
+        context.translate(canvasObj.transform.x, canvasObj.transform.y);
+        context.scale(canvasObj.transform.k, canvasObj.transform.k);
+        target = drawCanvasLink(canvasObj,x,y);
+        drawCanvasNode(canvasObj);
+        context.restore();
+    }
+    render(x,y);
+    return target;
+
+};
+
+/**
+ * Created by lcx on 2016/12/8.
+ */
+
+var drawCanvas = function () {
     var that = this;
     var context = this.element.getContext("2d");
     // console.log(that._getCurrentTransform());
     //绘制的canvas 对象，在优化的时候可以对nodes 和 links 的数据进行相应的分组优化
     var canvas = {
-        element:that.element,
+        canvas:that.element,
         context:context,
         nodes:this.getRenderedNodes(),
         links:this.getRenderedLinks(),
-        transform:that.currentTransform()
+        transform:that.currentTransform(),
+        nodesCache:that.nodesCache,//离屏缓存canvas
+        linksCache:that.linksCache
     };
 
 
@@ -1171,15 +1395,17 @@ function drawCanvas () {
     // that._hasInit = true;
 
 
-    function render() {
+    //若x,y 有值，则为单击时的重新渲染
+    function render(x,y) {
         canvas.nodes = that.getRenderedNodes();
         canvas.links = that.getRenderedLinks();
         context.clearRect(0, 0, that.element.width, that.element.height);
         context.save();
         context.translate(canvas.transform.x, canvas.transform.y);
         context.scale(canvas.transform.k, canvas.transform.k);
-        drawLinkCanvas(canvas);
-        drawNodeCanvas(canvas);
+        // drawCache(canvas,x,y);
+        drawCanvasLink(canvas,x,y);
+        drawCanvasNode(canvas);
         context.restore();
     }
 
@@ -1187,24 +1413,70 @@ function drawCanvas () {
     //单击事件
     function _click(d) {
         var p = convertToCanvasCor(that.element, d3.event.x, d3.event.y);
+        // var p = convertToCanvasCor(that._canvas,d3.event.x,d3.event.y);
         var x = canvas.transform.invertX(p.x);
         var y = canvas.transform.invertY(p.y);
         var targetNode = findPoint(canvas.nodes,x,y);
+        var targetLink = null;
+        if(!targetNode) targetLink = findLinks(canvas,p.x,p.y);
         //调用click 的回调函数
-        // console.log(targetNode);
-        // console.log(targetNode);
-        // render();
         if(targetNode){
             if(!d3.event.ctrlKey){
-                if(targetNode.selected()) return;
-                that.unselectNodes();
+                if(targetNode.selected) return;
+                that.getSelectedNodes().forEach(function (node) {
+                    node.attr('selected',false);
+                });
+                that.getSelectedLinks().forEach(function (link) {
+                    link.attr('selected',false);
+                });
             }
-            targetNode.selected(!targetNode.selected());
+            targetNode.attr('selected',!targetNode.selected);
         }else{
-            console.log(context.isPointInPath(x,y));
-            // targetNode = findLinks(context,canvas.links,x,y);
-            // console.log(targetNode);
-            that.unselectNodes();
+            if(targetLink){
+                //选中lilnk
+                if(!d3.event.ctrlKey){
+                    if(targetLink.select) return;
+                    that.getSelectedLinks().forEach(function (link) {
+                        link.attr('selected',false);
+                    });
+                    that.getSelectedNodes().forEach(function (node) {
+                        node.attr('selected',false);
+                    });
+                }
+                if(targetLink.attr('selected')){
+                    //取消选中 箭头指向的点
+                    if(targetLink.hasSourceArrow() && targetLink.hasTargetArrow()){
+                        //
+                        targetLink.source.attr('selected',false);
+                        targetLink.target.attr('selected',false);
+                    }else if(targetLink.hasSourceArrow()){
+                        targetLink.source.attr('selected',false);
+                    }else if(targetLink.hasTargetArrow()){
+                        targetLink.target.attr('selected',false);
+                    }
+                }else{
+                    //选中 箭头指向的点
+                    if(targetLink.hasSourceArrow() && targetLink.hasTargetArrow()){
+                        //
+                        targetLink.source.attr('selected',true);
+                        targetLink.target.attr('selected',true);
+                    }else if(targetLink.hasSourceArrow()){
+                        targetLink.source.attr('selected',true);
+                    }else if(targetLink.hasTargetArrow()){
+                        targetLink.target.attr('selected',true);
+                    }
+                }
+                targetLink.attr('selected',!targetLink.selected);
+
+            }else{
+                that.getSelectedNodes().forEach(function (node) {
+                    node.attr('selected',false);
+                });
+                that.getSelectedLinks().forEach(function (link) {
+                    link.attr('selected',false);
+                });
+            }
+
         }
 
     }
@@ -1294,18 +1566,18 @@ function drawCanvas () {
         render();
     }
 
-}
+};
 
-function draw (renderType, canvasType) {
+var draw = function (renderType, canvasType) {
     if(canvasType === 'svg'){
         drawNodesSvg.call(this, renderType);
         drawLinksSvg.call(this, renderType);
     }else if(canvasType === 'CANVAS'){
         drawCanvas.call(this);
     }
-}
+};
 
-function zoomed () {
+var zoomed = function () {
     //不可移动
     if (!this.movable) {
         //将变换前的translate值赋给变换后的translate值,保持位置不变
@@ -1329,7 +1601,7 @@ function zoomed () {
     if(previousScale >= hideScale && currentScale <= hideScale) this.render();
     //panning don't need re-render, render only after zooming
     if(currentScale !== previousScale && currentScale > hideScale) this.render();
-}
+};
 
 function transform(k, x, y, duration) {
     var transformed = d3.zoomIdentity;
@@ -1377,7 +1649,7 @@ function focus(filter, duration){
             .translate(-xCenter, -yCenter);
     
         this.svgSelection(duration || 1000).call(this.zoom.transform, transformed);
-    }.bind(this), 0)
+    }.bind(this), 0);
 }
 
 function keydowned() {
@@ -1401,14 +1673,14 @@ function keyupped() {
     }
 }
 
-function draged (currentNode) {
+var draged = function (currentNode) {
     var nudgedNodes = this.getSelectedNodes();
     for(var i = nudgedNodes.length; i--;){
         nudgedNodes[i]._nudge(d3.event.dx, d3.event.dy, true);
         this.updateDOM.addObj(nudgedNodes[i]);
     }
     this.delayRender(null, RENDER_TYPE.NUDGE);
-}
+};
 
 const DEFAULT_CONFIG = {
     radius: 15,
@@ -1463,7 +1735,7 @@ function UpdateDOM(graph){
     this.graph = graph;
     this._updateNodes = [];
     this._updateLinks = [];
-};
+}
 
 UpdateDOM.prototype = {
     constructor: UpdateDOM,
@@ -1483,8 +1755,8 @@ function addObj(Obj, renderType){
         if(renderType === RENDER_TYPE.NUDGE){
             var selectedNodes = this.graph.getSelectedNodes();
             var relatedLinks = this.graph.getRelatedLinks(selectedNodes);
-            relatedLinks.forEach(function(Link){
-                this._addLink(Link);
+            relatedLinks.forEach(function(Link$$1){
+                this._addLink(Link$$1);
             }, this);
             
         }
@@ -1492,20 +1764,20 @@ function addObj(Obj, renderType){
     if(Obj instanceof Link) this._addLink(Obj);
 }
 
-function addNode$1(Node){
-    if(this._updateNodes.indexOf(Node) === -1) this._updateNodes.push(Node);
+function addNode$1(Node$$1){
+    if(this._updateNodes.indexOf(Node$$1) === -1) this._updateNodes.push(Node$$1);
 }
 
-function addLink$1(Link){
-    if(this._updateLinks.indexOf(Link) === -1) this._updateLinks.push(Link);
+function addLink$1(Link$$1){
+    if(this._updateLinks.indexOf(Link$$1) === -1) this._updateLinks.push(Link$$1);
 }
 
 function getNodesEle(){
-    return this._updateNodes.map(function(Node){return Node.element;});
+    return this._updateNodes.map(function(Node$$1){return Node$$1.element;});
 }
 
 function getLinksEle(){
-    return this._updateLinks.map(function(Link){return Link.element;});
+    return this._updateLinks.map(function(Link$$1){return Link$$1.element;});
 }
 
 function clearUpdateNodes(){
@@ -1516,10 +1788,10 @@ function clearUpdateLinks(){
     this._updateLinks = [];
 }
 
-function Graph(selector, config) {
+function Graph(selector$$1, config$$1) {
     
-    this.selector(selector);
-    this.config(config);
+    this.selector(selector$$1);
+    this.config(config$$1);
     
     this._hasInit = false; //init only once
     
@@ -1568,6 +1840,7 @@ Graph.prototype = {
     _keydowned: keydowned,
     _keyupped: keyupped,
     _init: init,
+    _initCache:initCache,
     _draw: draw,
     _zoomed: zoomed,
     currentTransform: function(){
@@ -1595,21 +1868,21 @@ Graph.prototype = {
     }
 };
 
-function index (selector, config) {
-    return new Graph(selector, config);
-}
+var index = function (selector$$1, config$$1) {
+    return new Graph(selector$$1, config$$1);
+};
 
-function filterById (id, Nodes) {
+var filterById = function (id, Nodes) {
     return Nodes.filter(function(Node){
         return Node.id === id;
     })[0];
-}
+};
 
-function parseHTML (str) {
+var parseHTML = function (str) {
     var tmp = document.implementation.createHTMLDocument();
     tmp.body.innerHTML = str;
     return tmp.body.children[0];
-}
+};
 
 function direction(Links){
     var src = Links[0].getSourceId();
@@ -1632,9 +1905,9 @@ function direction(Links){
     }, DIRECTION.NONE);
 }
 
-function safeExecute (maybeFunction) {
+var safeExecute = function (maybeFunction) {
     return (maybeFunction instanceof Function)? maybeFunction(): maybeFunction;
-}
+};
 
 var utils = {
     filterBy: filterBy,
@@ -1648,6 +1921,8 @@ var utils = {
     direction: direction,
     safeExecute: safeExecute
 };
+
+//only for test now
 
 exports.graph = index;
 exports.utils = utils;
