@@ -35,12 +35,30 @@
 <script src="../node_modules/jquery/dist/jquery.min.js"></script>
 <script src="../dist/js/g3.js"></script>
 <script>
+    var nodes = [], links = [];
+    for (var i = 1000; i--;) {
+        nodes.push({
+                       id: i,
+                       label: i,
+                       radius: randomInt(7, 15),
+                       x: randomInt(0, 1920),
+                       y: randomInt(0, 800)
+                   });
 
-    var myGraph = g3.graph("#my-graph");
+        links.push({
+                       id: i,
+                       label: i,
+                       src: randomInt(1, 2000),
+                       dst: randomInt(1, 2000)
+                   });
+    }
 
-    $.getJSON('http://localhost/magneto_api/g3.php/nodes')
-            .then(function(data){
-                myGraph.nodes(data.nodes)
-                        .links(data.links);
-            });
+
+    var myGraph = g3.graph("#my-graph")
+        .nodes(nodes)
+        .links(links);
+
+    function randomInt(min, max) {
+        return Math.floor(Math.random() * (max - min + 1) + min);
+    }
 </script>
