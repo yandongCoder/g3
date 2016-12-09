@@ -33,7 +33,6 @@ function _render(renderType) {
     return this;
     
     function draw(renderType){
-        console.log('draw');
         self._draw(renderType, canvasType);
     }
 }

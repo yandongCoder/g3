@@ -10,11 +10,11 @@ export default function () {
     }
     //Graph._ifShowLabels();
     
-    var previousScale = this._getForceGroup()._pScale;
+    var previousScale = this.graphGroup._pScale;
     var currentScale = this.currentTransform().k.toFixed(4) / 1;
     //缩放网络图
-    this._getForceGroup().attr("transform", "translate(" + d3.event.transform.x + ", "+ d3.event.transform.y + ") scale(" + currentScale + ")");
-    this._getForceGroup()._pScale = currentScale;
+    this.graphGroup.attr("transform", "translate(" + d3.event.transform.x + ", "+ d3.event.transform.y + ") scale(" + currentScale + ")");
+    this.graphGroup._pScale = currentScale;
     
     var hideScale = d3.min([this._config.scaleOfHideNodeLabel, this._config.scaleOfHideLinkLabel]);
     

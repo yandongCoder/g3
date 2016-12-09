@@ -1,8 +1,8 @@
 //g3
 (function (global, factory) {
-    typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
-    typeof define === 'function' && define.amd ? define(['exports'], factory) :
-    (factory((global.g3 = global.g3 || {})));
+   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
+   typeof define === 'function' && define.amd ? define(['exports'], factory) :
+   (factory((global.g3 = global.g3 || {})));
 }(this, (function (exports) { 'use strict';
 
 const DIRECTION = {
@@ -62,7 +62,6 @@ function _render(renderType) {
     return this;
     
     function draw(renderType){
-        console.log('draw');
         self._draw(renderType, canvasType);
     }
 }
@@ -633,10 +632,10 @@ function appendPreElement () {
     var svg = this.svgSelection();
     this._brushSelection = svg.append("g").attr("class", "brush");
 
-    var forceGroup = this._forceGroupSelection = svg.append('g').attr('class', 'force');
+    var graphGroup = this.graphGroup = svg.append('g').attr('class', 'graph-group');
     
-    forceGroup.append("g").attr("class", "links");
-    forceGroup.append("g").attr("class", "nodes");
+    graphGroup.append("g").attr("class", "links");
+    graphGroup.append("g").attr("class", "nodes");
 }
 
 function Zoom() {
@@ -973,20 +972,75 @@ function drawLinksSvg (renderType) {
     }
 }
 
-function drawNodeCanvas () {
-    
+/**
+ * Created by lcx on 2016/11/1.
+ * 利用canvas 画点 
+ */
+function drawCanvasNode (canvasObj) {
+    var nodes = canvasObj.nodes;
+    var context = canvasObj.context;
+
+    nodes.forEach(function(Node) {
+        var x = Node.getX();
+        var y = Node.getY();
+        var r = Node.radius;
+        // console.log(Node.selected());
+        context.beginPath();
+        var radius = Node.selected ? Node.radius-5 : Node.radius;
+        context.fillStyle = Node.color;
+        context.moveTo(x, y);
+        if(Node.selected){
+            context.strokeStyle = '#f65565';
+            context.lineWidth=10;
+        }else{
+            context.strokeStyle=Node.color;
+            context.lineWidth=1;
+        }
+        
+        context.arc(x, y, radius, 0, 2 * Math.PI);
+        context.stroke();
+        context.fill();
+
+        //画字
+        //在点的旁边写对应文字
+        context.beginPath();
+        if(Node.selected){
+            //有点选状态
+            var labelLength = context.measureText(Node.label).width+10;
+            context.fillStyle='#f65565';
+            context.fillRect(x+radius,y+radius,labelLength,20);
+        }
+        context.strokeWidth = 1;
+        context.fillStyle = '#555';
+        context.font="16px 微软雅黑";
+        context.textAlign='left';
+        context.textBaseline='hanging';
+        var label = '';
+        if(Node.selected){
+            label = Node.label;
+        }else{
+            if(Node.label.length>8){
+                label = Node.label.slice(0,8)+'...';
+            }else{
+                label = Node.label;
+            }
+        }
+        context.fillText(label,x+r,y+r);
+
+    });
 }
 
 /**
  * Created by lcx on 2016/11/2.
  */
-function drawArrow(ctx,link,lineWidth) {
+function drawArrow(ctx,link,lineWidth,x,y) {
+    var targetLink = false;
     var s1 = link.source.getX();
     var e1 = link.source.getY();
     var s2 = link.target.getX();
     var e2 = link.target.getY();
-    var r = link.target.radius();
-    var text = link.label();
+    var r = link.target.radius;
+    var text = link.label;
 
     //计算x2 y2,x1 y1 的坐标 因为若是带箭头的话，不能从两个圆圈的中心点出发去画
     var l = Math.sqrt((s2-s1)*(s2-s1) + (e2-e1)*(e2-e1));
@@ -1057,21 +1111,38 @@ function drawArrow(ctx,link,lineWidth) {
     }
 
     ctx.beginPath();
+    if(link.attr('selected')){
+        ctx.strokeStyle = "#800";
+    }else{
+        ctx.strokeStyle = "#ccc";
+    }
     ctx.strokeStyle = "#ccc";
     ctx.lineWidth = 3;
     ctx.moveTo(x1, y1);
     ctx.lineTo(x2, y2);
-    ctx.stroke();
+    // ctx.lineTo(x1, y1);
+   /* ctx.stroke();
+    if(ctx.isPointInPath(x,y)){
+        targetLink = true;
+    }*/
+    if(ctx.isPointInPath(x,y)){
+        targetLink = true;
+    }
     ctx.moveTo(a1, b1);
     ctx.lineTo(x2, y2);
     ctx.lineTo(a2, b2);
+    if(ctx.isPointInPath(x,y)){
+        targetLink = true;
+    }
     ctx.stroke();
+
     //绘制文字
     // ctx.beginPath();
     ctx.strokeWidth = 0;
     ctx.fillStyle = '#555';
     ctx.font="16px 微软雅黑";
     ctx.fillText(text,(s2+s1)/2,(e2+e1)/2);
+    return targetLink;
 
 }
 
@@ -1079,7 +1150,7 @@ function drawArrow(ctx,link,lineWidth) {
  * Created by lcx on 2016/11/1.
  * 利用canvas 画线
  */
-function drawLinkCanvas (canvasObj) {
+function drawCanvasLink (canvasObj,x,y) {
     //取得经过计算之后的links 数据
     var links = canvasObj.links;
     var context = canvasObj.context;
@@ -1087,12 +1158,18 @@ function drawLinkCanvas (canvasObj) {
     // context.beginPath();
     context.strokeStyle = "#ccc";
     context.lineWidth = 3;
+    var targetLink = null;
     for(var i=0;i<links.length;i++){
         // drawArrow(context,links[i].source.getX(), links[i].source.getY(),links[i].target.getX(), links[i].target.getY(),links[i].target.radius(),3);
-        drawArrow(context,links[i],3);
+        /*console.log(x,y);
+        console.log(links[i]);*/
+        var tag = drawArrow(context,links[i],3,x,y);
+        if(tag) targetLink = links[i];
         // context.moveTo(links[i].source.getX(), links[i].source.getY());
         // context.lineTo(links[i].target.getX(), links[i].target.getY());
     }
+    console.log(targetLink);
+    return targetLink;
     // context.stroke();
 }
 
@@ -1107,7 +1184,7 @@ function findPoint(nodes,x, y) {
     // var nodes = this.getRenderedNodes();
 
     for (i = nodes.length - 1; i >= 0; --i) {
-        var r = nodes[i].radius();
+        var r = nodes[i].radius;
         var point = nodes[i];
         var xx = point.x;
         var yy = point.y;
@@ -1135,6 +1212,28 @@ function convertToCanvasCor(canvas,x, y) {
     res.x = x - cx;
     res.y = y - cy;
     return res;
+}
+
+/**
+ * Created by lcx on 2016/11/7.
+ */
+function findLinks (canvasObj, x, y) {
+    // console.log(links);
+    var context = canvasObj.context;
+    var target = null;
+    function render(x,y) {
+        context.clearRect(0, 0, canvasObj.canvas.width, canvasObj.canvas.height);
+        context.save();
+        context.translate(canvasObj.transform.x, canvasObj.transform.y);
+        context.scale(canvasObj.transform.k, canvasObj.transform.k);
+        target = drawCanvasLink(canvasObj,x,y);
+        drawCanvasNode(canvasObj);
+        context.restore();
+    }
+    render(x,y);
+    console.log(target);
+    return target;
+
 }
 
 function drawCanvas () {
@@ -1171,15 +1270,16 @@ function drawCanvas () {
     // that._hasInit = true;
 
 
-    function render() {
+    //若x,y 有值，则为单击时的重新渲染
+    function render(x,y) {
         canvas.nodes = that.getRenderedNodes();
         canvas.links = that.getRenderedLinks();
         context.clearRect(0, 0, that.element.width, that.element.height);
         context.save();
         context.translate(canvas.transform.x, canvas.transform.y);
         context.scale(canvas.transform.k, canvas.transform.k);
-        drawLinkCanvas(canvas);
-        drawNodeCanvas(canvas);
+        drawCanvasLink(canvas,x,y);
+        drawCanvasNode(canvas);
         context.restore();
     }
 
@@ -1187,24 +1287,44 @@ function drawCanvas () {
     //单击事件
     function _click(d) {
         var p = convertToCanvasCor(that.element, d3.event.x, d3.event.y);
+        console.log('click');
+        var p = convertToCanvasCor(that._canvas,d3.event.x,d3.event.y);
         var x = canvas.transform.invertX(p.x);
         var y = canvas.transform.invertY(p.y);
         var targetNode = findPoint(canvas.nodes,x,y);
+        var targetLink = null;
+        if(!targetNode) targetLink = findLinks(canvas,p.x,p.y);
         //调用click 的回调函数
-        // console.log(targetNode);
-        // console.log(targetNode);
-        // render();
         if(targetNode){
             if(!d3.event.ctrlKey){
-                if(targetNode.selected()) return;
-                that.unselectNodes();
+                if(targetNode.selected) return;
+                that.getSelectedNodes().forEach(function (node) {
+                    node.attr('selected',false);
+                });
             }
-            targetNode.selected(!targetNode.selected());
+            targetNode.attr('selected',!targetNode.selected);
         }else{
             console.log(context.isPointInPath(x,y));
-            // targetNode = findLinks(context,canvas.links,x,y);
-            // console.log(targetNode);
-            that.unselectNodes();
+            if(targetLink){
+                //选中lilnk
+                console.log(targetLink);
+                if(!d3.event.ctrlKey){
+                    if(targetLink.select) return;
+                    that.getSelectedLinks().forEach(function (link) {
+                        link.attr('selected',false);
+                    });
+                }
+                targetLink.attr('selected',!targetLink.selected);
+
+            }else{
+                that.getSelectedNodes().forEach(function (node) {
+                    node.attr('selected',false);
+                });
+                that.getSelectedLinks().forEach(function (link) {
+                    link.attr('selected',false);
+                });
+            }
+
         }
 
     }
@@ -1317,11 +1437,11 @@ function zoomed () {
     }
     //Graph._ifShowLabels();
     
-    var previousScale = this._getForceGroup()._pScale;
+    var previousScale = this.graphGroup._pScale;
     var currentScale = this.currentTransform().k.toFixed(4) / 1;
     //缩放网络图
-    this._getForceGroup().attr("transform", "translate(" + d3.event.transform.x + ", "+ d3.event.transform.y + ") scale(" + currentScale + ")");
-    this._getForceGroup()._pScale = currentScale;
+    this.graphGroup.attr("transform", "translate(" + d3.event.transform.x + ", "+ d3.event.transform.y + ") scale(" + currentScale + ")");
+    this.graphGroup._pScale = currentScale;
     
     var hideScale = d3.min([this._config.scaleOfHideNodeLabel, this._config.scaleOfHideLinkLabel]);
     
@@ -1589,9 +1709,6 @@ Graph.prototype = {
     },
     linksSelection: function(){
         return this.svgSelection().select('g.links').selectAll(".link");
-    },
-    _getForceGroup: function(){
-        return this._forceGroupSelection;
     }
 };
 

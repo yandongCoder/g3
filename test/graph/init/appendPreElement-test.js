@@ -8,9 +8,9 @@ tape("append element container correctly", function(test){
     g3.graph(svg)._render();
 
     test.notEqual(svg.querySelector("g.brush"), null);
-    test.notEqual(svg.querySelector("g.force"), null);
-    test.notEqual(svg.querySelector("g.force").querySelector('g.links'), null);
-    test.notEqual(svg.querySelector("g.force").querySelector('g.nodes'), null);
+    test.notEqual(svg.querySelector("g.graph-group"), null);
+    test.notEqual(svg.querySelector("g.graph-group").querySelector('g.links'), null);
+    test.notEqual(svg.querySelector("g.graph-group").querySelector('g.nodes'), null);
 
     test.end();
 });

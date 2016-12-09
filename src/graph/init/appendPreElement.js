@@ -2,8 +2,8 @@ export default function () {
     var svg = this.svgSelection();
     this._brushSelection = svg.append("g").attr("class", "brush");
 
-    var forceGroup = this._forceGroupSelection = svg.append('g').attr('class', 'force');
+    var graphGroup = this.graphGroup = svg.append('g').attr('class', 'graph-group');
     
-    forceGroup.append("g").attr("class", "links");
-    forceGroup.append("g").attr("class", "nodes");
+    graphGroup.append("g").attr("class", "links");
+    graphGroup.append("g").attr("class", "nodes");
 }
