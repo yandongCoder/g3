@@ -27,12 +27,9 @@ export default function (renderType) {
         .attr('class', 'text-group')
         .append("xhtml:div")
         .append('xhtml:span');
-    g.append('svg:foreignObject')
-        .attr('class', 'icon')
-        .append('xhtml:span');
-    g.append('svg:foreignObject')
-        .attr('class', 'mugshot')
-        .append('xhtml:img');
+    var avatar = g.append('svg:foreignObject').attr('class', 'avatar');
+    avatar.append('xhtml:span').attr('class', 'icon');
+    avatar.append('xhtml:img').attr('class', 'mugshot');
     g.call(updateAttr);
     
     //need update Nodes Element
@@ -57,15 +54,16 @@ export default function (renderType) {
             .attr("r", function(Node){ return Node.attr("radius");})
             .style("fill", function(Node){ return Node.attr("color"); });
         
-        selection.selectAll('.icon, .mugshot')
+        var avatar = selection.selectAll('.avatar')
             .attr("transform", function(Node){ return "translate(" + -Node.attr("radius") + ", "+ -Node.attr("radius") +")"; })
             .attr("width", function(Node){return Node.attr("radius")*2;})
             .attr("height", function(Node){return Node.attr("radius")*2;});
-        
-        selection.select('.icon').select('span')
-            .attr('class', function(Node){ return self._config.iconPrefix + Node.attr("icon");})
+    
+        avatar.select('.icon')
+            .attr('class', function(Node){ return "icon " + self._config.iconPrefix + Node.attr("icon");})
             .style("line-height", function(Node){return Node.attr("radius")*2 + "px";});
-        selection.select('.mugshot').select('img')
+        
+        avatar.select('.mugshot')
             .attr('src', function(Node){return Node.attr("mugshot")? self._config.mugshotPrefix + Node.attr("mugshot"): "";})
             .style('display', function(Node){return Node.attr("mugshot")? "block": "none";});
         

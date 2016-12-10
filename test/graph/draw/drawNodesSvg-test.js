@@ -42,12 +42,12 @@ tape("Node's DOM should correspond Node's property", function(test){
     //color Attribute
     test.equal(firstNodeEle.querySelector("circle").style.fill, "#123444");
     //icon
-    test.equal(firstNodeEle.querySelector(".icon").querySelector('span').className, "fa fa-male");
-    test.equal(secondNodeEle.querySelector(".icon").querySelector('span').className, "fa fa-default");
+    test.equal(firstNodeEle.querySelector(".icon").className, "icon fa fa-male");
+    test.equal(secondNodeEle.querySelector(".icon").className, "icon fa fa-default");
     
     //mugshot
-    test.equal(firstNodeEle.querySelector(".mugshot").querySelector('img').src, "./someUrl/foo.png");
-    test.equal(secondNodeEle.querySelector(".mugshot").querySelector('img').src, "./someUrl/default.png");
+    test.equal(firstNodeEle.querySelector(".mugshot").src, "./someUrl/foo.png");
+    test.equal(secondNodeEle.querySelector(".mugshot").src, "./someUrl/default.png");
     
     
     firstNode.attr("label", 'abc');
@@ -65,8 +65,8 @@ tape("Node's DOM should correspond Node's property", function(test){
     test.equal(firstNodeEle.querySelector("circle").getAttribute('r'), '40');
     test.equal(firstNodeEle.getAttribute("transform"), 'translate(15,10)');
     test.equal(firstNodeEle.querySelector("circle").style.fill, "#666888");
-    test.equal(firstNodeEle.querySelector(".icon").querySelector('span').className, "fa fa-female");
-    test.equal(firstNodeEle.querySelector(".mugshot").querySelector('img').src, "./someUrl/bar.png");
+    test.equal(firstNodeEle.querySelector(".icon").className, "icon fa fa-female");
+    test.equal(firstNodeEle.querySelector(".mugshot").src, "./someUrl/bar.png");
     
     test.end();
 });
