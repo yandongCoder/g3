@@ -27,9 +27,12 @@ export default function (renderType) {
         .attr('class', 'text-group')
         .append("xhtml:div")
         .append('xhtml:span');
+    
     var avatar = g.append('svg:foreignObject').attr('class', 'avatar');
     avatar.append('xhtml:span').attr('class', 'icon');
     avatar.append('xhtml:img').attr('class', 'mugshot');
+    
+    g.call(this._config.insertNode);
     g.call(updateAttr);
     
     //need update Nodes Element
@@ -81,5 +84,7 @@ export default function (renderType) {
             .attr('title', function (Node) { return Node.attr("label"); })
             .select('span')
             .text(function (Node) { return Node.attr("label"); });
+        
+        selection.call(self._config.updateNode, scale);
     }
 }

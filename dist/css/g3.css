@@ -58,7 +58,7 @@ svg.graph {
   .graph .nodes .node.selected text {
     font-weight: bold; }
   .graph .nodes .node.selected .text-group > div {
-    width: auto; }
+    width: auto !important; }
     .graph .nodes .node.selected .text-group > div > span {
       padding-right: 5px;
       background: #f65565;

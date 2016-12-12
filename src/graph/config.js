@@ -18,6 +18,9 @@ const DEFAULT_CONFIG = {
     mugshot: "",
     mugshotPrefix: "",
     
+    insertNode: function(){},
+    updateNode: function(){},
+    
     onBrushStart: function(){},
     onBrush: function(){},
     onBrushEnd: function(){},
