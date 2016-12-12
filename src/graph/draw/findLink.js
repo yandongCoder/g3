@@ -17,7 +17,6 @@ export default function (canvasObj, x, y) {
         context.restore();
     }
     render(x,y);
-    console.log(target);
     return target;
 
 }

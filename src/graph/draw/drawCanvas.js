@@ -3,6 +3,7 @@ import drawLinkCanvas from './drawCanvasLink';
 import findPoint from './findPoint';
 import convertToCanvasCor from './convertCor';
 import findLinks from './findLink';
+import drawCache from './drawCache';
 
 export default function () {
     var that = this;
@@ -10,11 +11,13 @@ export default function () {
     // console.log(that._getCurrentTransform());
     //绘制的canvas 对象，在优化的时候可以对nodes 和 links 的数据进行相应的分组优化
     var canvas = {
-        element:that.element,
+        canvas:that.element,
         context:context,
         nodes:this.getRenderedNodes(),
         links:this.getRenderedLinks(),
-        transform:that.currentTransform()
+        transform:that.currentTransform(),
+        nodesCache:that.nodesCache,//离屏缓存canvas
+        linksCache:that.linksCache
     };
 
 
@@ -46,6 +49,7 @@ export default function () {
         context.save();
         context.translate(canvas.transform.x, canvas.transform.y);
         context.scale(canvas.transform.k, canvas.transform.k);
+        // drawCache(canvas,x,y);
         drawLinkCanvas(canvas,x,y);
         drawNodeCanvas(canvas);
         context.restore();
@@ -55,8 +59,7 @@ export default function () {
     //单击事件
     function _click(d) {
         var p = convertToCanvasCor(that.element, d3.event.x, d3.event.y);
-        console.log('click');
-        var p = convertToCanvasCor(that._canvas,d3.event.x,d3.event.y);
+        // var p = convertToCanvasCor(that._canvas,d3.event.x,d3.event.y);
         var x = canvas.transform.invertX(p.x);
         var y = canvas.transform.invertY(p.y);
         var targetNode = findPoint(canvas.nodes,x,y);
@@ -69,18 +72,45 @@ export default function () {
                 that.getSelectedNodes().forEach(function (node) {
                     node.attr('selected',false);
                 });
+                that.getSelectedLinks().forEach(function (link) {
+                    link.attr('selected',false);
+                });
             }
             targetNode.attr('selected',!targetNode.selected);
         }else{
-            console.log(context.isPointInPath(x,y));
             if(targetLink){
                 //选中lilnk
-                console.log(targetLink);
                 if(!d3.event.ctrlKey){
                     if(targetLink.select) return;
                     that.getSelectedLinks().forEach(function (link) {
                         link.attr('selected',false);
                     });
+                    that.getSelectedNodes().forEach(function (node) {
+                        node.attr('selected',false);
+                    });
+                }
+                if(targetLink.attr('selected')){
+                    //取消选中 箭头指向的点
+                    if(targetLink.hasSourceArrow() && targetLink.hasTargetArrow()){
+                        //
+                        targetLink.source.attr('selected',false);
+                        targetLink.target.attr('selected',false);
+                    }else if(targetLink.hasSourceArrow()){
+                        targetLink.source.attr('selected',false);
+                    }else if(targetLink.hasTargetArrow()){
+                        targetLink.target.attr('selected',false);
+                    }
+                }else{
+                    //选中 箭头指向的点
+                    if(targetLink.hasSourceArrow() && targetLink.hasTargetArrow()){
+                        //
+                        targetLink.source.attr('selected',true);
+                        targetLink.target.attr('selected',true);
+                    }else if(targetLink.hasSourceArrow()){
+                        targetLink.source.attr('selected',true);
+                    }else if(targetLink.hasTargetArrow()){
+                        targetLink.target.attr('selected',true);
+                    }
                 }
                 targetLink.attr('selected',!targetLink.selected);
 
