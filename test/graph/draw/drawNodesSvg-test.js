@@ -32,7 +32,7 @@ tape("Node's DOM should correspond Node's property", function(test){
         secondNode = myGraph.nodes()[1],
         secondNodeEle = document.querySelectorAll(".node")[1];
     //label DOM
-    test.equal(firstNodeEle.querySelector(".text-group").querySelector('span').textContent, "a");
+    test.equal(firstNodeEle.querySelector(".text-group").querySelector('div').textContent, "a");
     //selected class DOM
     test.equal(firstNodeEle.className, "node selected");
     //radius Attribute
@@ -60,7 +60,7 @@ tape("Node's DOM should correspond Node's property", function(test){
     firstNode.attr("mugshot", 'bar.png');
     
     myGraph.render();
-    test.equal(firstNodeEle.querySelector(".text-group").querySelector('span').textContent, "abc");
+    test.equal(firstNodeEle.querySelector(".text-group").querySelector('div').textContent, "abc");
     test.equal(firstNodeEle.className, "node disabled");
     test.equal(firstNodeEle.querySelector("circle").getAttribute('r'), '40');
     test.equal(firstNodeEle.getAttribute("transform"), 'translate(15,10)');

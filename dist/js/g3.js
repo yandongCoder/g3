@@ -775,8 +775,7 @@ function drawNodesSvg (renderType) {
         .attr("filter", "url(" + getAbsUrl() + "#shadow)");
     g.append('svg:foreignObject')
         .attr('class', 'text-group')
-        .append("xhtml:div")
-        .append('xhtml:span');
+        .append("xhtml:div");
     
     var avatar = g.append('svg:foreignObject').attr('class', 'avatar');
     avatar.append('xhtml:span').attr('class', 'icon');
@@ -808,6 +807,8 @@ function drawNodesSvg (renderType) {
             .style('display', function(Node){
                 return (scale < self._config.scaleOfHideNodeLabel)? 'none': 'block';
             })
+            .attr("height", function(Node){ return Node.attr("radius") * scale; })
+            .style("line-height", function(Node){ return Node.attr("radius") * scale + "px"; })
             .attr("transform", function(Node){ return "translate(" + (1 + Node.attr("radius")) + ", "+ (-Node.attr("radius") / 2) +") scale(" + 1 / scale + ")"; })
         
         
@@ -841,15 +842,13 @@ function drawNodesSvg (renderType) {
             .style('display', function(Node){
                 return (scale < self._config.scaleOfHideNodeLabel)? 'none': 'block';
             })
-            .attr('width', function (Node) { return Node.getLabelWidth(); })
+            .style("width", self._config.nodeLabelClipWidth + "px")
+            //.attr('width', function (Node) { return Node.getLabelWidth(); })
             .attr("height", function(Node){ return Node.attr("radius") * scale; })
             .style("line-height", function(Node){ return Node.attr("radius") * scale + "px"; })
             .attr("transform", function(Node){ return "translate(" + (1 + Node.attr("radius")) + ", "+ (-Node.attr("radius") / 2) +") scale(" + 1 / scale + ")"; })
             
             .select('div')
-            .style("width", self._config.nodeLabelClipWidth + "px")
-            .attr('title', function (Node) { return Node.attr("label"); })
-            .select('span')
             .text(function (Node) { return Node.attr("label"); });
         
         selection.call(self._config.updateNode, scale);

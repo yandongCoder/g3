@@ -40,20 +40,16 @@ svg.graph{
       }
       .text-group{
         font-family: Microsoft YaHei UI, Lato, sans-serif;
+        width: 80px;
+        pointer-events: none;
         >div{
-          //position: fixed;
-          height: 100%;
-          display: flex;
-          align-items: center;
-          width: 80px;
-          pointer-events: none;
-          >span{
-            text-overflow: ellipsis;
-            overflow: hidden;
-            white-space: no;
-            height: 20px;
-            line-height: 20px;
-          }
+          width: 100%;
+          vertical-align: middle;
+          text-overflow: ellipsis;
+          overflow: hidden;
+          white-space: nowrap;
+          display: inline-block;
+          line-height: 20px;
         }
       }
       &.linked-node, &.selected-linked-node, &.selected-link {
@@ -82,12 +78,10 @@ svg.graph{
         .text-group{
           >div{
             width: auto !important;
-            >span{
-              padding-right: 5px;
-              background: #f65565;
-              white-space: nowrap;
-              text-overflow: initial;
-            }
+            padding-right: 5px;
+            background: #f65565;
+            white-space: nowrap;
+            text-overflow: initial;
           }
         }
       }
