@@ -12,6 +12,9 @@ const DIRECTION = {
     DOUBLE: 3
 };
 
+const LINE_TEXT_MARGIN = 2;
+const NODE_TEXT_HEIGHT = 10;// half of node text height in css.
+
 const LINK_REMOVE_TYPE = {
     UNMERGE: 1,
     L2N: 2
@@ -251,7 +254,7 @@ function getLinkInfoTransform(scale) {
     var transform  = 'rotate('+ degrees +' '+ rx +' '+ ry +') translate(' + rx + ' ' + ry + ') scale(' + 1 / scale + ')' + '';
     
     var offsetX =  - this.LineWidth(scale) / 2;
-    var offsetY =  this.LineHeight(scale) / 2 + 5;
+    var offsetY =  this.LineHeight(scale) / 2 + LINE_TEXT_MARGIN;
     transform += ' translate('+ offsetX +' '+ offsetY +')';
     
     return transform;
@@ -769,13 +772,14 @@ function drawNodesSvg (renderType) {
         })
         .call(this._config.bindNodeEvent)
         .call(this.dragNode);
-
-    //添加矩形
+    
     g.append("circle")
+        .attr('class', 'circle')
         .attr("filter", "url(" + getAbsUrl() + "#shadow)");
     g.append('svg:foreignObject')
         .attr('class', 'text-group')
-        .append("xhtml:div");
+        .append("xhtml:div")
+        .attr('class', 'text');
     
     var avatar = g.append('svg:foreignObject').attr('class', 'avatar');
     avatar.append('xhtml:span').attr('class', 'icon');
@@ -807,9 +811,7 @@ function drawNodesSvg (renderType) {
             .style('display', function(Node){
                 return (scale < self._config.scaleOfHideNodeLabel)? 'none': 'block';
             })
-            .attr("height", function(Node){ return Node.attr("radius") * scale; })
-            .style("line-height", function(Node){ return Node.attr("radius") * scale + "px"; })
-            .attr("transform", function(Node){ return "translate(" + (1 + Node.attr("radius")) + ", "+ (-Node.attr("radius") / 2) +") scale(" + 1 / scale + ")"; })
+            .attr("transform", function(Node){ return "translate(" + (1 + Node.attr("radius")) + ", "+ (-NODE_TEXT_HEIGHT / scale) +") scale(" + 1 / scale + ")"; })
         
         
         selection.call(self._config.updateNode, scale);
@@ -843,12 +845,9 @@ function drawNodesSvg (renderType) {
                 return (scale < self._config.scaleOfHideNodeLabel)? 'none': 'block';
             })
             .style("width", self._config.nodeLabelClipWidth + "px")
-            //.attr('width', function (Node) { return Node.getLabelWidth(); })
-            .attr("height", function(Node){ return Node.attr("radius") * scale; })
-            .style("line-height", function(Node){ return Node.attr("radius") * scale + "px"; })
-            .attr("transform", function(Node){ return "translate(" + (1 + Node.attr("radius")) + ", "+ (-Node.attr("radius") / 2) +") scale(" + 1 / scale + ")"; })
+            .attr("transform", function(Node){ return "translate(" + (1 + Node.attr("radius")) + ", "+ (-NODE_TEXT_HEIGHT / scale) +") scale(" + 1 / scale + ")"; })
             
-            .select('div')
+            .select('.text')
             .text(function (Node) { return Node.attr("label"); });
         
         selection.call(self._config.updateNode, scale);
@@ -884,9 +883,7 @@ function drawLinksSvg (renderType) {
     
     var info = link
         .append('svg:foreignObject')
-        .classed('link-info', true)
-        .append("xhtml:div")
-        .classed('center', true);
+        .classed('link-info', true);
     
     info.append('xhtml:span').attr('class', 'icon');
     info.append('xhtml:span').attr('class', 'text');
@@ -959,8 +956,8 @@ function drawLinksSvg (renderType) {
             .style('display', function(Link){
                 return (scale < self._config.scaleOfHideLinkLabel)? 'none': 'block';
             })
-            .attr('width', function (Link) {return Link.LineWidth(scale)})
-            .attr('height', function(Link){return Link.LineHeight(scale)});
+            .attr('width', function (Link) {return Link.LineWidth(scale)});
+            //.attr('height', function(Link){return Link.LineHeight(scale)});
         
         info.select('.text')
             .text(function (Link) {return Link.attr("label");});

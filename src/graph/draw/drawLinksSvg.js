@@ -22,9 +22,7 @@ export default function (renderType) {
     
     var info = link
         .append('svg:foreignObject')
-        .classed('link-info', true)
-        .append("xhtml:div")
-        .classed('center', true);
+        .classed('link-info', true);
     
     info.append('xhtml:span').attr('class', 'icon');
     info.append('xhtml:span').attr('class', 'text');
@@ -97,8 +95,8 @@ export default function (renderType) {
             .style('display', function(Link){
                 return (scale < self._config.scaleOfHideLinkLabel)? 'none': 'block';
             })
-            .attr('width', function (Link) {return Link.LineWidth(scale)})
-            .attr('height', function(Link){return Link.LineHeight(scale)});
+            .attr('width', function (Link) {return Link.LineWidth(scale)});
+            //.attr('height', function(Link){return Link.LineHeight(scale)});
         
         info.select('.text')
             .text(function (Link) {return Link.attr("label");});

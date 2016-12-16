@@ -1,5 +1,5 @@
 import getAbsUrl from "../../utils/getAbsUrl";
-import {RENDER_TYPE} from "../CONSTANT";
+import {RENDER_TYPE, NODE_TEXT_HEIGHT} from "../CONSTANT";
 
 export default function (renderType) {
  
@@ -19,13 +19,14 @@ export default function (renderType) {
         })
         .call(this._config.bindNodeEvent)
         .call(this.dragNode);
-
-    //添加矩形
+    
     g.append("circle")
+        .attr('class', 'circle')
         .attr("filter", "url(" + getAbsUrl() + "#shadow)");
     g.append('svg:foreignObject')
         .attr('class', 'text-group')
-        .append("xhtml:div");
+        .append("xhtml:div")
+        .attr('class', 'text');
     
     var avatar = g.append('svg:foreignObject').attr('class', 'avatar');
     avatar.append('xhtml:span').attr('class', 'icon');
@@ -57,9 +58,7 @@ export default function (renderType) {
             .style('display', function(Node){
                 return (scale < self._config.scaleOfHideNodeLabel)? 'none': 'block';
             })
-            .attr("height", function(Node){ return Node.attr("radius") * scale; })
-            .style("line-height", function(Node){ return Node.attr("radius") * scale + "px"; })
-            .attr("transform", function(Node){ return "translate(" + (1 + Node.attr("radius")) + ", "+ (-Node.attr("radius") / 2) +") scale(" + 1 / scale + ")"; })
+            .attr("transform", function(Node){ return "translate(" + (1 + Node.attr("radius")) + ", "+ (-NODE_TEXT_HEIGHT / scale) +") scale(" + 1 / scale + ")"; })
         
         
         selection.call(self._config.updateNode, scale);
@@ -93,12 +92,9 @@ export default function (renderType) {
                 return (scale < self._config.scaleOfHideNodeLabel)? 'none': 'block';
             })
             .style("width", self._config.nodeLabelClipWidth + "px")
-            //.attr('width', function (Node) { return Node.getLabelWidth(); })
-            .attr("height", function(Node){ return Node.attr("radius") * scale; })
-            .style("line-height", function(Node){ return Node.attr("radius") * scale + "px"; })
-            .attr("transform", function(Node){ return "translate(" + (1 + Node.attr("radius")) + ", "+ (-Node.attr("radius") / 2) +") scale(" + 1 / scale + ")"; })
+            .attr("transform", function(Node){ return "translate(" + (1 + Node.attr("radius")) + ", "+ (-NODE_TEXT_HEIGHT / scale) +") scale(" + 1 / scale + ")"; })
             
-            .select('div')
+            .select('.text')
             .text(function (Node) { return Node.attr("label"); });
         
         selection.call(self._config.updateNode, scale);

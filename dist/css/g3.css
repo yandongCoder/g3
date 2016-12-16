@@ -9,13 +9,13 @@ svg.graph {
   cursor: move;
   background-size: cover !important;
   background-position: center !important; }
+  .graph:focus {
+    outline: 0; }
   .graph .node, .graph .link {
     cursor: default; }
     .graph .node.disabled, .graph .link.disabled {
       opacity: 0.1;
       pointer-events: none; }
-  .graph .nodes .text-background {
-    display: none; }
   .graph .nodes .node .fa {
     color: #fff;
     font-size: 20px;
@@ -33,7 +33,7 @@ svg.graph {
     font-family: Microsoft YaHei UI, Lato, sans-serif;
     width: 80px;
     pointer-events: none; }
-    .graph .nodes .node .text-group > div {
+    .graph .nodes .node .text-group .text {
       width: 100%;
       vertical-align: middle;
       text-overflow: ellipsis;
@@ -41,49 +41,32 @@ svg.graph {
       white-space: nowrap;
       display: inline-block;
       line-height: 20px; }
-  .graph .nodes .node.linked-node circle, .graph .nodes .node.linked-node rect, .graph .nodes .node.selected-linked-node circle, .graph .nodes .node.selected-linked-node rect, .graph .nodes .node.selected-link circle, .graph .nodes .node.selected-link rect {
+  .graph .nodes .node.selected .circle {
     stroke: #f65565;
     stroke-width: 5; }
-  .graph .nodes .node.linked-node .text-background, .graph .nodes .node.selected-linked-node .text-background, .graph .nodes .node.selected-link .text-background {
-    display: block; }
-  .graph .nodes .node.linked-node text, .graph .nodes .node.selected-linked-node text, .graph .nodes .node.selected-link text {
-    font-weight: bold; }
-  .graph .nodes .node.selected circle, .graph .nodes .node.selected rect {
-    stroke: #f65565;
-    stroke-width: 5; }
-  .graph .nodes .node.selected .text-background {
-    display: block; }
-  .graph .nodes .node.selected text {
-    font-weight: bold; }
-  .graph .nodes .node.selected .text-group > div {
+  .graph .nodes .node.selected .text-group .text {
     width: auto !important;
     padding-right: 5px;
     background: #f65565;
     white-space: nowrap;
     text-overflow: initial; }
-  .graph svg:focus {
-    outline: 0; }
   .graph .links {
     font-size: 13px; }
     .graph .links .fa {
       font-size: 16px; }
     .graph .links .link-info {
-      font-family: Microsoft YaHei UI, Lato, sans-serif; }
-      .graph .links .link-info .center {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 100%;
-        height: 100%; }
-        .graph .links .link-info .center .icon {
-          margin-right: 2px; }
-    .graph .links path {
+      font-family: Microsoft YaHei UI, Lato, sans-serif;
+      text-align: center;
+      white-space: nowrap; }
+      .graph .links .link-info .icon {
+        margin-right: 2px; }
+    .graph .links .link-path {
       fill-opacity: 0.5;
       stroke-opacity: 0.5;
       fill: none;
       stroke: #a1a1a1;
       stroke-width: 4px; }
-      .graph .links path.selected {
+      .graph .links .link-path.selected {
         fill: none;
         stroke: #f65565 !important;
         fill-opacity: 1;
