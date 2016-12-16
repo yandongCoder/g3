@@ -1,8 +1,8 @@
 //g3
 (function (global, factory) {
-   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
-   typeof define === 'function' && define.amd ? define(['exports'], factory) :
-   (factory((global.g3 = global.g3 || {})));
+    typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
+    typeof define === 'function' && define.amd ? define(['exports'], factory) :
+    (factory((global.g3 = global.g3 || {})));
 }(this, (function (exports) { 'use strict';
 
 const DIRECTION = {
@@ -23,7 +23,8 @@ const REMOVE_TYPE = {
 const RENDER_TYPE = {
     SELECT: "SELECT",
     NUDGE: "NUDGE",
-    IMMEDIATELY: "IMMEDIATELY"
+    IMMEDIATELY: "IMMEDIATELY",
+    ZOOM: "ZOOM"
 };
 
 function select (selector) {
@@ -36,8 +37,8 @@ function delayRender(Obj, renderType){
     return this;
 }
 
-function render(){
-    this._render(RENDER_TYPE.IMMEDIATELY);
+function render(renderType){
+    this._render(renderType || RENDER_TYPE.IMMEDIATELY);
     return this;
 }
 
@@ -51,7 +52,7 @@ function _render(renderType) {
     var canvasType = this.element.nodeName;
     if(canvasType === 'svg'){ this._init();}
     
-    if(renderType === RENDER_TYPE.IMMEDIATELY){
+    if(renderType === RENDER_TYPE.IMMEDIATELY || renderType === RENDER_TYPE.ZOOM){
         draw(renderType);
     }
     else{
@@ -784,17 +785,34 @@ function drawNodesSvg (renderType) {
     g.call(this._config.insertNode);
     g.call(updateAttr);
     
-    //need update Nodes Element
-    if(renderType === RENDER_TYPE.IMMEDIATELY){
-        var updateNodes = this.nodesSelection();
-    }else{
-        updateNodes = d3.selectAll(this.updateDOM.getNodesEle());
-    }
-    updateNodes.call(updateAttr);
+    //update elements
+    if(renderType === RENDER_TYPE.IMMEDIATELY || renderType === RENDER_TYPE.ZOOM) var updateNodes = this.nodesSelection();
+    else updateNodes = d3.selectAll(this.updateDOM.getNodesEle());
+    
+    //update attributes
+    if(renderType === RENDER_TYPE.ZOOM) var updated = updateZoom;
+    else updated = updateAttr;
+    
+    updateNodes.call(updated);
+    
     
     this.updateDOM.clearUpdateNodes();
-    
     nodes.exit().remove();
+    
+    
+    function updateZoom(selection){
+        var scale = self.currentTransform().k;
+        selection.attr("transform", function (Node) { return "translate(" + Node.getX() + "," + Node.getY() + ")";});
+
+        selection.select('.text-group')
+            .style('display', function(Node){
+                return (scale < self._config.scaleOfHideNodeLabel)? 'none': 'block';
+            })
+            .attr("transform", function(Node){ return "translate(" + (1 + Node.attr("radius")) + ", "+ (-Node.attr("radius") / 2) +") scale(" + 1 / scale + ")"; })
+        
+        
+        selection.call(self._config.updateNode, scale);
+    }
     
     function updateAttr(selection){
         var scale = self.currentTransform().k;
@@ -875,10 +893,11 @@ function drawLinksSvg (renderType) {
     info.append('xhtml:span').attr('class', 'text');
     
     
-    link.call(updateLinkAttr);
+    link.call(updateAttr);
     
     
-    if(renderType === RENDER_TYPE.IMMEDIATELY){
+    //update elements
+    if(renderType === RENDER_TYPE.IMMEDIATELY || renderType === RENDER_TYPE.ZOOM){
         var updateLinks  = this.linksSelection();
     }else if(renderType === RENDER_TYPE.NUDGE){
         updateLinks  = d3.selectAll(this.getRelatedLinks(this.getSelectedNodes()).map(function(Link){return Link.element;}));
@@ -886,14 +905,29 @@ function drawLinksSvg (renderType) {
         updateLinks = d3.selectAll(this.updateDOM.getLinksEle());
     }
     
+    //update attributes
+    if(renderType === RENDER_TYPE.ZOOM) var updated = updateZoom;
+    else updated = updateAttr;
+    updateLinks.call(updated);
     
-    updateLinks.call(updateLinkAttr);
     
     this.updateDOM.clearUpdateLinks();
-    
     links.exit().remove();
     
-    function updateLinkAttr(selection){
+    
+    function updateZoom(selection){
+        selection
+            .select('.link-info')
+            .attr('transform', function(Link){
+                return Link.getLinkInfoTransform(scale);
+            })
+            .style('display', function(Link){
+                return (scale < self._config.scaleOfHideLinkLabel)? 'none': 'block';
+            })
+            .attr('width', function (Link) {return Link.LineWidth(scale)});
+    }
+    
+    function updateAttr(selection){
         // if(renderType === RENDER_TYPE.NUDGE){
         //     selection
         //         .select('path')
@@ -983,10 +1017,16 @@ function drawCanvasNode (canvasObj) {
     var nodes = canvasObj.nodes;
     var context = canvasObj.context;
 
-    nodes.forEach(function(Node) {
+    nodes.forEach(function(Node,i) {
         var x = Node.getX();
         var y = Node.getY();
         var r = Node.radius;
+
+        // canvasObj.nodesCache[i].width = r*2;
+        // canvasObj.nodesCache[i].height = r*2;
+
+        // var context = canvasObj.nodesCache[i].getContext('2d');
+
         // console.log(Node.selected());
         context.beginPath();
         var radius = Node.selected ? Node.radius-5 : Node.radius;
@@ -1042,109 +1082,192 @@ function drawArrow(ctx,link,lineWidth,x,y) {
     var e1 = link.source.getY();
     var s2 = link.target.getX();
     var e2 = link.target.getY();
-    var r = link.target.radius;
     var text = link.label;
+    var r ,r1;//r1 为source 的 半径
 
-    //计算x2 y2,x1 y1 的坐标 因为若是带箭头的话，不能从两个圆圈的中心点出发去画
-    var l = Math.sqrt((s2-s1)*(s2-s1) + (e2-e1)*(e2-e1));
-    var sin = (e2-e1)/l;
-    var cos = (s2-s1)/l;
-    var xlen = (r+lineWidth)*cos;
-    var ylen = (r+lineWidth)*sin;
+    // 判断哪个是source 哪个是target
+    if(link.hasSourceArrow() && link.hasTargetArrow()){
+        //双箭头
+        r = link.target.radius;
+        r1 = link.source.radius;
+        draw(e1,s1,e2,s2,true);
+    }else if(link.hasSourceArrow()){
+        r = link.source.radius;
+        r1 = link.target.radius;
+        //箭头指向source
+        draw(e2,s2,e1,s1);
+    }else if(link.hasTargetArrow()){
+        r = link.target.radius;
+        r1 = link.source.radius;
+        //箭头指向target
+        draw(e1,s1,e2,s2);
+    }
 
-    var dx = (r+lineWidth)*cos;
-    var dy = (r+lineWidth)*sin;
-    var x2 = s2-dx;
-    var y2 = e2-dy;
-    var x1 = s1+dx;
-    var y1 = e1+dy;
-    
-    //进行箭头的绘制
-    var angle = Math.abs(Math.atan((x2 - x1) / (y2 - y1))); //倾斜角余角
-    var length = 10; //箭头斜线长度
-    var degree = Math.PI / 6; //箭头倾斜角
-    var theta = 0;
-    var altha = 0;
-    var a1 = 0;
-    var b1 = 0;
-    var a2 = 0;
-    var b2 = 0;
+    function draw(e1, s1, e2, s2,isDouble) {
+        //1  --- source   2  ----target
+        var l = Math.sqrt((s2-s1)*(s2-s1) + (e2-e1)*(e2-e1));
+        var sin = (e2-e1)/l;
+        var cos = (s2-s1)/l;
+        var xlen = (r+lineWidth)*cos;
+        var ylen = (r+lineWidth)*sin;
 
-    if (angle >= degree && angle <= Math.PI / 2 - degree) {
-        theta = angle - degree;
-        altha = Math.PI / 2 - 2 * degree - theta;
-        if (x2 >= x1) {
-            a1 = x2 - length * Math.sin(theta);
-            a2 = x2 - length * Math.cos(altha);
-        } else {
-            a1 = x2 + length * Math.sin(theta);
-            a2 = x2 + length * Math.cos(altha);
+        var dx = (r+lineWidth)*cos;
+        var dy = (r+lineWidth)*sin;
+
+        var sdx = (r1+lineWidth)*cos;
+        var sdy = (r1+lineWidth)*sin;
+        var x2,y2,x1,y1;
+        x2 = s2-dx;
+        y2 = e2-dy;
+        x1 = s1+sdx;
+        y1 = e1+sdy;
+
+        var lineList = [];
+        lineList.push([x2,y2]);
+        if(!isDouble){
+            var targetArrow = calcArrow(x1,y1,x2,y2);
+
+            var x3 = (targetArrow.a1+targetArrow.a2)/2;
+            var y3 = (targetArrow.b1+targetArrow.b2)/2;
+
+            var a3 = (targetArrow.a1+x3)/2;
+            var b3 = (targetArrow.b1+y3)/2;
+            var a4 = (x3+targetArrow.a2)/2;
+            var b4 = (y3+targetArrow.b2)/2;
+
+            var a5 = a3-x3+x1;
+            var b5 = b3-y3+y1;
+
+            var a6 = a4-x3+x1;
+            var b6 = b4-y3+y1;
+            lineList.push([targetArrow.a1,targetArrow.b1]);
+            lineList.push([a3,b3]);
+            lineList.push([a5,b5]);
+            lineList.push([x1,y1]);
+            lineList.push([a6,b6]);
+            lineList.push([a4,b4]);
+            lineList.push([targetArrow.a2,targetArrow.b2]);
+
+        }else{
+            //双箭头
+            var targetArrow = calcArrow(x1,y1,x2,y2);
+            var sourceArrow = calcArrow(x2,y2,x1,y1);
+
+            var x3 = (targetArrow.a1+targetArrow.a2)/2;
+            var y3 = (targetArrow.b1+targetArrow.b2)/2;
+
+            var x4 = (sourceArrow.a1+sourceArrow.a2)/2;
+            var y4 = (sourceArrow.b1+sourceArrow.b2)/2;
+
+            var a3 = (targetArrow.a1+x3)/2;
+            var b3 = (targetArrow.b1+y3)/2;
+            var a4 = (targetArrow.a2+x3)/2;
+            var b4 = (targetArrow.b2+y3)/2;
+
+            var a5 = (sourceArrow.a1+x4)/2;
+            var b5 = (sourceArrow.b1+y4)/2;
+            var a6 = (sourceArrow.a2+x4)/2;
+            var b6 = (sourceArrow.b2+y4)/2;
+            lineList.push([targetArrow.a1,targetArrow.b1]);
+            lineList.push([a3,b3]);
+            lineList.push([a6,b6]);
+            lineList.push([sourceArrow.a1,sourceArrow.b1]);
+            lineList.push([x1,y1]);
+            lineList.push([sourceArrow.a2,sourceArrow.b2]);
+            lineList.push([a5,b5]);
+            lineList.push([a4,b4]);
+            lineList.push([targetArrow.a2,targetArrow.b2]);
         }
-        if (y2 >= y1) {
-            b1 = y2 - length * Math.cos(theta);
-            b2 = y2 - length * Math.sin(altha);
-        } else {
-            b1 = y2 + length * Math.cos(theta);
-            b2 = y2 + length * Math.sin(altha);
+
+        lineList.push([x2,y2]);
+
+        ctx.beginPath();
+        if(link.attr('selected')){
+            ctx.fillStyle = "#f00";
+        }else{
+            ctx.fillStyle = "#ccc";
         }
-    } else {
-        theta = angle - degree;
-        altha = theta + 2 * degree - Math.PI / 2;
-        if (x2 >= x1 && y2 >= y1) {
-            a1 = x2 - length * Math.sin(theta);
-            b1 = y2 - length * Math.cos(theta);
-            a2 = x2 - length * Math.cos(altha);
-            b2 = y2 + length * Math.sin(altha);
-        } else if (x2 >= x1 && y2 < y1) {
-            a1 = x2 - length * Math.sin(theta);
-            b1 = y2 + length * Math.cos(theta);
-            a2 = x2 - length * Math.cos(altha);
-            b2 = y2 - length * Math.sin(altha);
-        } else if (x2 < x1 && y2 < y1) {
-            a1 = x2 + length * Math.sin(theta);
-            b1 = y2 + length * Math.cos(theta);
-            a2 = x2 + length * Math.cos(altha);
-            b2 = y2 - length * Math.sin(altha);
-        } else {
-            a1 = x2 + length * Math.sin(theta);
-            b1 = y2 - length * Math.cos(theta);
-            a2 = x2 + length * Math.cos(altha);
-            b2 = y2 + length * Math.sin(altha);
+        ctx.lineWidth = 3;
+        ctx.moveTo(lineList[0][0],lineList[0][1]);
+        for(var i=1;i<lineList.length;i++){
+            ctx.lineTo(lineList[i][0],lineList[i][1]);
         }
+        if(ctx.isPointInPath(x,y)){
+            targetLink = true;
+        }
+        ctx.fill();
+
+        //绘制文字
+        // ctx.beginPath();
+        ctx.strokeWidth = 0;
+        ctx.fillStyle = '#555';
+        ctx.font="16px 微软雅黑";
+        ctx.fillText(text,(s2+s1)/2,(e2+e1)/2);
     }
 
-    ctx.beginPath();
-    if(link.attr('selected')){
-        ctx.strokeStyle = "#800";
-    }else{
-        ctx.strokeStyle = "#ccc";
-    }
-    ctx.strokeStyle = "#ccc";
-    ctx.lineWidth = 3;
-    ctx.moveTo(x1, y1);
-    ctx.lineTo(x2, y2);
-    // ctx.lineTo(x1, y1);
-   /* ctx.stroke();
-    if(ctx.isPointInPath(x,y)){
-        targetLink = true;
-    }*/
-    if(ctx.isPointInPath(x,y)){
-        targetLink = true;
-    }
-    ctx.moveTo(a1, b1);
-    ctx.lineTo(x2, y2);
-    ctx.lineTo(a2, b2);
-    if(ctx.isPointInPath(x,y)){
-        targetLink = true;
-    }
-    ctx.stroke();
+    //计算箭头两端坐标
+    function calcArrow(x1, y1, x2, y2) {
+        //进行箭头的绘制
+        var angle = Math.abs(Math.atan((x2 - x1) / (y2 - y1))); //倾斜角余角
+        var length = 10; //箭头斜线长度
+        var degree = Math.PI / 6; //箭头倾斜角
+        var theta = 0;
+        var altha = 0;
+        var a1 = 0;
+        var b1 = 0;
+        var a2 = 0;
+        var b2 = 0;
+        //a1，b1  求箭头的坐标
 
-    //绘制文字
-    // ctx.beginPath();
-    ctx.strokeWidth = 0;
-    ctx.fillStyle = '#555';
-    ctx.font="16px 微软雅黑";
-    ctx.fillText(text,(s2+s1)/2,(e2+e1)/2);
+        if (angle >= degree && angle <= Math.PI / 2 - degree) {
+            theta = angle - degree;
+            altha = Math.PI / 2 - 2 * degree - theta;
+            if (x2 >= x1) {
+                a1 = x2 - length * Math.sin(theta);
+                a2 = x2 - length * Math.cos(altha);
+            } else {
+                a1 = x2 + length * Math.sin(theta);
+                a2 = x2 + length * Math.cos(altha);
+            }
+            if (y2 >= y1) {
+                b1 = y2 - length * Math.cos(theta);
+                b2 = y2 - length * Math.sin(altha);
+            } else {
+                b1 = y2 + length * Math.cos(theta);
+                b2 = y2 + length * Math.sin(altha);
+            }
+        } else {
+            theta = angle - degree;
+            altha = theta + 2 * degree - Math.PI / 2;
+            if (x2 >= x1 && y2 >= y1) {
+                a1 = x2 - length * Math.sin(theta);
+                b1 = y2 - length * Math.cos(theta);
+                a2 = x2 - length * Math.cos(altha);
+                b2 = y2 + length * Math.sin(altha);
+            } else if (x2 >= x1 && y2 < y1) {
+                a1 = x2 - length * Math.sin(theta);
+                b1 = y2 + length * Math.cos(theta);
+                a2 = x2 - length * Math.cos(altha);
+                b2 = y2 - length * Math.sin(altha);
+            } else if (x2 < x1 && y2 < y1) {
+                a1 = x2 + length * Math.sin(theta);
+                b1 = y2 + length * Math.cos(theta);
+                a2 = x2 + length * Math.cos(altha);
+                b2 = y2 - length * Math.sin(altha);
+            } else {
+                a1 = x2 + length * Math.sin(theta);
+                b1 = y2 - length * Math.cos(theta);
+                a2 = x2 + length * Math.cos(altha);
+                b2 = y2 + length * Math.sin(altha);
+            }
+        }
+        return {
+            a1:a1,
+            b1:b1,
+            a2:a2,
+            b2:b2
+        };
+    }
     return targetLink;
 
 }
@@ -1157,23 +1280,19 @@ function drawCanvasLink (canvasObj,x,y) {
     //取得经过计算之后的links 数据
     var links = canvasObj.links;
     var context = canvasObj.context;
+
     //进行绘制
-    // context.beginPath();
     context.strokeStyle = "#ccc";
-    context.lineWidth = 3;
     var targetLink = null;
     for(var i=0;i<links.length;i++){
-        // drawArrow(context,links[i].source.getX(), links[i].source.getY(),links[i].target.getX(), links[i].target.getY(),links[i].target.radius(),3);
-        /*console.log(x,y);
-        console.log(links[i]);*/
+     /*   canvasObj.linksCache[i].width = Math.abs(links[i].source.x-links[i].target.x);
+        canvasObj.linksCache[i].height = Math.abs(links[i].source.y-links[i].target.y);
+        var cacheCtx = canvasObj.linksCache[i].getContext('2d');*/
         var tag = drawArrow(context,links[i],3,x,y);
         if(tag) targetLink = links[i];
-        // context.moveTo(links[i].source.getX(), links[i].source.getY());
-        // context.lineTo(links[i].target.getX(), links[i].target.getY());
+
     }
-    console.log(targetLink);
     return targetLink;
-    // context.stroke();
 }
 
 function findPoint(nodes,x, y) {
@@ -1234,7 +1353,6 @@ function findLinks (canvasObj, x, y) {
         context.restore();
     }
     render(x,y);
-    console.log(target);
     return target;
 
 }
@@ -1245,11 +1363,13 @@ function drawCanvas () {
     // console.log(that._getCurrentTransform());
     //绘制的canvas 对象，在优化的时候可以对nodes 和 links 的数据进行相应的分组优化
     var canvas = {
-        element:that.element,
+        canvas:that.element,
         context:context,
         nodes:this.getRenderedNodes(),
         links:this.getRenderedLinks(),
-        transform:that.currentTransform()
+        transform:that.currentTransform(),
+        nodesCache:that.nodesCache,//离屏缓存canvas
+        linksCache:that.linksCache
     };
 
 
@@ -1281,6 +1401,7 @@ function drawCanvas () {
         context.save();
         context.translate(canvas.transform.x, canvas.transform.y);
         context.scale(canvas.transform.k, canvas.transform.k);
+        // drawCache(canvas,x,y);
         drawCanvasLink(canvas,x,y);
         drawCanvasNode(canvas);
         context.restore();
@@ -1290,8 +1411,7 @@ function drawCanvas () {
     //单击事件
     function _click(d) {
         var p = convertToCanvasCor(that.element, d3.event.x, d3.event.y);
-        console.log('click');
-        var p = convertToCanvasCor(that._canvas,d3.event.x,d3.event.y);
+        // var p = convertToCanvasCor(that._canvas,d3.event.x,d3.event.y);
         var x = canvas.transform.invertX(p.x);
         var y = canvas.transform.invertY(p.y);
         var targetNode = findPoint(canvas.nodes,x,y);
@@ -1304,18 +1424,45 @@ function drawCanvas () {
                 that.getSelectedNodes().forEach(function (node) {
                     node.attr('selected',false);
                 });
+                that.getSelectedLinks().forEach(function (link) {
+                    link.attr('selected',false);
+                });
             }
             targetNode.attr('selected',!targetNode.selected);
         }else{
-            console.log(context.isPointInPath(x,y));
             if(targetLink){
                 //选中lilnk
-                console.log(targetLink);
                 if(!d3.event.ctrlKey){
                     if(targetLink.select) return;
                     that.getSelectedLinks().forEach(function (link) {
                         link.attr('selected',false);
                     });
+                    that.getSelectedNodes().forEach(function (node) {
+                        node.attr('selected',false);
+                    });
+                }
+                if(targetLink.attr('selected')){
+                    //取消选中 箭头指向的点
+                    if(targetLink.hasSourceArrow() && targetLink.hasTargetArrow()){
+                        //
+                        targetLink.source.attr('selected',false);
+                        targetLink.target.attr('selected',false);
+                    }else if(targetLink.hasSourceArrow()){
+                        targetLink.source.attr('selected',false);
+                    }else if(targetLink.hasTargetArrow()){
+                        targetLink.target.attr('selected',false);
+                    }
+                }else{
+                    //选中 箭头指向的点
+                    if(targetLink.hasSourceArrow() && targetLink.hasTargetArrow()){
+                        //
+                        targetLink.source.attr('selected',true);
+                        targetLink.target.attr('selected',true);
+                    }else if(targetLink.hasSourceArrow()){
+                        targetLink.source.attr('selected',true);
+                    }else if(targetLink.hasTargetArrow()){
+                        targetLink.target.attr('selected',true);
+                    }
                 }
                 targetLink.attr('selected',!targetLink.selected);
 
@@ -1449,9 +1596,9 @@ function zoomed () {
     var hideScale = d3.min([this._config.scaleOfHideNodeLabel, this._config.scaleOfHideLinkLabel]);
     
     //render while should hide label
-    if(previousScale >= hideScale && currentScale <= hideScale) this.render();
+    if(previousScale >= hideScale && currentScale <= hideScale) this.render(RENDER_TYPE.ZOOM);
     //panning don't need re-render, render only after zooming
-    if(currentScale !== previousScale && currentScale > hideScale) this.render();
+    if(currentScale !== previousScale && currentScale > hideScale) this.render(RENDER_TYPE.ZOOM);
 }
 
 function transform(k, x, y, duration) {

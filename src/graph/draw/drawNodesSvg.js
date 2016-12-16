@@ -35,17 +35,34 @@ export default function (renderType) {
     g.call(this._config.insertNode);
     g.call(updateAttr);
     
-    //need update Nodes Element
-    if(renderType === RENDER_TYPE.IMMEDIATELY){
-        var updateNodes = this.nodesSelection();
-    }else{
-        updateNodes = d3.selectAll(this.updateDOM.getNodesEle());
-    }
-    updateNodes.call(updateAttr);
+    //update elements
+    if(renderType === RENDER_TYPE.IMMEDIATELY || renderType === RENDER_TYPE.ZOOM) var updateNodes = this.nodesSelection();
+    else updateNodes = d3.selectAll(this.updateDOM.getNodesEle());
+    
+    //update attributes
+    if(renderType === RENDER_TYPE.ZOOM) var updated = updateZoom;
+    else updated = updateAttr;
+    
+    updateNodes.call(updated);
+    
     
     this.updateDOM.clearUpdateNodes();
-    
     nodes.exit().remove();
+    
+    
+    function updateZoom(selection){
+        var scale = self.currentTransform().k;
+        selection.attr("transform", function (Node) { return "translate(" + Node.getX() + "," + Node.getY() + ")";});
+
+        selection.select('.text-group')
+            .style('display', function(Node){
+                return (scale < self._config.scaleOfHideNodeLabel)? 'none': 'block';
+            })
+            .attr("transform", function(Node){ return "translate(" + (1 + Node.attr("radius")) + ", "+ (-Node.attr("radius") / 2) +") scale(" + 1 / scale + ")"; })
+        
+        
+        selection.call(self._config.updateNode, scale);
+    }
     
     function updateAttr(selection){
         var scale = self.currentTransform().k;
