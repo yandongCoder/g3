@@ -11,8 +11,8 @@ export default function () {
     var self = this;
 
     //add predefined DOM
-    appendPreElement.call(this);
     appendPreDefs.call(this);
+    appendPreElement.call(this);
 
 
     this.svgSelection()

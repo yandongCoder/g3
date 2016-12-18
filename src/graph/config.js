@@ -1,3 +1,5 @@
+import assign from "../utils/assign";
+
 const DEFAULT_CONFIG = {
     radius: 15,
     linkWidth: 3,
@@ -39,7 +41,7 @@ const DEFAULT_CONFIG = {
 function config(config) {
     if(!arguments.length) return this._config;
     
-    this._config = Object.assign({}, DEFAULT_CONFIG, this._config || {}, config || {});
+    this._config = assign({}, DEFAULT_CONFIG, this._config || {}, config || {});
     return this;
 }
 

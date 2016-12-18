@@ -1,4 +1,4 @@
-import {RENDER_TYPE} from "../CONSTANT";
+import {RENDER_TYPE, LINE_HEIGHT} from "../CONSTANT";
 import unique from "../../utils/unique";
 
 export default function (renderType) {
@@ -95,8 +95,8 @@ export default function (renderType) {
             .style('display', function(Link){
                 return (scale < self._config.scaleOfHideLinkLabel)? 'none': 'block';
             })
-            .attr('width', function (Link) {return Link.LineWidth(scale)});
-            //.attr('height', function(Link){return Link.LineHeight(scale)});
+            .attr('width', function (Link) {return Link.LineWidth(scale)})
+            .attr('height', LINE_HEIGHT);
         
         info.select('.text')
             .text(function (Link) {return Link.attr("label");});

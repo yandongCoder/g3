@@ -16,24 +16,23 @@ svg.graph {
     .graph .node.disabled, .graph .link.disabled {
       opacity: 0.1;
       pointer-events: none; }
-  .graph .nodes .node .fa {
+  .graph .node .fa {
     color: #fff;
     font-size: 20px;
     position: static;
     display: block;
     text-align: center; }
-  .graph .nodes .node .mugshot {
+  .graph .node .mugshot {
     width: 100%;
     height: 100%;
     border-radius: 50%;
     object-fit: cover; }
-  .graph .nodes .node .icon {
+  .graph .node .icon {
     border-radius: 50%; }
-  .graph .nodes .node .text-group {
+  .graph .node .text-group {
     font-family: Microsoft YaHei UI, Lato, sans-serif;
-    width: 80px;
     pointer-events: none; }
-    .graph .nodes .node .text-group .text {
+    .graph .node .text-group .text {
       width: 100%;
       vertical-align: middle;
       text-overflow: ellipsis;
@@ -41,36 +40,36 @@ svg.graph {
       white-space: nowrap;
       display: inline-block;
       line-height: 20px; }
-  .graph .nodes .node.selected .circle {
+  .graph .node.selected .circle {
     stroke: #f65565;
     stroke-width: 5; }
-  .graph .nodes .node.selected .text-group .text {
+  .graph .node.selected .text-group .text {
     width: auto !important;
     padding-right: 5px;
     background: #f65565;
     white-space: nowrap;
     text-overflow: initial; }
-  .graph .links {
+  .graph .link-info {
+    font-family: Microsoft YaHei UI, Lato, sans-serif;
+    text-align: center;
+    white-space: nowrap;
     font-size: 13px; }
-    .graph .links .fa {
+    .graph .link-info .fa {
       font-size: 16px; }
-    .graph .links .link-info {
-      font-family: Microsoft YaHei UI, Lato, sans-serif;
-      text-align: center;
-      white-space: nowrap; }
-      .graph .links .link-info .icon {
-        margin-right: 2px; }
-    .graph .links .link-path {
-      fill-opacity: 0.5;
-      stroke-opacity: 0.5;
+    .graph .link-info .icon {
+      margin-right: 2px; }
+  .graph .link-path {
+    will-change: transform;
+    fill-opacity: 0.5;
+    stroke-opacity: 0.5;
+    fill: none;
+    stroke: #a1a1a1;
+    stroke-width: 4px; }
+    .graph .link-path.selected {
       fill: none;
-      stroke: #a1a1a1;
-      stroke-width: 4px; }
-      .graph .links .link-path.selected {
-        fill: none;
-        stroke: #f65565 !important;
-        fill-opacity: 1;
-        stroke-opacity: 1; }
+      stroke: #f65565 !important;
+      fill-opacity: 1;
+      stroke-opacity: 1; }
   .graph #start-arrow path, .graph #end-arrow path, .graph .color-start-arrow path, .graph .color-end-arrow path {
     fill-opacity: 0.5; }
   .graph #start-arrow-selected path, .graph #end-arrow-selected path {

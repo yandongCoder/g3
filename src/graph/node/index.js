@@ -30,9 +30,6 @@ Node.prototype = {
     attr: attr,
     getX: getX,
     getY: getY,
-    getLabelWidth: function(){
-        return getStrLen(this.attr("label")) * 9;
-    },
     remove: remove,
     getConnectedLinks: getConnectedLinks
 };

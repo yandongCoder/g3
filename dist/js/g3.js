@@ -13,6 +13,7 @@ const DIRECTION = {
 };
 
 const LINE_TEXT_MARGIN = 2;
+const LINE_HEIGHT = 20;
 const NODE_TEXT_HEIGHT = 10;// half of node text height in css.
 
 const LINK_REMOVE_TYPE = {
@@ -176,9 +177,6 @@ Node.prototype = {
     attr: attr,
     getX: getX,
     getY: getY,
-    getLabelWidth: function(){
-        return getStrLen(this.attr("label")) * 9;
-    },
     remove: remove,
     getConnectedLinks: getConnectedLinks
 };
@@ -603,7 +601,7 @@ function getRenderedLinks() {
 
 function appendPreDefs () {
     var self = this;
-    var str = '<defs>'+
+    var str = ''+
                         '<filter id="shadow" x="-20%" y="-20%" width="200%" height="200%" type="Shadow" shadowoffsetx="5" shadowoffsety="5" shadowblur="5" shadowcolor="rgba(0,0,0)">' +
                             '<feOffset result="offOut" in="SourceGraphic" dx="0" dy="3"></feOffset>' +
                             '<feColorMatrix result="matrixOut" in="offOut" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.5 0"></feColorMatrix>' +
@@ -620,9 +618,13 @@ function appendPreDefs () {
                             '<stop offset="98%" style="stop-color:rgb(255,255,255);stop-opacity:1" />' +
                             '<stop offset="100%" style="stop-color:rgb(222，222, 222);stop-opacity:1" />' +
                         '</radialGradient>' +
-                '</defs>';
+                '';
 
-    this.element.insertAdjacentHTML("afterbegin", str);
+    //this.element.insertAdjacentHTML("afterbegin", str);
+    
+    var def = document.createElementNS("http://www.w3.org/2000/svg", "defs");
+    def.innerHTML = str;
+    this.element.appendChild(def);
     
     d3.select("#start-arrow path").call(arrowAttr);
     d3.select("#end-arrow path").call(arrowAttr);
@@ -714,8 +716,8 @@ function init () {
     var self = this;
 
     //add predefined DOM
-    appendPreElement.call(this);
     appendPreDefs.call(this);
+    appendPreElement.call(this);
 
 
     this.svgSelection()
@@ -812,7 +814,11 @@ function drawNodesSvg (renderType) {
                 return (scale < self._config.scaleOfHideNodeLabel)? 'none': 'block';
             })
             .attr("transform", function(Node){ return "translate(" + (1 + Node.attr("radius")) + ", "+ (-NODE_TEXT_HEIGHT / scale) +") scale(" + 1 / scale + ")"; })
-        
+    
+        selection.selectAll('.avatar')
+            .attr("transform", function(Node){ return "translate(" + -Node.attr("radius") + ", "+ -Node.attr("radius") +")"; })
+            .attr("width", function(Node){return Node.attr("radius")*2;})
+            .attr("height", function(Node){return Node.attr("radius")*2;});
         
         selection.call(self._config.updateNode, scale);
     }
@@ -844,7 +850,10 @@ function drawNodesSvg (renderType) {
             .style('display', function(Node){
                 return (scale < self._config.scaleOfHideNodeLabel)? 'none': 'block';
             })
-            .style("width", self._config.nodeLabelClipWidth + "px")
+            .attr("width", function(Node){
+                return Node.selected? getStrLen(Node.label) * 9 :self._config.nodeLabelClipWidth;
+            })
+            .attr('height', NODE_TEXT_HEIGHT * 2)
             .attr("transform", function(Node){ return "translate(" + (1 + Node.attr("radius")) + ", "+ (-NODE_TEXT_HEIGHT / scale) +") scale(" + 1 / scale + ")"; })
             
             .select('.text')
@@ -956,8 +965,8 @@ function drawLinksSvg (renderType) {
             .style('display', function(Link){
                 return (scale < self._config.scaleOfHideLinkLabel)? 'none': 'block';
             })
-            .attr('width', function (Link) {return Link.LineWidth(scale)});
-            //.attr('height', function(Link){return Link.LineHeight(scale)});
+            .attr('width', function (Link) {return Link.LineWidth(scale)})
+            .attr('height', LINE_HEIGHT);
         
         info.select('.text')
             .text(function (Link) {return Link.attr("label");});
@@ -1676,6 +1685,29 @@ function draged (currentNode) {
     this.delayRender(null, RENDER_TYPE.NUDGE);
 }
 
+function assign(target, varArgs) { // .length of function is 2
+    'use strict';
+    if (target == null) { // TypeError if undefined or null
+        throw new TypeError('Cannot convert undefined or null to object');
+    }
+    
+    var to = Object(target);
+    
+    for (var index = 1; index < arguments.length; index++) {
+        var nextSource = arguments[index];
+        
+        if (nextSource != null) { // Skip over if undefined or null
+            for (var nextKey in nextSource) {
+                // Avoid bugs when hasOwnProperty is shadowed
+                if (Object.prototype.hasOwnProperty.call(nextSource, nextKey)) {
+                    to[nextKey] = nextSource[nextKey];
+                }
+            }
+        }
+    }
+    return to;
+};
+
 const DEFAULT_CONFIG = {
     radius: 15,
     linkWidth: 3,
@@ -1717,7 +1749,7 @@ const DEFAULT_CONFIG = {
 function config(config) {
     if(!arguments.length) return this._config;
     
-    this._config = Object.assign({}, DEFAULT_CONFIG, this._config || {}, config || {});
+    this._config = assign({}, DEFAULT_CONFIG, this._config || {}, config || {});
     return this;
 }
 

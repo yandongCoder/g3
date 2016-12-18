@@ -1,4 +1,6 @@
 import getAbsUrl from "../../utils/getAbsUrl";
+import getStrLen from "../../utils/getStrLen";
+
 import {RENDER_TYPE, NODE_TEXT_HEIGHT} from "../CONSTANT";
 
 export default function (renderType) {
@@ -59,7 +61,11 @@ export default function (renderType) {
                 return (scale < self._config.scaleOfHideNodeLabel)? 'none': 'block';
             })
             .attr("transform", function(Node){ return "translate(" + (1 + Node.attr("radius")) + ", "+ (-NODE_TEXT_HEIGHT / scale) +") scale(" + 1 / scale + ")"; })
-        
+    
+        selection.selectAll('.avatar')
+            .attr("transform", function(Node){ return "translate(" + -Node.attr("radius") + ", "+ -Node.attr("radius") +")"; })
+            .attr("width", function(Node){return Node.attr("radius")*2;})
+            .attr("height", function(Node){return Node.attr("radius")*2;});
         
         selection.call(self._config.updateNode, scale);
     }
@@ -91,7 +97,10 @@ export default function (renderType) {
             .style('display', function(Node){
                 return (scale < self._config.scaleOfHideNodeLabel)? 'none': 'block';
             })
-            .style("width", self._config.nodeLabelClipWidth + "px")
+            .attr("width", function(Node){
+                return Node.selected? getStrLen(Node.label) * 9 :self._config.nodeLabelClipWidth;
+            })
+            .attr('height', NODE_TEXT_HEIGHT * 2)
             .attr("transform", function(Node){ return "translate(" + (1 + Node.attr("radius")) + ", "+ (-NODE_TEXT_HEIGHT / scale) +") scale(" + 1 / scale + ")"; })
             
             .select('.text')
