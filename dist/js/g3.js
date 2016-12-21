@@ -601,6 +601,10 @@ const FONT = {
     "fa-youtube-square": "f166"
 };
 
+const LINE_TEXT_MARGIN = 2;
+const LINE_HEIGHT = 20;
+const NODE_TEXT_HEIGHT = 10;// half of node text height in css.
+
 const LINK_REMOVE_TYPE = {
     UNMERGE: 1,
     L2N: 2
@@ -612,12 +616,13 @@ const REMOVE_TYPE = {
 const RENDER_TYPE = {
     SELECT: "SELECT",
     NUDGE: "NUDGE",
-    IMMEDIATELY: "IMMEDIATELY"
+    IMMEDIATELY: "IMMEDIATELY",
+    ZOOM: "ZOOM"
 };
 
-var select = function (selector) {
+function select (selector) {
     return typeof selector === "string"? document.querySelector(selector): selector;
-};
+}
 
 function delayRender(Obj, renderType){
     this.updateDOM.addObj(Obj, renderType);
@@ -625,8 +630,8 @@ function delayRender(Obj, renderType){
     return this;
 }
 
-function render(){
-    this._render(RENDER_TYPE.IMMEDIATELY);
+function render(renderType){
+    this._render(renderType || RENDER_TYPE.IMMEDIATELY);
     return this;
 }
 
@@ -639,16 +644,19 @@ function _render(renderType) {
     if(!this._config.ifRender) return this;
     var canvasType = this.element.nodeName;
     if(canvasType === 'svg'){ this._init();}
+<<<<<<< HEAD
    /* else{
         this._initCache();
     }*/
+=======
+>>>>>>> b08c8a660ea32c7bc5f23ff54d8122a6d850b1f9
     
-    if(renderType === RENDER_TYPE.IMMEDIATELY){
+    if(renderType === RENDER_TYPE.IMMEDIATELY || renderType === RENDER_TYPE.ZOOM){
         draw(renderType);
     }
     else{
         clearTimeout(this._renderDelay);
-        this._renderDelay = setTimeout(function timeoutDraw(){draw(renderType);}, 0);
+        this._renderDelay = setTimeout(function timeoutDraw(){draw(renderType)}, 0);
     }
     
     return this;
@@ -658,14 +666,14 @@ function _render(renderType) {
     }
 }
 
-var toArray = function (maybeArr) {
+function toArray (maybeArr) {
     if(!Array.isArray(maybeArr)) maybeArr = [maybeArr];
     return maybeArr;
-};
+}
 
 //中文为2长度，非中文为1
 
-var getStrLen = function (str) {
+function getStrLen (str) {
     var len = 0;
     if (typeof str !== "string") {
         str = str.toString();
@@ -680,18 +688,17 @@ var getStrLen = function (str) {
     return len;
 };
 
-var attr = function (prop, val){
+function attr (prop, val){
     if(val === undefined) return this[prop];
     
     val = val instanceof Function? val(this): val;
     if(val === this[prop]) return;
     this[prop] = val;
     
-    // this.graph.delayRender(this);
-    this.graph.render(this);
-
+    this.graph.delayRender(this);
+    
     return this;
-};
+}
 
 function getX() {
     return this.x || 0;
@@ -701,16 +708,16 @@ function getY() {
     return this.y || 0;
 }
 
-var nudge = function (nudgeX, nudgeY) {
+function nudge (nudgeX, nudgeY) {
     if(!this.graph._config.dragable) return;
     
     this.x += nudgeX;
     this.y += nudgeY;
     
     return this;
-};
+}
 
-var getConnectedLinks = function (grouped) {
+function getConnectedLinks (grouped) {
     var connectedLinks = this.graph._links.filter(function (Link) {
         return (Link.source === this) || (Link.target === this);
     }, this);
@@ -731,14 +738,14 @@ var getConnectedLinks = function (grouped) {
     }
 
     return connectedLinks;
-};
+}
 
-var remove = function (removeType) {
+function remove (removeType) {
     delete this.graph._nodesHash[this.id];
     this.graph._nodes.splice(this.graph._nodes.indexOf(this), 1);
     
     if(this.groupedBy && (removeType !== REMOVE_TYPE.UNGROUP) ) this.groupedBy.remove();
-};
+}
 
 //data: data obj, graph: graphInstance
 function Node(data, graph) {
@@ -765,19 +772,16 @@ Node.prototype = {
     attr: attr,
     getX: getX,
     getY: getY,
-    getLabelWidth: function(){
-        return getStrLen(this.attr("label")) * 9;
-    },
     remove: remove,
     getConnectedLinks: getConnectedLinks
 };
 
 //Link has source and target Node in _nodes
-var hasST = function () {
+function hasST () {
     return (this.source !== undefined) && (this.target !== undefined);
-};
+}
 
-var getOffsetCoordinate = function (Sx, Sy, Tx, Ty, offsetS, offsetT) {
+function getOffsetCoordinate (Sx, Sy, Tx, Ty, offsetS, offsetT) {
     var l = Math.sqrt((Tx - Sx) * (Tx - Sx) + (Ty - Sy) * (Ty - Sy));
     if(l === 0) l = 1;
 
@@ -790,7 +794,7 @@ var getOffsetCoordinate = function (Sx, Sy, Tx, Ty, offsetS, offsetT) {
         Tx: Tx - offsetT * cos,
         Ty: Ty - offsetT * sin
     }
-};
+}
 
 var absUrl = window.location.href.split('#')[0];
 
@@ -843,7 +847,7 @@ function getLinkInfoTransform(scale) {
     var transform  = 'rotate('+ degrees +' '+ rx +' '+ ry +') translate(' + rx + ' ' + ry + ') scale(' + 1 / scale + ')' + '';
     
     var offsetX =  - this.LineWidth(scale) / 2;
-    var offsetY =  this.LineHeight(scale) / 2 + 5;
+    var offsetY =  this.LineHeight(scale) / 2 + LINE_TEXT_MARGIN;
     transform += ' translate('+ offsetX +' '+ offsetY +')';
     
     return transform;
@@ -915,7 +919,7 @@ function getTargetId(){
     return this.target.id;
 }
 
-var remove$1 = function (type) {
+function remove$1 (type) {
     delete this.graph._linksHash[this.id];
     this.graph._links.splice(this.graph._links.indexOf(this), 1);
 
@@ -925,14 +929,14 @@ var remove$1 = function (type) {
     if(this.transformedBy && (type !== LINK_REMOVE_TYPE.L2N)) this.transformedBy.remove();
 
     return this;
-};
+}
 
-var getHomoLinks = function () {
+function getHomoLinks () {
     return this.graph._links.filter(function(Link){
         return (Link.source === this.source || Link.source === this.target) &&
                 (Link.target === this.source || Link.target === this.target);
     }, this) || [];
-};
+}
 
 function Link(data, graph) {
     this.graph = graph;
@@ -1258,26 +1262,26 @@ function addLink(obj) {
 }
 
 function removeNodes(filter) {
-    this.getNodes(filter).forEach(function(Node$$1){
+    this.getNodes(filter).forEach(function(Node){
         //remove links first
-        this._removeLinksOfNode(Node$$1);
-        Node$$1.remove();
+        this._removeLinksOfNode(Node);
+        Node.remove();
     }, this);
     
     this._render();
 }
 
 function removeLinks(filter) {
-    this.getLinks(filter).forEach(function(Link$$1){
-        Link$$1.remove();
+    this.getLinks(filter).forEach(function(Link){
+        Link.remove();
     }, this);
     
     this._render();
 }
 
-function removeLinksOfNode(Node$$1) {
-    Node$$1.getConnectedLinks().map(function (Link$$1) {
-        Link$$1.remove();
+function removeLinksOfNode(Node) {
+    Node.getConnectedLinks().map(function (Link) {
+        Link.remove();
     }, this);
 }
 
@@ -1343,16 +1347,16 @@ function links(links, cover) {
     return this;
 }
 
-var getIds = function (array) {
+function getIds (array) {
     return array.map(function(item){
         if(typeof item  ===  'object') return item.id;
         else return item;
     });
-};
+}
 
 //filter array of object which has id; filtered by id, or id array, or object that has id, or object array
 //this function is convenient to Nodes or Links data.
-var filterBy = function (filter, objArray) {
+function filterBy (filter, objArray) {
     if(typeof filter === "function"){
         var filtered = filter;
     }else if(filter === undefined || filter === null){
@@ -1371,18 +1375,18 @@ var filterBy = function (filter, objArray) {
         if(filtered(objArray[i])) filteredArr.push(objArray[i]);
     }
     return filteredArr;
-};
+}
 
-var attr$1 = function (prop, val) {
+function attr$1 (prop, val) {
     this.arr.forEach(function(datum){
         datum.attr(prop, val instanceof Function? val(datum): val);
     });
     return this;
-};
+}
 
-var data = function () {
+function data () {
     return this.arr;
-};
+}
 
 function Selection(arr) {
     this.arr = arr;
@@ -1401,7 +1405,7 @@ function getNodesOP(filter, val){
 function getNodes(filter, val) {
     if(arguments.length === 2 && val !== undefined){
         var key = filter;
-        filter = function(Node){return Node.attr(key) === val;};
+        filter = function(Node){return Node.attr(key) === val;}
     }
     return filterBy(filter, this._nodes);
 }
@@ -1423,7 +1427,7 @@ function getLinksOP(filter, val){
 function getLinks(filter, val) {
     if(arguments.length === 2 && val !== undefined){
         var key = filter;
-        filter = function(Node){return Node.attr(key) === val;};
+        filter = function(Node){return Node.attr(key) === val;}
     }
     
     return filterBy(filter, this._links);
@@ -1471,9 +1475,9 @@ function getRenderedLinks() {
     });
 }
 
-var appendPreDefs = function () {
+function appendPreDefs () {
     var self = this;
-    var str = '<defs>'+
+    var str = ''+
                         '<filter id="shadow" x="-20%" y="-20%" width="200%" height="200%" type="Shadow" shadowoffsetx="5" shadowoffsety="5" shadowblur="5" shadowcolor="rgba(0,0,0)">' +
                             '<feOffset result="offOut" in="SourceGraphic" dx="0" dy="3"></feOffset>' +
                             '<feColorMatrix result="matrixOut" in="offOut" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.5 0"></feColorMatrix>' +
@@ -1490,9 +1494,13 @@ var appendPreDefs = function () {
                             '<stop offset="98%" style="stop-color:rgb(255,255,255);stop-opacity:1" />' +
                             '<stop offset="100%" style="stop-color:rgb(222，222, 222);stop-opacity:1" />' +
                         '</radialGradient>' +
-                '</defs>';
+                '';
 
-    this.element.insertAdjacentHTML("afterbegin", str);
+    //this.element.insertAdjacentHTML("afterbegin", str);
+    
+    var def = document.createElementNS("http://www.w3.org/2000/svg", "defs");
+    def.innerHTML = str;
+    this.element.appendChild(def);
     
     d3.select("#start-arrow path").call(arrowAttr);
     d3.select("#end-arrow path").call(arrowAttr);
@@ -1500,19 +1508,19 @@ var appendPreDefs = function () {
     function arrowAttr(selection){
         selection.style('fill', self._config.linkColor);
     }
-};
+}
 
-var appendPreElement = function () {
+function appendPreElement () {
     var svg = this.svgSelection();
     this._brushSelection = svg.append("g").attr("class", "brush");
 
-    var forceGroup = this._forceGroupSelection = svg.append('g').attr('class', 'force');
+    var graphGroup = this.graphGroup = svg.append('g').attr('class', 'graph-group');
     
-    forceGroup.append("g").attr("class", "links");
-    forceGroup.append("g").attr("class", "nodes");
-};
+    graphGroup.append("g").attr("class", "links");
+    graphGroup.append("g").attr("class", "nodes");
+}
 
-var Zoom = function() {
+function Zoom() {
     var self = this;
     return d3.zoom().scaleExtent([this._config.minScale, this._config.maxScale])
         .on('start', function () {
@@ -1522,9 +1530,9 @@ var Zoom = function() {
         .on('end', function () {
             self._config.onZoomEnd.call(this);
         });
-};
+}
 
-var Brush = function () {
+function Brush () {
     var self = this;
     var brush = d3.brush()
         .extent([[0, 0], [3840, 2400]])
@@ -1562,9 +1570,9 @@ var Brush = function () {
     };
 
     return brush;
-};
+}
 
-var dragNode = function () {
+function dragNode () {
     var self = this;
     var drag = d3.drag()
         .on("start", function (Node) {
@@ -1575,17 +1583,17 @@ var dragNode = function () {
 
         });
     return drag;
-};
+}
 
-var init = function () {
+function init () {
     //init trigger only once a graph
     if(this._hasInit) return;
 
     var self = this;
 
     //add predefined DOM
-    appendPreElement.call(this);
     appendPreDefs.call(this);
+    appendPreElement.call(this);
 
 
     this.svgSelection()
@@ -1618,13 +1626,279 @@ var init = function () {
     this.dragNode = dragNode.call(this);
 
     this._hasInit = true;
-};
+}
+
+function getAbsUrl (url) {
+    return (url || window.location.href).split('#')[0];
+}
+
+function drawNodesSvg (renderType) {
+ 
+    var self = this;
+    var nodes = this.nodesSelection().data(this.getRenderedNodes(), function (Node) { return Node.id;});
+
+    var g = nodes.enter().append('g')
+        .each(function(Node){ Node.element = this })//reference element to Node
+        .classed('node', true)
+        .on('mousedown.select', function(Node, i){
+            if(!d3.event.ctrlKey){
+                if(Node.attr("selected")) return;
+                self.getNodesOP().attr("selected", false);
+            }
+            self.getLinksOP().attr("selected", false);
+            Node.attr("selected",!Node.attr("selected"));
+        })
+        .call(this._config.bindNodeEvent)
+        .call(this.dragNode);
+    
+    g.append("circle")
+        .attr('class', 'circle')
+        .attr("filter", "url(" + getAbsUrl() + "#shadow)");
+    g.append('svg:foreignObject')
+        .attr('class', 'text-group')
+        .append("xhtml:div")
+        .attr('class', 'text');
+    
+    var avatar = g.append('svg:foreignObject').attr('class', 'avatar');
+    avatar.append('xhtml:span').attr('class', 'icon');
+    avatar.append('xhtml:img').attr('class', 'mugshot');
+    
+    g.call(this._config.insertNode);
+    g.call(updateAttr);
+    
+    //update elements
+    if(renderType === RENDER_TYPE.IMMEDIATELY || renderType === RENDER_TYPE.ZOOM) var updateNodes = this.nodesSelection();
+    else updateNodes = d3.selectAll(this.updateDOM.getNodesEle());
+    
+    //update attributes
+    if(renderType === RENDER_TYPE.ZOOM) var updated = updateZoom;
+    else updated = updateAttr;
+    
+    updateNodes.call(updated);
+    
+    
+    this.updateDOM.clearUpdateNodes();
+    nodes.exit().remove();
+    
+    
+    function updateZoom(selection){
+        var scale = self.currentTransform().k;
+        selection.attr("transform", function (Node) { return "translate(" + Node.getX() + "," + Node.getY() + ")";});
+
+        selection.select('.text-group')
+            .style('display', function(Node){
+                return (scale < self._config.scaleOfHideNodeLabel)? 'none': 'block';
+            })
+            .attr("transform", function(Node){ return "translate(" + (1 + Node.attr("radius")) + ", "+ (-NODE_TEXT_HEIGHT / scale) +") scale(" + 1 / scale + ")"; })
+    
+        selection.selectAll('.avatar')
+            .attr("transform", function(Node){ return "translate(" + -Node.attr("radius") + ", "+ -Node.attr("radius") +")"; })
+            .attr("width", function(Node){return Node.attr("radius")*2;})
+            .attr("height", function(Node){return Node.attr("radius")*2;});
+        
+        selection.call(self._config.updateNode, scale);
+    }
+    
+    function updateAttr(selection){
+        var scale = self.currentTransform().k;
+        selection.attr("transform", function (Node) { return "translate(" + Node.getX() + "," + Node.getY() + ")";})
+            .classed("selected", function(Node){return Node.attr("selected")})
+            .classed("disabled", function(Node){return Node.attr("disabled")});
+        
+        selection.select('circle')
+            .attr("r", function(Node){ return Node.attr("radius");})
+            .style("fill", function(Node){ return Node.attr("color"); });
+        
+        var avatar = selection.selectAll('.avatar')
+            .attr("transform", function(Node){ return "translate(" + -Node.attr("radius") + ", "+ -Node.attr("radius") +")"; })
+            .attr("width", function(Node){return Node.attr("radius")*2;})
+            .attr("height", function(Node){return Node.attr("radius")*2;});
+    
+        avatar.select('.icon')
+            .attr('class', function(Node){ return "icon " + self._config.iconPrefix + Node.attr("icon");})
+            .style("line-height", function(Node){return Node.attr("radius")*2 + "px";});
+        
+        avatar.select('.mugshot')
+            .attr('src', function(Node){return Node.attr("mugshot")? self._config.mugshotPrefix + Node.attr("mugshot"): "";})
+            .style('display', function(Node){return Node.attr("mugshot")? "block": "none";});
+        
+        selection.select('.text-group')
+            .style('display', function(Node){
+                return (scale < self._config.scaleOfHideNodeLabel)? 'none': 'block';
+            })
+            .attr("width", function(Node){
+                return Node.selected? getStrLen(Node.label) * 9 :self._config.nodeLabelClipWidth;
+            })
+            .attr('height', NODE_TEXT_HEIGHT * 2)
+            .attr("transform", function(Node){ return "translate(" + (1 + Node.attr("radius")) + ", "+ (-NODE_TEXT_HEIGHT / scale) +") scale(" + 1 / scale + ")"; })
+            
+            .select('.text')
+            .text(function (Node) { return Node.attr("label"); });
+        
+        selection.call(self._config.updateNode, scale);
+    }
+}
+
+function unique (array) {
+    var n = [];
+    for (var i = 0; i < array.length; i++) {
+        if (n.indexOf(array[i]) == -1) n.push(array[i]);
+    }
+    return n;
+}
+
+function drawLinksSvg (renderType) {
+    var self = this;
+    var scale = self.currentTransform().k;
+    
+    addArrowByColor();
+    
+    var links = this.linksSelection().data(this.getRenderedLinks(), function (Link) { return Link.id });
+
+    var link = links.enter()
+        .append('g')
+        .each(function(Link){ Link.element = this })
+        .classed('link', true)
+        .call(this._config.bindLinkEvent);
+    
+    link.append('path')
+        .classed('link-path', true)
+        .attr('id', function(Link){ return "link-path" + Link.id});
+    
+    
+    var info = link
+        .append('svg:foreignObject')
+        .classed('link-info', true);
+    
+    info.append('xhtml:span').attr('class', 'icon');
+    info.append('xhtml:span').attr('class', 'text');
+    
+    
+    link.call(updateAttr);
+    
+    
+    //update elements
+    if(renderType === RENDER_TYPE.IMMEDIATELY || renderType === RENDER_TYPE.ZOOM){
+        var updateLinks  = this.linksSelection();
+    }else if(renderType === RENDER_TYPE.NUDGE){
+        updateLinks  = d3.selectAll(this.getRelatedLinks(this.getSelectedNodes()).map(function(Link){return Link.element;}));
+    }else{
+        updateLinks = d3.selectAll(this.updateDOM.getLinksEle());
+    }
+    
+    //update attributes
+    if(renderType === RENDER_TYPE.ZOOM) var updated = updateZoom;
+    else updated = updateAttr;
+    updateLinks.call(updated);
+    
+    
+    this.updateDOM.clearUpdateLinks();
+    links.exit().remove();
+    
+    
+    function updateZoom(selection){
+        selection
+            .select('.link-info')
+            .attr('transform', function(Link){
+                return Link.getLinkInfoTransform(scale);
+            })
+            .style('display', function(Link){
+                return (scale < self._config.scaleOfHideLinkLabel)? 'none': 'block';
+            })
+            .attr('width', function (Link) {return Link.LineWidth(scale)});
+    }
+    
+    function updateAttr(selection){
+        // if(renderType === RENDER_TYPE.NUDGE){
+        //     selection
+        //         .select('path')
+        //         .attr('d', function (Link) { var c = Link.getCoordination();  return 'M ' + c.Sx + ' ' + c.Sy + ' L ' + c.Tx + ' ' + c.Ty; });
+        //     return;
+        // }
+        selection.classed("disabled", function(Link){return Link.attr("disabled")});
+        
+        selection
+            .select('path')
+            .attr('d', function (Link) { var c = Link.getCoordination();  return 'M ' + c.Sx + ' ' + c.Sy + ' L ' + c.Tx + ' ' + c.Ty; })
+            .classed("selected", function(Link){return Link.attr("selected")})
+            .style('marker-start', function (Link) { return Link.getStartArrow(); })
+            .style('marker-end', function (Link) { return Link.getEndArrow(); })
+            .style('stroke-width', function(Link){ return Link.attr("width"); })
+            .style('stroke', function(Link){ return Link.attr("color"); });
+    
+        // if(renderType === RENDER_TYPE.NUDGE){
+        //     selection
+        //         .attr('dx', function(Link){return Link.getTextOffset(); })
+        //         .attr('transform', function(Link){ return Link.getLinkLabelTransform(scale); });
+        //     return;
+        // }
+        
+        var info = selection
+            .select('.link-info')
+            .attr('transform', function(Link){
+                return Link.getLinkInfoTransform(scale);
+            })
+            .style('display', function(Link){
+                return (scale < self._config.scaleOfHideLinkLabel)? 'none': 'block';
+            })
+            .attr('width', function (Link) {return Link.LineWidth(scale)})
+            .attr('height', LINE_HEIGHT);
+        
+        info.select('.text')
+            .text(function (Link) {return Link.attr("label");});
+    
+        info.select('.icon')
+            .attr('class', function(Link){ return self._config.iconPrefix + Link.attr("icon");})
+    }
+    
+    function addArrowByColor(){
+        var uniqueColor = unique(self.getRenderedLinks().map(function(Link){return Link.color;}));
+        var startArrow = self.svgSelection().select('defs').selectAll('marker.color-start-arrow').data(uniqueColor, function(v){return v;});
+        var endArrow = self.svgSelection().select('defs').selectAll('marker.color-end-arrow').data(uniqueColor, function(v){return v;});
+    
+        startArrow.enter()
+            .append("svg:marker")
+            .attr("id", function(v){ return "start-arrow-"+ v; })
+            .classed('color-start-arrow', true)
+            .attr("refX", 10)
+            .call(arrowAttr)
+            .append("svg:path")
+            .attr("d", "M10,-5L0,0L10,5")
+            .call(arrowPathAttr);
+    
+        endArrow.enter()
+            .append("svg:marker")
+            .attr("id", function(v){ return "end-arrow-"+ v; })
+            .attr("refX", 0)
+            .classed('color-end-arrow', true)
+            .call(arrowAttr)
+            .append("svg:path")
+            .attr("d", "M0,-5L10,0L0,5")
+            .call(arrowPathAttr);
+    
+        function arrowAttr(selection){
+            selection
+                .attr("viewBox", "0 -5 10 10")
+                .attr("markerWidth", 3)
+                .attr("markerHeight", 3)
+                .attr("orient", "auto");
+        }
+        function arrowPathAttr(selection){
+            selection
+                .style("fill", function(v){return v});
+        }
+    }
+}
 
 /**
  * Created by lcx on 2016/11/1.
  * 利用canvas 画点 
  */
+<<<<<<< HEAD
 var drawCanvasNode$1 = function (canvasObj) {
+=======
+function drawCanvasNode (canvasObj) {
+>>>>>>> b08c8a660ea32c7bc5f23ff54d8122a6d850b1f9
     var nodes = canvasObj.nodes;
     // var context = canvasObj.context;
 
@@ -1688,15 +1962,25 @@ var drawCanvasNode$1 = function (canvasObj) {
     }
   /*  nodes.forEach(function(Node,i) {
 
+<<<<<<< HEAD
 
     });*/
 };
+=======
+    });
+}
+>>>>>>> b08c8a660ea32c7bc5f23ff54d8122a6d850b1f9
 
 /**
  * Created by lcx on 2016/11/2.
  */
+<<<<<<< HEAD
 var drawArrow = function(ctx,link,lineWidth,x,y) {
     var targetLink = false;//标记当前link 是否为点击选中的link
+=======
+function drawArrow(ctx,link,lineWidth,x,y) {
+    var targetLink = false;
+>>>>>>> b08c8a660ea32c7bc5f23ff54d8122a6d850b1f9
     var s1 = link.source.getX();
     var e1 = link.source.getY();
     var s2 = link.target.getX();
@@ -1861,7 +2145,7 @@ var drawArrow = function(ctx,link,lineWidth,x,y) {
     }
 
 
-};
+}
 
 /**
  * Created by lcx on 2016/12/13.
@@ -1871,7 +2155,11 @@ var drawArrow = function(ctx,link,lineWidth,x,y) {
  * Created by lcx on 2016/11/1.
  * 利用canvas 画线
  */
+<<<<<<< HEAD
 var drawLinkCanvas = function (canvasObj,tag,target) {
+=======
+function drawCanvasLink (canvasObj,x,y) {
+>>>>>>> b08c8a660ea32c7bc5f23ff54d8122a6d850b1f9
     //取得经过计算之后的links 数据
     var links = canvasObj.links;
     var nodes = canvasObj.nodes;
@@ -2146,6 +2434,7 @@ var drawLinkCanvas = function (canvasObj,tag,target) {
             otherLinks:otherList
         }
     }
+<<<<<<< HEAD
 
 };
 
@@ -2410,6 +2699,10 @@ var drawLinksSvg = function (renderType) {
         }
     }
 };
+=======
+    return targetLink;
+}
+>>>>>>> b08c8a660ea32c7bc5f23ff54d8122a6d850b1f9
 
 function findPoint(nodes,x, y) {
     var i,
@@ -2441,7 +2734,7 @@ function findPoint(nodes,x, y) {
 /**
  * Created by lcx on 2016/11/1.
  */
-var convertToCanvasCor = function(canvas,x, y) {
+function convertToCanvasCor(canvas,x, y) {
     // var canvas = this._canvas;
     var res = {};
     var cBox = canvas.getBoundingClientRect();
@@ -2450,12 +2743,16 @@ var convertToCanvasCor = function(canvas,x, y) {
     res.x = x - cx;
     res.y = y - cy;
     return res;
-};
+}
 
 /**
  * Created by lcx on 2016/11/7.
  */
+<<<<<<< HEAD
 var findLinks = function (canvasObj, x, y,lineWidth) {
+=======
+function findLinks (canvasObj, x, y) {
+>>>>>>> b08c8a660ea32c7bc5f23ff54d8122a6d850b1f9
     // console.log(links);
     var context = canvasObj.context;
     var target = null;
@@ -2542,6 +2839,7 @@ var findLinks = function (canvasObj, x, y,lineWidth) {
     render(x,y);
     return target;*/
 
+<<<<<<< HEAD
 };
 
 /**
@@ -2906,8 +3204,11 @@ var redrawNodeCanvas = function (canvasObj,target) {
     }*/
 
 };
+=======
+}
+>>>>>>> b08c8a660ea32c7bc5f23ff54d8122a6d850b1f9
 
-var drawCanvas = function () {
+function drawCanvas () {
     var that = this;
     var context = this.element.getContext("2d");
     // console.log(that._getCurrentTransform());
@@ -3175,18 +3476,18 @@ var drawCanvas = function () {
         render('zoom');
     }
 
-};
+}
 
-var draw = function (renderType, canvasType) {
+function draw (renderType, canvasType) {
     if(canvasType === 'svg'){
         drawNodesSvg.call(this, renderType);
         drawLinksSvg.call(this, renderType);
     }else if(canvasType === 'CANVAS'){
         drawCanvas.call(this);
     }
-};
+}
 
-var zoomed = function () {
+function zoomed () {
     //不可移动
     if (!this.movable) {
         //将变换前的translate值赋给变换后的translate值,保持位置不变
@@ -3198,19 +3499,19 @@ var zoomed = function () {
     }
     //Graph._ifShowLabels();
     
-    var previousScale = this._getForceGroup()._pScale;
+    var previousScale = this.graphGroup._pScale;
     var currentScale = this.currentTransform().k.toFixed(4) / 1;
     //缩放网络图
-    this._getForceGroup().attr("transform", "translate(" + d3.event.transform.x + ", "+ d3.event.transform.y + ") scale(" + currentScale + ")");
-    this._getForceGroup()._pScale = currentScale;
+    this.graphGroup.attr("transform", "translate(" + d3.event.transform.x + ", "+ d3.event.transform.y + ") scale(" + currentScale + ")");
+    this.graphGroup._pScale = currentScale;
     
     var hideScale = d3.min([this._config.scaleOfHideNodeLabel, this._config.scaleOfHideLinkLabel]);
     
     //render while should hide label
-    if(previousScale >= hideScale && currentScale <= hideScale) this.render();
+    if(previousScale >= hideScale && currentScale <= hideScale) this.render(RENDER_TYPE.ZOOM);
     //panning don't need re-render, render only after zooming
-    if(currentScale !== previousScale && currentScale > hideScale) this.render();
-};
+    if(currentScale !== previousScale && currentScale > hideScale) this.render(RENDER_TYPE.ZOOM);
+}
 
 function transform(k, x, y, duration) {
     var transformed = d3.zoomIdentity;
@@ -3258,7 +3559,7 @@ function focus(filter, duration){
             .translate(-xCenter, -yCenter);
     
         this.svgSelection(duration || 1000).call(this.zoom.transform, transformed);
-    }.bind(this), 0);
+    }.bind(this), 0)
 }
 
 function keydowned() {
@@ -3282,13 +3583,36 @@ function keyupped() {
     }
 }
 
-var draged = function (currentNode) {
+function draged (currentNode) {
     var nudgedNodes = this.getSelectedNodes();
     for(var i = nudgedNodes.length; i--;){
         nudgedNodes[i]._nudge(d3.event.dx, d3.event.dy, true);
         this.updateDOM.addObj(nudgedNodes[i]);
     }
     this.delayRender(null, RENDER_TYPE.NUDGE);
+}
+
+function assign(target, varArgs) { // .length of function is 2
+    'use strict';
+    if (target == null) { // TypeError if undefined or null
+        throw new TypeError('Cannot convert undefined or null to object');
+    }
+    
+    var to = Object(target);
+    
+    for (var index = 1; index < arguments.length; index++) {
+        var nextSource = arguments[index];
+        
+        if (nextSource != null) { // Skip over if undefined or null
+            for (var nextKey in nextSource) {
+                // Avoid bugs when hasOwnProperty is shadowed
+                if (Object.prototype.hasOwnProperty.call(nextSource, nextKey)) {
+                    to[nextKey] = nextSource[nextKey];
+                }
+            }
+        }
+    }
+    return to;
 };
 
 const DEFAULT_CONFIG = {
@@ -3311,6 +3635,9 @@ const DEFAULT_CONFIG = {
     mugshot: "",
     mugshotPrefix: "",
     
+    insertNode: function(){},
+    updateNode: function(){},
+    
     onBrushStart: function(){},
     onBrush: function(){},
     onBrushEnd: function(){},
@@ -3329,7 +3656,7 @@ const DEFAULT_CONFIG = {
 function config(config) {
     if(!arguments.length) return this._config;
     
-    this._config = Object.assign({}, DEFAULT_CONFIG, this._config || {}, config || {});
+    this._config = assign({}, DEFAULT_CONFIG, this._config || {}, config || {});
     return this;
 }
 
@@ -3344,7 +3671,7 @@ function UpdateDOM(graph){
     this.graph = graph;
     this._updateNodes = [];
     this._updateLinks = [];
-}
+};
 
 UpdateDOM.prototype = {
     constructor: UpdateDOM,
@@ -3364,8 +3691,8 @@ function addObj(Obj, renderType){
         if(renderType === RENDER_TYPE.NUDGE){
             var selectedNodes = this.graph.getSelectedNodes();
             var relatedLinks = this.graph.getRelatedLinks(selectedNodes);
-            relatedLinks.forEach(function(Link$$1){
-                this._addLink(Link$$1);
+            relatedLinks.forEach(function(Link){
+                this._addLink(Link);
             }, this);
             
         }
@@ -3373,20 +3700,20 @@ function addObj(Obj, renderType){
     if(Obj instanceof Link) this._addLink(Obj);
 }
 
-function addNode$1(Node$$1){
-    if(this._updateNodes.indexOf(Node$$1) === -1) this._updateNodes.push(Node$$1);
+function addNode$1(Node){
+    if(this._updateNodes.indexOf(Node) === -1) this._updateNodes.push(Node);
 }
 
-function addLink$1(Link$$1){
-    if(this._updateLinks.indexOf(Link$$1) === -1) this._updateLinks.push(Link$$1);
+function addLink$1(Link){
+    if(this._updateLinks.indexOf(Link) === -1) this._updateLinks.push(Link);
 }
 
 function getNodesEle(){
-    return this._updateNodes.map(function(Node$$1){return Node$$1.element;});
+    return this._updateNodes.map(function(Node){return Node.element;});
 }
 
 function getLinksEle(){
-    return this._updateLinks.map(function(Link$$1){return Link$$1.element;});
+    return this._updateLinks.map(function(Link){return Link.element;});
 }
 
 function clearUpdateNodes(){
@@ -3397,10 +3724,10 @@ function clearUpdateLinks(){
     this._updateLinks = [];
 }
 
-function Graph(selector$$1, config$$1) {
+function Graph(selector, config) {
     
-    this.selector(selector$$1);
-    this.config(config$$1);
+    this.selector(selector);
+    this.config(config);
     
     this._hasInit = false; //init only once
     
@@ -3449,7 +3776,6 @@ Graph.prototype = {
     _keydowned: keydowned,
     _keyupped: keyupped,
     _init: init,
-    _initCache:initCache,
     _draw: draw,
     _zoomed: zoomed,
     currentTransform: function(){
@@ -3471,27 +3797,24 @@ Graph.prototype = {
     },
     linksSelection: function(){
         return this.svgSelection().select('g.links').selectAll(".link");
-    },
-    _getForceGroup: function(){
-        return this._forceGroupSelection;
     }
 };
 
-var index = function (selector$$1, config$$1) {
-    return new Graph(selector$$1, config$$1);
-};
+function index (selector, config) {
+    return new Graph(selector, config);
+}
 
-var filterById = function (id, Nodes) {
+function filterById (id, Nodes) {
     return Nodes.filter(function(Node){
         return Node.id === id;
     })[0];
-};
+}
 
-var parseHTML = function (str) {
+function parseHTML (str) {
     var tmp = document.implementation.createHTMLDocument();
     tmp.body.innerHTML = str;
     return tmp.body.children[0];
-};
+}
 
 function direction(Links){
     var src = Links[0].getSourceId();
@@ -3514,9 +3837,9 @@ function direction(Links){
     }, DIRECTION.NONE);
 }
 
-var safeExecute = function (maybeFunction) {
+function safeExecute (maybeFunction) {
     return (maybeFunction instanceof Function)? maybeFunction(): maybeFunction;
-};
+}
 
 var utils = {
     filterBy: filterBy,
@@ -3530,8 +3853,6 @@ var utils = {
     direction: direction,
     safeExecute: safeExecute
 };
-
-//only for test now
 
 exports.graph = index;
 exports.utils = utils;

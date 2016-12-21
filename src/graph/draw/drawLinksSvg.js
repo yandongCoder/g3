@@ -1,4 +1,4 @@
-import {RENDER_TYPE} from "../CONSTANT";
+import {RENDER_TYPE, LINE_HEIGHT} from "../CONSTANT";
 import unique from "../../utils/unique";
 
 export default function (renderType) {
@@ -22,18 +22,17 @@ export default function (renderType) {
     
     var info = link
         .append('svg:foreignObject')
-        .classed('link-info', true)
-        .append("xhtml:div")
-        .classed('center', true);
+        .classed('link-info', true);
     
     info.append('xhtml:span').attr('class', 'icon');
     info.append('xhtml:span').attr('class', 'text');
     
     
-    link.call(updateLinkAttr);
+    link.call(updateAttr);
     
     
-    if(renderType === RENDER_TYPE.IMMEDIATELY){
+    //update elements
+    if(renderType === RENDER_TYPE.IMMEDIATELY || renderType === RENDER_TYPE.ZOOM){
         var updateLinks  = this.linksSelection();
     }else if(renderType === RENDER_TYPE.NUDGE){
         updateLinks  = d3.selectAll(this.getRelatedLinks(this.getSelectedNodes()).map(function(Link){return Link.element;}));
@@ -41,14 +40,29 @@ export default function (renderType) {
         updateLinks = d3.selectAll(this.updateDOM.getLinksEle());
     }
     
+    //update attributes
+    if(renderType === RENDER_TYPE.ZOOM) var updated = updateZoom;
+    else updated = updateAttr;
+    updateLinks.call(updated);
     
-    updateLinks.call(updateLinkAttr);
     
     this.updateDOM.clearUpdateLinks();
-    
     links.exit().remove();
     
-    function updateLinkAttr(selection){
+    
+    function updateZoom(selection){
+        selection
+            .select('.link-info')
+            .attr('transform', function(Link){
+                return Link.getLinkInfoTransform(scale);
+            })
+            .style('display', function(Link){
+                return (scale < self._config.scaleOfHideLinkLabel)? 'none': 'block';
+            })
+            .attr('width', function (Link) {return Link.LineWidth(scale)});
+    }
+    
+    function updateAttr(selection){
         // if(renderType === RENDER_TYPE.NUDGE){
         //     selection
         //         .select('path')
@@ -82,7 +96,7 @@ export default function (renderType) {
                 return (scale < self._config.scaleOfHideLinkLabel)? 'none': 'block';
             })
             .attr('width', function (Link) {return Link.LineWidth(scale)})
-            .attr('height', function(Link){return Link.LineHeight(scale)});
+            .attr('height', LINE_HEIGHT);
         
         info.select('.text')
             .text(function (Link) {return Link.attr("label");});

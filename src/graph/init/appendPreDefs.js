@@ -1,6 +1,6 @@
 export default function () {
     var self = this;
-    var str = '<defs>'+
+    var str = ''+
                         '<filter id="shadow" x="-20%" y="-20%" width="200%" height="200%" type="Shadow" shadowoffsetx="5" shadowoffsety="5" shadowblur="5" shadowcolor="rgba(0,0,0)">' +
                             '<feOffset result="offOut" in="SourceGraphic" dx="0" dy="3"></feOffset>' +
                             '<feColorMatrix result="matrixOut" in="offOut" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.5 0"></feColorMatrix>' +
@@ -17,9 +17,13 @@ export default function () {
                             '<stop offset="98%" style="stop-color:rgb(255,255,255);stop-opacity:1" />' +
                             '<stop offset="100%" style="stop-color:rgb(222，222, 222);stop-opacity:1" />' +
                         '</radialGradient>' +
-                '</defs>';
+                '';
 
-    this.element.insertAdjacentHTML("afterbegin", str);
+    //this.element.insertAdjacentHTML("afterbegin", str);
+    
+    var def = document.createElementNS("http://www.w3.org/2000/svg", "defs");
+    def.innerHTML = str;
+    this.element.appendChild(def);
     
     d3.select("#start-arrow path").call(arrowAttr);
     d3.select("#end-arrow path").call(arrowAttr);

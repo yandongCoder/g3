@@ -84,9 +84,6 @@ Graph.prototype = {
     },
     linksSelection: function(){
         return this.svgSelection().select('g.links').selectAll(".link");
-    },
-    _getForceGroup: function(){
-        return this._forceGroupSelection;
     }
 };
 

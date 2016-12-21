@@ -22,6 +22,28 @@
             top: 10px;
             left: 10px;
         }
+        .pin{
+            background: url('./img/pin.png');
+            background-size: cover;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+        .note-content-wrap{
+            width: 200px;
+            height: 200px;
+            margin-left: 5px;
+            display: none;
+        }
+        .note-content{
+            width: 170px;
+            height: 170px;
+            padding: 10px;
+            margin-bottom: 10px;
+            margin-right: 10px;
+            background: #fff700;
+            box-shadow: 3px 3px 12px #888;
+        }
     </style>
 </head>
 <body>
@@ -41,8 +63,8 @@
     };
 
     var groupedByRelatedNodes = {
-        nodes: [{id: 1, label: 1, x: 50, y: 100, icon: 'male'}, {id: 2, label: 2, x: 300, y: 50, selected: true}, {id: 3, label: 3, x: 100, y: 150}, {id: 4, label: 4, x: 200, y: 100}, {id: 5, label: 5, x: 300, y: 50}, {id: 6, label: 6, x: 300, y: 150}],
-        links: [{id:1, label: 'a啊啊bc', icon: "female", src: 2, dst: 1, direction: 3, selected: true}]
+        nodes: [{id: 1, label: "aaaaa aaaaaaaa aaaa aa", note: {content: "abc", nodes:[1, 2, 3]}, x: 50, y: 100, icon: 'male', radius: 30}, {id: 2, label: 2, x: 300, y: 50, selected: true, mugshot: "./img/mugshot.jpg"}, {id: 3, label: 3, x: 100, y: 150}, {id: 4, label: 4, x: 200, y: 100}, {id: 5, label: 5, x: 300, y: 50}, {id: 6, label: 6, x: 300, y: 150}],
+        links: [{id:1, label: 'a啊ddddddddddsdasSS啊bc', icon: "female", src: 2, dst: 1, direction: 3, selected: true}, {id: 2, label: "cccc", src: 3, dst: 4}]
     };
     //, {id:2, label: "b", src: 3, dst: 1}, {id:3, src: 2, dst: 4}, {id:4, label: 'KNIGHT', src: 4, dst: 3}, {id:5, src: 4, dst: 5}, {id:6, label: 'loves', src: 6, dst: 4}
 
@@ -53,7 +75,41 @@
 
     var myGraph = g3.graph("#my-graph",{
         zoomable: false,
-        iconPrefix: "fa fa-"
+        iconPrefix: "fa fa-",
+        nodeLabelClipWidth: 50,
+        insertNode: function(selection){
+            var note = selection.append('svg:foreignObject')
+                .classed('note', true)
+                .attr("width", 20)
+                .attr("height", 20);
+
+                note.append('xhtml:div')
+                .classed("pin", true)
+                .on("click", function(Node){
+                    myGraph.getNodesOP(Node.note.nodes).attr("selected", true);
+                    d3.select(this.nextSibling).style("display", function(){
+                        return d3.select(this).style("display") === "block"? "none": "block";
+                    });
+                });
+                note.append('xhtml:div')
+                .classed("note-content-wrap", true)
+                .append('xhtml:div')
+                .classed("note-content", true);
+        },
+        updateNode: function(selection, scale){
+            selection.select(".note")
+                .style("display", function(Node){
+                    return (scale < myGraph._config.scaleOfHideNodeLabel || !Node.note)? 'none': 'block';
+                })
+                .attr("transform", function(Node){
+                    var r = Node.attr('radius');
+                    var arcPoint = Math.sqrt(r*r / 2);
+                    return "translate(" + arcPoint + ", "+ -arcPoint +") scale("+ 1 / scale +") translate(-5.6 -20)";
+                })
+                .select(".note-content")
+                .text(function(Node){ return Node.note && Node.note.content});
+
+        }
     })
     .nodes(groupedByRelatedNodes.nodes)
     .links(groupedByRelatedNodes.links);

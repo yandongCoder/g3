@@ -11,6 +11,6 @@ tape("A graph call init only once in first render", function(test){
 
     test.equal(svg.querySelectorAll("defs").length, 1);
     test.equal(svg.querySelectorAll("g.brush").length, 1);
-    test.equal(svg.querySelectorAll("g.force").length, 1);
+    test.equal(svg.querySelectorAll("g.graph-group").length, 1);
     test.end();
 });

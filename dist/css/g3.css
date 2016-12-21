@@ -9,88 +9,67 @@ svg.graph {
   cursor: move;
   background-size: cover !important;
   background-position: center !important; }
+  .graph:focus {
+    outline: 0; }
   .graph .node, .graph .link {
     cursor: default; }
     .graph .node.disabled, .graph .link.disabled {
       opacity: 0.1;
       pointer-events: none; }
-  .graph .nodes .text-background {
-    display: none; }
-  .graph .nodes .node .fa {
+  .graph .node .fa {
     color: #fff;
     font-size: 20px;
     position: static;
     display: block;
     text-align: center; }
-  .graph .nodes .node .mugshot img {
+  .graph .node .mugshot {
     width: 100%;
     height: 100%;
     border-radius: 50%;
     object-fit: cover; }
-  .graph .nodes .node .icon {
+  .graph .node .icon {
     border-radius: 50%; }
-  .graph .nodes .node .text-group {
-    font-family: Microsoft YaHei UI, Lato, sans-serif; }
-    .graph .nodes .node .text-group > div {
-      height: 100%;
-      display: flex;
-      align-items: center;
-      width: 80px;
-      pointer-events: none; }
-      .graph .nodes .node .text-group > div > span {
-        text-overflow: ellipsis;
-        overflow: hidden;
-        white-space: no;
-        height: 20px;
-        line-height: 20px; }
-  .graph .nodes .node.linked-node circle, .graph .nodes .node.linked-node rect, .graph .nodes .node.selected-linked-node circle, .graph .nodes .node.selected-linked-node rect, .graph .nodes .node.selected-link circle, .graph .nodes .node.selected-link rect {
-    stroke: #f65565;
-    stroke-width: 5; }
-  .graph .nodes .node.linked-node .text-background, .graph .nodes .node.selected-linked-node .text-background, .graph .nodes .node.selected-link .text-background {
-    display: block; }
-  .graph .nodes .node.linked-node text, .graph .nodes .node.selected-linked-node text, .graph .nodes .node.selected-link text {
-    font-weight: bold; }
-  .graph .nodes .node.selected circle, .graph .nodes .node.selected rect {
-    stroke: #f65565;
-    stroke-width: 5; }
-  .graph .nodes .node.selected .text-background {
-    display: block; }
-  .graph .nodes .node.selected text {
-    font-weight: bold; }
-  .graph .nodes .node.selected .text-group > div {
-    width: auto; }
-    .graph .nodes .node.selected .text-group > div > span {
-      padding-right: 5px;
-      background: #f65565;
+  .graph .node .text-group {
+    font-family: Microsoft YaHei UI, Lato, sans-serif;
+    pointer-events: none; }
+    .graph .node .text-group .text {
+      width: 100%;
+      vertical-align: middle;
+      text-overflow: ellipsis;
+      overflow: hidden;
       white-space: nowrap;
-      text-overflow: initial; }
-  .graph svg:focus {
-    outline: 0; }
-  .graph .links {
+      display: inline-block;
+      line-height: 20px; }
+  .graph .node.selected .circle {
+    stroke: #f65565;
+    stroke-width: 5; }
+  .graph .node.selected .text-group .text {
+    width: auto !important;
+    padding-right: 5px;
+    background: #f65565;
+    white-space: nowrap;
+    text-overflow: initial; }
+  .graph .link-info {
+    font-family: Microsoft YaHei UI, Lato, sans-serif;
+    text-align: center;
+    white-space: nowrap;
     font-size: 13px; }
-    .graph .links .fa {
+    .graph .link-info .fa {
       font-size: 16px; }
-    .graph .links .link-info {
-      font-family: Microsoft YaHei UI, Lato, sans-serif; }
-      .graph .links .link-info .center {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 100%;
-        height: 100%; }
-        .graph .links .link-info .center .icon {
-          margin-right: 2px; }
-    .graph .links path {
-      fill-opacity: 0.5;
-      stroke-opacity: 0.5;
+    .graph .link-info .icon {
+      margin-right: 2px; }
+  .graph .link-path {
+    will-change: transform;
+    fill-opacity: 0.5;
+    stroke-opacity: 0.5;
+    fill: none;
+    stroke: #a1a1a1;
+    stroke-width: 4px; }
+    .graph .link-path.selected {
       fill: none;
-      stroke: #a1a1a1;
-      stroke-width: 4px; }
-      .graph .links path.selected {
-        fill: none;
-        stroke: #f65565 !important;
-        fill-opacity: 1;
-        stroke-opacity: 1; }
+      stroke: #f65565 !important;
+      fill-opacity: 1;
+      stroke-opacity: 1; }
   .graph #start-arrow path, .graph #end-arrow path, .graph .color-start-arrow path, .graph .color-end-arrow path {
     fill-opacity: 0.5; }
   .graph #start-arrow-selected path, .graph #end-arrow-selected path {

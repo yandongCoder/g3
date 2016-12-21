@@ -7,8 +7,8 @@ function delayRender(Obj, renderType){
     return this;
 }
 
-function render(){
-    this._render(RENDER_TYPE.IMMEDIATELY);
+function render(renderType){
+    this._render(renderType || RENDER_TYPE.IMMEDIATELY);
     return this;
 }
 
@@ -22,7 +22,7 @@ function _render(renderType) {
     var canvasType = this.element.nodeName;
     if(canvasType === 'svg'){ this._init();}
     
-    if(renderType === RENDER_TYPE.IMMEDIATELY){
+    if(renderType === RENDER_TYPE.IMMEDIATELY || renderType === RENDER_TYPE.ZOOM){
         draw(renderType);
     }
     else{
@@ -33,7 +33,6 @@ function _render(renderType) {
     return this;
     
     function draw(renderType){
-        console.log('draw');
         self._draw(renderType, canvasType);
     }
 }

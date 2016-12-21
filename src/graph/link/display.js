@@ -1,4 +1,4 @@
-import {DIRECTION} from "../CONSTANT";
+import {DIRECTION, LINE_TEXT_MARGIN} from "../CONSTANT";
 import getOffsetCoordinate from "../../utils/getOffsetCoordinate";
 
 var absUrl = window.location.href.split('#')[0];
@@ -52,7 +52,7 @@ function getLinkInfoTransform(scale) {
     var transform  = 'rotate('+ degrees +' '+ rx +' '+ ry +') translate(' + rx + ' ' + ry + ') scale(' + 1 / scale + ')' + '';
     
     var offsetX =  - this.LineWidth(scale) / 2;
-    var offsetY =  this.LineHeight(scale) / 2 + 5;
+    var offsetY =  this.LineHeight(scale) / 2 + LINE_TEXT_MARGIN;
     transform += ' translate('+ offsetX +' '+ offsetY +')';
     
     return transform;

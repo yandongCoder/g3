@@ -32,7 +32,7 @@ tape("Node's DOM should correspond Node's property", function(test){
         secondNode = myGraph.nodes()[1],
         secondNodeEle = document.querySelectorAll(".node")[1];
     //label DOM
-    test.equal(firstNodeEle.querySelector(".text-group").querySelector('span').textContent, "a");
+    test.equal(firstNodeEle.querySelector(".text-group").querySelector('div').textContent, "a");
     //selected class DOM
     test.equal(firstNodeEle.className, "node selected");
     //radius Attribute
@@ -42,12 +42,12 @@ tape("Node's DOM should correspond Node's property", function(test){
     //color Attribute
     test.equal(firstNodeEle.querySelector("circle").style.fill, "#123444");
     //icon
-    test.equal(firstNodeEle.querySelector(".icon").querySelector('span').className, "fa fa-male");
-    test.equal(secondNodeEle.querySelector(".icon").querySelector('span').className, "fa fa-default");
+    test.equal(firstNodeEle.querySelector(".icon").className, "icon fa fa-male");
+    test.equal(secondNodeEle.querySelector(".icon").className, "icon fa fa-default");
     
     //mugshot
-    test.equal(firstNodeEle.querySelector(".mugshot").querySelector('img').src, "./someUrl/foo.png");
-    test.equal(secondNodeEle.querySelector(".mugshot").querySelector('img').src, "./someUrl/default.png");
+    test.equal(firstNodeEle.querySelector(".mugshot").src, "./someUrl/foo.png");
+    test.equal(secondNodeEle.querySelector(".mugshot").src, "./someUrl/default.png");
     
     
     firstNode.attr("label", 'abc');
@@ -60,13 +60,13 @@ tape("Node's DOM should correspond Node's property", function(test){
     firstNode.attr("mugshot", 'bar.png');
     
     myGraph.render();
-    test.equal(firstNodeEle.querySelector(".text-group").querySelector('span').textContent, "abc");
+    test.equal(firstNodeEle.querySelector(".text-group").querySelector('div').textContent, "abc");
     test.equal(firstNodeEle.className, "node disabled");
     test.equal(firstNodeEle.querySelector("circle").getAttribute('r'), '40');
     test.equal(firstNodeEle.getAttribute("transform"), 'translate(15,10)');
     test.equal(firstNodeEle.querySelector("circle").style.fill, "#666888");
-    test.equal(firstNodeEle.querySelector(".icon").querySelector('span').className, "fa fa-female");
-    test.equal(firstNodeEle.querySelector(".mugshot").querySelector('img').src, "./someUrl/bar.png");
+    test.equal(firstNodeEle.querySelector(".icon").className, "icon fa fa-female");
+    test.equal(firstNodeEle.querySelector(".mugshot").src, "./someUrl/bar.png");
     
     test.end();
 });

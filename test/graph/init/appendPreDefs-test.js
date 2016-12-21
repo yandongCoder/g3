@@ -7,7 +7,7 @@ tape("append svg pre defs correctly", function(test){
     var svg = document.querySelector("#graph");
     g3.graph(svg)._render();
     
-    test.equal(svg.firstElementChild.nodeName, "DEFS");
+    test.equal(svg.firstElementChild.nodeName, "defs");
 
     test.notEqual(document.querySelector('#shadow'), null);
     test.notEqual(document.querySelector('#start-arrow'), null);
