@@ -3,7 +3,6 @@
  * 利用canvas 画线
  */
 import drawArrow from './drawArrow';
-import canvasLine from './canvasLine';
 export default function (canvasObj,tag,target) {
     //取得经过计算之后的links 数据
     var links = canvasObj.links;

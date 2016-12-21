@@ -1,8 +1,8 @@
 //g3
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
-  typeof define === 'function' && define.amd ? define(['exports'], factory) :
-  (factory((global.g3 = global.g3 || {})));
+   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
+   typeof define === 'function' && define.amd ? define(['exports'], factory) :
+   (factory((global.g3 = global.g3 || {})));
 }(this, (function (exports) { 'use strict';
 
 const DIRECTION = {
@@ -11,7 +11,7 @@ const DIRECTION = {
     D2S: 2,
     DOUBLE: 3
 };
-const COLOR$1 = '#00a';
+const COLOR = '#00a';
 
 const FONT = {
     "fa-500px": "f26e",
@@ -620,9 +620,9 @@ const RENDER_TYPE = {
     ZOOM: "ZOOM"
 };
 
-function select (selector) {
+var select = function (selector) {
     return typeof selector === "string"? document.querySelector(selector): selector;
-}
+};
 
 function delayRender(Obj, renderType){
     this.updateDOM.addObj(Obj, renderType);
@@ -644,19 +644,13 @@ function _render(renderType) {
     if(!this._config.ifRender) return this;
     var canvasType = this.element.nodeName;
     if(canvasType === 'svg'){ this._init();}
-<<<<<<< HEAD
-   /* else{
-        this._initCache();
-    }*/
-=======
->>>>>>> b08c8a660ea32c7bc5f23ff54d8122a6d850b1f9
     
     if(renderType === RENDER_TYPE.IMMEDIATELY || renderType === RENDER_TYPE.ZOOM){
         draw(renderType);
     }
     else{
         clearTimeout(this._renderDelay);
-        this._renderDelay = setTimeout(function timeoutDraw(){draw(renderType)}, 0);
+        this._renderDelay = setTimeout(function timeoutDraw(){draw(renderType);}, 0);
     }
     
     return this;
@@ -666,14 +660,14 @@ function _render(renderType) {
     }
 }
 
-function toArray (maybeArr) {
+var toArray = function (maybeArr) {
     if(!Array.isArray(maybeArr)) maybeArr = [maybeArr];
     return maybeArr;
-}
+};
 
 //中文为2长度，非中文为1
 
-function getStrLen (str) {
+var getStrLen = function (str) {
     var len = 0;
     if (typeof str !== "string") {
         str = str.toString();
@@ -688,17 +682,18 @@ function getStrLen (str) {
     return len;
 };
 
-function attr (prop, val){
+var attr = function (prop, val){
     if(val === undefined) return this[prop];
     
     val = val instanceof Function? val(this): val;
     if(val === this[prop]) return;
     this[prop] = val;
     
-    this.graph.delayRender(this);
-    
+    // this.graph.delayRender(this);
+    this.graph.render(this);
+
     return this;
-}
+};
 
 function getX() {
     return this.x || 0;
@@ -708,16 +703,16 @@ function getY() {
     return this.y || 0;
 }
 
-function nudge (nudgeX, nudgeY) {
+var nudge = function (nudgeX, nudgeY) {
     if(!this.graph._config.dragable) return;
     
     this.x += nudgeX;
     this.y += nudgeY;
     
     return this;
-}
+};
 
-function getConnectedLinks (grouped) {
+var getConnectedLinks = function (grouped) {
     var connectedLinks = this.graph._links.filter(function (Link) {
         return (Link.source === this) || (Link.target === this);
     }, this);
@@ -738,14 +733,14 @@ function getConnectedLinks (grouped) {
     }
 
     return connectedLinks;
-}
+};
 
-function remove (removeType) {
+var remove = function (removeType) {
     delete this.graph._nodesHash[this.id];
     this.graph._nodes.splice(this.graph._nodes.indexOf(this), 1);
     
     if(this.groupedBy && (removeType !== REMOVE_TYPE.UNGROUP) ) this.groupedBy.remove();
-}
+};
 
 //data: data obj, graph: graphInstance
 function Node(data, graph) {
@@ -777,11 +772,11 @@ Node.prototype = {
 };
 
 //Link has source and target Node in _nodes
-function hasST () {
+var hasST = function () {
     return (this.source !== undefined) && (this.target !== undefined);
-}
+};
 
-function getOffsetCoordinate (Sx, Sy, Tx, Ty, offsetS, offsetT) {
+var getOffsetCoordinate = function (Sx, Sy, Tx, Ty, offsetS, offsetT) {
     var l = Math.sqrt((Tx - Sx) * (Tx - Sx) + (Ty - Sy) * (Ty - Sy));
     if(l === 0) l = 1;
 
@@ -794,7 +789,7 @@ function getOffsetCoordinate (Sx, Sy, Tx, Ty, offsetS, offsetT) {
         Tx: Tx - offsetT * cos,
         Ty: Ty - offsetT * sin
     }
-}
+};
 
 var absUrl = window.location.href.split('#')[0];
 
@@ -919,7 +914,7 @@ function getTargetId(){
     return this.target.id;
 }
 
-function remove$1 (type) {
+var remove$1 = function (type) {
     delete this.graph._linksHash[this.id];
     this.graph._links.splice(this.graph._links.indexOf(this), 1);
 
@@ -929,14 +924,14 @@ function remove$1 (type) {
     if(this.transformedBy && (type !== LINK_REMOVE_TYPE.L2N)) this.transformedBy.remove();
 
     return this;
-}
+};
 
-function getHomoLinks () {
+var getHomoLinks = function () {
     return this.graph._links.filter(function(Link){
         return (Link.source === this.source || Link.source === this.target) &&
                 (Link.target === this.source || Link.target === this.target);
     }, this) || [];
-}
+};
 
 function Link(data, graph) {
     this.graph = graph;
@@ -1262,26 +1257,26 @@ function addLink(obj) {
 }
 
 function removeNodes(filter) {
-    this.getNodes(filter).forEach(function(Node){
+    this.getNodes(filter).forEach(function(Node$$1){
         //remove links first
-        this._removeLinksOfNode(Node);
-        Node.remove();
+        this._removeLinksOfNode(Node$$1);
+        Node$$1.remove();
     }, this);
     
     this._render();
 }
 
 function removeLinks(filter) {
-    this.getLinks(filter).forEach(function(Link){
-        Link.remove();
+    this.getLinks(filter).forEach(function(Link$$1){
+        Link$$1.remove();
     }, this);
     
     this._render();
 }
 
-function removeLinksOfNode(Node) {
-    Node.getConnectedLinks().map(function (Link) {
-        Link.remove();
+function removeLinksOfNode(Node$$1) {
+    Node$$1.getConnectedLinks().map(function (Link$$1) {
+        Link$$1.remove();
     }, this);
 }
 
@@ -1347,16 +1342,16 @@ function links(links, cover) {
     return this;
 }
 
-function getIds (array) {
+var getIds = function (array) {
     return array.map(function(item){
         if(typeof item  ===  'object') return item.id;
         else return item;
     });
-}
+};
 
 //filter array of object which has id; filtered by id, or id array, or object that has id, or object array
 //this function is convenient to Nodes or Links data.
-function filterBy (filter, objArray) {
+var filterBy = function (filter, objArray) {
     if(typeof filter === "function"){
         var filtered = filter;
     }else if(filter === undefined || filter === null){
@@ -1375,18 +1370,18 @@ function filterBy (filter, objArray) {
         if(filtered(objArray[i])) filteredArr.push(objArray[i]);
     }
     return filteredArr;
-}
+};
 
-function attr$1 (prop, val) {
+var attr$1 = function (prop, val) {
     this.arr.forEach(function(datum){
         datum.attr(prop, val instanceof Function? val(datum): val);
     });
     return this;
-}
+};
 
-function data () {
+var data = function () {
     return this.arr;
-}
+};
 
 function Selection(arr) {
     this.arr = arr;
@@ -1405,7 +1400,7 @@ function getNodesOP(filter, val){
 function getNodes(filter, val) {
     if(arguments.length === 2 && val !== undefined){
         var key = filter;
-        filter = function(Node){return Node.attr(key) === val;}
+        filter = function(Node){return Node.attr(key) === val;};
     }
     return filterBy(filter, this._nodes);
 }
@@ -1427,7 +1422,7 @@ function getLinksOP(filter, val){
 function getLinks(filter, val) {
     if(arguments.length === 2 && val !== undefined){
         var key = filter;
-        filter = function(Node){return Node.attr(key) === val;}
+        filter = function(Node){return Node.attr(key) === val;};
     }
     
     return filterBy(filter, this._links);
@@ -1475,7 +1470,7 @@ function getRenderedLinks() {
     });
 }
 
-function appendPreDefs () {
+var appendPreDefs = function () {
     var self = this;
     var str = ''+
                         '<filter id="shadow" x="-20%" y="-20%" width="200%" height="200%" type="Shadow" shadowoffsetx="5" shadowoffsety="5" shadowblur="5" shadowcolor="rgba(0,0,0)">' +
@@ -1508,9 +1503,9 @@ function appendPreDefs () {
     function arrowAttr(selection){
         selection.style('fill', self._config.linkColor);
     }
-}
+};
 
-function appendPreElement () {
+var appendPreElement = function () {
     var svg = this.svgSelection();
     this._brushSelection = svg.append("g").attr("class", "brush");
 
@@ -1518,9 +1513,9 @@ function appendPreElement () {
     
     graphGroup.append("g").attr("class", "links");
     graphGroup.append("g").attr("class", "nodes");
-}
+};
 
-function Zoom() {
+var Zoom = function() {
     var self = this;
     return d3.zoom().scaleExtent([this._config.minScale, this._config.maxScale])
         .on('start', function () {
@@ -1530,9 +1525,9 @@ function Zoom() {
         .on('end', function () {
             self._config.onZoomEnd.call(this);
         });
-}
+};
 
-function Brush () {
+var Brush = function () {
     var self = this;
     var brush = d3.brush()
         .extent([[0, 0], [3840, 2400]])
@@ -1570,9 +1565,9 @@ function Brush () {
     };
 
     return brush;
-}
+};
 
-function dragNode () {
+var dragNode = function () {
     var self = this;
     var drag = d3.drag()
         .on("start", function (Node) {
@@ -1583,9 +1578,9 @@ function dragNode () {
 
         });
     return drag;
-}
+};
 
-function init () {
+var init = function () {
     //init trigger only once a graph
     if(this._hasInit) return;
 
@@ -1626,19 +1621,19 @@ function init () {
     this.dragNode = dragNode.call(this);
 
     this._hasInit = true;
-}
+};
 
-function getAbsUrl (url) {
+var getAbsUrl = function (url) {
     return (url || window.location.href).split('#')[0];
-}
+};
 
-function drawNodesSvg (renderType) {
+var drawNodesSvg = function (renderType) {
  
     var self = this;
     var nodes = this.nodesSelection().data(this.getRenderedNodes(), function (Node) { return Node.id;});
 
     var g = nodes.enter().append('g')
-        .each(function(Node){ Node.element = this })//reference element to Node
+        .each(function(Node){ Node.element = this; })//reference element to Node
         .classed('node', true)
         .on('mousedown.select', function(Node, i){
             if(!d3.event.ctrlKey){
@@ -1689,7 +1684,7 @@ function drawNodesSvg (renderType) {
             .style('display', function(Node){
                 return (scale < self._config.scaleOfHideNodeLabel)? 'none': 'block';
             })
-            .attr("transform", function(Node){ return "translate(" + (1 + Node.attr("radius")) + ", "+ (-NODE_TEXT_HEIGHT / scale) +") scale(" + 1 / scale + ")"; })
+            .attr("transform", function(Node){ return "translate(" + (1 + Node.attr("radius")) + ", "+ (-NODE_TEXT_HEIGHT / scale) +") scale(" + 1 / scale + ")"; });
     
         selection.selectAll('.avatar')
             .attr("transform", function(Node){ return "translate(" + -Node.attr("radius") + ", "+ -Node.attr("radius") +")"; })
@@ -1737,17 +1732,17 @@ function drawNodesSvg (renderType) {
         
         selection.call(self._config.updateNode, scale);
     }
-}
+};
 
-function unique (array) {
+var unique = function (array) {
     var n = [];
     for (var i = 0; i < array.length; i++) {
         if (n.indexOf(array[i]) == -1) n.push(array[i]);
     }
     return n;
-}
+};
 
-function drawLinksSvg (renderType) {
+var drawLinksSvg = function (renderType) {
     var self = this;
     var scale = self.currentTransform().k;
     
@@ -1757,7 +1752,7 @@ function drawLinksSvg (renderType) {
 
     var link = links.enter()
         .append('g')
-        .each(function(Link){ Link.element = this })
+        .each(function(Link){ Link.element = this; })
         .classed('link', true)
         .call(this._config.bindLinkEvent);
     
@@ -1848,7 +1843,7 @@ function drawLinksSvg (renderType) {
             .text(function (Link) {return Link.attr("label");});
     
         info.select('.icon')
-            .attr('class', function(Link){ return self._config.iconPrefix + Link.attr("icon");})
+            .attr('class', function(Link){ return self._config.iconPrefix + Link.attr("icon");});
     }
     
     function addArrowByColor(){
@@ -1888,99 +1883,13 @@ function drawLinksSvg (renderType) {
                 .style("fill", function(v){return v});
         }
     }
-}
-
-/**
- * Created by lcx on 2016/11/1.
- * 利用canvas 画点 
- */
-<<<<<<< HEAD
-var drawCanvasNode$1 = function (canvasObj) {
-=======
-function drawCanvasNode (canvasObj) {
->>>>>>> b08c8a660ea32c7bc5f23ff54d8122a6d850b1f9
-    var nodes = canvasObj.nodes;
-    // var context = canvasObj.context;
-
-    console.log('drawCache');
-    for(var i=0;i<nodes.length;i++){
-        (function () {
-            var Node = nodes[i];
-            var x = Node.getX();
-            var y = Node.getY();
-            var r = Node.radius;
-
-            var context = canvasObj.nodesCache[i].getContext('2d');
-            canvasObj.nodesCache[i].width = r*2+context.measureText(Node.label).width+10;
-            canvasObj.nodesCache[i].height = r*2+context.measureText(Node.label).width+10;
-            context.save();
-            // console.log(Node.selected());
-            context.beginPath();
-            var radius = Node.selected ? Node.radius-5 : Node.radius;
-            context.fillStyle = Node.color;
-            context.moveTo(r, r);
-            if(Node.selected){
-                context.strokeStyle = '#f65565';
-                context.lineWidth=10;
-            }else{
-                context.strokeStyle=Node.color;
-                context.lineWidth=1;
-            }
-
-            context.arc(r, r, radius, 0, 2 * Math.PI);
-            context.stroke();
-            context.fill();
-
-            //画字
-            //在点的旁边写对应文字
-            
-            context.beginPath();
-            if(Node.selected){
-                //有点选状态
-                var labelLength = context.measureText(Node.label).width+10;
-                context.fillStyle='#f65565';
-                context.fillRect(r+radius,r+radius,labelLength,20);
-            }
-            context.strokeWidth = 1;
-            context.fillStyle = '#555';
-            context.font="16px 微软雅黑";
-            context.textAlign='left';
-            context.textBaseline='hanging';
-            var label = '';
-            if(Node.selected){
-                label = Node.label;
-            }else{
-                if(Node.label.length>8){
-                    label = Node.label.slice(0,8)+'...';
-                }else{
-                    label = Node.label;
-                }
-            }
-            context.fillText(label,r+r,r+r);
-            context.restore();
-        })(i);
-    }
-  /*  nodes.forEach(function(Node,i) {
-
-<<<<<<< HEAD
-
-    });*/
 };
-=======
-    });
-}
->>>>>>> b08c8a660ea32c7bc5f23ff54d8122a6d850b1f9
 
 /**
  * Created by lcx on 2016/11/2.
  */
-<<<<<<< HEAD
 var drawArrow = function(ctx,link,lineWidth,x,y) {
     var targetLink = false;//标记当前link 是否为点击选中的link
-=======
-function drawArrow(ctx,link,lineWidth,x,y) {
-    var targetLink = false;
->>>>>>> b08c8a660ea32c7bc5f23ff54d8122a6d850b1f9
     var s1 = link.source.getX();
     var e1 = link.source.getY();
     var s2 = link.target.getX();
@@ -2145,21 +2054,13 @@ function drawArrow(ctx,link,lineWidth,x,y) {
     }
 
 
-}
-
-/**
- * Created by lcx on 2016/12/13.
- */
+};
 
 /**
  * Created by lcx on 2016/11/1.
  * 利用canvas 画线
  */
-<<<<<<< HEAD
 var drawLinkCanvas = function (canvasObj,tag,target) {
-=======
-function drawCanvasLink (canvasObj,x,y) {
->>>>>>> b08c8a660ea32c7bc5f23ff54d8122a6d850b1f9
     //取得经过计算之后的links 数据
     var links = canvasObj.links;
     var nodes = canvasObj.nodes;
@@ -2434,275 +2335,8 @@ function drawCanvasLink (canvasObj,x,y) {
             otherLinks:otherList
         }
     }
-<<<<<<< HEAD
 
 };
-
-/**
- * Created by lcx on 2016/12/8.
- */
-var initCache = function () {
-    if(this._hasInit) return;
-
-    var that = this;
-    var nodes = that.getRenderedNodes();
-    var links = that.getRenderedLinks();
-    var nodesCache = [],linksCache = [];
-console.log(links);
-    console.log(nodes);
-    for(var i=0;i<nodes.length;i++){
-        var tempCanvas = document.createElement('canvas');
-        nodesCache.push(tempCanvas);
-    }
-    for(var j=0;j<links.length;j++){
-        var tempCanvas = document.createElement('canvas');
-        linksCache.push(tempCanvas);
-    }
-    this.linksCache = linksCache;
-    this.nodesCache = nodesCache;
-    var canvasObj = {
-        nodes:that.getRenderedNodes(),
-        links:that.getRenderedLinks(),
-        linksCache:that.linksCache,
-        nodesCache:that.nodesCache
-    };
-    console.log(linksCache);
-    console.log('initCache');
-    drawLinkCanvas(canvasObj);
-    drawCanvasNode$1(canvasObj);
-    this._hasInit = true;
-
-};
-
-var getAbsUrl = function (url) {
-    return (url || window.location.href).split('#')[0];
-};
-
-var drawNodesSvg = function (renderType) {
- 
-    var self = this;
-    var nodes = this.nodesSelection().data(this.getRenderedNodes(), function (Node) { return Node.id;});
-
-    var g = nodes.enter().append('g')
-        .each(function(Node){ Node.element = this; })//reference element to Node
-        .classed('node', true)
-        .on('mousedown.select', function(Node, i){
-            if(!d3.event.ctrlKey){
-                if(Node.attr("selected")) return;
-                self.getNodesOP().attr("selected", false);
-            }
-            self.getLinksOP().attr("selected", false);
-            Node.attr("selected",!Node.attr("selected"));
-        })
-        .call(this._config.bindNodeEvent)
-        .call(this.dragNode);
-
-    //添加矩形
-    g.append("circle")
-        .attr("filter", "url(" + getAbsUrl() + "#shadow)");
-    g.append('svg:foreignObject')
-        .attr('class', 'text-group')
-        .append("xhtml:div")
-        .append('xhtml:span');
-    g.append('svg:foreignObject')
-        .attr('class', 'icon')
-        .append('xhtml:span');
-    g.append('svg:foreignObject')
-        .attr('class', 'mugshot')
-        .append('xhtml:img');
-    g.call(updateAttr);
-    
-    //need update Nodes Element
-    if(renderType === RENDER_TYPE.IMMEDIATELY){
-        var updateNodes = this.nodesSelection();
-    }else{
-        updateNodes = d3.selectAll(this.updateDOM.getNodesEle());
-    }
-    updateNodes.call(updateAttr);
-    
-    this.updateDOM.clearUpdateNodes();
-    
-    nodes.exit().remove();
-    
-    function updateAttr(selection){
-        var scale = self.currentTransform().k;
-        selection.attr("transform", function (Node) { return "translate(" + Node.getX() + "," + Node.getY() + ")";})
-            .classed("selected", function(Node){return Node.attr("selected")})
-            .classed("disabled", function(Node){return Node.attr("disabled")});
-        
-        selection.select('circle')
-            .attr("r", function(Node){ return Node.attr("radius");})
-            .style("fill", function(Node){ return Node.attr("color"); });
-        
-        selection.selectAll('.icon, .mugshot')
-            .attr("transform", function(Node){ return "translate(" + -Node.attr("radius") + ", "+ -Node.attr("radius") +")"; })
-            .attr("width", function(Node){return Node.attr("radius")*2;})
-            .attr("height", function(Node){return Node.attr("radius")*2;});
-        
-        selection.select('.icon').select('span')
-            .attr('class', function(Node){ return self._config.iconPrefix + Node.attr("icon");})
-            .style("line-height", function(Node){return Node.attr("radius")*2 + "px";});
-        selection.select('.mugshot').select('img')
-            .attr('src', function(Node){return Node.attr("mugshot")? self._config.mugshotPrefix + Node.attr("mugshot"): "";})
-            .style('display', function(Node){return Node.attr("mugshot")? "block": "none";});
-        
-        selection.select('.text-group')
-            .style('display', function(Node){
-                return (scale < self._config.scaleOfHideNodeLabel)? 'none': 'block';
-            })
-            .attr('width', function (Node) { return Node.getLabelWidth(); })
-            .attr("height", function(Node){ return Node.attr("radius") * scale; })
-            .style("line-height", function(Node){ return Node.attr("radius") * scale + "px"; })
-            .attr("transform", function(Node){ return "translate(" + (1 + Node.attr("radius")) + ", "+ (-Node.attr("radius") / 2) +") scale(" + 1 / scale + ")"; })
-            
-            .select('div')
-            .style("width", self._config.nodeLabelClipWidth + "px")
-            .attr('title', function (Node) { return Node.attr("label"); })
-            .select('span')
-            .text(function (Node) { return Node.attr("label"); });
-    }
-};
-
-var unique = function (array) {
-    var n = [];
-    for (var i = 0; i < array.length; i++) {
-        if (n.indexOf(array[i]) == -1) n.push(array[i]);
-    }
-    return n;
-};
-
-var drawLinksSvg = function (renderType) {
-    var self = this;
-    var scale = self.currentTransform().k;
-    
-    addArrowByColor();
-    
-    var links = this.linksSelection().data(this.getRenderedLinks(), function (Link) { return Link.id });
-
-    var link = links.enter()
-        .append('g')
-        .each(function(Link){ Link.element = this; })
-        .classed('link', true)
-        .call(this._config.bindLinkEvent);
-    
-    link.append('path')
-        .classed('link-path', true)
-        .attr('id', function(Link){ return "link-path" + Link.id});
-    
-    
-    var info = link
-        .append('svg:foreignObject')
-        .classed('link-info', true)
-        .append("xhtml:div")
-        .classed('center', true);
-    
-    info.append('xhtml:span').attr('class', 'icon');
-    info.append('xhtml:span').attr('class', 'text');
-    
-    
-    link.call(updateLinkAttr);
-    
-    
-    if(renderType === RENDER_TYPE.IMMEDIATELY){
-        var updateLinks  = this.linksSelection();
-    }else if(renderType === RENDER_TYPE.NUDGE){
-        updateLinks  = d3.selectAll(this.getRelatedLinks(this.getSelectedNodes()).map(function(Link){return Link.element;}));
-    }else{
-        updateLinks = d3.selectAll(this.updateDOM.getLinksEle());
-    }
-    
-    
-    updateLinks.call(updateLinkAttr);
-    
-    this.updateDOM.clearUpdateLinks();
-    
-    links.exit().remove();
-    
-    function updateLinkAttr(selection){
-        // if(renderType === RENDER_TYPE.NUDGE){
-        //     selection
-        //         .select('path')
-        //         .attr('d', function (Link) { var c = Link.getCoordination();  return 'M ' + c.Sx + ' ' + c.Sy + ' L ' + c.Tx + ' ' + c.Ty; });
-        //     return;
-        // }
-        selection.classed("disabled", function(Link){return Link.attr("disabled")});
-        
-        selection
-            .select('path')
-            .attr('d', function (Link) { var c = Link.getCoordination();  return 'M ' + c.Sx + ' ' + c.Sy + ' L ' + c.Tx + ' ' + c.Ty; })
-            .classed("selected", function(Link){return Link.attr("selected")})
-            .style('marker-start', function (Link) { return Link.getStartArrow(); })
-            .style('marker-end', function (Link) { return Link.getEndArrow(); })
-            .style('stroke-width', function(Link){ return Link.attr("width"); })
-            .style('stroke', function(Link){ return Link.attr("color"); });
-    
-        // if(renderType === RENDER_TYPE.NUDGE){
-        //     selection
-        //         .attr('dx', function(Link){return Link.getTextOffset(); })
-        //         .attr('transform', function(Link){ return Link.getLinkLabelTransform(scale); });
-        //     return;
-        // }
-        
-        var info = selection
-            .select('.link-info')
-            .attr('transform', function(Link){
-                return Link.getLinkInfoTransform(scale);
-            })
-            .style('display', function(Link){
-                return (scale < self._config.scaleOfHideLinkLabel)? 'none': 'block';
-            })
-            .attr('width', function (Link) {return Link.LineWidth(scale)})
-            .attr('height', function(Link){return Link.LineHeight(scale)});
-        
-        info.select('.text')
-            .text(function (Link) {return Link.attr("label");});
-    
-        info.select('.icon')
-            .attr('class', function(Link){ return self._config.iconPrefix + Link.attr("icon");});
-    }
-    
-    function addArrowByColor(){
-        var uniqueColor = unique(self.getRenderedLinks().map(function(Link){return Link.color;}));
-        var startArrow = self.svgSelection().select('defs').selectAll('marker.color-start-arrow').data(uniqueColor, function(v){return v;});
-        var endArrow = self.svgSelection().select('defs').selectAll('marker.color-end-arrow').data(uniqueColor, function(v){return v;});
-    
-        startArrow.enter()
-            .append("svg:marker")
-            .attr("id", function(v){ return "start-arrow-"+ v; })
-            .classed('color-start-arrow', true)
-            .attr("refX", 10)
-            .call(arrowAttr)
-            .append("svg:path")
-            .attr("d", "M10,-5L0,0L10,5")
-            .call(arrowPathAttr);
-    
-        endArrow.enter()
-            .append("svg:marker")
-            .attr("id", function(v){ return "end-arrow-"+ v; })
-            .attr("refX", 0)
-            .classed('color-end-arrow', true)
-            .call(arrowAttr)
-            .append("svg:path")
-            .attr("d", "M0,-5L10,0L0,5")
-            .call(arrowPathAttr);
-    
-        function arrowAttr(selection){
-            selection
-                .attr("viewBox", "0 -5 10 10")
-                .attr("markerWidth", 3)
-                .attr("markerHeight", 3)
-                .attr("orient", "auto");
-        }
-        function arrowPathAttr(selection){
-            selection
-                .style("fill", function(v){return v});
-        }
-    }
-};
-=======
-    return targetLink;
-}
->>>>>>> b08c8a660ea32c7bc5f23ff54d8122a6d850b1f9
 
 function findPoint(nodes,x, y) {
     var i,
@@ -2734,7 +2368,7 @@ function findPoint(nodes,x, y) {
 /**
  * Created by lcx on 2016/11/1.
  */
-function convertToCanvasCor(canvas,x, y) {
+var convertToCanvasCor = function(canvas,x, y) {
     // var canvas = this._canvas;
     var res = {};
     var cBox = canvas.getBoundingClientRect();
@@ -2743,16 +2377,17 @@ function convertToCanvasCor(canvas,x, y) {
     res.x = x - cx;
     res.y = y - cy;
     return res;
-}
+};
+
+/**
+ * Created by lcx on 2016/11/1.
+ * 利用canvas 画点 
+ */
 
 /**
  * Created by lcx on 2016/11/7.
  */
-<<<<<<< HEAD
 var findLinks = function (canvasObj, x, y,lineWidth) {
-=======
-function findLinks (canvasObj, x, y) {
->>>>>>> b08c8a660ea32c7bc5f23ff54d8122a6d850b1f9
     // console.log(links);
     var context = canvasObj.context;
     var target = null;
@@ -2839,7 +2474,6 @@ function findLinks (canvasObj, x, y) {
     render(x,y);
     return target;*/
 
-<<<<<<< HEAD
 };
 
 /**
@@ -2876,7 +2510,7 @@ var redrawNodeCanvas = function (canvasObj,target) {
             var index = colorList.indexOf(selectedNodes[l].color);
             selectedNodeDepartList[index].push(selectedNodes[l]);
         }else{
-            var index = colorList.indexOf(COLOR$1);
+            var index = colorList.indexOf(COLOR);
             selectedNodeDepartList[index].push(selectedNodes[l]);
         }
 
@@ -2888,7 +2522,7 @@ var redrawNodeCanvas = function (canvasObj,target) {
         if(target.color){
             index = colorList.indexOf(target.color);
         }else{
-            index = colorList.indexOf(COLOR$1);
+            index = colorList.indexOf(COLOR);
         }
         var context = cache[index].getContext('2d');
         context.clearRect(0,0,this.element.width,this.element.height);
@@ -3204,11 +2838,8 @@ var redrawNodeCanvas = function (canvasObj,target) {
     }*/
 
 };
-=======
-}
->>>>>>> b08c8a660ea32c7bc5f23ff54d8122a6d850b1f9
 
-function drawCanvas () {
+var drawCanvas = function () {
     var that = this;
     var context = this.element.getContext("2d");
     // console.log(that._getCurrentTransform());
@@ -3476,18 +3107,18 @@ function drawCanvas () {
         render('zoom');
     }
 
-}
+};
 
-function draw (renderType, canvasType) {
+var draw = function (renderType, canvasType) {
     if(canvasType === 'svg'){
         drawNodesSvg.call(this, renderType);
         drawLinksSvg.call(this, renderType);
     }else if(canvasType === 'CANVAS'){
         drawCanvas.call(this);
     }
-}
+};
 
-function zoomed () {
+var zoomed = function () {
     //不可移动
     if (!this.movable) {
         //将变换前的translate值赋给变换后的translate值,保持位置不变
@@ -3511,7 +3142,7 @@ function zoomed () {
     if(previousScale >= hideScale && currentScale <= hideScale) this.render(RENDER_TYPE.ZOOM);
     //panning don't need re-render, render only after zooming
     if(currentScale !== previousScale && currentScale > hideScale) this.render(RENDER_TYPE.ZOOM);
-}
+};
 
 function transform(k, x, y, duration) {
     var transformed = d3.zoomIdentity;
@@ -3559,7 +3190,7 @@ function focus(filter, duration){
             .translate(-xCenter, -yCenter);
     
         this.svgSelection(duration || 1000).call(this.zoom.transform, transformed);
-    }.bind(this), 0)
+    }.bind(this), 0);
 }
 
 function keydowned() {
@@ -3583,14 +3214,14 @@ function keyupped() {
     }
 }
 
-function draged (currentNode) {
+var draged = function (currentNode) {
     var nudgedNodes = this.getSelectedNodes();
     for(var i = nudgedNodes.length; i--;){
         nudgedNodes[i]._nudge(d3.event.dx, d3.event.dy, true);
         this.updateDOM.addObj(nudgedNodes[i]);
     }
     this.delayRender(null, RENDER_TYPE.NUDGE);
-}
+};
 
 function assign(target, varArgs) { // .length of function is 2
     'use strict';
@@ -3613,7 +3244,7 @@ function assign(target, varArgs) { // .length of function is 2
         }
     }
     return to;
-};
+}
 
 const DEFAULT_CONFIG = {
     radius: 15,
@@ -3671,7 +3302,7 @@ function UpdateDOM(graph){
     this.graph = graph;
     this._updateNodes = [];
     this._updateLinks = [];
-};
+}
 
 UpdateDOM.prototype = {
     constructor: UpdateDOM,
@@ -3691,8 +3322,8 @@ function addObj(Obj, renderType){
         if(renderType === RENDER_TYPE.NUDGE){
             var selectedNodes = this.graph.getSelectedNodes();
             var relatedLinks = this.graph.getRelatedLinks(selectedNodes);
-            relatedLinks.forEach(function(Link){
-                this._addLink(Link);
+            relatedLinks.forEach(function(Link$$1){
+                this._addLink(Link$$1);
             }, this);
             
         }
@@ -3700,20 +3331,20 @@ function addObj(Obj, renderType){
     if(Obj instanceof Link) this._addLink(Obj);
 }
 
-function addNode$1(Node){
-    if(this._updateNodes.indexOf(Node) === -1) this._updateNodes.push(Node);
+function addNode$1(Node$$1){
+    if(this._updateNodes.indexOf(Node$$1) === -1) this._updateNodes.push(Node$$1);
 }
 
-function addLink$1(Link){
-    if(this._updateLinks.indexOf(Link) === -1) this._updateLinks.push(Link);
+function addLink$1(Link$$1){
+    if(this._updateLinks.indexOf(Link$$1) === -1) this._updateLinks.push(Link$$1);
 }
 
 function getNodesEle(){
-    return this._updateNodes.map(function(Node){return Node.element;});
+    return this._updateNodes.map(function(Node$$1){return Node$$1.element;});
 }
 
 function getLinksEle(){
-    return this._updateLinks.map(function(Link){return Link.element;});
+    return this._updateLinks.map(function(Link$$1){return Link$$1.element;});
 }
 
 function clearUpdateNodes(){
@@ -3724,10 +3355,10 @@ function clearUpdateLinks(){
     this._updateLinks = [];
 }
 
-function Graph(selector, config) {
+function Graph(selector$$1, config$$1) {
     
-    this.selector(selector);
-    this.config(config);
+    this.selector(selector$$1);
+    this.config(config$$1);
     
     this._hasInit = false; //init only once
     
@@ -3800,21 +3431,21 @@ Graph.prototype = {
     }
 };
 
-function index (selector, config) {
-    return new Graph(selector, config);
-}
+var index = function (selector$$1, config$$1) {
+    return new Graph(selector$$1, config$$1);
+};
 
-function filterById (id, Nodes) {
+var filterById = function (id, Nodes) {
     return Nodes.filter(function(Node){
         return Node.id === id;
     })[0];
-}
+};
 
-function parseHTML (str) {
+var parseHTML = function (str) {
     var tmp = document.implementation.createHTMLDocument();
     tmp.body.innerHTML = str;
     return tmp.body.children[0];
-}
+};
 
 function direction(Links){
     var src = Links[0].getSourceId();
@@ -3837,9 +3468,9 @@ function direction(Links){
     }, DIRECTION.NONE);
 }
 
-function safeExecute (maybeFunction) {
+var safeExecute = function (maybeFunction) {
     return (maybeFunction instanceof Function)? maybeFunction(): maybeFunction;
-}
+};
 
 var utils = {
     filterBy: filterBy,
@@ -3853,6 +3484,8 @@ var utils = {
     direction: direction,
     safeExecute: safeExecute
 };
+
+//only for test now
 
 exports.graph = index;
 exports.utils = utils;

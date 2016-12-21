@@ -3,7 +3,7 @@ import drawLinkCanvas from './drawCanvasLink';
 import findPoint from './findPoint';
 import convertToCanvasCor from './convertCor';
 import findLinks from './findLink';
-import drawCache from './drawCache2';
+import drawCache from './drawCache';
 import redrawNodeCanvas from './redrawCanvasNode';
 
 export default function () {

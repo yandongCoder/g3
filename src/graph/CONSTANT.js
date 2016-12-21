@@ -592,7 +592,7 @@ const FONT = {
     "fa-youtube": "f167",
     "fa-youtube-play": "f16a",
     "fa-youtube-square": "f166"
-}
+};
 
 const LINE_TEXT_MARGIN = 2;
 const LINE_HEIGHT = 20;
