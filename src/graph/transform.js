@@ -26,8 +26,8 @@ function focus(filter, duration){
         var minX = d3.min(Nodes, xAccessor), maxX = d3.max(Nodes, xAccessor), minY = d3.min(Nodes, yAccessor), maxY = d3.max(Nodes, yAccessor);
         var xSpan = maxX - minX, ySpan = maxY - minY;
         var xCenter = (maxX + minX) / 2, yCenter = (maxY + minY) / 2;
-        var canvasW = this.element.width.baseVal.value,
-            canvasH = this.element.height.baseVal.value;
+        var canvasW = this.element.getBoundingClientRect().width,
+            canvasH = this.element.getBoundingClientRect().height;
     
         var xScale = canvasW / xSpan,
             yScale = canvasH / ySpan;
@@ -36,14 +36,14 @@ function focus(filter, duration){
         if(scale > this._config.maxScale) scale = this._config.maxScale;
         scale = scale === Infinity? 1: scale;
         scale -= scale/5;
-    
-    
+        
         var transformed = d3.zoomIdentity
             .translate(canvasW / 2, canvasH / 2)
             .scale(scale)
             .translate(-xCenter, -yCenter);
     
-        this.svgSelection(duration || 1000).call(this.zoom.transform, transformed);
+        console.log(transformed);
+        this.svgSelection(duration || 10000).call(this.zoom.transform, transformed);
     }.bind(this), 0)
 }
 
