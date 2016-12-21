@@ -775,8 +775,6 @@ function drawNodesSvg (renderType) {
         .attr("filter", "url(" + getAbsUrl() + "#shadow)");
     g.append('svg:foreignObject')
         .attr('class', 'text-group')
-        .append("xhtml:body")
-        .attr('xmlns', "http://www.w3.org/1999/xhtml")
         .append("xhtml:div")
         .attr('class', 'text');
     

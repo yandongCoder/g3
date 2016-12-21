@@ -22,18 +22,18 @@
             top: 10px;
             left: 10px;
         }
-        .pin{
-            background: url('./img/pin.png');
-            background-size: cover;
-            width: 100%;
-            height: 100%;
+        .note{
             cursor: pointer;
         }
         .note-content-wrap{
+            position: fixed;
             width: 200px;
             height: 200px;
             margin-left: 5px;
             display: none;
+            top: 20px;
+            left: 20px;
+            opacity: 0.9;
         }
         .note-content{
             width: 170px;
@@ -44,12 +44,23 @@
             background: #fff700;
             box-shadow: 3px 3px 12px #888;
         }
+        .note-close{
+            color: #333 !important;
+            float: right;
+            cursor: pointer;
+            margin-right: 18px;
+            margin-top: 5px;
+        }
     </style>
 </head>
 <body>
 <svg id="my-graph"></svg>
 <div class="tools">
     <button id="showBrush">showBrush</button>
+</div>
+<div class="note-content-wrap">
+    <span class="note-close fa fa-close"></span>
+    <div class="note-content">abc</div>
 </div>
 </body>
 </html>
@@ -73,28 +84,31 @@
         links: [{id:1, src: 1, dst: 2}, {id:2, src: 2, dst: 3}]
     };
 
+    d3.select(".note-close")
+        .on("click", function(){
+            d3.select(".note-content-wrap").style('display', 'none');
+        });
+
+    var currentNoteNode;
     var myGraph = g3.graph("#my-graph",{
         zoomable: false,
         iconPrefix: "fa fa-",
         nodeLabelClipWidth: 50,
         insertNode: function(selection){
-            var note = selection.append('svg:foreignObject')
+            var note = selection.append('svg:image')
                 .classed('note', true)
+                .attr('xlink:href', "./img/pin.png")
                 .attr("width", 20)
-                .attr("height", 20);
-
-                note.append('xhtml:div')
-                .classed("pin", true)
+                .attr("height", 20)
                 .on("click", function(Node){
                     myGraph.getNodesOP(Node.note.nodes).attr("selected", true);
-                    d3.select(this.nextSibling).style("display", function(){
+                    d3.select(".note-content-wrap").style("display", function(){
                         return d3.select(this).style("display") === "block"? "none": "block";
                     });
+                    currentNoteNode = Node;
+                    updateNotePosition();
                 });
-                note.append('xhtml:div')
-                .classed("note-content-wrap", true)
-                .append('xhtml:div')
-                .classed("note-content", true);
+
         },
         updateNode: function(selection, scale){
             selection.select(".note")
@@ -114,7 +128,23 @@
     .nodes(groupedByRelatedNodes.nodes)
     .links(groupedByRelatedNodes.links);
 
+    myGraph.drag.on('drag.my', updateNotePosition);
+    myGraph.zoom.on('zoom.my', updateNotePosition);
 
+
+    function updateNotePosition(){
+        if(!currentNoteNode) return;
+        var bound = currentNoteNode.element.querySelector('.note').getBoundingClientRect();
+
+        if(bound.width === 0 && bound.left === 0){
+            d3.select('.note-content-wrap').style('display', 'none');
+        } else{
+            d3.select('.note-content-wrap').style('display', 'block');
+            d3.select('.note-content-wrap')
+                .style('left', bound.left + "px")
+                .style('top', bound.top + bound.height + "px");
+        }
+    }
 
 //    myGraph.groupBy(null, function(Node){
 //        var groupIds = [];
