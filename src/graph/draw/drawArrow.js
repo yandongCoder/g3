@@ -1,136 +1,109 @@
 /**
  * Created by lcx on 2016/11/2.
  */
-export default function(ctx,link,lineWidth,x,y) {
-    var targetLink = false;
+export default
+function(ctx,link,lineWidth,x,y) {
+    var targetLink = false;//标记当前link 是否为点击选中的link
     var s1 = link.source.getX();
     var e1 = link.source.getY();
     var s2 = link.target.getX();
     var e2 = link.target.getY();
-    var text = link.label;
-    var r ,r1;//r1 为source 的 半径
-
-    // 判断哪个是source 哪个是target
-    if(link.hasSourceArrow() && link.hasTargetArrow()){
-        //双箭头
-        r = link.target.radius;
-        r1 = link.source.radius;
-        draw(e1,s1,e2,s2,true);
-    }else if(link.hasSourceArrow()){
-        r = link.source.radius;
-        r1 = link.target.radius;
-        //箭头指向source
-        draw(e2,s2,e1,s1);
-    }else if(link.hasTargetArrow()){
-        r = link.target.radius;
-        r1 = link.source.radius;
-        //箭头指向target
-        draw(e1,s1,e2,s2);
-    }
-
-    function draw(e1, s1, e2, s2,isDouble) {
-        //1  --- source   2  ----target
+    var r ,r1;
+    function draw(e1, s1, e2, s2,tag) {
         var l = Math.sqrt((s2-s1)*(s2-s1) + (e2-e1)*(e2-e1));
         var sin = (e2-e1)/l;
         var cos = (s2-s1)/l;
-        var xlen = (r+lineWidth)*cos;
-        var ylen = (r+lineWidth)*sin;
 
         var dx = (r+lineWidth)*cos;
         var dy = (r+lineWidth)*sin;
 
         var sdx = (r1+lineWidth)*cos;
         var sdy = (r1+lineWidth)*sin;
+        var res = {
+            tag:tag
+        };
+
         var x2,y2,x1,y1;
         x2 = s2-dx;
         y2 = e2-dy;
         x1 = s1+sdx;
         y1 = e1+sdy;
 
-        var lineList = [];
-        lineList.push([x2,y2]);
-        if(!isDouble){
-            var targetArrow = calcArrow(x1,y1,x2,y2);
+        /*var arrX1,arrY1,arrX2,arrY2;
+        arrX2 = s2-(r+lineWidth*3)*cos;
+        arrY2 = e2-(r+lineWidth*3)*sin;
+        arrX1 = s1+(r1+lineWidth*3)*cos;
+        arrY1 = e1+(r1+lineWidth*3)*sin;*/
+        var targetArrow = calcArrow(x1,y1,x2,y2);
+        var sourceArrow = calcArrow(x2,y2,x1,y1);
+        x1 = round(x1);
+        x2 = round(x2);
+        y1 = round(y1);
+        y2 = round(y2);
+        targetArrow.a1 = round(targetArrow.a1);
+        targetArrow.b1 = round(targetArrow.b1);
+        targetArrow.a2 = round(targetArrow.a2);
+        targetArrow.b2 = round(targetArrow.b2);
+        sourceArrow.a1 = round(sourceArrow.a1);
+        sourceArrow.b1 = round(sourceArrow.b1);
+        sourceArrow.a2 = round(sourceArrow.a2);
+        sourceArrow.b2 = round(sourceArrow.b2);
+        ctx.moveTo(x1,y1);
+        ctx.lineTo(x2,y2);
+        if(tag == 'double'){
+            ctx.moveTo(targetArrow.a1,targetArrow.b1);
+            ctx.lineTo(x2,y2);
+            ctx.lineTo(targetArrow.a2,targetArrow.b2);
 
-            var x3 = (targetArrow.a1+targetArrow.a2)/2;
-            var y3 = (targetArrow.b1+targetArrow.b2)/2;
-
-            var a3 = (targetArrow.a1+x3)/2;
-            var b3 = (targetArrow.b1+y3)/2;
-            var a4 = (x3+targetArrow.a2)/2;
-            var b4 = (y3+targetArrow.b2)/2;
-
-            var a5 = a3-x3+x1;
-            var b5 = b3-y3+y1;
-
-            var a6 = a4-x3+x1;
-            var b6 = b4-y3+y1;
-            lineList.push([targetArrow.a1,targetArrow.b1]);
-            lineList.push([a3,b3]);
-            lineList.push([a5,b5]);
-            lineList.push([x1,y1]);
-            lineList.push([a6,b6]);
-            lineList.push([a4,b4]);
-            lineList.push([targetArrow.a2,targetArrow.b2]);
-
-        }else{
-            //双箭头
-            var targetArrow = calcArrow(x1,y1,x2,y2);
-            var sourceArrow = calcArrow(x2,y2,x1,y1);
-
-            var x3 = (targetArrow.a1+targetArrow.a2)/2;
-            var y3 = (targetArrow.b1+targetArrow.b2)/2;
-
-            var x4 = (sourceArrow.a1+sourceArrow.a2)/2;
-            var y4 = (sourceArrow.b1+sourceArrow.b2)/2;
-
-            var a3 = (targetArrow.a1+x3)/2;
-            var b3 = (targetArrow.b1+y3)/2;
-            var a4 = (targetArrow.a2+x3)/2;
-            var b4 = (targetArrow.b2+y3)/2;
-
-            var a5 = (sourceArrow.a1+x4)/2;
-            var b5 = (sourceArrow.b1+y4)/2;
-            var a6 = (sourceArrow.a2+x4)/2;
-            var b6 = (sourceArrow.b2+y4)/2;
-            lineList.push([targetArrow.a1,targetArrow.b1]);
-            lineList.push([a3,b3]);
-            lineList.push([a6,b6]);
-            lineList.push([sourceArrow.a1,sourceArrow.b1]);
-            lineList.push([x1,y1]);
-            lineList.push([sourceArrow.a2,sourceArrow.b2]);
-            lineList.push([a5,b5]);
-            lineList.push([a4,b4]);
-            lineList.push([targetArrow.a2,targetArrow.b2]);
+            ctx.moveTo(sourceArrow.a1,sourceArrow.b1);
+            ctx.lineTo(x1,y1);
+            ctx.lineTo(sourceArrow.a2,sourceArrow.b2);
+        }else if(tag == 'source'){
+            var sourceArrow = calcArrow(x1,y1,x2,y2);
+            sourceArrow.a1 = round(sourceArrow.a1);
+            sourceArrow.b1 = round(sourceArrow.b1);
+            sourceArrow.a2 = round(sourceArrow.a2);
+            sourceArrow.b2 = round(sourceArrow.b2);
+            ctx.moveTo(sourceArrow.a1,sourceArrow.b1);
+            ctx.lineTo(x2,y2);
+            ctx.lineTo(sourceArrow.a2,sourceArrow.b2);
+        }else if(tag == 'target'){
+            ctx.moveTo(targetArrow.a1,targetArrow.b1);
+            ctx.lineTo(x2,y2);
+            ctx.lineTo(targetArrow.a2,targetArrow.b2);
         }
-
-        lineList.push([x2,y2]);
-
-        ctx.beginPath();
-        if(link.attr('selected')){
-            ctx.fillStyle = "#f00";
-        }else{
-            ctx.fillStyle = "#ccc";
-        }
-        ctx.lineWidth = 3;
-        ctx.moveTo(lineList[0][0],lineList[0][1]);
-        for(var i=1;i<lineList.length;i++){
-            ctx.lineTo(lineList[i][0],lineList[i][1]);
-        }
-        if(ctx.isPointInPath(x,y)){
-            targetLink = true;
-        }
-        ctx.fill();
-
-        //绘制文字
-        // ctx.beginPath();
-        ctx.strokeWidth = 0;
-        ctx.fillStyle = '#555';
-        ctx.font="16px 微软雅黑";
-        ctx.fillText(text,(s2+s1)/2,(e2+e1)/2);
+        return res;
     }
 
-    //计算箭头两端坐标
+    if(link.hasSourceArrow() && link.hasTargetArrow()){
+        //双箭头
+        r = link.target.radius;
+        r1 = link.source.radius;
+        return draw(e1,s1,e2,s2,'double');
+    }else if(link.hasSourceArrow()){
+        r = link.source.radius;
+        r1 = link.target.radius;
+        //箭头指向source
+        return draw(e2,s2,e1,s1,'source');
+    }else if(link.hasTargetArrow()){
+        r = link.target.radius;
+        r1 = link.source.radius;
+        //箭头指向target
+        return draw(e1,s1,e2,s2,'target');
+    }else{
+        r = link.target.radius;
+        r1 = link.source.radius;
+        return draw(e1,s1,e2,s2,'none');
+    }
+
+    function round(somenum) {
+        var rounded;
+        rounded = (0.5 + somenum) | 0;
+        rounded = ~~ (0.5 + somenum);
+        rounded = (0.5 + somenum) << 0;
+        return rounded;
+    }
+
     function calcArrow(x1, y1, x2, y2) {
         //进行箭头的绘制
         var angle = Math.abs(Math.atan((x2 - x1) / (y2 - y1))); //倾斜角余角
@@ -193,6 +166,6 @@ export default function(ctx,link,lineWidth,x,y) {
             b2:b2
         };
     }
-    return targetLink;
+
 
 }

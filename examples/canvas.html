@@ -44,8 +44,9 @@
 
 
     var myGraph = g3.graph("#my-graph")
-            .nodes([{id: 1, label: "aadafafafafafa", x: 100, y: 100, color: "#123456",radius:20}, {id: 2, label: "b", x: 200, y: 200, color: "#0f0",radius:25}, {id: 3, label: "c", x: 300, y: 300, color: "#00f",radius:30}, {id: 4, label: "d", x: 400, y: 200, color: "#ff0",radius:18}])
-            .links([{id:1, label: "a",direction:3, src: 1, dst: 2}, {id:4, label: "d", src: 3,direction:1, dst: 2}, {id:5, label: "e", src: 3,direction:2, dst: 4}]);
+            .nodes([{id: 1, label: "aadafafafafafa", x: 100, y: 100, color: "#123456",radius:20}, {id: 2, label: "b", x: 200, y: 200, color: "#0f0",radius:25},
+                {id: 3, label: "c", x: 300, y: 300, color: "#00f",radius:30}, {id: 4, label: "d", x: 400, y: 200, color: "#ff0",radius:18},{id: 5, label: "e", x: 600, y: 200, color: "#0ff",radius:18}])
+            .links([{id:1, label: "a",direction:3, src: 1, dst: 2}, {id:4, label: "d", src: 3,direction:1, dst: 2}, {id:5, label: "e", src: 3,direction:2, dst: 4},{id:6, label: "f", src: 4,direction:0, dst: 5}]);
 
     d3.select("#showBrush").on('click', myGraph.brush.show);
     d3.select("#hideBrush").on('click', myGraph.brush.hide);

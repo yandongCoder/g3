@@ -1,8 +1,8 @@
 //g3
 (function (global, factory) {
-    typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
-    typeof define === 'function' && define.amd ? define(['exports'], factory) :
-    (factory((global.g3 = global.g3 || {})));
+  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
+  typeof define === 'function' && define.amd ? define(['exports'], factory) :
+  (factory((global.g3 = global.g3 || {})));
 }(this, (function (exports) { 'use strict';
 
 const DIRECTION = {
@@ -10,6 +10,595 @@ const DIRECTION = {
     S2D: 1,
     D2S: 2,
     DOUBLE: 3
+};
+const COLOR$1 = '#00a';
+
+const FONT = {
+    "fa-500px": "f26e",
+    "fa-adjust": "f042",
+    "fa-adn": "f170",
+    "fa-align-center": "f037",
+    "fa-align-justify": "f039",
+    "fa-align-left": "f036",
+    "fa-align-right": "f038",
+    "fa-amazon": "f270",
+    "fa-ambulance": "f0f9",
+    "fa-anchor": "f13d",
+    "fa-android": "f17b",
+    "fa-angellist": "f209",
+    "fa-angle-double-down": "f103",
+    "fa-angle-double-left": "f100",
+    "fa-angle-double-right": "f101",
+    "fa-angle-double-up": "f102",
+    "fa-angle-down": "f107",
+    "fa-angle-left": "f104",
+    "fa-angle-right": "f105",
+    "fa-angle-up": "f106",
+    "fa-apple": "f179",
+    "fa-archive": "f187",
+    "fa-area-chart": "f1fe",
+    "fa-arrow-circle-down": "f0ab",
+    "fa-arrow-circle-left": "f0a8",
+    "fa-arrow-circle-o-down": "f01a",
+    "fa-arrow-circle-o-left": "f190",
+    "fa-arrow-circle-o-right": "f18e",
+    "fa-arrow-circle-o-up": "f01b",
+    "fa-arrow-circle-right": "f0a9",
+    "fa-arrow-circle-up": "f0aa",
+    "fa-arrow-down": "f063",
+    "fa-arrow-left": "f060",
+    "fa-arrow-right": "f061",
+    "fa-arrow-up": "f062",
+    "fa-arrows": "f047",
+    "fa-arrows-alt": "f0b2",
+    "fa-arrows-h": "f07e",
+    "fa-arrows-v": "f07d",
+    "fa-asterisk": "f069",
+    "fa-at": "f1fa",
+    "fa-backward": "f04a",
+    "fa-balance-scale": "f24e",
+    "fa-ban": "f05e",
+    "fa-bar-chart": "f080",
+    "fa-barcode": "f02a",
+    "fa-bars": "f0c9",
+    "fa-battery-empty": "f244",
+    "fa-battery-full": "f240",
+    "fa-battery-half": "f242",
+    "fa-battery-quarter": "f243",
+    "fa-battery-three-quarters": "f241",
+    "fa-bed": "f236",
+    "fa-beer": "f0fc",
+    "fa-behance": "f1b4",
+    "fa-behance-square": "f1b5",
+    "fa-bell": "f0f3",
+    "fa-bell-o": "f0a2",
+    "fa-bell-slash": "f1f6",
+    "fa-bell-slash-o": "f1f7",
+    "fa-bicycle": "f206",
+    "fa-binoculars": "f1e5",
+    "fa-birthday-cake": "f1fd",
+    "fa-bitbucket": "f171",
+    "fa-bitbucket-square": "f172",
+    "fa-black-tie": "f27e",
+    "fa-bold": "f032",
+    "fa-bolt": "f0e7",
+    "fa-bomb": "f1e2",
+    "fa-book": "f02d",
+    "fa-bookmark": "f02e",
+    "fa-bookmark-o": "f097",
+    "fa-briefcase": "f0b1",
+    "fa-btc": "f15a",
+    "fa-bug": "f188",
+    "fa-building": "f1ad",
+    "fa-building-o": "f0f7",
+    "fa-bullhorn": "f0a1",
+    "fa-bullseye": "f140",
+    "fa-bus": "f207",
+    "fa-buysellads": "f20d",
+    "fa-calculator": "f1ec",
+    "fa-calendar": "f073",
+    "fa-calendar-check-o": "f274",
+    "fa-calendar-minus-o": "f272",
+    "fa-calendar-o": "f133",
+    "fa-calendar-plus-o": "f271",
+    "fa-calendar-times-o": "f273",
+    "fa-camera": "f030",
+    "fa-camera-retro": "f083",
+    "fa-car": "f1b9",
+    "fa-caret-down": "f0d7",
+    "fa-caret-left": "f0d9",
+    "fa-caret-right": "f0da",
+    "fa-caret-square-o-down": "f150",
+    "fa-caret-square-o-left": "f191",
+    "fa-caret-square-o-right": "f152",
+    "fa-caret-square-o-up": "f151",
+    "fa-caret-up": "f0d8",
+    "fa-cart-arrow-down": "f218",
+    "fa-cart-plus": "f217",
+    "fa-cc": "f20a",
+    "fa-cc-amex": "f1f3",
+    "fa-cc-diners-club": "f24c",
+    "fa-cc-discover": "f1f2",
+    "fa-cc-jcb": "f24b",
+    "fa-cc-mastercard": "f1f1",
+    "fa-cc-paypal": "f1f4",
+    "fa-cc-stripe": "f1f5",
+    "fa-cc-visa": "f1f0",
+    "fa-certificate": "f0a3",
+    "fa-chain-broken": "f127",
+    "fa-check": "f00c",
+    "fa-check-circle": "f058",
+    "fa-check-circle-o": "f05d",
+    "fa-check-square": "f14a",
+    "fa-check-square-o": "f046",
+    "fa-chevron-circle-down": "f13a",
+    "fa-chevron-circle-left": "f137",
+    "fa-chevron-circle-right": "f138",
+    "fa-chevron-circle-up": "f139",
+    "fa-chevron-down": "f078",
+    "fa-chevron-left": "f053",
+    "fa-chevron-right": "f054",
+    "fa-chevron-up": "f077",
+    "fa-child": "f1ae",
+    "fa-chrome": "f268",
+    "fa-circle": "f111",
+    "fa-circle-o": "f10c",
+    "fa-circle-o-notch": "f1ce",
+    "fa-circle-thin": "f1db",
+    "fa-clipboard": "f0ea",
+    "fa-clock-o": "f017",
+    "fa-clone": "f24d",
+    "fa-cloud": "f0c2",
+    "fa-cloud-download": "f0ed",
+    "fa-cloud-upload": "f0ee",
+    "fa-code": "f121",
+    "fa-code-fork": "f126",
+    "fa-codepen": "f1cb",
+    "fa-coffee": "f0f4",
+    "fa-cog": "f013",
+    "fa-cogs": "f085",
+    "fa-columns": "f0db",
+    "fa-comment": "f075",
+    "fa-comment-o": "f0e5",
+    "fa-commenting": "f27a",
+    "fa-commenting-o": "f27b",
+    "fa-comments": "f086",
+    "fa-comments-o": "f0e6",
+    "fa-compass": "f14e",
+    "fa-compress": "f066",
+    "fa-connectdevelop": "f20e",
+    "fa-contao": "f26d",
+    "fa-copyright": "f1f9",
+    "fa-creative-commons": "f25e",
+    "fa-credit-card": "f09d",
+    "fa-crop": "f125",
+    "fa-crosshairs": "f05b",
+    "fa-css3": "f13c",
+    "fa-cube": "f1b2",
+    "fa-cubes": "f1b3",
+    "fa-cutlery": "f0f5",
+    "fa-dashcube": "f210",
+    "fa-database": "f1c0",
+    "fa-delicious": "f1a5",
+    "fa-desktop": "f108",
+    "fa-deviantart": "f1bd",
+    "fa-diamond": "f219",
+    "fa-digg": "f1a6",
+    "fa-dot-circle-o": "f192",
+    "fa-download": "f019",
+    "fa-dribbble": "f17d",
+    "fa-dropbox": "f16b",
+    "fa-drupal": "f1a9",
+    "fa-eject": "f052",
+    "fa-ellipsis-h": "f141",
+    "fa-ellipsis-v": "f142",
+    "fa-empire": "f1d1",
+    "fa-envelope": "f0e0",
+    "fa-envelope-o": "f003",
+    "fa-envelope-square": "f199",
+    "fa-eraser": "f12d",
+    "fa-eur": "f153",
+    "fa-exchange": "f0ec",
+    "fa-exclamation": "f12a",
+    "fa-exclamation-circle": "f06a",
+    "fa-exclamation-triangle": "f071",
+    "fa-expand": "f065",
+    "fa-expeditedssl": "f23e",
+    "fa-external-link": "f08e",
+    "fa-external-link-square": "f14c",
+    "fa-eye": "f06e",
+    "fa-eye-slash": "f070",
+    "fa-eyedropper": "f1fb",
+    "fa-facebook": "f09a",
+    "fa-facebook-official": "f230",
+    "fa-facebook-square": "f082",
+    "fa-fast-backward": "f049",
+    "fa-fast-forward": "f050",
+    "fa-fax": "f1ac",
+    "fa-female": "f182",
+    "fa-fighter-jet": "f0fb",
+    "fa-file": "f15b",
+    "fa-file-archive-o": "f1c6",
+    "fa-file-audio-o": "f1c7",
+    "fa-file-code-o": "f1c9",
+    "fa-file-excel-o": "f1c3",
+    "fa-file-image-o": "f1c5",
+    "fa-file-o": "f016",
+    "fa-file-pdf-o": "f1c1",
+    "fa-file-powerpoint-o": "f1c4",
+    "fa-file-text": "f15c",
+    "fa-file-text-o": "f0f6",
+    "fa-file-video-o": "f1c8",
+    "fa-file-word-o": "f1c2",
+    "fa-files-o": "f0c5",
+    "fa-film": "f008",
+    "fa-filter": "f0b0",
+    "fa-fire": "f06d",
+    "fa-fire-extinguisher": "f134",
+    "fa-firefox": "f269",
+    "fa-flag": "f024",
+    "fa-flag-checkered": "f11e",
+    "fa-flag-o": "f11d",
+    "fa-flask": "f0c3",
+    "fa-flickr": "f16e",
+    "fa-floppy-o": "f0c7",
+    "fa-folder": "f07b",
+    "fa-folder-o": "f114",
+    "fa-folder-open": "f07c",
+    "fa-folder-open-o": "f115",
+    "fa-font": "f031",
+    "fa-fonticons": "f280",
+    "fa-forumbee": "f211",
+    "fa-forward": "f04e",
+    "fa-foursquare": "f180",
+    "fa-frown-o": "f119",
+    "fa-futbol-o": "f1e3",
+    "fa-gamepad": "f11b",
+    "fa-gavel": "f0e3",
+    "fa-gbp": "f154",
+    "fa-genderless": "f22d",
+    "fa-get-pocket": "f265",
+    "fa-gg": "f260",
+    "fa-gg-circle": "f261",
+    "fa-gift": "f06b",
+    "fa-git": "f1d3",
+    "fa-git-square": "f1d2",
+    "fa-github": "f09b",
+    "fa-github-alt": "f113",
+    "fa-github-square": "f092",
+    "fa-glass": "f000",
+    "fa-globe": "f0ac",
+    "fa-google": "f1a0",
+    "fa-google-plus": "f0d5",
+    "fa-google-plus-square": "f0d4",
+    "fa-google-wallet": "f1ee",
+    "fa-graduation-cap": "f19d",
+    "fa-gratipay": "f184",
+    "fa-h-square": "f0fd",
+    "fa-hacker-news": "f1d4",
+    "fa-hand-lizard-o": "f258",
+    "fa-hand-o-down": "f0a7",
+    "fa-hand-o-left": "f0a5",
+    "fa-hand-o-right": "f0a4",
+    "fa-hand-o-up": "f0a6",
+    "fa-hand-paper-o": "f256",
+    "fa-hand-peace-o": "f25b",
+    "fa-hand-pointer-o": "f25a",
+    "fa-hand-rock-o": "f255",
+    "fa-hand-scissors-o": "f257",
+    "fa-hand-spock-o": "f259",
+    "fa-hdd-o": "f0a0",
+    "fa-header": "f1dc",
+    "fa-headphones": "f025",
+    "fa-heart": "f004",
+    "fa-heart-o": "f08a",
+    "fa-heartbeat": "f21e",
+    "fa-history": "f1da",
+    "fa-home": "f015",
+    "fa-hospital-o": "f0f8",
+    "fa-hourglass": "f254",
+    "fa-hourglass-end": "f253",
+    "fa-hourglass-half": "f252",
+    "fa-hourglass-o": "f250",
+    "fa-hourglass-start": "f251",
+    "fa-houzz": "f27c",
+    "fa-html5": "f13b",
+    "fa-i-cursor": "f246",
+    "fa-ils": "f20b",
+    "fa-inbox": "f01c",
+    "fa-indent": "f03c",
+    "fa-industry": "f275",
+    "fa-info": "f129",
+    "fa-info-circle": "f05a",
+    "fa-inr": "f156",
+    "fa-instagram": "f16d",
+    "fa-internet-explorer": "f26b",
+    "fa-ioxhost": "f208",
+    "fa-italic": "f033",
+    "fa-joomla": "f1aa",
+    "fa-jpy": "f157",
+    "fa-jsfiddle": "f1cc",
+    "fa-key": "f084",
+    "fa-keyboard-o": "f11c",
+    "fa-krw": "f159",
+    "fa-language": "f1ab",
+    "fa-laptop": "f109",
+    "fa-lastfm": "f202",
+    "fa-lastfm-square": "f203",
+    "fa-leaf": "f06c",
+    "fa-leanpub": "f212",
+    "fa-lemon-o": "f094",
+    "fa-level-down": "f149",
+    "fa-level-up": "f148",
+    "fa-life-ring": "f1cd",
+    "fa-lightbulb-o": "f0eb",
+    "fa-line-chart": "f201",
+    "fa-link": "f0c1",
+    "fa-linkedin": "f0e1",
+    "fa-linkedin-square": "f08c",
+    "fa-linux": "f17c",
+    "fa-list": "f03a",
+    "fa-list-alt": "f022",
+    "fa-list-ol": "f0cb",
+    "fa-list-ul": "f0ca",
+    "fa-location-arrow": "f124",
+    "fa-lock": "f023",
+    "fa-long-arrow-down": "f175",
+    "fa-long-arrow-left": "f177",
+    "fa-long-arrow-right": "f178",
+    "fa-long-arrow-up": "f176",
+    "fa-magic": "f0d0",
+    "fa-magnet": "f076",
+    "fa-male": "f183",
+    "fa-map": "f279",
+    "fa-map-marker": "f041",
+    "fa-map-o": "f278",
+    "fa-map-pin": "f276",
+    "fa-map-signs": "f277",
+    "fa-mars": "f222",
+    "fa-mars-double": "f227",
+    "fa-mars-stroke": "f229",
+    "fa-mars-stroke-h": "f22b",
+    "fa-mars-stroke-v": "f22a",
+    "fa-maxcdn": "f136",
+    "fa-meanpath": "f20c",
+    "fa-medium": "f23a",
+    "fa-medkit": "f0fa",
+    "fa-meh-o": "f11a",
+    "fa-mercury": "f223",
+    "fa-microphone": "f130",
+    "fa-microphone-slash": "f131",
+    "fa-minus": "f068",
+    "fa-minus-circle": "f056",
+    "fa-minus-square": "f146",
+    "fa-minus-square-o": "f147",
+    "fa-mobile": "f10b",
+    "fa-money": "f0d6",
+    "fa-moon-o": "f186",
+    "fa-motorcycle": "f21c",
+    "fa-mouse-pointer": "f245",
+    "fa-music": "f001",
+    "fa-neuter": "f22c",
+    "fa-newspaper-o": "f1ea",
+    "fa-object-group": "f247",
+    "fa-object-ungroup": "f248",
+    "fa-odnoklassniki": "f263",
+    "fa-odnoklassniki-square": "f264",
+    "fa-opencart": "f23d",
+    "fa-openid": "f19b",
+    "fa-opera": "f26a",
+    "fa-optin-monster": "f23c",
+    "fa-outdent": "f03b",
+    "fa-pagelines": "f18c",
+    "fa-paint-brush": "f1fc",
+    "fa-paper-plane": "f1d8",
+    "fa-paper-plane-o": "f1d9",
+    "fa-paperclip": "f0c6",
+    "fa-paragraph": "f1dd",
+    "fa-pause": "f04c",
+    "fa-paw": "f1b0",
+    "fa-paypal": "f1ed",
+    "fa-pencil": "f040",
+    "fa-pencil-square": "f14b",
+    "fa-pencil-square-o": "f044",
+    "fa-phone": "f095",
+    "fa-phone-square": "f098",
+    "fa-picture-o": "f03e",
+    "fa-pie-chart": "f200",
+    "fa-pied-piper": "f1a7",
+    "fa-pied-piper-alt": "f1a8",
+    "fa-pinterest": "f0d2",
+    "fa-pinterest-p": "f231",
+    "fa-pinterest-square": "f0d3",
+    "fa-plane": "f072",
+    "fa-play": "f04b",
+    "fa-play-circle": "f144",
+    "fa-play-circle-o": "f01d",
+    "fa-plug": "f1e6",
+    "fa-plus": "f067",
+    "fa-plus-circle": "f055",
+    "fa-plus-square": "f0fe",
+    "fa-plus-square-o": "f196",
+    "fa-power-off": "f011",
+    "fa-print": "f02f",
+    "fa-puzzle-piece": "f12e",
+    "fa-qq": "f1d6",
+    "fa-qrcode": "f029",
+    "fa-question": "f128",
+    "fa-question-circle": "f059",
+    "fa-quote-left": "f10d",
+    "fa-quote-right": "f10e",
+    "fa-random": "f074",
+    "fa-rebel": "f1d0",
+    "fa-recycle": "f1b8",
+    "fa-reddit": "f1a1",
+    "fa-reddit-square": "f1a2",
+    "fa-refresh": "f021",
+    "fa-registered": "f25d",
+    "fa-renren": "f18b",
+    "fa-repeat": "f01e",
+    "fa-reply": "f112",
+    "fa-reply-all": "f122",
+    "fa-retweet": "f079",
+    "fa-road": "f018",
+    "fa-rocket": "f135",
+    "fa-rss": "f09e",
+    "fa-rss-square": "f143",
+    "fa-rub": "f158",
+    "fa-safari": "f267",
+    "fa-scissors": "f0c4",
+    "fa-search": "f002",
+    "fa-search-minus": "f010",
+    "fa-search-plus": "f00e",
+    "fa-sellsy": "f213",
+    "fa-server": "f233",
+    "fa-share": "f064",
+    "fa-share-alt": "f1e0",
+    "fa-share-alt-square": "f1e1",
+    "fa-share-square": "f14d",
+    "fa-share-square-o": "f045",
+    "fa-shield": "f132",
+    "fa-ship": "f21a",
+    "fa-shirtsinbulk": "f214",
+    "fa-shopping-cart": "f07a",
+    "fa-sign-in": "f090",
+    "fa-sign-out": "f08b",
+    "fa-signal": "f012",
+    "fa-simplybuilt": "f215",
+    "fa-sitemap": "f0e8",
+    "fa-skyatlas": "f216",
+    "fa-skype": "f17e",
+    "fa-slack": "f198",
+    "fa-sliders": "f1de",
+    "fa-slideshare": "f1e7",
+    "fa-smile-o": "f118",
+    "fa-sort": "f0dc",
+    "fa-sort-alpha-asc": "f15d",
+    "fa-sort-alpha-desc": "f15e",
+    "fa-sort-amount-asc": "f160",
+    "fa-sort-amount-desc": "f161",
+    "fa-sort-asc": "f0de",
+    "fa-sort-desc": "f0dd",
+    "fa-sort-numeric-asc": "f162",
+    "fa-sort-numeric-desc": "f163",
+    "fa-soundcloud": "f1be",
+    "fa-space-shuttle": "f197",
+    "fa-spinner": "f110",
+    "fa-spoon": "f1b1",
+    "fa-spotify": "f1bc",
+    "fa-square": "f0c8",
+    "fa-square-o": "f096",
+    "fa-stack-exchange": "f18d",
+    "fa-stack-overflow": "f16c",
+    "fa-star": "f005",
+    "fa-star-half": "f089",
+    "fa-star-half-o": "f123",
+    "fa-star-o": "f006",
+    "fa-steam": "f1b6",
+    "fa-steam-square": "f1b7",
+    "fa-step-backward": "f048",
+    "fa-step-forward": "f051",
+    "fa-stethoscope": "f0f1",
+    "fa-sticky-note": "f249",
+    "fa-sticky-note-o": "f24a",
+    "fa-stop": "f04d",
+    "fa-street-view": "f21d",
+    "fa-strikethrough": "f0cc",
+    "fa-stumbleupon": "f1a4",
+    "fa-stumbleupon-circle": "f1a3",
+    "fa-subscript": "f12c",
+    "fa-subway": "f239",
+    "fa-suitcase": "f0f2",
+    "fa-sun-o": "f185",
+    "fa-superscript": "f12b",
+    "fa-table": "f0ce",
+    "fa-tablet": "f10a",
+    "fa-tachometer": "f0e4",
+    "fa-tag": "f02b",
+    "fa-tags": "f02c",
+    "fa-tasks": "f0ae",
+    "fa-taxi": "f1ba",
+    "fa-television": "f26c",
+    "fa-tencent-weibo": "f1d5",
+    "fa-terminal": "f120",
+    "fa-text-height": "f034",
+    "fa-text-width": "f035",
+    "fa-th": "f00a",
+    "fa-th-large": "f009",
+    "fa-th-list": "f00b",
+    "fa-thumb-tack": "f08d",
+    "fa-thumbs-down": "f165",
+    "fa-thumbs-o-down": "f088",
+    "fa-thumbs-o-up": "f087",
+    "fa-thumbs-up": "f164",
+    "fa-ticket": "f145",
+    "fa-times": "f00d",
+    "fa-times-circle": "f057",
+    "fa-times-circle-o": "f05c",
+    "fa-tint": "f043",
+    "fa-toggle-off": "f204",
+    "fa-toggle-on": "f205",
+    "fa-trademark": "f25c",
+    "fa-train": "f238",
+    "fa-transgender": "f224",
+    "fa-transgender-alt": "f225",
+    "fa-trash": "f1f8",
+    "fa-trash-o": "f014",
+    "fa-tree": "f1bb",
+    "fa-trello": "f181",
+    "fa-tripadvisor": "f262",
+    "fa-trophy": "f091",
+    "fa-truck": "f0d1",
+    "fa-try": "f195",
+    "fa-tty": "f1e4",
+    "fa-tumblr": "f173",
+    "fa-tumblr-square": "f174",
+    "fa-twitch": "f1e8",
+    "fa-twitter": "f099",
+    "fa-twitter-square": "f081",
+    "fa-umbrella": "f0e9",
+    "fa-underline": "f0cd",
+    "fa-undo": "f0e2",
+    "fa-university": "f19c",
+    "fa-unlock": "f09c",
+    "fa-unlock-alt": "f13e",
+    "fa-upload": "f093",
+    "fa-usd": "f155",
+    "fa-user": "f007",
+    "fa-user-md": "f0f0",
+    "fa-user-plus": "f234",
+    "fa-user-secret": "f21b",
+    "fa-user-times": "f235",
+    "fa-users": "f0c0",
+    "fa-venus": "f221",
+    "fa-venus-double": "f226",
+    "fa-venus-mars": "f228",
+    "fa-viacoin": "f237",
+    "fa-video-camera": "f03d",
+    "fa-vimeo": "f27d",
+    "fa-vimeo-square": "f194",
+    "fa-vine": "f1ca",
+    "fa-vk": "f189",
+    "fa-volume-down": "f027",
+    "fa-volume-off": "f026",
+    "fa-volume-up": "f028",
+    "fa-weibo": "f18a",
+    "fa-weixin": "f1d7",
+    "fa-whatsapp": "f232",
+    "fa-wheelchair": "f193",
+    "fa-wifi": "f1eb",
+    "fa-wikipedia-w": "f266",
+    "fa-windows": "f17a",
+    "fa-wordpress": "f19a",
+    "fa-wrench": "f0ad",
+    "fa-xing": "f168",
+    "fa-xing-square": "f169",
+    "fa-y-combinator": "f23b",
+    "fa-yahoo": "f19e",
+    "fa-yelp": "f1e9",
+    "fa-youtube": "f167",
+    "fa-youtube-play": "f16a",
+    "fa-youtube-square": "f166"
 };
 
 const LINK_REMOVE_TYPE = {
@@ -50,9 +639,9 @@ function _render(renderType) {
     if(!this._config.ifRender) return this;
     var canvasType = this.element.nodeName;
     if(canvasType === 'svg'){ this._init();}
-    else{
-        // this._initCache();
-    }
+   /* else{
+        this._initCache();
+    }*/
     
     if(renderType === RENDER_TYPE.IMMEDIATELY){
         draw(renderType);
@@ -390,6 +979,249 @@ Link.prototype = {
     }
 };
 
+/**
+ * Created by lcx on 2016/11/1.
+ * 利用canvas 画点 
+ */
+var drawCanvasNode = function (canvasObj) {
+    var nodes = this.getRenderedNodes();
+    // var context = canvasObj.context;
+    //对node 进行分类 按颜色进行分类 不同的颜色画在不同的画布上，但是所有点的总共的颜色不宜过多 否则在点线多的情况下会影响整体效率
+    var colorList = [];
+    var nodeDepartList = [];
+    var selectedNodeDepartList = [];
+    var cache = [];
+    var selectedNodes = this.getSelectedNodes();
+    for(var j=0;j<nodes.length;j++){
+        if(nodes[j].color){
+            if(colorList.indexOf(nodes[j].color)<0){
+                colorList.push(nodes[j].color);
+                nodeDepartList.push([nodes[j]]);
+                selectedNodeDepartList.push([]);
+                var canvas = document.createElement('canvas');
+                canvas.width = this.element.width;
+                canvas.height = this.element.height;
+                cache.push(canvas);
+            }else{
+                var index = colorList.indexOf(nodes[j].color);
+                nodeDepartList[index].push(nodes[j]);
+            }
+        }else{
+            if(colorList.indexOf(COLOR)<0){
+                colorList.push(COLOR);
+                nodeDepartList.push([nodes[j]]);
+                selectedNodeDepartList.push([]);
+                var canvas = document.createElement('canvas');
+                canvas.width = this.element.width;
+                canvas.height = this.element.height;
+                cache.push(canvas);
+            }else{
+                var index = colorList.indexOf(COLOR);
+                nodeDepartList[index].push(nodes[j]);
+            }
+        }
+
+    }
+    for(var l=0;l<selectedNodes.length;l++){
+        if(selectedNodes[l].color){
+            var index = colorList.indexOf(selectedNodes[l].color);
+            selectedNodeDepartList[index].push(selectedNodes[l]);
+        }else{
+            var index = colorList.indexOf(COLOR);
+            selectedNodeDepartList[index].push(selectedNodes[l]);
+        }
+
+    }
+
+    for(var i=0;i<nodeDepartList.length;i++){
+        var context = cache[i].getContext('2d');
+        var selectedNodes = selectedNodeDepartList[i];
+        var nodes = nodeDepartList[i];
+        if(selectedNodeDepartList[i].length>0){
+            //绘制选中状态的点
+            context.beginPath();
+            context.lineWidth=10;
+            context.strokeStyle = '#f65565';
+            context.fillStyle = colorList[i];
+            for(var m=0;m<selectedNodes.length;m++){
+                var Node = selectedNodes[m];
+                var x = Node.getX();
+                var y = Node.getY();
+                var r = Node.radius;
+
+                var radius =  Node.radius-5;
+                context.moveTo(x, y);
+                context.arc(x, y, radius, 0, 2 * Math.PI);
+            }
+            context.stroke();
+            context.fill();
+
+            //画字
+            context.strokeWidth = 1;
+            context.font="16px 微软雅黑";
+            context.textAlign='left';
+            context.textBaseline='hanging';
+            for(var k=0;k<selectedNodes.length;k++){
+                var Node = selectedNodes[k];
+                var x = Node.getX();
+                var y = Node.getY();
+                var r = Node.radius;
+
+                var radius =  Node.radius-5;
+                var labelLength = context.measureText(Node.label).width+10;
+                context.fillStyle='#f65565';
+                context.fillRect(x+radius,y+radius,labelLength,20);
+
+                context.fillStyle = '#555';
+                var label = Node.label;
+                context.fillText(label,x+r,y+r);
+
+            }
+
+        }
+
+        context.beginPath();
+        context.lineWidth=1;
+        context.strokeStyle = colorList[i];
+        context.fillStyle = colorList[i];
+        for(var n=0;n<nodes.length;n++){
+            var Node = nodes[n];
+            if(!Node.attr('selected')){
+                var x = Node.getX();
+                var y = Node.getY();
+                var r = Node.radius;
+
+
+                var radius = Node.radius;
+                context.fillStyle = Node.color;
+                context.strokeStyle=Node.color;
+
+                context.moveTo(x, y);
+
+                context.arc(x, y, radius, 0, 2 * Math.PI);
+            }
+
+        }
+        context.stroke();
+        context.fill();
+
+        context.strokeWidth = 1;
+        context.font="16px 微软雅黑";
+        context.textAlign='left';
+        context.textBaseline='hanging';
+        context.fillStyle = '#555';
+        for(var a=0;a<selectedNodes.length;a++){
+            var Node = nodes[a];
+            var x = Node.getX();
+            var y = Node.getY();
+            var r = Node.radius;
+
+            var label = '';
+            if(Node.label.length>8){
+                label = Node.label.slice(0,8)+'...';
+            }else{
+                label = Node.label;
+            }
+            context.fillText(label,x+r,y+r);
+
+        }
+    }
+
+    this.nodesCache = cache;
+    this.colorList = colorList;
+    this.nodesDepartList = nodeDepartList;
+    return this;
+
+
+
+
+
+
+
+
+
+
+   /* //分开渲染，先渲染选中状态的node
+    if(selectedNodes.length>0){
+        context.beginPath();
+        context.lineWidth=10;
+        context.strokeStyle = '#f65565';
+        for(var m=0;m<selectedNodes.length;m++){
+            var Node = selectedNodes[m];
+            var x = Node.getX();
+            var y = Node.getY();
+            var r = Node.radius;
+
+            var radius =  Node.radius-5 ;
+            context.fillStyle = Node.color;
+            context.moveTo(x, y);
+            context.arc(x, y, radius, 0, 2 * Math.PI);
+        }
+        context.stroke();
+        context.fill();
+    }
+
+    //非选中状态node
+    context.beginPath();
+    context.lineWidth=1;
+    for(var i=0;i<nodes.length;i++){
+            var Node = nodes[i];
+        if(!Node.attr('selected')){
+            var x = Node.getX();
+            var y = Node.getY();
+            var r = Node.radius;
+
+
+            var radius = Node.radius;
+            context.fillStyle = Node.color;
+            context.strokeStyle=Node.color;
+
+            context.moveTo(x, y);
+
+            context.arc(x, y, radius, 0, 2 * Math.PI);
+        }
+
+            // context.restore();
+    }
+    context.stroke();
+    context.fill();
+
+//画字
+    context.beginPath();
+    for(var k=0;k<nodes.length;k++){
+        var Node = nodes[k];
+        var x = Node.getX();
+        var y = Node.getY();
+        var r = Node.radius;
+
+        //在点的旁边写对应文字
+        if(Node.selected){
+            //有点选状态
+            var labelLength = context.measureText(Node.label).width+10;
+            context.fillStyle='#f65565';
+            context.fillRect(x+radius,y+radius,labelLength,20);
+        }
+        context.strokeWidth = 1;
+        context.fillStyle = '#555';
+        context.font="16px 微软雅黑";
+        context.textAlign='left';
+        context.textBaseline='hanging';
+        var label = '';
+        if(Node.selected){
+            label = Node.label;
+        }else{
+            if(Node.label.length>8){
+                label = Node.label.slice(0,8)+'...';
+            }else{
+                label = Node.label;
+            }
+        }
+        context.fillText(label,x+r,y+r);
+    }*/
+
+};
+
+// import drawCanvasLink from './draw/drawCanvasLink2';
 function clearNodes() {
     this._nodes = [];
 }
@@ -451,13 +1283,28 @@ function removeLinksOfNode(Node$$1) {
 
 function nodes(nodes, cover) {
     nodes = toArray(nodes);
-    
+
     if(!arguments.length) return this._nodes;
     if(cover) this.clearNodes();
-    
+
     nodes.forEach(function(v){ this._addNode(v);},this);
-    
     this._render();
+    if(this.element.nodeName === 'CANVAS'){
+        //初始化
+        drawCanvasNode.call(this);
+       /* var nodes = this.getRenderedNodes();
+        var nodesCache = [];
+        for(var i=0;i<nodes.length;i++){
+            var tempCanvas = document.createElement('canvas');
+            nodesCache.push(tempCanvas);
+        }
+        this.nodesCache = nodesCache;
+        var canvasObj = {
+            nodes:this.getRenderedNodes(),
+            nodesCache:this.nodesCache
+        };
+        drawCanvasNode(canvasObj);*/
+    }
     return this;
 }
 
@@ -468,8 +1315,31 @@ function links(links, cover) {
     if(cover) this.clearLinks();
     
     links.forEach(function(v){ this._addLink(v); },this);
-    
     this._render();
+    if(this.element.nodeName === 'CANVAS'){
+        var canvas = document.createElement('canvas');
+        canvas.width = this.element.width;
+        canvas.height = this.element.height;
+        this.linkCanvas = canvas;
+       /* var links = this.getRenderedLinks();
+        var nodes = this.getRenderedNodes();
+        var linksCache = [];
+        for(var j=0;j<links.length;j++){
+            var tempCanvas = document.createElement('canvas');
+            // var svg = document.createElement('svg');
+
+
+            linksCache.push(tempCanvas);
+        }*/
+        // this.linksCache = [];
+        /*var canvasObj = {
+            links:this.getRenderedLinks(),
+            linksCache:this.linksCache,
+            cacheList:this.cacheList
+        };*/
+        // drawCanvasLink.call(this);
+    }
+
     return this;
 }
 
@@ -754,199 +1624,179 @@ var init = function () {
  * Created by lcx on 2016/11/1.
  * 利用canvas 画点 
  */
-var drawCanvasNode = function (canvasObj) {
+var drawCanvasNode$1 = function (canvasObj) {
     var nodes = canvasObj.nodes;
-    var context = canvasObj.context;
+    // var context = canvasObj.context;
 
-    nodes.forEach(function(Node,i) {
-        var x = Node.getX();
-        var y = Node.getY();
-        var r = Node.radius;
+    console.log('drawCache');
+    for(var i=0;i<nodes.length;i++){
+        (function () {
+            var Node = nodes[i];
+            var x = Node.getX();
+            var y = Node.getY();
+            var r = Node.radius;
 
-        // canvasObj.nodesCache[i].width = r*2;
-        // canvasObj.nodesCache[i].height = r*2;
-
-        // var context = canvasObj.nodesCache[i].getContext('2d');
-
-        // console.log(Node.selected());
-        context.beginPath();
-        var radius = Node.selected ? Node.radius-5 : Node.radius;
-        context.fillStyle = Node.color;
-        context.moveTo(x, y);
-        if(Node.selected){
-            context.strokeStyle = '#f65565';
-            context.lineWidth=10;
-        }else{
-            context.strokeStyle=Node.color;
-            context.lineWidth=1;
-        }
-        
-        context.arc(x, y, radius, 0, 2 * Math.PI);
-        context.stroke();
-        context.fill();
-
-        //画字
-        //在点的旁边写对应文字
-        context.beginPath();
-        if(Node.selected){
-            //有点选状态
-            var labelLength = context.measureText(Node.label).width+10;
-            context.fillStyle='#f65565';
-            context.fillRect(x+radius,y+radius,labelLength,20);
-        }
-        context.strokeWidth = 1;
-        context.fillStyle = '#555';
-        context.font="16px 微软雅黑";
-        context.textAlign='left';
-        context.textBaseline='hanging';
-        var label = '';
-        if(Node.selected){
-            label = Node.label;
-        }else{
-            if(Node.label.length>8){
-                label = Node.label.slice(0,8)+'...';
+            var context = canvasObj.nodesCache[i].getContext('2d');
+            canvasObj.nodesCache[i].width = r*2+context.measureText(Node.label).width+10;
+            canvasObj.nodesCache[i].height = r*2+context.measureText(Node.label).width+10;
+            context.save();
+            // console.log(Node.selected());
+            context.beginPath();
+            var radius = Node.selected ? Node.radius-5 : Node.radius;
+            context.fillStyle = Node.color;
+            context.moveTo(r, r);
+            if(Node.selected){
+                context.strokeStyle = '#f65565';
+                context.lineWidth=10;
             }else{
-                label = Node.label;
+                context.strokeStyle=Node.color;
+                context.lineWidth=1;
             }
-        }
-        context.fillText(label,x+r,y+r);
 
-    });
+            context.arc(r, r, radius, 0, 2 * Math.PI);
+            context.stroke();
+            context.fill();
+
+            //画字
+            //在点的旁边写对应文字
+            
+            context.beginPath();
+            if(Node.selected){
+                //有点选状态
+                var labelLength = context.measureText(Node.label).width+10;
+                context.fillStyle='#f65565';
+                context.fillRect(r+radius,r+radius,labelLength,20);
+            }
+            context.strokeWidth = 1;
+            context.fillStyle = '#555';
+            context.font="16px 微软雅黑";
+            context.textAlign='left';
+            context.textBaseline='hanging';
+            var label = '';
+            if(Node.selected){
+                label = Node.label;
+            }else{
+                if(Node.label.length>8){
+                    label = Node.label.slice(0,8)+'...';
+                }else{
+                    label = Node.label;
+                }
+            }
+            context.fillText(label,r+r,r+r);
+            context.restore();
+        })(i);
+    }
+  /*  nodes.forEach(function(Node,i) {
+
+
+    });*/
 };
 
 /**
  * Created by lcx on 2016/11/2.
  */
 var drawArrow = function(ctx,link,lineWidth,x,y) {
-    var targetLink = false;
+    var targetLink = false;//标记当前link 是否为点击选中的link
     var s1 = link.source.getX();
     var e1 = link.source.getY();
     var s2 = link.target.getX();
     var e2 = link.target.getY();
-    var text = link.label;
-    var r ,r1;//r1 为source 的 半径
-
-    // 判断哪个是source 哪个是target
-    if(link.hasSourceArrow() && link.hasTargetArrow()){
-        //双箭头
-        r = link.target.radius;
-        r1 = link.source.radius;
-        draw(e1,s1,e2,s2,true);
-    }else if(link.hasSourceArrow()){
-        r = link.source.radius;
-        r1 = link.target.radius;
-        //箭头指向source
-        draw(e2,s2,e1,s1);
-    }else if(link.hasTargetArrow()){
-        r = link.target.radius;
-        r1 = link.source.radius;
-        //箭头指向target
-        draw(e1,s1,e2,s2);
-    }
-
-    function draw(e1, s1, e2, s2,isDouble) {
-        //1  --- source   2  ----target
+    var r ,r1;
+    function draw(e1, s1, e2, s2,tag) {
         var l = Math.sqrt((s2-s1)*(s2-s1) + (e2-e1)*(e2-e1));
         var sin = (e2-e1)/l;
         var cos = (s2-s1)/l;
-        var xlen = (r+lineWidth)*cos;
-        var ylen = (r+lineWidth)*sin;
 
         var dx = (r+lineWidth)*cos;
         var dy = (r+lineWidth)*sin;
 
         var sdx = (r1+lineWidth)*cos;
         var sdy = (r1+lineWidth)*sin;
+        var res = {
+            tag:tag
+        };
+
         var x2,y2,x1,y1;
         x2 = s2-dx;
         y2 = e2-dy;
         x1 = s1+sdx;
         y1 = e1+sdy;
 
-        var lineList = [];
-        lineList.push([x2,y2]);
-        if(!isDouble){
-            var targetArrow = calcArrow(x1,y1,x2,y2);
+        /*var arrX1,arrY1,arrX2,arrY2;
+        arrX2 = s2-(r+lineWidth*3)*cos;
+        arrY2 = e2-(r+lineWidth*3)*sin;
+        arrX1 = s1+(r1+lineWidth*3)*cos;
+        arrY1 = e1+(r1+lineWidth*3)*sin;*/
+        var targetArrow = calcArrow(x1,y1,x2,y2);
+        var sourceArrow = calcArrow(x2,y2,x1,y1);
+        x1 = round(x1);
+        x2 = round(x2);
+        y1 = round(y1);
+        y2 = round(y2);
+        targetArrow.a1 = round(targetArrow.a1);
+        targetArrow.b1 = round(targetArrow.b1);
+        targetArrow.a2 = round(targetArrow.a2);
+        targetArrow.b2 = round(targetArrow.b2);
+        sourceArrow.a1 = round(sourceArrow.a1);
+        sourceArrow.b1 = round(sourceArrow.b1);
+        sourceArrow.a2 = round(sourceArrow.a2);
+        sourceArrow.b2 = round(sourceArrow.b2);
+        ctx.moveTo(x1,y1);
+        ctx.lineTo(x2,y2);
+        if(tag == 'double'){
+            ctx.moveTo(targetArrow.a1,targetArrow.b1);
+            ctx.lineTo(x2,y2);
+            ctx.lineTo(targetArrow.a2,targetArrow.b2);
 
-            var x3 = (targetArrow.a1+targetArrow.a2)/2;
-            var y3 = (targetArrow.b1+targetArrow.b2)/2;
-
-            var a3 = (targetArrow.a1+x3)/2;
-            var b3 = (targetArrow.b1+y3)/2;
-            var a4 = (x3+targetArrow.a2)/2;
-            var b4 = (y3+targetArrow.b2)/2;
-
-            var a5 = a3-x3+x1;
-            var b5 = b3-y3+y1;
-
-            var a6 = a4-x3+x1;
-            var b6 = b4-y3+y1;
-            lineList.push([targetArrow.a1,targetArrow.b1]);
-            lineList.push([a3,b3]);
-            lineList.push([a5,b5]);
-            lineList.push([x1,y1]);
-            lineList.push([a6,b6]);
-            lineList.push([a4,b4]);
-            lineList.push([targetArrow.a2,targetArrow.b2]);
-
-        }else{
-            //双箭头
-            var targetArrow = calcArrow(x1,y1,x2,y2);
-            var sourceArrow = calcArrow(x2,y2,x1,y1);
-
-            var x3 = (targetArrow.a1+targetArrow.a2)/2;
-            var y3 = (targetArrow.b1+targetArrow.b2)/2;
-
-            var x4 = (sourceArrow.a1+sourceArrow.a2)/2;
-            var y4 = (sourceArrow.b1+sourceArrow.b2)/2;
-
-            var a3 = (targetArrow.a1+x3)/2;
-            var b3 = (targetArrow.b1+y3)/2;
-            var a4 = (targetArrow.a2+x3)/2;
-            var b4 = (targetArrow.b2+y3)/2;
-
-            var a5 = (sourceArrow.a1+x4)/2;
-            var b5 = (sourceArrow.b1+y4)/2;
-            var a6 = (sourceArrow.a2+x4)/2;
-            var b6 = (sourceArrow.b2+y4)/2;
-            lineList.push([targetArrow.a1,targetArrow.b1]);
-            lineList.push([a3,b3]);
-            lineList.push([a6,b6]);
-            lineList.push([sourceArrow.a1,sourceArrow.b1]);
-            lineList.push([x1,y1]);
-            lineList.push([sourceArrow.a2,sourceArrow.b2]);
-            lineList.push([a5,b5]);
-            lineList.push([a4,b4]);
-            lineList.push([targetArrow.a2,targetArrow.b2]);
+            ctx.moveTo(sourceArrow.a1,sourceArrow.b1);
+            ctx.lineTo(x1,y1);
+            ctx.lineTo(sourceArrow.a2,sourceArrow.b2);
+        }else if(tag == 'source'){
+            var sourceArrow = calcArrow(x1,y1,x2,y2);
+            sourceArrow.a1 = round(sourceArrow.a1);
+            sourceArrow.b1 = round(sourceArrow.b1);
+            sourceArrow.a2 = round(sourceArrow.a2);
+            sourceArrow.b2 = round(sourceArrow.b2);
+            ctx.moveTo(sourceArrow.a1,sourceArrow.b1);
+            ctx.lineTo(x2,y2);
+            ctx.lineTo(sourceArrow.a2,sourceArrow.b2);
+        }else if(tag == 'target'){
+            ctx.moveTo(targetArrow.a1,targetArrow.b1);
+            ctx.lineTo(x2,y2);
+            ctx.lineTo(targetArrow.a2,targetArrow.b2);
         }
-
-        lineList.push([x2,y2]);
-
-        ctx.beginPath();
-        if(link.attr('selected')){
-            ctx.fillStyle = "#f00";
-        }else{
-            ctx.fillStyle = "#ccc";
-        }
-        ctx.lineWidth = 3;
-        ctx.moveTo(lineList[0][0],lineList[0][1]);
-        for(var i=1;i<lineList.length;i++){
-            ctx.lineTo(lineList[i][0],lineList[i][1]);
-        }
-        if(ctx.isPointInPath(x,y)){
-            targetLink = true;
-        }
-        ctx.fill();
-
-        //绘制文字
-        // ctx.beginPath();
-        ctx.strokeWidth = 0;
-        ctx.fillStyle = '#555';
-        ctx.font="16px 微软雅黑";
-        ctx.fillText(text,(s2+s1)/2,(e2+e1)/2);
+        return res;
     }
 
-    //计算箭头两端坐标
+    if(link.hasSourceArrow() && link.hasTargetArrow()){
+        //双箭头
+        r = link.target.radius;
+        r1 = link.source.radius;
+        return draw(e1,s1,e2,s2,'double');
+    }else if(link.hasSourceArrow()){
+        r = link.source.radius;
+        r1 = link.target.radius;
+        //箭头指向source
+        return draw(e2,s2,e1,s1,'source');
+    }else if(link.hasTargetArrow()){
+        r = link.target.radius;
+        r1 = link.source.radius;
+        //箭头指向target
+        return draw(e1,s1,e2,s2,'target');
+    }else{
+        r = link.target.radius;
+        r1 = link.source.radius;
+        return draw(e1,s1,e2,s2,'none');
+    }
+
+    function round(somenum) {
+        var rounded;
+        rounded = (0.5 + somenum) | 0;
+        rounded = ~~ (0.5 + somenum);
+        rounded = (0.5 + somenum) << 0;
+        return rounded;
+    }
+
     function calcArrow(x1, y1, x2, y2) {
         //进行箭头的绘制
         var angle = Math.abs(Math.atan((x2 - x1) / (y2 - y1))); //倾斜角余角
@@ -1009,42 +1859,308 @@ var drawArrow = function(ctx,link,lineWidth,x,y) {
             b2:b2
         };
     }
-    return targetLink;
+
 
 };
+
+/**
+ * Created by lcx on 2016/12/13.
+ */
 
 /**
  * Created by lcx on 2016/11/1.
  * 利用canvas 画线
  */
-var drawCanvasLink = function (canvasObj,x,y) {
+var drawLinkCanvas = function (canvasObj,tag,target) {
     //取得经过计算之后的links 数据
     var links = canvasObj.links;
-    var context = canvasObj.context;
+    var nodes = canvasObj.nodes;
+    var cacheCtx = canvasObj.context;
+    var width = canvasObj.canvas.width;
+    var height = canvasObj.canvas.height;
 
     //进行绘制
-    context.strokeStyle = "#ccc";
+    // context.strokeStyle = "#ccc";
     var targetLink = null;
-    for(var i=0;i<links.length;i++){
-     /*   canvasObj.linksCache[i].width = Math.abs(links[i].source.x-links[i].target.x);
-        canvasObj.linksCache[i].height = Math.abs(links[i].source.y-links[i].target.y);
-        var cacheCtx = canvasObj.linksCache[i].getContext('2d');*/
-        var tag = drawArrow(context,links[i],3,x,y);
-        if(tag) targetLink = links[i];
+    // var lineList = [];
+    // var pointList = [];
+    var selectedLinks = this.getSelectedLinks();
+
+
+
+    if(tag == 'dragStart'){
+        var departLinks = getDepartLinks(links,target);
+        var selectedDepart = getDepartLinks(selectedLinks,target);
+        var targetLinks = departLinks.targetLinks;
+        var otherLinks = departLinks.otherLinks;
+        var selectedTargetLinks = selectedDepart.targetLinks;
+        var selectedOtherLinks = selectedDepart.otherLinks;
+        //drag 操作，需要分成两张画布进行渲染  和target 相连的线+target 单独绘制在一张画布上面
+        var targetCanvas = document.createElement('canvas');
+        targetCanvas.width = width;
+        targetCanvas.height = height;
+        var targetContext = targetCanvas.getContext('2d');
+        targetContext.save();
+
+        targetContext.translate(canvasObj.transform.x, canvasObj.transform.y);
+        targetContext.scale(canvasObj.transform.k, canvasObj.transform.k);
+
+        var otherCanvas = document.createElement('canvas');
+        otherCanvas.width = canvasObj.canvas.width;
+        otherCanvas.height = canvasObj.canvas.height;
+        var otherContext = otherCanvas.getContext('2d');
+        otherContext.save();
+
+        otherContext.translate(canvasObj.transform.x, canvasObj.transform.y);
+        otherContext.scale(canvasObj.transform.k, canvasObj.transform.k);
+
+
+
+
+
+        //先绘制其他
+        otherContext.lineWidth=3;
+        if(selectedOtherLinks.length>0){
+            otherContext.beginPath();
+            otherContext.strokeStyle = '#f00';
+            for(var m=0;m<selectedOtherLinks.length;m++){
+
+                drawArrow(otherContext,selectedOtherLinks[m],3);
+            }
+            otherContext.stroke();
+        }
+
+        otherContext.beginPath();
+        otherContext.strokeStyle = '#ccc';
+        //画线
+        for(var i=0;i<otherLinks.length;i++){
+            if(!otherLinks[i].attr('selected')){
+                drawArrow(otherContext,otherLinks[i],3);
+            }
+            var text = otherLinks[i].label;
+
+            var s1 = otherLinks[i].source.getX();
+            var e1 =otherLinks[i].source.getY();
+            var s2 = otherLinks[i].target.getX();
+            var e2 = otherLinks[i].target.getY();
+
+
+            otherContext.fillText(text,(s2+s1)/2,(e2+e1)/2);
+        }
+        otherContext.stroke();
+      /*  for(var k=0;k<nodes.length;k++){
+            if(nodes[k].id != target.id){
+                otherContext.drawImage(canvasObj.nodesCache[k],nodes[k].getX()-nodes[k].radius,nodes[k].getY()-nodes[k].radius);
+            }
+        }*/
+
+
+        otherContext.restore();
+
+
+        //绘制拖拽选中的link-----------------------------------
+        targetContext.lineWidth=3;
+        if(selectedTargetLinks.length>0){
+            targetContext.beginPath();
+            targetContext.strokeStyle = '#f00';
+            for(var m=0;m<selectedTargetLinks.length;m++){
+
+                drawArrow(targetContext,selectedTargetLinks[m],3);
+            }
+            targetContext.stroke();
+        }
+
+        targetContext.beginPath();
+        targetContext.strokeStyle = '#ccc';
+        //画线
+        for(var i=0;i<targetLinks.length;i++){
+            if(!targetLinks[i].attr('selected')){
+               drawArrow(targetContext,targetLinks[i],3);
+            }
+            var text = targetLinks[i].label;
+
+            var s1 = targetLinks[i].source.getX();
+            var e1 =targetLinks[i].source.getY();
+            var s2 = targetLinks[i].target.getX();
+            var e2 = targetLinks[i].target.getY();
+
+
+            targetContext.fillText(text,(s2+s1)/2,(e2+e1)/2);
+        }
+        targetContext.stroke();
+        // for(var n=0;n<nodes.length;n++){
+        //     if(nodes[n].id == target.id){
+        //         targetContext.drawImage(canvasObj.nodesCache[n],nodes[n].getX()-nodes[n].radius,nodes[n].getY()-nodes[n].radius);
+        //     }
+        // }
+        targetContext.restore();
+
+        cacheCtx.drawImage(otherCanvas,0,0);
+        cacheCtx.drawImage(targetCanvas,0,0);
+
+        return {
+            otherCanvas:otherCanvas,
+            targetCanvas:targetCanvas
+        };
+
+    }else if(tag == 'drag'){
+        var departLinks = getDepartLinks(links,target);
+        var selectedDepart = getDepartLinks(selectedLinks,target);
+        var targetLinks = departLinks.targetLinks;
+        var otherLinks = departLinks.otherLinks;
+        var selectedTargetLinks = selectedDepart.targetLinks;
+        var selectedOtherLinks = selectedDepart.otherLinks;
+
+        var otherCanvas = canvasObj.doubleCanvas.otherCanvas;
+        var targetCanvas = canvasObj.doubleCanvas.targetCanvas;
+        var targetContext = targetCanvas.getContext('2d');
+        targetContext.save();
+        targetContext.clearRect(0,0,width,height);
+        targetContext.translate(canvasObj.transform.x, canvasObj.transform.y);
+        targetContext.scale(canvasObj.transform.k, canvasObj.transform.k);
+
+
+        targetContext.lineWidth=3;
+        if(selectedTargetLinks.length>0){
+            targetContext.beginPath();
+            targetContext.strokeStyle = '#f00';
+            for(var m=0;m<selectedTargetLinks.length;m++){
+
+                drawArrow(targetContext,selectedTargetLinks[m],3);
+            }
+            targetContext.stroke();
+        }
+
+        targetContext.beginPath();
+        targetContext.strokeStyle = '#ccc';
+        //画线
+        for(var i=0;i<targetLinks.length;i++){
+            if(!targetLinks[i].attr('selected')){
+                drawArrow(targetContext,targetLinks[i],3);
+            }
+            var text = targetLinks[i].label;
+
+            var s1 = targetLinks[i].source.getX();
+            var e1 =targetLinks[i].source.getY();
+            var s2 = targetLinks[i].target.getX();
+            var e2 = targetLinks[i].target.getY();
+
+
+            targetContext.fillText(text,(s2+s1)/2,(e2+e1)/2);
+        }
+        targetContext.stroke();
+       /* for(var j=0;j<nodes.length;j++){
+            if(nodes[j].id == target.id){
+                targetContext.drawImage(canvasObj.nodesCache[j],nodes[j].getX()-nodes[j].radius,nodes[j].getY()-nodes[j].radius);
+            }
+        }*/
+        targetContext.restore();
+        cacheCtx.drawImage(otherCanvas,0,0);
+        cacheCtx.drawImage(targetCanvas,0,0);
+        canvasObj.doubleCanvas.targetCanvas = targetCanvas;
+        return canvasObj.doubleCanvas;
+    }else{
+        //无区别重绘
+        var context = this.linkCanvas.getContext('2d');
+        context.clearRect(0,0,this.element.width,this.element.height);
+        context.save();
+        context.translate(canvasObj.transform.x, canvasObj.transform.y);
+        context.scale(canvasObj.transform.k, canvasObj.transform.k);
+
+        context.lineWidth=3;
+        if(selectedLinks.length>0){
+            context.beginPath();
+            context.strokeStyle = '#f00';
+            for(var m=0;m<selectedLinks.length;m++){
+
+               drawArrow(context,selectedLinks[m],3);
+            }
+            context.stroke();
+
+        }
+
+
+        context.beginPath();
+        context.strokeStyle = '#ccc';
+        //画线
+        for(var i=0;i<links.length;i++){
+            if(!links[i].attr('selected')){
+                drawArrow(context,links[i],3);
+            }
+        }
+        context.stroke();
+        if(canvasObj.transform.k>=1){
+            context.strokeWidth = 0;
+            context.fillStyle = '#555';
+            context.font="16px 微软雅黑";
+            for(var k=0;k<links.length;k++){
+                var text = links[k].label;
+
+                var s1 = links[k].source.getX();
+                var e1 = links[k].source.getY();
+                var s2 = links[k].target.getX();
+                var e2 = links[k].target.getY();
+
+
+                context.fillText(text,(s2+s1)/2,(e2+e1)/2);
+            }
+        }
+
+        context.restore();
+        cacheCtx.drawImage(this.linkCanvas,0,0);
+
+        /*cacheCtx.beginPath();
+         cacheCtx.fillStyle = '#ccc';
+         //画三角形
+         for(var j=selectedLinks.length;j<lineList.length;j++){
+         var tag = pointList[j].tag;
+         lineList[j].drawArrowhead(cacheCtx,tag);
+         }
+         cacheCtx.fill();*/
+        //画文字
+
+        return targetLink;
+
 
     }
-    return targetLink;
+
+
+
+
+
+    // var selectedLinks = this.getSelectedLinks();
+
+
+    function getDepartLinks(links, target) {
+        var targetList = [];
+        var otherList = [];
+        for(var i=0;i<links.length;i++){
+            if(links[i].source.id == target.id || links[i].target.id == target.id){
+                targetList.push(links[i]);
+            }else{
+                otherList.push(links[i]);
+            }
+        }
+        return {
+            targetLinks:targetList,
+            otherLinks:otherList
+        }
+    }
+
 };
 
 /**
  * Created by lcx on 2016/12/8.
  */
 var initCache = function () {
-    var that = this;
-    var nodes = that.getNodes();
-    var links = that.getLinks();
-    var nodesCache = [],linksCache = [];
+    if(this._hasInit) return;
 
+    var that = this;
+    var nodes = that.getRenderedNodes();
+    var links = that.getRenderedLinks();
+    var nodesCache = [],linksCache = [];
+console.log(links);
+    console.log(nodes);
     for(var i=0;i<nodes.length;i++){
         var tempCanvas = document.createElement('canvas');
         nodesCache.push(tempCanvas);
@@ -1061,9 +2177,11 @@ var initCache = function () {
         linksCache:that.linksCache,
         nodesCache:that.nodesCache
     };
+    console.log(linksCache);
     console.log('initCache');
-    drawCanvasLink(canvasObj);
-    drawCanvasNode(canvasObj);
+    drawLinkCanvas(canvasObj);
+    drawCanvasNode$1(canvasObj);
+    this._hasInit = true;
 
 };
 
@@ -1337,11 +2455,82 @@ var convertToCanvasCor = function(canvas,x, y) {
 /**
  * Created by lcx on 2016/11/7.
  */
-var findLinks = function (canvasObj, x, y) {
+var findLinks = function (canvasObj, x, y,lineWidth) {
     // console.log(links);
     var context = canvasObj.context;
     var target = null;
-    function render(x,y) {
+    var targets = [];
+    var lineWidth = lineWidth || 10;
+    //判断是否选中线 采用计算的方法，不使用isPointInPath 方法
+    var links = canvasObj.links;
+    for(var i=0;i<links.length;i++){
+        var point = drawArrow(links[i],3,x,y);
+        if(calc(point,x,y)){
+            target = links[i];
+            // targets.push(links[i]);
+        }
+    }
+
+    return target;
+
+    function calc(point,x,y) {
+        //判断点击的点是否在该线的区域内
+        var minx = Math.min.apply(null,[point.x1,point.x2]);
+        var maxx = Math.max.apply(null,[point.x1,point.x2]);
+        var miny = Math.min.apply(null,[point.y1,point.y2]);
+        var maxy = Math.max.apply(null,[point.y1,point.y2]);
+        if(isInArea(x,minx,maxx) && isInArea(y,miny,maxy)){
+            if(point.x1-point.x2==0 || point.y1-point.y2 == 0){
+                //垂直 或 水平
+                return true;
+            }
+            var dy = (y-point.y1)/(x-point.x1)*(point.x2-point.x1)-(point.y2-point.y1);
+            var dx = (x-point.x1)/(y-point.y1)*(point.y2-point.y1)-(point.x2-point.x1);
+            var targetLink = false;
+            if(dy>=-lineWidth && dy <= lineWidth){
+                targetLink = true;
+            }else if(dx>=-lineWidth && dx <= lineWidth){
+                targetLink = true;
+            }
+            return targetLink;
+        }else{
+            return false;
+        }
+
+
+
+    }
+    
+    function isInArea(x,minx,maxx) {
+        var x1 = x-5;
+        var x2 = x+5;
+        if(minx == maxx){
+            return true;
+        }
+
+        if(x>=minx && x<=maxx){
+            return true;
+        }else if(x1>=minx && x1<=maxx){
+            return true;
+        }else if(x2>=minx && x2<=maxx){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+  /*  function render(x,y) {
         context.clearRect(0, 0, canvasObj.canvas.width, canvasObj.canvas.height);
         context.save();
         context.translate(canvasObj.transform.x, canvasObj.transform.y);
@@ -1351,19 +2540,379 @@ var findLinks = function (canvasObj, x, y) {
         context.restore();
     }
     render(x,y);
-    return target;
+    return target;*/
 
 };
 
 /**
  * Created by lcx on 2016/12/8.
  */
+var drawCache = function (canvasObj,keyWord,target) {
+    var cache = this.nodesCache;
+    var context = this.element.getContext('2d');
+    for(var i=0;i<cache.length;i++){
+        context.drawImage(cache[i],0,0);
+    }
+
+};
+
+/**
+ * Created by lcx on 2016/11/1.
+ * 利用canvas 画点 
+ */
+var redrawNodeCanvas = function (canvasObj,target) {
+    var nodes = this.getRenderedNodes();
+    // var context = canvasObj.context;
+    //对node 进行分类 按颜色进行分类 不同的颜色画在不同的画布上，但是所有点的总共的颜色不宜过多 否则在点线多的情况下会影响整体效率
+    var colorList = this.colorList;
+    var nodeDepartList = this.nodesDepartList;
+    var selectedNodeDepartList = [];
+    var cache = this.nodesCache;
+    var selectedNodes = this.getSelectedNodes();
+    colorList.forEach(function () {
+        selectedNodeDepartList.push([]);
+    });
+
+    for(var l=0;l<selectedNodes.length;l++){
+        if(selectedNodes[l].color){
+            var index = colorList.indexOf(selectedNodes[l].color);
+            selectedNodeDepartList[index].push(selectedNodes[l]);
+        }else{
+            var index = colorList.indexOf(COLOR$1);
+            selectedNodeDepartList[index].push(selectedNodes[l]);
+        }
+
+    }
+
+    if(target){
+        //drag 操作，渲染某一张canvas 即可
+        var index = 0;
+        if(target.color){
+            index = colorList.indexOf(target.color);
+        }else{
+            index = colorList.indexOf(COLOR$1);
+        }
+        var context = cache[index].getContext('2d');
+        context.clearRect(0,0,this.element.width,this.element.height);
+        context.save();
+        context.translate(canvasObj.transform.x, canvasObj.transform.y);
+        context.scale(canvasObj.transform.k, canvasObj.transform.k);
+        var selectedNodes = selectedNodeDepartList[index];
+        var nodes = nodeDepartList[index];
+        if(selectedNodeDepartList[index].length>0){
+            //绘制选中状态的点
+            context.beginPath();
+            context.lineWidth=10;
+            context.strokeStyle = '#f65565';
+            context.fillStyle = colorList[i];
+            for(var m=0;m<selectedNodes.length;m++){
+                var Node = selectedNodes[m];
+                var x = Node.getX();
+                var y = Node.getY();
+                var r = Node.radius;
+
+                var radius =  Node.radius-5;
+                context.moveTo(x, y);
+                context.arc(x, y, radius, 0, 2 * Math.PI);
+            }
+            context.stroke();
+            context.fill();
+
+            if(canvasObj.transform.k>=1){
+//画字
+                context.beginPath();
+                context.strokeWidth = 1;
+                context.font="16px 微软雅黑";
+                context.textAlign='left';
+                context.textBaseline='hanging';
+                for(var k=0;k<selectedNodes.length;k++){
+                    var Node = selectedNodes[k];
+                    var x = Node.getX();
+                    var y = Node.getY();
+                    var r = Node.radius;
+
+                    var radius =  Node.radius-5;
+                    var labelLength = context.measureText(Node.label).width+10;
+                    context.fillStyle='#f65565';
+                    context.fillRect(x+radius,y+radius,labelLength,20);
+
+                    context.fillStyle = '#555';
+                    var label = Node.label;
+                    context.fillText(label,x+r,y+r);
+
+                }
+            }
+
+
+        }
+
+        context.beginPath();
+        context.lineWidth=1;
+        context.strokeStyle = colorList[i];
+        context.fillStyle = colorList[i];
+        for(var n=0;n<nodes.length;n++){
+            var Node = nodes[n];
+            if(!Node.attr('selected')){
+                var x = Node.getX();
+                var y = Node.getY();
+                var r = Node.radius;
+
+
+                var radius = Node.radius;
+                context.fillStyle = Node.color;
+                context.strokeStyle=Node.color;
+
+                context.moveTo(x, y);
+
+                context.arc(x, y, radius, 0, 2 * Math.PI);
+            }
+
+        }
+        context.stroke();
+        context.fill();
+        if(canvasObj.transform.k>=1) {
+            context.beginPath();
+            context.strokeWidth = 1;
+            context.font="16px 微软雅黑";
+            context.textAlign='left';
+            context.textBaseline='hanging';
+            context.fillStyle = '#555';
+            for(var a=0;a<nodes.length;a++){
+                var Node = nodes[a];
+                var x = Node.getX();
+                var y = Node.getY();
+                var r = Node.radius;
+
+                var label = '';
+                if(Node.label.length>8){
+                    label = Node.label.slice(0,8)+'...';
+                }else{
+                    label = Node.label;
+                }
+                context.fillText(label,x+r,y+r);
+
+            }
+        }
+
+        context.restore();
+    }else{
+        //zoom 操作，需要全部重新渲染
+        for(var i=0;i<nodeDepartList.length;i++){
+            var context = cache[i].getContext('2d');
+            context.clearRect(0,0,this.element.width,this.element.height);
+            context.save();
+            context.translate(canvasObj.transform.x, canvasObj.transform.y);
+            context.scale(canvasObj.transform.k, canvasObj.transform.k);
+            var selectedNodes = selectedNodeDepartList[i];
+            var nodes = nodeDepartList[i];
+            if(selectedNodeDepartList[i].length>0){
+                //绘制选中状态的点
+                context.beginPath();
+                context.lineWidth=10;
+                context.strokeStyle = '#f65565';
+                context.fillStyle = colorList[i];
+                for(var m=0;m<selectedNodes.length;m++){
+                    var Node = selectedNodes[m];
+                    var x = Node.getX();
+                    var y = Node.getY();
+                    var r = Node.radius;
+
+                    var radius =  Node.radius-5;
+                    context.moveTo(x, y);
+                    context.arc(x, y, radius, 0, 2 * Math.PI);
+                }
+                context.stroke();
+                context.fill();
+
+                if(canvasObj.transform.k>=1){
+//画字
+                    context.strokeWidth = 1;
+                    context.font="16px 微软雅黑";
+                    context.textAlign='left';
+                    context.textBaseline='hanging';
+                    for(var k=0;k<selectedNodes.length;k++){
+                        var Node = selectedNodes[k];
+                        var x = Node.getX();
+                        var y = Node.getY();
+                        var r = Node.radius;
+
+                        var radius =  Node.radius-5;
+                        var labelLength = context.measureText(Node.label).width+10;
+                        context.fillStyle='#f65565';
+                        context.fillRect(x+radius,y+radius,labelLength,20);
+
+                        context.fillStyle = '#555';
+                        var label = Node.label;
+                        context.fillText(label,x+r,y+r);
+
+                    }
+                }
+
+
+            }
+
+            context.beginPath();
+            context.lineWidth=1;
+            context.strokeStyle = colorList[i];
+            context.fillStyle = colorList[i];
+            for(var n=0;n<nodes.length;n++){
+                var Node = nodes[n];
+                if(!Node.attr('selected')){
+                    var x = Node.getX();
+                    var y = Node.getY();
+                    var r = Node.radius;
+
+
+                    var radius = Node.radius;
+                    context.fillStyle = Node.color;
+                    context.strokeStyle=Node.color;
+
+                    context.moveTo(x, y);
+
+                    context.arc(x, y, radius, 0, 2 * Math.PI);
+                }
+
+            }
+            context.stroke();
+            context.fill();
+            if(canvasObj.transform.k>=1) {
+                context.beginPath();
+                context.strokeWidth = 1;
+                context.font="14px 微软雅黑";
+                context.textAlign='left';
+                context.textBaseline='hanging';
+                context.fillStyle = '#555';
+                for(var a=0;a<nodes.length;a++){
+                    var Node = nodes[a];
+                    var x = Node.getX();
+                    var y = Node.getY();
+                    var r = Node.radius;
+
+                    var label = '';
+                    var icon = FONT[nodes[a].icon];
+                    console.log(icon);
+                    if(Node.label.length>8){
+                        label = Node.label.slice(0,8)+'...';
+                    }else{
+                        label = Node.label;
+                    }
+                    context.fillText(label,x+r,y+r);
+
+                    context.font="14px fontawesome";
+                    context.fillText(String.fromCharCode(parseInt(icon,16)),x,y);
+
+
+                }
+            }
+
+            context.restore();
+        }
+    }
+
+
+
+
+
+
+    this.nodesCache = cache;
+    this.colorList = colorList;
+    return this;
+
+
+
+
+
+
+
+
+
+
+   /* //分开渲染，先渲染选中状态的node
+    if(selectedNodes.length>0){
+        context.beginPath();
+        context.lineWidth=10;
+        context.strokeStyle = '#f65565';
+        for(var m=0;m<selectedNodes.length;m++){
+            var Node = selectedNodes[m];
+            var x = Node.getX();
+            var y = Node.getY();
+            var r = Node.radius;
+
+            var radius =  Node.radius-5 ;
+            context.fillStyle = Node.color;
+            context.moveTo(x, y);
+            context.arc(x, y, radius, 0, 2 * Math.PI);
+        }
+        context.stroke();
+        context.fill();
+    }
+
+    //非选中状态node
+    context.beginPath();
+    context.lineWidth=1;
+    for(var i=0;i<nodes.length;i++){
+            var Node = nodes[i];
+        if(!Node.attr('selected')){
+            var x = Node.getX();
+            var y = Node.getY();
+            var r = Node.radius;
+
+
+            var radius = Node.radius;
+            context.fillStyle = Node.color;
+            context.strokeStyle=Node.color;
+
+            context.moveTo(x, y);
+
+            context.arc(x, y, radius, 0, 2 * Math.PI);
+        }
+
+            // context.restore();
+    }
+    context.stroke();
+    context.fill();
+
+//画字
+    context.beginPath();
+    for(var k=0;k<nodes.length;k++){
+        var Node = nodes[k];
+        var x = Node.getX();
+        var y = Node.getY();
+        var r = Node.radius;
+
+        //在点的旁边写对应文字
+        if(Node.selected){
+            //有点选状态
+            var labelLength = context.measureText(Node.label).width+10;
+            context.fillStyle='#f65565';
+            context.fillRect(x+radius,y+radius,labelLength,20);
+        }
+        context.strokeWidth = 1;
+        context.fillStyle = '#555';
+        context.font="16px 微软雅黑";
+        context.textAlign='left';
+        context.textBaseline='hanging';
+        var label = '';
+        if(Node.selected){
+            label = Node.label;
+        }else{
+            if(Node.label.length>8){
+                label = Node.label.slice(0,8)+'...';
+            }else{
+                label = Node.label;
+            }
+        }
+        context.fillText(label,x+r,y+r);
+    }*/
+
+};
 
 var drawCanvas = function () {
     var that = this;
     var context = this.element.getContext("2d");
     // console.log(that._getCurrentTransform());
     //绘制的canvas 对象，在优化的时候可以对nodes 和 links 的数据进行相应的分组优化
+
     var canvas = {
         canvas:that.element,
         context:context,
@@ -1371,54 +2920,105 @@ var drawCanvas = function () {
         links:this.getRenderedLinks(),
         transform:that.currentTransform(),
         nodesCache:that.nodesCache,//离屏缓存canvas
-        linksCache:that.linksCache
+        linksCache:that.linksCache,
+        zoomCache:null
+
     };
 
+    // d3.json('../src/graph/canvas/font-awesome-data.json',function (data) {
+    //     console.log(data);
+    //     canvas.fontAwesome = data;
+    // });
+
+    var nodeCanvas = document.createElement('canvas');
+    nodeCanvas.width = that.element.width;
+    nodeCanvas.height = that.element.height;
+    canvas.nodeCanvas = nodeCanvas;
 
     //进行事件绑定，canvas 在进行事件绑定的时候没有对应的dom 结构，所以要进行相应的计算来判断事件的目标对象时哪个点或者边
     render();
     //绘制
     //canvas 事件绑定
     d3.select(this.element)
-        .on('click',_click)
+        // .on('mousedown',_click)
+        // .on('click',_click)
         .on('dblclick',_dblClick)
         .on('mousemove',_mousemove)
         .call(d3.drag()
             .container(that.element)
             .subject(dragsubject)
-            // .on("start", dragstarted)
+            .on("start", dragstarted)
             .on("drag", dragged)
             .on("end", dragended))
-        .call( d3.zoom().scaleExtent([0.5, 8]).on('zoom', zoomed) )
+        .call( d3.zoom().scaleExtent([0.5, 8])
+            .on('zoom', zoomed)
+            .on('end',function () {
+                // render('zoom');
+            })
+        )
         // .on("mousedown.zoom", null)
         .on("dblclick.zoom", null);//取消双击时zoom 事件的触发
     // that._hasInit = true;
 
 
     //若x,y 有值，则为单击时的重新渲染
-    function render(x,y) {
+    function render(keyWord,target) {
+
         canvas.nodes = that.getRenderedNodes();
         canvas.links = that.getRenderedLinks();
         context.clearRect(0, 0, that.element.width, that.element.height);
         context.save();
-        context.translate(canvas.transform.x, canvas.transform.y);
-        context.scale(canvas.transform.k, canvas.transform.k);
-        // drawCache(canvas,x,y);
-        drawCanvasLink(canvas,x,y);
-        drawCanvasNode(canvas);
+
+
+        if(keyWord == 'dragStart'){
+            canvas.doubleCanvas = drawLinkCanvas.call(that,canvas,keyWord,target);
+            // canvas.doubleNodeCanvas = drawCache(canvas,keyWord,target);
+        }else if(keyWord == 'drag'){
+            canvas.doubleCanvas = drawLinkCanvas.call(that,canvas,keyWord,target);
+            redrawNodeCanvas.call(that,canvas,target);
+            drawCache.call(that,canvas);
+
+            // canvas.doubleNodeCanvas = drawCache(canvas,keyWord,target);
+            /*var nodeCanvas = canvas.nodeCanvas;
+            var nodeContext = nodeCanvas.getContext('2d');
+            nodeContext.clearRect(0,0,that.element.width,that.element.height);
+            nodeContext.save();
+            nodeContext.translate(canvas.transform.x, canvas.transform.y);
+            nodeContext.scale(canvas.transform.k, canvas.transform.k);
+            var nodes = canvas.nodes;
+            for(var j=0;j<nodes.length;j++){
+                nodeContext.drawImage(canvas.nodesCache[j],nodes[j].getX()-nodes[j].radius,nodes[j].getY()-nodes[j].radius);
+            }
+            nodeContext.restore();
+            context.drawImage(nodeCanvas,0,0);*/
+        }else{
+            // context.translate(canvas.transform.x, canvas.transform.y);
+            // context.scale(canvas.transform.k, canvas.transform.k);
+            canvas.doubleCanvas = null;
+            drawLinkCanvas.call(that,canvas);
+            // drawNodeCanvas.call(that,canvas);
+            redrawNodeCanvas.call(that,canvas);
+
+            drawCache.call(that,canvas);
+        }
+
         context.restore();
+
+
+
     }
 
 
     //单击事件
     function _click(d) {
+        console.log(d);
         var p = convertToCanvasCor(that.element, d3.event.x, d3.event.y);
         // var p = convertToCanvasCor(that._canvas,d3.event.x,d3.event.y);
         var x = canvas.transform.invertX(p.x);
         var y = canvas.transform.invertY(p.y);
         var targetNode = findPoint(canvas.nodes,x,y);
         var targetLink = null;
-        if(!targetNode) targetLink = findLinks(canvas,p.x,p.y);
+        if(!targetNode) targetLink = findLinks(canvas,x,y);
         //调用click 的回调函数
         if(targetNode){
             if(!d3.event.ctrlKey){
@@ -1483,6 +3083,7 @@ var drawCanvas = function () {
 
     //双击事件
     function _dblClick(d) {
+        console.log('dbclick');
         var p = convertToCanvasCor(that.element, d3.event.x, d3.event.y);
         var x = canvas.transform.invertX(p.x);
         var y = canvas.transform.invertY(p.y);
@@ -1537,17 +3138,25 @@ var drawCanvas = function () {
             targetNode.x = canvas.transform.applyX(targetNode.x);
             targetNode.y = canvas.transform.applyY(targetNode.y);
         }
+
         // console.log(targetNode);
         return targetNode;
     }
 
+    function dragstarted() {
+        render('dragStart',d3.event.subject);
+        // _click();
+        //进行重绘
+
+    }
+
     //拖拽
     function dragged() {
-        // console.log('drag');
+        console.log('drag');
         d3.event.subject.x = canvas.transform.invertX(d3.event.x);
         d3.event.subject.y = canvas.transform.invertY(d3.event.y);
         //进行重绘
-        render();
+        render('drag',d3.event.subject);
 
     }
 
@@ -1559,11 +3168,11 @@ var drawCanvas = function () {
     }
 
     function zoomed() {
+        console.log(d3.event.transform.k);
         // console.log('zoom');
         canvas.transform = d3.event.transform;
-
         //进行重绘
-        render();
+        render('zoom');
     }
 
 };

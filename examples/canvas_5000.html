@@ -33,14 +33,41 @@
            .attr('width',$('#my-graph').parent().width())
            .attr('height',$('#my-graph').parent().height());
     var nodes = [], links = [];
-    for (var i = 1000; i--;) {
-        nodes.push({
-            id: i,
-            label: i,
-            radius: randomInt(7, 15),
-            x: randomInt(0, 1920),
-            y: randomInt(0, 800)
-        });
+    for (var i = 5000; i--;) {
+        if(i<1500){
+            nodes.push({
+                id: i,
+                label: i,
+                radius: randomInt(7, 15),
+                x: randomInt(0, 1920),
+                y: randomInt(0, 800),
+                color:'#0a0',
+                icon:'fa-user'
+            });
+        }else if(i>1500 && i<3000){
+            nodes.push({
+                id: i,
+                label: i,
+                radius: randomInt(7, 15),
+                x: randomInt(0, 1920),
+                y: randomInt(0, 800),
+                color:'#a00',
+                icon:'fa-user'
+
+            });
+        }else{
+            nodes.push({
+                id: i,
+                label: i,
+                radius: randomInt(7, 15),
+                x: randomInt(0, 1920),
+                y: randomInt(0, 800),
+                color:'#00a',
+                icon:'fa-user'
+
+            });
+        }
+
 
         links.push({
             id: i,
