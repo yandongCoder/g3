@@ -7,3 +7,5 @@ global.window = document.defaultView;
 global.document = document;
 global.d3 = require("d3");
 global.SVGElement = function SVGElement() {};//TODO Jsdom not has SVGElement implement yet, this sentence just void test error
+global.cancelAnimationFrame = clearTimeout;
+global.requestAnimationFrame = setTimeout;

@@ -26,8 +26,8 @@ function _render(renderType) {
         draw(renderType);
     }
     else{
-        clearTimeout(this._renderDelay);
-        this._renderDelay = setTimeout(function timeoutDraw(){draw(renderType)}, 0);
+        cancelAnimationFrame(this._renderDelay);
+        this._renderDelay = requestAnimationFrame(function timeoutDraw(){draw(renderType)}, 0);
     }
     
     return this;
