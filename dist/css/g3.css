@@ -8,7 +8,8 @@ svg.graph {
   overflow: hidden;
   cursor: move;
   background-size: cover !important;
-  background-position: center !important; }
+  background-position: center !important;
+  backface-visibility: hidden; }
   .graph:focus {
     outline: 0; }
   .graph .node, .graph .link {

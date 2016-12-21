@@ -23,14 +23,6 @@ const DEFAULT_CONFIG = {
     insertNode: function(){},
     updateNode: function(){},
     
-    onBrushStart: function(){},
-    onBrush: function(){},
-    onBrushEnd: function(){},
-    
-    onZoomStart: function(){},
-    onZoom: function(){},
-    onZoomEnd: function(){},
-    
     bindGraphEvent: function(){},
     bindNodeEvent: function(){},
     bindLinkEvent: function(){},

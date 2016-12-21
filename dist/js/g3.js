@@ -60,8 +60,8 @@ function _render(renderType) {
         draw(renderType);
     }
     else{
-        clearTimeout(this._renderDelay);
-        this._renderDelay = setTimeout(function timeoutDraw(){draw(renderType)}, 0);
+        cancelAnimationFrame(this._renderDelay);
+        this._renderDelay = requestAnimationFrame(function timeoutDraw(){draw(renderType)}, 0);
     }
     
     return this;
@@ -647,12 +647,10 @@ function appendPreElement () {
 function Zoom() {
     var self = this;
     return d3.zoom().scaleExtent([this._config.minScale, this._config.maxScale])
-        .on('start', function () {
-            self._config.onZoomStart.call(this);
+        .on('start.g3Default', function () {
         })
-        .on("zoom", this._zoomed.bind(this))
-        .on('end', function () {
-            self._config.onZoomEnd.call(this);
+        .on("zoom.g3Default", this._zoomed.bind(this))
+        .on('end.g3Default', function () {
         });
 }
 
@@ -660,15 +658,14 @@ function Brush () {
     var self = this;
     var brush = d3.brush()
         .extent([[0, 0], [3840, 2400]])
-        .on('start', function () {
+        .on('start.g3Default', function () {
             if (!d3.event.selection) return; // Ignore empty selections.
             
             self.nodesSelection().each(function (Node) {
                 Node.pselected = d3.event.sourceEvent.ctrlKey && Node.attr("selected");
             });
-            self._config.onBrushStart.call(this);
         })
-        .on('brush', function () {
+        .on('brush.g3Default', function () {
             if (!d3.event.selection) return; // Ignore empty selections.
 
             var extent = d3.event.selection;
@@ -677,13 +674,11 @@ function Brush () {
             self.nodesSelection().each(function(Node){
                 Node.attr("selected", !Node.attr('disabled') && Boolean(Node.pselected ^ ( (extent[0][0] - t.x) / t.k  <= Node.getX() && Node.getX() < (extent[1][0] - t.x) / t.k  && (extent[0][1] - t.y) / t.k <= Node.getY() && Node.getY() < (extent[1][1] - t.y) / t.k )));
             });
-            self._config.onBrush.call(this);
         })
-        .on('end', function () {
+        .on('end.g3Default', function () {
             if (!d3.event.selection) return; // Ignore empty selections.
             self.brushSelection()
                 .call(brush.move, null);
-            self._config.onBrushEnd.call(this);
         });
 
     brush.show = function(){
@@ -699,11 +694,11 @@ function Brush () {
 function dragNode () {
     var self = this;
     var drag = d3.drag()
-        .on("start", function (Node) {
+        .on("start.g3Default", function (Node) {
             d3.event.sourceEvent.stopPropagation();
         })
-        .on("drag", this.draged.bind(this))
-        .on("end", function (Node) {
+        .on("drag.g3Default", this.draged.bind(this))
+        .on("end.g3Default", function (Node) {
 
         });
     return drag;
@@ -747,7 +742,7 @@ function init () {
 
     
     //new drag instance for bind to nodes
-    this.dragNode = dragNode.call(this);
+    this.drag = dragNode.call(this);
 
     this._hasInit = true;
 }
@@ -773,13 +768,15 @@ function drawNodesSvg (renderType) {
             Node.attr("selected",!Node.attr("selected"));
         })
         .call(this._config.bindNodeEvent)
-        .call(this.dragNode);
+        .call(this.drag);
     
     g.append("circle")
         .attr('class', 'circle')
         .attr("filter", "url(" + getAbsUrl() + "#shadow)");
     g.append('svg:foreignObject')
         .attr('class', 'text-group')
+        .append("xhtml:body")
+        .attr('xmlns', "http://www.w3.org/1999/xhtml")
         .append("xhtml:div")
         .attr('class', 'text');
     
@@ -1634,8 +1631,8 @@ function focus(filter, duration){
         var minX = d3.min(Nodes, xAccessor), maxX = d3.max(Nodes, xAccessor), minY = d3.min(Nodes, yAccessor), maxY = d3.max(Nodes, yAccessor);
         var xSpan = maxX - minX, ySpan = maxY - minY;
         var xCenter = (maxX + minX) / 2, yCenter = (maxY + minY) / 2;
-        var canvasW = this.element.width.baseVal.value,
-            canvasH = this.element.height.baseVal.value;
+        var canvasW = this.element.getBoundingClientRect().width,
+            canvasH = this.element.getBoundingClientRect().height;
     
         var xScale = canvasW / xSpan,
             yScale = canvasH / ySpan;
@@ -1644,14 +1641,14 @@ function focus(filter, duration){
         if(scale > this._config.maxScale) scale = this._config.maxScale;
         scale = scale === Infinity? 1: scale;
         scale -= scale/5;
-    
-    
+        
         var transformed = d3.zoomIdentity
             .translate(canvasW / 2, canvasH / 2)
             .scale(scale)
             .translate(-xCenter, -yCenter);
     
-        this.svgSelection(duration || 1000).call(this.zoom.transform, transformed);
+        console.log(transformed);
+        this.svgSelection(duration || 10000).call(this.zoom.transform, transformed);
     }.bind(this), 0)
 }
 
@@ -1730,14 +1727,6 @@ const DEFAULT_CONFIG = {
     
     insertNode: function(){},
     updateNode: function(){},
-    
-    onBrushStart: function(){},
-    onBrush: function(){},
-    onBrushEnd: function(){},
-    
-    onZoomStart: function(){},
-    onZoom: function(){},
-    onZoomEnd: function(){},
     
     bindGraphEvent: function(){},
     bindNodeEvent: function(){},

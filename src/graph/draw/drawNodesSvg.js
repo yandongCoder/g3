@@ -20,7 +20,7 @@ export default function (renderType) {
             Node.attr("selected",!Node.attr("selected"));
         })
         .call(this._config.bindNodeEvent)
-        .call(this.dragNode);
+        .call(this.drag);
     
     g.append("circle")
         .attr('class', 'circle')

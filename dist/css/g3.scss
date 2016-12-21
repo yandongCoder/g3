@@ -10,6 +10,7 @@ svg.graph{
   cursor: move;
   background-size: cover !important;
   background-position: center !important;
+  backface-visibility: hidden;//Fix no-static position element not render in foreignObject.
   &:focus{
     outline: 0;
   }

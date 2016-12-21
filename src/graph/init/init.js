@@ -42,7 +42,7 @@ export default function () {
 
     
     //new drag instance for bind to nodes
-    this.dragNode = dragNode.call(this);
+    this.drag = dragNode.call(this);
 
     this._hasInit = true;
 }
