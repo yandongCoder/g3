@@ -5,7 +5,7 @@ import {getLinksOP, getLinks, getSelectedLinks, getContainLinks, getAttachedLink
 import init from "./init/init";
 import draw from "./draw/index";
 import zoomed from "./zoomed";
-import {transform, scaleTo, translateBy, focus} from "./transform";
+import {transform, focus} from "./transform";
 import {keyupped, keydowned} from "./keyboard";
 import draged from "./draged";
 import {selector, config} from "./config";
@@ -56,8 +56,6 @@ Graph.prototype = {
     _removeLinksOfNode: removeLinksOfNode,
     clearLinks: clearLinks,
     transform: transform,
-    scaleTo: scaleTo,
-    translateBy: translateBy,
     focus: focus,
     draged: draged,
     _keydowned: keydowned,

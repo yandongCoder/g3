@@ -71,22 +71,22 @@ function nodes(nodes, cover) {
 
     nodes.forEach(function(v){ this._addNode(v);},this);
     this._render();
-    if(this.element.nodeName === 'CANVAS'){
-        //初始化
-        drawCanvasNode.call(this);
-       /* var nodes = this.getRenderedNodes();
-        var nodesCache = [];
-        for(var i=0;i<nodes.length;i++){
-            var tempCanvas = document.createElement('canvas');
-            nodesCache.push(tempCanvas);
-        }
-        this.nodesCache = nodesCache;
-        var canvasObj = {
-            nodes:this.getRenderedNodes(),
-            nodesCache:this.nodesCache
-        };
-        drawCanvasNode(canvasObj);*/
-    }
+    // if(this.element.nodeName === 'CANVAS'){
+    //     //初始化
+    //     drawCanvasNode.call(this);
+    //    /* var nodes = this.getRenderedNodes();
+    //     var nodesCache = [];
+    //     for(var i=0;i<nodes.length;i++){
+    //         var tempCanvas = document.createElement('canvas');
+    //         nodesCache.push(tempCanvas);
+    //     }
+    //     this.nodesCache = nodesCache;
+    //     var canvasObj = {
+    //         nodes:this.getRenderedNodes(),
+    //         nodesCache:this.nodesCache
+    //     };
+    //     drawCanvasNode(canvasObj);*/
+    // }
     return this;
 }
 
@@ -98,29 +98,29 @@ function links(links, cover) {
     
     links.forEach(function(v){ this._addLink(v); },this);
     this._render();
-    if(this.element.nodeName === 'CANVAS'){
-        var canvas = document.createElement('canvas');
-        canvas.width = this.element.width;
-        canvas.height = this.element.height;
-        this.linkCanvas = canvas;
-       /* var links = this.getRenderedLinks();
-        var nodes = this.getRenderedNodes();
-        var linksCache = [];
-        for(var j=0;j<links.length;j++){
-            var tempCanvas = document.createElement('canvas');
-            // var svg = document.createElement('svg');
-
-
-            linksCache.push(tempCanvas);
-        }*/
-        // this.linksCache = [];
-        /*var canvasObj = {
-            links:this.getRenderedLinks(),
-            linksCache:this.linksCache,
-            cacheList:this.cacheList
-        };*/
-        // drawCanvasLink.call(this);
-    }
+    // if(this.element.nodeName === 'CANVAS'){
+    //     var canvas = document.createElement('canvas');
+    //     canvas.width = this.element.width;
+    //     canvas.height = this.element.height;
+    //     this.linkCanvas = canvas;
+    //    /* var links = this.getRenderedLinks();
+    //     var nodes = this.getRenderedNodes();
+    //     var linksCache = [];
+    //     for(var j=0;j<links.length;j++){
+    //         var tempCanvas = document.createElement('canvas');
+    //         // var svg = document.createElement('svg');
+    //
+    //
+    //         linksCache.push(tempCanvas);
+    //     }*/
+    //     // this.linksCache = [];
+    //     /*var canvasObj = {
+    //         links:this.getRenderedLinks(),
+    //         linksCache:this.linksCache,
+    //         cacheList:this.cacheList
+    //     };*/
+    //     // drawCanvasLink.call(this);
+    // }
 
     return this;
 }

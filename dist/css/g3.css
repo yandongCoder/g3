@@ -29,7 +29,9 @@ svg.graph {
     border-radius: 50%;
     object-fit: cover; }
   .graph .node .icon {
-    border-radius: 50%; }
+    border-radius: 50%;
+    width: 100%;
+    height: 100%; }
   .graph .node .text-group {
     font-family: Microsoft YaHei UI, Lato, sans-serif;
     pointer-events: none; }

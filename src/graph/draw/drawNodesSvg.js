@@ -87,7 +87,8 @@ export default function (renderType) {
     
         avatar.select('.icon')
             .attr('class', function(Node){ return "icon " + self._config.iconPrefix + Node.attr("icon");})
-            .style("line-height", function(Node){return Node.attr("radius")*2 + "px";});
+            .style("line-height", function(Node){return Node.attr("radius")*2 + "px";})
+            .style('display', function(Node){return Node.attr("icon")? "block": "none";});
         
         avatar.select('.mugshot')
             .attr('src', function(Node){return Node.attr("mugshot")? self._config.mugshotPrefix + Node.attr("mugshot"): "";})

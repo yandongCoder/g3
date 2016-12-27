@@ -7,16 +7,6 @@ function transform(k, x, y, duration) {
     return this;
 }
 
-function scaleTo(k, duration) {
-    this.transform(k, null, null, duration);
-    return this;
-}
-
-function translateBy(x, y, duration) {
-    this.transform(null, x, y , duration);
-    return this;
-}
-
 function focus(filter, duration){
     setTimeout(function(){
         var Nodes = this.getNodes(filter);
@@ -43,8 +33,8 @@ function focus(filter, duration){
             .translate(-xCenter, -yCenter);
     
         console.log(transformed);
-        this.svgSelection(duration || 10000).call(this.zoom.transform, transformed);
+        this.svgSelection(duration || 100).call(this.zoom.transform, transformed);
     }.bind(this), 0)
 }
 
-export {transform, scaleTo, translateBy, focus};
+export {transform, focus};

@@ -1,8 +1,8 @@
 //g3
 (function (global, factory) {
-   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
-   typeof define === 'function' && define.amd ? define(['exports'], factory) :
-   (factory((global.g3 = global.g3 || {})));
+  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
+  typeof define === 'function' && define.amd ? define(['exports'], factory) :
+  (factory((global.g3 = global.g3 || {})));
 }(this, (function (exports) { 'use strict';
 
 const DIRECTION = {
@@ -620,9 +620,9 @@ const RENDER_TYPE = {
     ZOOM: "ZOOM"
 };
 
-var select = function (selector) {
+function select (selector) {
     return typeof selector === "string"? document.querySelector(selector): selector;
-};
+}
 
 function delayRender(Obj, renderType){
     this.updateDOM.addObj(Obj, renderType);
@@ -649,8 +649,8 @@ function _render(renderType) {
         draw(renderType);
     }
     else{
-        clearTimeout(this._renderDelay);
-        this._renderDelay = setTimeout(function timeoutDraw(){draw(renderType);}, 0);
+        cancelAnimationFrame(this._renderDelay);
+        this._renderDelay = requestAnimationFrame(function timeoutDraw(){draw(renderType)}, 0);
     }
     
     return this;
@@ -660,14 +660,14 @@ function _render(renderType) {
     }
 }
 
-var toArray = function (maybeArr) {
+function toArray (maybeArr) {
     if(!Array.isArray(maybeArr)) maybeArr = [maybeArr];
     return maybeArr;
-};
+}
 
 //中文为2长度，非中文为1
 
-var getStrLen = function (str) {
+function getStrLen (str) {
     var len = 0;
     if (typeof str !== "string") {
         str = str.toString();
@@ -682,18 +682,18 @@ var getStrLen = function (str) {
     return len;
 };
 
-var attr = function (prop, val){
+function attr (prop, val){
     if(val === undefined) return this[prop];
     
     val = val instanceof Function? val(this): val;
     if(val === this[prop]) return;
     this[prop] = val;
     
-    // this.graph.delayRender(this);
-    this.graph.render(this);
+    this.graph.delayRender(this);
+    //this.graph.render(this);
 
     return this;
-};
+}
 
 function getX() {
     return this.x || 0;
@@ -703,16 +703,16 @@ function getY() {
     return this.y || 0;
 }
 
-var nudge = function (nudgeX, nudgeY) {
+function nudge (nudgeX, nudgeY) {
     if(!this.graph._config.dragable) return;
     
     this.x += nudgeX;
     this.y += nudgeY;
     
     return this;
-};
+}
 
-var getConnectedLinks = function (grouped) {
+function getConnectedLinks (grouped) {
     var connectedLinks = this.graph._links.filter(function (Link) {
         return (Link.source === this) || (Link.target === this);
     }, this);
@@ -733,14 +733,14 @@ var getConnectedLinks = function (grouped) {
     }
 
     return connectedLinks;
-};
+}
 
-var remove = function (removeType) {
+function remove (removeType) {
     delete this.graph._nodesHash[this.id];
     this.graph._nodes.splice(this.graph._nodes.indexOf(this), 1);
     
     if(this.groupedBy && (removeType !== REMOVE_TYPE.UNGROUP) ) this.groupedBy.remove();
-};
+}
 
 //data: data obj, graph: graphInstance
 function Node(data, graph) {
@@ -772,11 +772,11 @@ Node.prototype = {
 };
 
 //Link has source and target Node in _nodes
-var hasST = function () {
+function hasST () {
     return (this.source !== undefined) && (this.target !== undefined);
-};
+}
 
-var getOffsetCoordinate = function (Sx, Sy, Tx, Ty, offsetS, offsetT) {
+function getOffsetCoordinate (Sx, Sy, Tx, Ty, offsetS, offsetT) {
     var l = Math.sqrt((Tx - Sx) * (Tx - Sx) + (Ty - Sy) * (Ty - Sy));
     if(l === 0) l = 1;
 
@@ -789,7 +789,7 @@ var getOffsetCoordinate = function (Sx, Sy, Tx, Ty, offsetS, offsetT) {
         Tx: Tx - offsetT * cos,
         Ty: Ty - offsetT * sin
     }
-};
+}
 
 var absUrl = window.location.href.split('#')[0];
 
@@ -914,7 +914,7 @@ function getTargetId(){
     return this.target.id;
 }
 
-var remove$1 = function (type) {
+function remove$1 (type) {
     delete this.graph._linksHash[this.id];
     this.graph._links.splice(this.graph._links.indexOf(this), 1);
 
@@ -924,14 +924,14 @@ var remove$1 = function (type) {
     if(this.transformedBy && (type !== LINK_REMOVE_TYPE.L2N)) this.transformedBy.remove();
 
     return this;
-};
+}
 
-var getHomoLinks = function () {
+function getHomoLinks () {
     return this.graph._links.filter(function(Link){
         return (Link.source === this.source || Link.source === this.target) &&
                 (Link.target === this.source || Link.target === this.target);
     }, this) || [];
-};
+}
 
 function Link(data, graph) {
     this.graph = graph;
@@ -982,243 +982,6 @@ Link.prototype = {
  * Created by lcx on 2016/11/1.
  * 利用canvas 画点 
  */
-var drawCanvasNode = function (canvasObj) {
-    var nodes = this.getRenderedNodes();
-    // var context = canvasObj.context;
-    //对node 进行分类 按颜色进行分类 不同的颜色画在不同的画布上，但是所有点的总共的颜色不宜过多 否则在点线多的情况下会影响整体效率
-    var colorList = [];
-    var nodeDepartList = [];
-    var selectedNodeDepartList = [];
-    var cache = [];
-    var selectedNodes = this.getSelectedNodes();
-    for(var j=0;j<nodes.length;j++){
-        if(nodes[j].color){
-            if(colorList.indexOf(nodes[j].color)<0){
-                colorList.push(nodes[j].color);
-                nodeDepartList.push([nodes[j]]);
-                selectedNodeDepartList.push([]);
-                var canvas = document.createElement('canvas');
-                canvas.width = this.element.width;
-                canvas.height = this.element.height;
-                cache.push(canvas);
-            }else{
-                var index = colorList.indexOf(nodes[j].color);
-                nodeDepartList[index].push(nodes[j]);
-            }
-        }else{
-            if(colorList.indexOf(COLOR)<0){
-                colorList.push(COLOR);
-                nodeDepartList.push([nodes[j]]);
-                selectedNodeDepartList.push([]);
-                var canvas = document.createElement('canvas');
-                canvas.width = this.element.width;
-                canvas.height = this.element.height;
-                cache.push(canvas);
-            }else{
-                var index = colorList.indexOf(COLOR);
-                nodeDepartList[index].push(nodes[j]);
-            }
-        }
-
-    }
-    for(var l=0;l<selectedNodes.length;l++){
-        if(selectedNodes[l].color){
-            var index = colorList.indexOf(selectedNodes[l].color);
-            selectedNodeDepartList[index].push(selectedNodes[l]);
-        }else{
-            var index = colorList.indexOf(COLOR);
-            selectedNodeDepartList[index].push(selectedNodes[l]);
-        }
-
-    }
-
-    for(var i=0;i<nodeDepartList.length;i++){
-        var context = cache[i].getContext('2d');
-        var selectedNodes = selectedNodeDepartList[i];
-        var nodes = nodeDepartList[i];
-        if(selectedNodeDepartList[i].length>0){
-            //绘制选中状态的点
-            context.beginPath();
-            context.lineWidth=10;
-            context.strokeStyle = '#f65565';
-            context.fillStyle = colorList[i];
-            for(var m=0;m<selectedNodes.length;m++){
-                var Node = selectedNodes[m];
-                var x = Node.getX();
-                var y = Node.getY();
-                var r = Node.radius;
-
-                var radius =  Node.radius-5;
-                context.moveTo(x, y);
-                context.arc(x, y, radius, 0, 2 * Math.PI);
-            }
-            context.stroke();
-            context.fill();
-
-            //画字
-            context.strokeWidth = 1;
-            context.font="16px 微软雅黑";
-            context.textAlign='left';
-            context.textBaseline='hanging';
-            for(var k=0;k<selectedNodes.length;k++){
-                var Node = selectedNodes[k];
-                var x = Node.getX();
-                var y = Node.getY();
-                var r = Node.radius;
-
-                var radius =  Node.radius-5;
-                var labelLength = context.measureText(Node.label).width+10;
-                context.fillStyle='#f65565';
-                context.fillRect(x+radius,y+radius,labelLength,20);
-
-                context.fillStyle = '#555';
-                var label = Node.label;
-                context.fillText(label,x+r,y+r);
-
-            }
-
-        }
-
-        context.beginPath();
-        context.lineWidth=1;
-        context.strokeStyle = colorList[i];
-        context.fillStyle = colorList[i];
-        for(var n=0;n<nodes.length;n++){
-            var Node = nodes[n];
-            if(!Node.attr('selected')){
-                var x = Node.getX();
-                var y = Node.getY();
-                var r = Node.radius;
-
-
-                var radius = Node.radius;
-                context.fillStyle = Node.color;
-                context.strokeStyle=Node.color;
-
-                context.moveTo(x, y);
-
-                context.arc(x, y, radius, 0, 2 * Math.PI);
-            }
-
-        }
-        context.stroke();
-        context.fill();
-
-        context.strokeWidth = 1;
-        context.font="16px 微软雅黑";
-        context.textAlign='left';
-        context.textBaseline='hanging';
-        context.fillStyle = '#555';
-        for(var a=0;a<selectedNodes.length;a++){
-            var Node = nodes[a];
-            var x = Node.getX();
-            var y = Node.getY();
-            var r = Node.radius;
-
-            var label = '';
-            if(Node.label.length>8){
-                label = Node.label.slice(0,8)+'...';
-            }else{
-                label = Node.label;
-            }
-            context.fillText(label,x+r,y+r);
-
-        }
-    }
-
-    this.nodesCache = cache;
-    this.colorList = colorList;
-    this.nodesDepartList = nodeDepartList;
-    return this;
-
-
-
-
-
-
-
-
-
-
-   /* //分开渲染，先渲染选中状态的node
-    if(selectedNodes.length>0){
-        context.beginPath();
-        context.lineWidth=10;
-        context.strokeStyle = '#f65565';
-        for(var m=0;m<selectedNodes.length;m++){
-            var Node = selectedNodes[m];
-            var x = Node.getX();
-            var y = Node.getY();
-            var r = Node.radius;
-
-            var radius =  Node.radius-5 ;
-            context.fillStyle = Node.color;
-            context.moveTo(x, y);
-            context.arc(x, y, radius, 0, 2 * Math.PI);
-        }
-        context.stroke();
-        context.fill();
-    }
-
-    //非选中状态node
-    context.beginPath();
-    context.lineWidth=1;
-    for(var i=0;i<nodes.length;i++){
-            var Node = nodes[i];
-        if(!Node.attr('selected')){
-            var x = Node.getX();
-            var y = Node.getY();
-            var r = Node.radius;
-
-
-            var radius = Node.radius;
-            context.fillStyle = Node.color;
-            context.strokeStyle=Node.color;
-
-            context.moveTo(x, y);
-
-            context.arc(x, y, radius, 0, 2 * Math.PI);
-        }
-
-            // context.restore();
-    }
-    context.stroke();
-    context.fill();
-
-//画字
-    context.beginPath();
-    for(var k=0;k<nodes.length;k++){
-        var Node = nodes[k];
-        var x = Node.getX();
-        var y = Node.getY();
-        var r = Node.radius;
-
-        //在点的旁边写对应文字
-        if(Node.selected){
-            //有点选状态
-            var labelLength = context.measureText(Node.label).width+10;
-            context.fillStyle='#f65565';
-            context.fillRect(x+radius,y+radius,labelLength,20);
-        }
-        context.strokeWidth = 1;
-        context.fillStyle = '#555';
-        context.font="16px 微软雅黑";
-        context.textAlign='left';
-        context.textBaseline='hanging';
-        var label = '';
-        if(Node.selected){
-            label = Node.label;
-        }else{
-            if(Node.label.length>8){
-                label = Node.label.slice(0,8)+'...';
-            }else{
-                label = Node.label;
-            }
-        }
-        context.fillText(label,x+r,y+r);
-    }*/
-
-};
 
 // import drawCanvasLink from './draw/drawCanvasLink2';
 function clearNodes() {
@@ -1257,26 +1020,26 @@ function addLink(obj) {
 }
 
 function removeNodes(filter) {
-    this.getNodes(filter).forEach(function(Node$$1){
+    this.getNodes(filter).forEach(function(Node){
         //remove links first
-        this._removeLinksOfNode(Node$$1);
-        Node$$1.remove();
+        this._removeLinksOfNode(Node);
+        Node.remove();
     }, this);
     
     this._render();
 }
 
 function removeLinks(filter) {
-    this.getLinks(filter).forEach(function(Link$$1){
-        Link$$1.remove();
+    this.getLinks(filter).forEach(function(Link){
+        Link.remove();
     }, this);
     
     this._render();
 }
 
-function removeLinksOfNode(Node$$1) {
-    Node$$1.getConnectedLinks().map(function (Link$$1) {
-        Link$$1.remove();
+function removeLinksOfNode(Node) {
+    Node.getConnectedLinks().map(function (Link) {
+        Link.remove();
     }, this);
 }
 
@@ -1288,22 +1051,22 @@ function nodes(nodes, cover) {
 
     nodes.forEach(function(v){ this._addNode(v);},this);
     this._render();
-    if(this.element.nodeName === 'CANVAS'){
-        //初始化
-        drawCanvasNode.call(this);
-       /* var nodes = this.getRenderedNodes();
-        var nodesCache = [];
-        for(var i=0;i<nodes.length;i++){
-            var tempCanvas = document.createElement('canvas');
-            nodesCache.push(tempCanvas);
-        }
-        this.nodesCache = nodesCache;
-        var canvasObj = {
-            nodes:this.getRenderedNodes(),
-            nodesCache:this.nodesCache
-        };
-        drawCanvasNode(canvasObj);*/
-    }
+    // if(this.element.nodeName === 'CANVAS'){
+    //     //初始化
+    //     drawCanvasNode.call(this);
+    //    /* var nodes = this.getRenderedNodes();
+    //     var nodesCache = [];
+    //     for(var i=0;i<nodes.length;i++){
+    //         var tempCanvas = document.createElement('canvas');
+    //         nodesCache.push(tempCanvas);
+    //     }
+    //     this.nodesCache = nodesCache;
+    //     var canvasObj = {
+    //         nodes:this.getRenderedNodes(),
+    //         nodesCache:this.nodesCache
+    //     };
+    //     drawCanvasNode(canvasObj);*/
+    // }
     return this;
 }
 
@@ -1315,43 +1078,43 @@ function links(links, cover) {
     
     links.forEach(function(v){ this._addLink(v); },this);
     this._render();
-    if(this.element.nodeName === 'CANVAS'){
-        var canvas = document.createElement('canvas');
-        canvas.width = this.element.width;
-        canvas.height = this.element.height;
-        this.linkCanvas = canvas;
-       /* var links = this.getRenderedLinks();
-        var nodes = this.getRenderedNodes();
-        var linksCache = [];
-        for(var j=0;j<links.length;j++){
-            var tempCanvas = document.createElement('canvas');
-            // var svg = document.createElement('svg');
-
-
-            linksCache.push(tempCanvas);
-        }*/
-        // this.linksCache = [];
-        /*var canvasObj = {
-            links:this.getRenderedLinks(),
-            linksCache:this.linksCache,
-            cacheList:this.cacheList
-        };*/
-        // drawCanvasLink.call(this);
-    }
+    // if(this.element.nodeName === 'CANVAS'){
+    //     var canvas = document.createElement('canvas');
+    //     canvas.width = this.element.width;
+    //     canvas.height = this.element.height;
+    //     this.linkCanvas = canvas;
+    //    /* var links = this.getRenderedLinks();
+    //     var nodes = this.getRenderedNodes();
+    //     var linksCache = [];
+    //     for(var j=0;j<links.length;j++){
+    //         var tempCanvas = document.createElement('canvas');
+    //         // var svg = document.createElement('svg');
+    //
+    //
+    //         linksCache.push(tempCanvas);
+    //     }*/
+    //     // this.linksCache = [];
+    //     /*var canvasObj = {
+    //         links:this.getRenderedLinks(),
+    //         linksCache:this.linksCache,
+    //         cacheList:this.cacheList
+    //     };*/
+    //     // drawCanvasLink.call(this);
+    // }
 
     return this;
 }
 
-var getIds = function (array) {
+function getIds (array) {
     return array.map(function(item){
         if(typeof item  ===  'object') return item.id;
         else return item;
     });
-};
+}
 
 //filter array of object which has id; filtered by id, or id array, or object that has id, or object array
 //this function is convenient to Nodes or Links data.
-var filterBy = function (filter, objArray) {
+function filterBy (filter, objArray) {
     if(typeof filter === "function"){
         var filtered = filter;
     }else if(filter === undefined || filter === null){
@@ -1370,18 +1133,18 @@ var filterBy = function (filter, objArray) {
         if(filtered(objArray[i])) filteredArr.push(objArray[i]);
     }
     return filteredArr;
-};
+}
 
-var attr$1 = function (prop, val) {
+function attr$1 (prop, val) {
     this.arr.forEach(function(datum){
         datum.attr(prop, val instanceof Function? val(datum): val);
     });
     return this;
-};
+}
 
-var data = function () {
+function data () {
     return this.arr;
-};
+}
 
 function Selection(arr) {
     this.arr = arr;
@@ -1400,7 +1163,7 @@ function getNodesOP(filter, val){
 function getNodes(filter, val) {
     if(arguments.length === 2 && val !== undefined){
         var key = filter;
-        filter = function(Node){return Node.attr(key) === val;};
+        filter = function(Node){return Node.attr(key) === val;}
     }
     return filterBy(filter, this._nodes);
 }
@@ -1422,7 +1185,7 @@ function getLinksOP(filter, val){
 function getLinks(filter, val) {
     if(arguments.length === 2 && val !== undefined){
         var key = filter;
-        filter = function(Node){return Node.attr(key) === val;};
+        filter = function(Node){return Node.attr(key) === val;}
     }
     
     return filterBy(filter, this._links);
@@ -1470,7 +1233,7 @@ function getRenderedLinks() {
     });
 }
 
-var appendPreDefs = function () {
+function appendPreDefs () {
     var self = this;
     var str = ''+
                         '<filter id="shadow" x="-20%" y="-20%" width="200%" height="200%" type="Shadow" shadowoffsetx="5" shadowoffsety="5" shadowblur="5" shadowcolor="rgba(0,0,0)">' +
@@ -1503,9 +1266,9 @@ var appendPreDefs = function () {
     function arrowAttr(selection){
         selection.style('fill', self._config.linkColor);
     }
-};
+}
 
-var appendPreElement = function () {
+function appendPreElement () {
     var svg = this.svgSelection();
     this._brushSelection = svg.append("g").attr("class", "brush");
 
@@ -1513,33 +1276,37 @@ var appendPreElement = function () {
     
     graphGroup.append("g").attr("class", "links");
     graphGroup.append("g").attr("class", "nodes");
-};
+}
 
-var Zoom = function() {
+function Zoom() {
     var self = this;
+    var downPosition = null;
     return d3.zoom().scaleExtent([this._config.minScale, this._config.maxScale])
-        .on('start', function () {
-            self._config.onZoomStart.call(this);
+        .on('start.g3Default', function () {
+            if(!d3.event.sourceEvent) return;
+            downPosition = [d3.event.sourceEvent.x, d3.event.sourceEvent.y];
         })
-        .on("zoom", this._zoomed.bind(this))
-        .on('end', function () {
-            self._config.onZoomEnd.call(this);
+        .on("zoom.g3Default", this._zoomed.bind(this))
+        .on('end.g3Default', function () {
+            if(!d3.event.sourceEvent) return;
+            if(downPosition[0] === d3.event.sourceEvent.x && downPosition[1] === d3.event.sourceEvent.y && d3.event.sourceEvent.target.nodeName === 'svg'){
+                d3.event.sourceEvent.target.dispatchEvent(new Event('click'));
+            }
         });
-};
+}
 
-var Brush = function () {
+function Brush () {
     var self = this;
     var brush = d3.brush()
         .extent([[0, 0], [3840, 2400]])
-        .on('start', function () {
+        .on('start.g3Default', function () {
             if (!d3.event.selection) return; // Ignore empty selections.
             
             self.nodesSelection().each(function (Node) {
                 Node.pselected = d3.event.sourceEvent.ctrlKey && Node.attr("selected");
             });
-            self._config.onBrushStart.call(this);
         })
-        .on('brush', function () {
+        .on('brush.g3Default', function () {
             if (!d3.event.selection) return; // Ignore empty selections.
 
             var extent = d3.event.selection;
@@ -1548,13 +1315,11 @@ var Brush = function () {
             self.nodesSelection().each(function(Node){
                 Node.attr("selected", !Node.attr('disabled') && Boolean(Node.pselected ^ ( (extent[0][0] - t.x) / t.k  <= Node.getX() && Node.getX() < (extent[1][0] - t.x) / t.k  && (extent[0][1] - t.y) / t.k <= Node.getY() && Node.getY() < (extent[1][1] - t.y) / t.k )));
             });
-            self._config.onBrush.call(this);
         })
-        .on('end', function () {
+        .on('end.g3Default', function () {
             if (!d3.event.selection) return; // Ignore empty selections.
             self.brushSelection()
                 .call(brush.move, null);
-            self._config.onBrushEnd.call(this);
         });
 
     brush.show = function(){
@@ -1565,22 +1330,22 @@ var Brush = function () {
     };
 
     return brush;
-};
+}
 
-var dragNode = function () {
+function dragNode () {
     var self = this;
     var drag = d3.drag()
-        .on("start", function (Node) {
+        .on("start.g3Default", function (Node) {
             d3.event.sourceEvent.stopPropagation();
         })
-        .on("drag", this.draged.bind(this))
-        .on("end", function (Node) {
+        .on("drag.g3Default", this.draged.bind(this))
+        .on("end.g3Default", function (Node) {
 
         });
     return drag;
-};
+}
 
-var init = function () {
+function init () {
     //init trigger only once a graph
     if(this._hasInit) return;
 
@@ -1618,22 +1383,22 @@ var init = function () {
 
     
     //new drag instance for bind to nodes
-    this.dragNode = dragNode.call(this);
+    this.drag = dragNode.call(this);
 
     this._hasInit = true;
-};
+}
 
-var getAbsUrl = function (url) {
+function getAbsUrl (url) {
     return (url || window.location.href).split('#')[0];
-};
+}
 
-var drawNodesSvg = function (renderType) {
+function drawNodesSvg (renderType) {
  
     var self = this;
     var nodes = this.nodesSelection().data(this.getRenderedNodes(), function (Node) { return Node.id;});
 
     var g = nodes.enter().append('g')
-        .each(function(Node){ Node.element = this; })//reference element to Node
+        .each(function(Node){ Node.element = this })//reference element to Node
         .classed('node', true)
         .on('mousedown.select', function(Node, i){
             if(!d3.event.ctrlKey){
@@ -1644,7 +1409,7 @@ var drawNodesSvg = function (renderType) {
             Node.attr("selected",!Node.attr("selected"));
         })
         .call(this._config.bindNodeEvent)
-        .call(this.dragNode);
+        .call(this.drag);
     
     g.append("circle")
         .attr('class', 'circle')
@@ -1684,7 +1449,7 @@ var drawNodesSvg = function (renderType) {
             .style('display', function(Node){
                 return (scale < self._config.scaleOfHideNodeLabel)? 'none': 'block';
             })
-            .attr("transform", function(Node){ return "translate(" + (1 + Node.attr("radius")) + ", "+ (-NODE_TEXT_HEIGHT / scale) +") scale(" + 1 / scale + ")"; });
+            .attr("transform", function(Node){ return "translate(" + (1 + Node.attr("radius")) + ", "+ (-NODE_TEXT_HEIGHT / scale) +") scale(" + 1 / scale + ")"; })
     
         selection.selectAll('.avatar')
             .attr("transform", function(Node){ return "translate(" + -Node.attr("radius") + ", "+ -Node.attr("radius") +")"; })
@@ -1711,7 +1476,8 @@ var drawNodesSvg = function (renderType) {
     
         avatar.select('.icon')
             .attr('class', function(Node){ return "icon " + self._config.iconPrefix + Node.attr("icon");})
-            .style("line-height", function(Node){return Node.attr("radius")*2 + "px";});
+            .style("line-height", function(Node){return Node.attr("radius")*2 + "px";})
+            .style('display', function(Node){return Node.attr("icon")? "block": "none";});
         
         avatar.select('.mugshot')
             .attr('src', function(Node){return Node.attr("mugshot")? self._config.mugshotPrefix + Node.attr("mugshot"): "";})
@@ -1732,17 +1498,17 @@ var drawNodesSvg = function (renderType) {
         
         selection.call(self._config.updateNode, scale);
     }
-};
+}
 
-var unique = function (array) {
+function unique (array) {
     var n = [];
     for (var i = 0; i < array.length; i++) {
         if (n.indexOf(array[i]) == -1) n.push(array[i]);
     }
     return n;
-};
+}
 
-var drawLinksSvg = function (renderType) {
+function drawLinksSvg (renderType) {
     var self = this;
     var scale = self.currentTransform().k;
     
@@ -1752,7 +1518,7 @@ var drawLinksSvg = function (renderType) {
 
     var link = links.enter()
         .append('g')
-        .each(function(Link){ Link.element = this; })
+        .each(function(Link){ Link.element = this })
         .classed('link', true)
         .call(this._config.bindLinkEvent);
     
@@ -1843,7 +1609,7 @@ var drawLinksSvg = function (renderType) {
             .text(function (Link) {return Link.attr("label");});
     
         info.select('.icon')
-            .attr('class', function(Link){ return self._config.iconPrefix + Link.attr("icon");});
+            .attr('class', function(Link){ return self._config.iconPrefix + Link.attr("icon");})
     }
     
     function addArrowByColor(){
@@ -1883,12 +1649,12 @@ var drawLinksSvg = function (renderType) {
                 .style("fill", function(v){return v});
         }
     }
-};
+}
 
 /**
  * Created by lcx on 2016/11/2.
  */
-var drawArrow = function(ctx,link,lineWidth,x,y) {
+function drawArrow(ctx,link,lineWidth,x,y) {
     var targetLink = false;//标记当前link 是否为点击选中的link
     var s1 = link.source.getX();
     var e1 = link.source.getY();
@@ -2054,13 +1820,13 @@ var drawArrow = function(ctx,link,lineWidth,x,y) {
     }
 
 
-};
+}
 
 /**
  * Created by lcx on 2016/11/1.
  * 利用canvas 画线
  */
-var drawLinkCanvas = function (canvasObj,tag,target) {
+function drawLinkCanvas (canvasObj,tag,target) {
     //取得经过计算之后的links 数据
     var links = canvasObj.links;
     var nodes = canvasObj.nodes;
@@ -2336,7 +2102,7 @@ var drawLinkCanvas = function (canvasObj,tag,target) {
         }
     }
 
-};
+}
 
 function findPoint(nodes,x, y) {
     var i,
@@ -2368,7 +2134,7 @@ function findPoint(nodes,x, y) {
 /**
  * Created by lcx on 2016/11/1.
  */
-var convertToCanvasCor = function(canvas,x, y) {
+function convertToCanvasCor(canvas,x, y) {
     // var canvas = this._canvas;
     var res = {};
     var cBox = canvas.getBoundingClientRect();
@@ -2377,17 +2143,12 @@ var convertToCanvasCor = function(canvas,x, y) {
     res.x = x - cx;
     res.y = y - cy;
     return res;
-};
-
-/**
- * Created by lcx on 2016/11/1.
- * 利用canvas 画点 
- */
+}
 
 /**
  * Created by lcx on 2016/11/7.
  */
-var findLinks = function (canvasObj, x, y,lineWidth) {
+function findLinks (canvasObj, x, y,lineWidth) {
     // console.log(links);
     var context = canvasObj.context;
     var target = null;
@@ -2474,25 +2235,25 @@ var findLinks = function (canvasObj, x, y,lineWidth) {
     render(x,y);
     return target;*/
 
-};
+}
 
 /**
  * Created by lcx on 2016/12/8.
  */
-var drawCache = function (canvasObj,keyWord,target) {
+function drawCache (canvasObj,keyWord,target) {
     var cache = this.nodesCache;
     var context = this.element.getContext('2d');
     for(var i=0;i<cache.length;i++){
         context.drawImage(cache[i],0,0);
     }
 
-};
+}
 
 /**
  * Created by lcx on 2016/11/1.
  * 利用canvas 画点 
  */
-var redrawNodeCanvas = function (canvasObj,target) {
+function redrawNodeCanvas (canvasObj,target) {
     var nodes = this.getRenderedNodes();
     // var context = canvasObj.context;
     //对node 进行分类 按颜色进行分类 不同的颜色画在不同的画布上，但是所有点的总共的颜色不宜过多 否则在点线多的情况下会影响整体效率
@@ -2543,7 +2304,7 @@ var redrawNodeCanvas = function (canvasObj,target) {
                 var y = Node.getY();
                 var r = Node.radius;
 
-                var radius =  Node.radius-5;
+                var radius =  Node.radius-5 ;
                 context.moveTo(x, y);
                 context.arc(x, y, radius, 0, 2 * Math.PI);
             }
@@ -2563,7 +2324,7 @@ var redrawNodeCanvas = function (canvasObj,target) {
                     var y = Node.getY();
                     var r = Node.radius;
 
-                    var radius =  Node.radius-5;
+                    var radius =  Node.radius-5 ;
                     var labelLength = context.measureText(Node.label).width+10;
                     context.fillStyle='#f65565';
                     context.fillRect(x+radius,y+radius,labelLength,20);
@@ -2649,7 +2410,7 @@ var redrawNodeCanvas = function (canvasObj,target) {
                     var y = Node.getY();
                     var r = Node.radius;
 
-                    var radius =  Node.radius-5;
+                    var radius =  Node.radius-5 ;
                     context.moveTo(x, y);
                     context.arc(x, y, radius, 0, 2 * Math.PI);
                 }
@@ -2668,7 +2429,7 @@ var redrawNodeCanvas = function (canvasObj,target) {
                         var y = Node.getY();
                         var r = Node.radius;
 
-                        var radius =  Node.radius-5;
+                        var radius =  Node.radius-5 ;
                         var labelLength = context.measureText(Node.label).width+10;
                         context.fillStyle='#f65565';
                         context.fillRect(x+radius,y+radius,labelLength,20);
@@ -2837,9 +2598,9 @@ var redrawNodeCanvas = function (canvasObj,target) {
         context.fillText(label,x+r,y+r);
     }*/
 
-};
+}
 
-var drawCanvas = function () {
+function drawCanvas () {
     var that = this;
     var context = this.element.getContext("2d");
     // console.log(that._getCurrentTransform());
@@ -3107,18 +2868,18 @@ var drawCanvas = function () {
         render('zoom');
     }
 
-};
+}
 
-var draw = function (renderType, canvasType) {
+function draw (renderType, canvasType) {
     if(canvasType === 'svg'){
         drawNodesSvg.call(this, renderType);
         drawLinksSvg.call(this, renderType);
     }else if(canvasType === 'CANVAS'){
         drawCanvas.call(this);
     }
-};
+}
 
-var zoomed = function () {
+function zoomed () {
     //不可移动
     if (!this.movable) {
         //将变换前的translate值赋给变换后的translate值,保持位置不变
@@ -3142,7 +2903,7 @@ var zoomed = function () {
     if(previousScale >= hideScale && currentScale <= hideScale) this.render(RENDER_TYPE.ZOOM);
     //panning don't need re-render, render only after zooming
     if(currentScale !== previousScale && currentScale > hideScale) this.render(RENDER_TYPE.ZOOM);
-};
+}
 
 function transform(k, x, y, duration) {
     var transformed = d3.zoomIdentity;
@@ -3150,16 +2911,6 @@ function transform(k, x, y, duration) {
     if(typeof x === "number" && typeof y === "number") transformed = transformed.translate(x, y);
     this.svgSelection(duration).call(this.zoom.transform, transformed);
     
-    return this;
-}
-
-function scaleTo(k, duration) {
-    this.transform(k, null, null, duration);
-    return this;
-}
-
-function translateBy(x, y, duration) {
-    this.transform(null, x, y , duration);
     return this;
 }
 
@@ -3172,8 +2923,8 @@ function focus(filter, duration){
         var minX = d3.min(Nodes, xAccessor), maxX = d3.max(Nodes, xAccessor), minY = d3.min(Nodes, yAccessor), maxY = d3.max(Nodes, yAccessor);
         var xSpan = maxX - minX, ySpan = maxY - minY;
         var xCenter = (maxX + minX) / 2, yCenter = (maxY + minY) / 2;
-        var canvasW = this.element.width.baseVal.value,
-            canvasH = this.element.height.baseVal.value;
+        var canvasW = this.element.getBoundingClientRect().width,
+            canvasH = this.element.getBoundingClientRect().height;
     
         var xScale = canvasW / xSpan,
             yScale = canvasH / ySpan;
@@ -3182,15 +2933,15 @@ function focus(filter, duration){
         if(scale > this._config.maxScale) scale = this._config.maxScale;
         scale = scale === Infinity? 1: scale;
         scale -= scale/5;
-    
-    
+        
         var transformed = d3.zoomIdentity
             .translate(canvasW / 2, canvasH / 2)
             .scale(scale)
             .translate(-xCenter, -yCenter);
     
-        this.svgSelection(duration || 1000).call(this.zoom.transform, transformed);
-    }.bind(this), 0);
+        console.log(transformed);
+        this.svgSelection(duration || 100).call(this.zoom.transform, transformed);
+    }.bind(this), 0)
 }
 
 function keydowned() {
@@ -3214,14 +2965,14 @@ function keyupped() {
     }
 }
 
-var draged = function (currentNode) {
+function draged (currentNode) {
     var nudgedNodes = this.getSelectedNodes();
     for(var i = nudgedNodes.length; i--;){
         nudgedNodes[i]._nudge(d3.event.dx, d3.event.dy, true);
         this.updateDOM.addObj(nudgedNodes[i]);
     }
     this.delayRender(null, RENDER_TYPE.NUDGE);
-};
+}
 
 function assign(target, varArgs) { // .length of function is 2
     'use strict';
@@ -3244,7 +2995,7 @@ function assign(target, varArgs) { // .length of function is 2
         }
     }
     return to;
-}
+};
 
 const DEFAULT_CONFIG = {
     radius: 15,
@@ -3268,14 +3019,6 @@ const DEFAULT_CONFIG = {
     
     insertNode: function(){},
     updateNode: function(){},
-    
-    onBrushStart: function(){},
-    onBrush: function(){},
-    onBrushEnd: function(){},
-    
-    onZoomStart: function(){},
-    onZoom: function(){},
-    onZoomEnd: function(){},
     
     bindGraphEvent: function(){},
     bindNodeEvent: function(){},
@@ -3302,7 +3045,7 @@ function UpdateDOM(graph){
     this.graph = graph;
     this._updateNodes = [];
     this._updateLinks = [];
-}
+};
 
 UpdateDOM.prototype = {
     constructor: UpdateDOM,
@@ -3322,8 +3065,8 @@ function addObj(Obj, renderType){
         if(renderType === RENDER_TYPE.NUDGE){
             var selectedNodes = this.graph.getSelectedNodes();
             var relatedLinks = this.graph.getRelatedLinks(selectedNodes);
-            relatedLinks.forEach(function(Link$$1){
-                this._addLink(Link$$1);
+            relatedLinks.forEach(function(Link){
+                this._addLink(Link);
             }, this);
             
         }
@@ -3331,20 +3074,20 @@ function addObj(Obj, renderType){
     if(Obj instanceof Link) this._addLink(Obj);
 }
 
-function addNode$1(Node$$1){
-    if(this._updateNodes.indexOf(Node$$1) === -1) this._updateNodes.push(Node$$1);
+function addNode$1(Node){
+    if(this._updateNodes.indexOf(Node) === -1) this._updateNodes.push(Node);
 }
 
-function addLink$1(Link$$1){
-    if(this._updateLinks.indexOf(Link$$1) === -1) this._updateLinks.push(Link$$1);
+function addLink$1(Link){
+    if(this._updateLinks.indexOf(Link) === -1) this._updateLinks.push(Link);
 }
 
 function getNodesEle(){
-    return this._updateNodes.map(function(Node$$1){return Node$$1.element;});
+    return this._updateNodes.map(function(Node){return Node.element;});
 }
 
 function getLinksEle(){
-    return this._updateLinks.map(function(Link$$1){return Link$$1.element;});
+    return this._updateLinks.map(function(Link){return Link.element;});
 }
 
 function clearUpdateNodes(){
@@ -3355,10 +3098,10 @@ function clearUpdateLinks(){
     this._updateLinks = [];
 }
 
-function Graph(selector$$1, config$$1) {
+function Graph(selector, config) {
     
-    this.selector(selector$$1);
-    this.config(config$$1);
+    this.selector(selector);
+    this.config(config);
     
     this._hasInit = false; //init only once
     
@@ -3400,8 +3143,6 @@ Graph.prototype = {
     _removeLinksOfNode: removeLinksOfNode,
     clearLinks: clearLinks,
     transform: transform,
-    scaleTo: scaleTo,
-    translateBy: translateBy,
     focus: focus,
     draged: draged,
     _keydowned: keydowned,
@@ -3431,21 +3172,21 @@ Graph.prototype = {
     }
 };
 
-var index = function (selector$$1, config$$1) {
-    return new Graph(selector$$1, config$$1);
-};
+function index (selector, config) {
+    return new Graph(selector, config);
+}
 
-var filterById = function (id, Nodes) {
+function filterById (id, Nodes) {
     return Nodes.filter(function(Node){
         return Node.id === id;
     })[0];
-};
+}
 
-var parseHTML = function (str) {
+function parseHTML (str) {
     var tmp = document.implementation.createHTMLDocument();
     tmp.body.innerHTML = str;
     return tmp.body.children[0];
-};
+}
 
 function direction(Links){
     var src = Links[0].getSourceId();
@@ -3468,9 +3209,9 @@ function direction(Links){
     }, DIRECTION.NONE);
 }
 
-var safeExecute = function (maybeFunction) {
+function safeExecute (maybeFunction) {
     return (maybeFunction instanceof Function)? maybeFunction(): maybeFunction;
-};
+}
 
 var utils = {
     filterBy: filterBy,
@@ -3484,8 +3225,6 @@ var utils = {
     direction: direction,
     safeExecute: safeExecute
 };
-
-//only for test now
 
 exports.graph = index;
 exports.utils = utils;
