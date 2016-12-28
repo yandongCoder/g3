@@ -30,7 +30,7 @@ g3.graph("#my-graph",{
 - **src** (src point to its source node's id, it eventually generate source property that point to source node)
 - **dst** (dst point to its target node's id, it eventually generate target property that point to target node)
 - **direction**(link arrow's direction)
-    - value: 0(no arrow), 1(point to target), 2(point to source), 3(double arrow)
+    - value: 0 (no arrow), 1 (point to target), 2 (point to source), 3 (double arrow)
     - default: 1
 - **color** (color of link)
 - **width** (line width of link)
@@ -40,8 +40,23 @@ g3.graph("#my-graph",{
 - **selected** (selected state of link)
 - **hide** (whether show link)
 
-## config
+## Config
 
-- **radius** (node's default radius)
-    - value: ```number```
-    - default: ```15```
+- **radius** (node's default radius, default: 15)
+- **linkWidth** (link's default width, default: 3)
+- **zoomable** (whether could zoom and pan graph, default: true)
+- **dragable** (whether could drag nodes, default: true)
+- **nodeLabelClipWidth** (clip label text if longer than this value, default: 500)
+- **color** (node's default color, default: #123456)
+- **linkColor** (link's default color, default: #a1a1a1)
+- **background** (background color or image standard css value, default: #f1f1f1)
+- **minScale** (min scale of zoom, default: 0.1)
+- **maxScale** (max scale of zoom, default: 3.0)
+- **scaleOfHideNodeLabel** (hide node label while zoom scale less than this value, default: 0.8)
+- **scaleOfHideLinkLabel** (hide link label while zoom scale less than this value, default: 0.8)
+- **icon** (default icon of node, default: "")
+- **iconPrefix** (icon class prefix like "fa fa-", default: "")
+- **mugshot** (default mugshot of node, default: "")
+- **mugshotPrefix** (mugshot url prefix link "../img/", default: "")
+
+## Event
