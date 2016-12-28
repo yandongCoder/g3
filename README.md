@@ -60,3 +60,12 @@ g3.graph("#my-graph",{
 - **mugshotPrefix** (mugshot url prefix link "../img/", default: "")
 
 ## Event
+
+- **bindNodeEvent** (bind events to nodes, use d3's api, Node )
+```js
+bindNodeEvent: function(nodeSelection){
+    nodeSelection.on('click', function(Node){
+        alert(Node.label);
+    });
+}
+```
