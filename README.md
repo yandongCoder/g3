@@ -62,26 +62,18 @@ g3.graph("#my-graph",{
 ## Event
 
 - **bindNodeEvent** (bind events to nodes, use d3's api)
-```js
-bindNodeEvent: function(nodeSelection){
-    nodeSelection.on('click', function(Node){
-        alert(Node.label);
-    });
-}
-```
-
 - **bindLinkEvent** (bind events to links, use d3's api)
-```js
-bindLinkEvent: function(linkSelection){
-    linkSelection.on('click', function(Link){
-        alert(Link.label);
-    });
-}
-```
-
 - **bindGraphEvent** (bind events to svg element, use d3's api)
-```js
-bindGraphEvent: function(svg){
-    svg.on('click', function(){...});
-}
-```
+
+##Hook
+
+If you want to add your code to node's generation process, you can use hooks below.
+- **insertNode** (add custom code to insert process)
+- **updateNode** (add custom code to update process)
+
+##Method
+.nodes(<i>nodeArr</i>)
+if a node array is specified, add nodes to graph, else return all nodes.
+
+.links(<i>linkArr</i>)
+if a link array is specified, add links to graph, else return all links.
