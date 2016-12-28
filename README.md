@@ -61,11 +61,27 @@ g3.graph("#my-graph",{
 
 ## Event
 
-- **bindNodeEvent** (bind events to nodes, use d3's api, Node )
+- **bindNodeEvent** (bind events to nodes, use d3's api)
 ```js
 bindNodeEvent: function(nodeSelection){
     nodeSelection.on('click', function(Node){
         alert(Node.label);
     });
+}
+```
+
+- **bindLinkEvent** (bind events to links, use d3's api)
+```js
+bindLinkEvent: function(linkSelection){
+    linkSelection.on('click', function(Link){
+        alert(Link.label);
+    });
+}
+```
+
+- **bindGraphEvent** (bind events to svg element, use d3's api)
+```js
+bindGraphEvent: function(svg){
+    svg.on('click', function(){...});
 }
 ```
