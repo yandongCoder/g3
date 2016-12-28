@@ -2992,7 +2992,6 @@ function assign(target, varArgs) { // .length of function is 2
 const DEFAULT_CONFIG = {
     radius: 15,
     linkWidth: 3,
-    movable: true,
     zoomable: true,
     dragable: true,
     ifRender: true,

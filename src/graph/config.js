@@ -3,7 +3,6 @@ import assign from "../utils/assign";
 const DEFAULT_CONFIG = {
     radius: 15,
     linkWidth: 3,
-    movable: true,
     zoomable: true,
     dragable: true,
     ifRender: true,
