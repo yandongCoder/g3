@@ -79,4 +79,4 @@ If you want to add your code to node's generation process, you can use hooks bel
 if a node array is specified, add nodes to graph, else return all nodes.
 
 .links(<i>linkArr</i>)
-if a link array is specified, add links to graph, else return all links.
+if a link array is specified, add links to graph, else return all links.~
