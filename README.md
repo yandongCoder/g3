@@ -1,8 +1,10 @@
 # g3
 基于D3的图可视化库，可与D3无缝混合使用，通过传入数据和简单的配置，渲染出完整的交互式关联图，同时又提供了很多hook进行自定义。
+## Sample
+![sample graph](https://raw.githubusercontent.com/yandongCoder/g3/master/examples/img/mugshot.png)
 
-## Simple Demo
-[jsfiddle Demo](https://jsfiddle.net/yandongCoder/f5tmfq3j/)
+## Demo
+[jsfiddle Demo](https://jsfiddle.net/yandongCoder/f5tmfq3j/4/)
 
 ## Basic usage
 ```js
