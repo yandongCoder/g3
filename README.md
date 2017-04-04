@@ -8,7 +8,7 @@
 
 ## install
 ```js
-    npm install circular-menu
+    npm install graph3
 ```
 
 ## Basic usage
