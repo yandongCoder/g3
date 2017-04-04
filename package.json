@@ -1,5 +1,5 @@
 {
-  "name": "g3",
+  "name": "graph3",
   "version": "0.0.1",
   "description": "graph data visualization based on D3.js",
   "main": "index.js",
