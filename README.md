@@ -7,9 +7,9 @@
 [jsfiddle Demo](https://jsfiddle.net/yandongCoder/f5tmfq3j/4/)
 
 ## install
-    ```js
-        npm install circular-menu
-    ```
+```js
+    npm install circular-menu
+```
 
 ## Basic usage
 ```js
