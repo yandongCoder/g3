@@ -1,6 +1,6 @@
 {
-  "name": "yes",
-  "version": "1.0.0",
+  "name": "g3",
+  "version": "0.0.1",
   "description": "graph data visualization based on D3.js",
   "main": "index.js",
   "scripts": {
